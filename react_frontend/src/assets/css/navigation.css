@@ -1,11 +1,9 @@
 .navigation_container{
     position: relative;
-    display: inline-block;
-    width:200px;
     color:white;
     background-color:rgb(31,77,145) ;
     height: 100vh;
-    
+    min-width: 200px;
 }
 
 .title a > span:nth-child(1){
