@@ -1,0 +1,23 @@
+.navigation_container{
+    position: relative;
+    display: inline-block;
+    width:200px;
+    color:white;
+    background-color:rgb(31,77,145) ;
+    height: 100vh;
+    
+}
+
+.title a > span:nth-child(1){
+    font-size: 30px;
+}
+
+.title a > span:nth-child(2){
+    font-size: 12px;
+}
+
+.title{
+    padding-top: 10px;
+    padding-left: 10px;
+}
+
