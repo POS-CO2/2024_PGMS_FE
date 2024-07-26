@@ -6,8 +6,9 @@ import MenuList from "./MenuList";
 export default function AppContainer({children}){
     return(
         <div className={appStyles.app}>
-           <Header/>
+            <Header/>
             {children}
+            <div style={{height:'70px',width:'100px', margin:'auto', backgroundColor:'red'}}></div>
         </div>
         );
 }
