@@ -3,6 +3,7 @@ import Navigation from './Navigation';
 import  * as mainStyles from './assets/css/main.css';
 import AppContainer from './AppContainer';
 import { Outlet, useNavigate } from 'react-router';
+import Tabbar from './Tabbar';
 
 const menus =
 [
@@ -181,20 +182,8 @@ export default function SiteLayout(){
             <Navigation menus={menus} onMenuClick={handleMenuClick}/>
             <AppContainer>
                 {/*  */}
-                <div className={mainStyles.tabBar}>
-                    {tabs.map(tab => (
-                        <div
-                            key={tab.url}
-                            className={`${mainStyles.tab} ${activeTab === tab.url ? mainStyles.activeTab : ''}`}
-                            onClick={() => {
-                                handelTabClick(tab.url)
-                            }}
-                        >
-                            {tab.name}
-                            <button onClick={(e) => handleTabClose(tab.url, e)}>x</button>
-                        </div>
-                    ))}
-                </div>
+                <Tabbar tabs = {tabs} activeTab={activeTab} handelTabClick={handelTabClick} handleTabClose={handleTabClose}/>
+                
                 <Outlet/>
             </AppContainer>
         </div>
