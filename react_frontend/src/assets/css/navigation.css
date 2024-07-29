@@ -1,7 +1,8 @@
 .navigation_container{
     position: relative;
     color:white;
-    background-color:rgb(31,77,145) ;
+    background: linear-gradient(#000046, rgb(49,95,175));
+    /*background-color:rgb(31,77,145) ;*/
     height: 100vh;
     min-width: 200px;
 }

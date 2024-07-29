@@ -3,12 +3,11 @@ import * as appStyles from "./assets/css/app.css"
 import Header from "./Header";
 import MenuList from "./MenuList";
 
-export default function AppContainer({children}){
+export default function AppContainer({children, tabs, activeTab, handelTabClick, handleTabClose}){
     return(
         <div className={appStyles.app}>
-            <Header/>
+            <Header tabs = {tabs} activeTab={activeTab} handelTabClick={handelTabClick} handleTabClose={handleTabClose}/>
             {children}
-            <div style={{height:'70px',width:'100px', margin:'auto', backgroundColor:'red'}}></div>
         </div>
         );
 }

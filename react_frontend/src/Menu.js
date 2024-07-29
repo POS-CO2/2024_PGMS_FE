@@ -2,7 +2,7 @@ import React,{useState} from "react";
 import * as menuStyles from "./assets/css/menu.css";
 import MenuList from "./MenuList";
 import {NavLink} from "react-router-dom";
-export default function Menu({menu}){
+export default function Menu({menu, onMenuClick}){
     const [isOpen,setIsOpen] = useState(false);
     const toggleOpen = ()=>{
         setIsOpen(prev=>!prev);
@@ -24,7 +24,7 @@ export default function Menu({menu}){
             `
         }>
             {
-                menu.url ? <NavLink to={menu.url}>{menu.name}</NavLink> : menu.name
+                menu.url ? <NavLink to={menu.url} onClick={() => onMenuClick(menu)}>{menu.name}</NavLink> : <span onClick={() => onMenuClick(menu)}>{menu.name}</span>
             } 
             {
                 menu.menu.length != 0 && !isOpen 
@@ -51,7 +51,7 @@ export default function Menu({menu}){
                 && 
                 isOpen
                 &&
-                <MenuList menus={menu.menu} />
+                <MenuList menus={menu.menu} onMenuClick={onMenuClick}/>
 
 
             }

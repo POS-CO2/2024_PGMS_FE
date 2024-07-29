@@ -3,13 +3,12 @@ import React from "react";
 import Title from "./Title";
 import Footer from "./Footer";
 import MenuList from "./MenuList";
-export default function Navigation({menus}){
-
+export default function Navigation({ menus, onMenuClick }){
 
     return(
         <div className={navStyles.navigation_container}>
             <Title/>
-            <MenuList menus={menus} />
+            <MenuList menus={menus} onMenuClick={onMenuClick}/>
             <Footer/>
         </div>
     );  
