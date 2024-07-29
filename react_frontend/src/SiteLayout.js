@@ -2,7 +2,7 @@ import React, {useState, useEffect} from 'react';
 import Navigation from './Navigation';
 import  * as mainStyles from './assets/css/main.css';
 import AppContainer from './AppContainer';
-import { Outlet } from 'react-router';
+import { Outlet, useNavigate } from 'react-router';
 
 const menus =
 [
@@ -135,10 +135,66 @@ const menus =
 
 
 export default function SiteLayout(){
+
+    const [tabs, setTabs] = useState([]);
+    const [activeTab, setActiveTab] = useState(null);
+    const navigate = useNavigate();
+
+    // 메뉴 클릭 시 해당 url 로 이동 하는 코드.
+    const handleMenuClick = (item) => {
+        const existingTab = tabs.find(tab => tab.url === item.url );
+        // 중복 탭 여부 검사(이미 열려있는지)
+        if (!existingTab) {
+            setTabs([...tabs, item]);
+        }
+        setActiveTab(item.url);
+        navigate(item.url);
+    };
+
+    const handelTabClick = (url) => {
+        setActiveTab(url);
+        navigate(url);
+    }
+
+    const handleTabClose = (url, event) => {
+        event.stopPropagation();
+        const filteredTabs = tabs.filter(tab => tab.url !== url);
+        setTabs(filteredTabs);
+        // 활성화된 탭이 있을 경우 인덱스 - 1의 탭을 보여줌 
+        if (activeTab === url && filteredTabs.length > 0) {
+            const newActiveTab = filteredTabs[filteredTabs.length - 1].url;
+            setActiveTab(newActiveTab);
+            navigate(newActiveTab);
+        } 
+        // 활성화된 탭이 없을 경우 
+        else if (filteredTabs.length === 0) {
+            setActiveTab(null);
+            navigate('/')
+        }
+    }
+
+
+
+
     return (
         <div id={mainStyles.root}>
-            <Navigation menus={menus}/>
+            <Navigation menus={menus} onMenuClick={handleMenuClick}/>
             <AppContainer>
+                {/*  */}
+                <div className={mainStyles.tabBar}>
+                    {tabs.map(tab => (
+                        <div
+                            key={tab.url}
+                            className={`${mainStyles.tab} ${activeTab === tab.url ? mainStyles.activeTab : ''}`}
+                            onClick={() => {
+                                handelTabClick(tab.url)
+                            }}
+                        >
+                            {tab.name}
+                            <button onClick={(e) => handleTabClose(tab.url, e)}>x</button>
+                        </div>
+                    ))}
+                </div>
                 <Outlet/>
             </AppContainer>
         </div>

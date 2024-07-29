@@ -15,3 +15,28 @@ a {
     outline: none; /* 클릭했을 때 발생하는 아웃라인 제거 */
     cursor: pointer; /* 마우스 커서가 손가락 모양으로 변하게 설정 */
 }
+
+.tabBar {
+    display: flex;
+    border-bottom: 1px solid #ccc;
+}
+
+.tab {
+    padding: 10px;
+    cursor: pointer;
+    border: 1px solid #ccc;
+    border-bottom: none;
+    background-color: #f5f5f5;
+}
+
+.activeTab {
+    background-color: white;
+    font-weight: bold;
+}
+
+.content {
+    padding: 20px;
+    flex-grow: 1;
+    background-color: white;
+    border: 1px solid #ccc;
+}
