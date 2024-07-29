@@ -1,15 +1,23 @@
 .header{
+    position: relative;
     min-width: 600px;
     width:100%; 
     height: 50px;
-    background-color:rgb(31,77,145) ;
+    background-color:#000046 ;
     display: flex;
-    justify-content: flex-end;
     align-items: center;
-    
+    justify-content: space-between;
+}
+
+.header_left {
+    display: flex;
+    align-items: center;
+    flex-grow: 1;
 }
 
 .header_profile {
+    position:absolute;
+    right:0px;
     display: flex;
     align-items: center; 
 }
@@ -44,3 +52,54 @@ img {
     position: relative;
 }
 
+
+.tabBar {
+    display: flex;
+    border-bottom: 1px solid #ccc;
+    align-items: flex-end;
+    bottom: 0;
+    border-bottom: none;
+    position:absolute;
+    bottom: 0px;
+}
+
+.tab {
+    width: 130px;
+    padding: 10px;
+    cursor: pointer;
+    border: 0px solid #ccc;
+    border-right: 1px solid #ccc;
+    border-bottom: none;
+    background-color: #eaeaea;
+    align-items: center;
+    border-radius: 10px 10px 0px 0px;
+    text-align: center;
+    position: relative;
+}
+
+.activeTab {
+    background-color: white;
+    font-weight: bold;
+}
+
+.content {
+    padding: 20px;
+    flex-grow: 1;
+    background-color: white;
+    border: 1px solid #ccc;
+}
+
+.tab button {
+    position: absolute;
+    right: 2px;
+    margin-left: 10px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: black;
+    font-size: 16px;
+}
+
+.tab button:hover {
+    color: red;
+}

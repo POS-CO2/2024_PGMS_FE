@@ -180,10 +180,7 @@ export default function SiteLayout(){
     return (
         <div id={mainStyles.root}>
             <Navigation menus={menus} onMenuClick={handleMenuClick}/>
-            <AppContainer>
-                {/*  */}
-                <Tabbar tabs = {tabs} activeTab={activeTab} handelTabClick={handelTabClick} handleTabClose={handleTabClose}/>
-                
+            <AppContainer tabs = {tabs} activeTab={activeTab} handelTabClick={handelTabClick} handleTabClose={handleTabClose}>
                 <Outlet/>
             </AppContainer>
         </div>

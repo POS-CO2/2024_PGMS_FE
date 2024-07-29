@@ -1,11 +1,12 @@
 import React from 'react';
-import  * as mainStyles from './assets/css/main.css';
+import  * as headerStyles from './assets/css/header.css';
+import Header from './Header';
 
 export default function Tab({tab, activeTab, handleTabClose, handelTabClick}){
     return (
         <div
             key={tab.url}
-            className={`${mainStyles.tab} ${activeTab === tab.url ? mainStyles.activeTab : ''}`}
+            className={`${headerStyles.tab} ${activeTab === tab.url ? headerStyles.activeTab : ''}`}
             onClick={() => {
                 handelTabClick(tab.url)
             }}
