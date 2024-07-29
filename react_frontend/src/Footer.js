@@ -1,11 +1,20 @@
 import * as footerStyles from "./assets/css/footer.css";
-import React from "react";
+import languageIcon from "./assets/images/language.png";
+import React, {useState} from "react";
 
+export default function Footer() {
+    const [language, setLanguage] = useState("EN");
 
-export default function Footer(){
+    const onClickLanguage = () => {
+        setLanguage(prevLanguage => (prevLanguage === "EN" ? "KO" : "EN"));
+    };
+
     return(
         <footer>
-            <p>GLOBAL</p>
+            <button className={footerStyles.language_btn} onClick={onClickLanguage}>
+                <img src={languageIcon} />
+                <p>{language}</p>
+            </button>
         </footer>
     );
 }

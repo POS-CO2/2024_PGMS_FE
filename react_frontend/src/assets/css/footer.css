@@ -1,5 +1,5 @@
-footer{
-    position:absolute;
+footer {
+    position: absolute;
     bottom: 0px;
     left: 0px;
     right: 0px;
@@ -10,12 +10,17 @@ footer{
     font-size: 20px;
 }
 
-
-footer p{
-    text-align: right;
-    padding-top: 1px;
-    margin-top: 10px;
-    margin-right: 10px;
+.language_btn {
+    float: left;
+    display: inline-flex;
+    color: white;
+    font-weight: bold;
+    outline: none;
+    border: none;
+    cursor: pointer;
     font-size: 20px;
+    background-color:transparent;
+    align-items: center;
+    vertical-align: middle;
+    height: 100%;
 }
-
