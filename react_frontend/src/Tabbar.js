@@ -3,10 +3,10 @@ import  * as headerStyles from './assets/css/header.css';
 import Tab from './Tab';
 
 
-export default function Tabbar({tabs, activeTab, handelTabClick, handleTabClose}){
+export default function Tabbar({tabs, activeTab, handelTabClick, handleTabClose, tabBarRef}){
     console.log(tabs);
     return (
-        <div className={headerStyles.tabBar}>
+        <div className={headerStyles.tabBar} ref={tabBarRef}>
             <div
                 className={`${headerStyles.tab} ${activeTab === '/' ? headerStyles.activeTab : ''}`}
                 onClick={() => {

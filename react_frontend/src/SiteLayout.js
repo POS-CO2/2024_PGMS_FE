@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, useRef} from 'react';
 import Navigation from './Navigation';
 import  * as mainStyles from './assets/css/main.css';
 import AppContainer from './AppContainer';
@@ -137,9 +137,16 @@ const menus =
 
 export default function SiteLayout(){
 
-    const [tabs, setTabs] = useState([]);
-    const [activeTab, setActiveTab] = useState(null);
+    const [tabs, setTabs] = useState(() => {
+        const savedTabs = localStorage.getItem('tabs');
+        return savedTabs ? JSON.parse(savedTabs) : [];
+    });
+    const [activeTab, setActiveTab] = useState(() => {
+        const savedActiveTab = localStorage.getItem('activeTab');
+        return savedActiveTab || null;
+    });
     const navigate = useNavigate();
+    const tabBarRef = useRef(null);
 
     // 메뉴 클릭 시 해당 url 로 이동 하는 코드.
     // 탭도 생성함
@@ -148,16 +155,23 @@ export default function SiteLayout(){
         // 중복 탭 여부 검사(이미 열려있는지)
         if (item.menu.length === 0){
             if (!existingTab) {
-                setTabs([...tabs, item]);
+                const newTabs = [...tabs, item];
+                setTabs(newTabs);
+                localStorage.setItem('tabs', JSON.stringify(newTabs));
             }
             setActiveTab(item.url);
+            localStorage.setItem('activeTab', item.url);
             navigate(item.url);
         }
     };
+    // 누가 화면을 켜놓고 가냐
+    // 프론트 천재 화면 배껴갑니다.
+    // 신찬규
 
     // 탭 클릭시 해당 url 로 이동하는 코드
     const handelTabClick = (url) => {
         setActiveTab(url);
+        localStorage.setItem('activeTab', url);
         navigate(url);
     }
 
@@ -166,19 +180,25 @@ export default function SiteLayout(){
         event.stopPropagation();
         const filteredTabs = tabs.filter(tab => tab.url !== url);
         setTabs(filteredTabs);
+        localStorage.setItem('tabs', JSON.stringify(filteredTabs));
         // 활성화된 탭이 있을 경우 인덱스 - 1의 탭을 보여줌 
         if (activeTab === url && filteredTabs.length > 0) {
             const newActiveTab = filteredTabs[filteredTabs.length - 1].url;
             setActiveTab(newActiveTab);
+            localStorage.setItem('activeTab', newActiveTab);
             navigate(newActiveTab);
         } 
         // 활성화된 탭이 없을 경우 
         else if (filteredTabs.length === 0) {
             setActiveTab(null);
+            localStorage.removeItem('activeTab');
             navigate('/')
         }
     }
 
+    
+
+    
 
 
 
