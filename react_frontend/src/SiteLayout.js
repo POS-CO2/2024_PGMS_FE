@@ -6,6 +6,7 @@ import AppContainer from './AppContainer';
 import { Outlet, useNavigate } from 'react-router';
 import Tabbar from './Tabbar';
 
+
 const menus =
 [
     {
@@ -149,6 +150,9 @@ export default function SiteLayout(){
     const navigate = useNavigate();
     const tabBarRef = useRef(null);
 
+    const dragItem = useRef();
+    const dragOverItem = useRef();
+
     // 메뉴 클릭 시 해당 url 로 이동 하는 코드.
     // 탭도 생성함
     const handleMenuClick = (item) => {
@@ -229,12 +233,30 @@ export default function SiteLayout(){
         }
     }, [activeTab, navigate]);
 
+    // drag 구현
+    const dragStart = (e, position) => {
+        dragItem.current = position;
+        console.log(e.target.innerHTML);
+    };
 
+    const dragEnter = (e, position) => {
+        dragOverItem.current = position;
+    }
+
+    const drop = (e) => {
+        const newList = [...tabs];
+        const dragItemValue = newList[dragItem.current];
+        newList.splice(dragItem.current, 1);
+        newList.splice(dragOverItem.current, 0, dragItemValue);
+        dragItem.current = null;
+        dragOverItem.current = null;
+        setTabs(newList);
+    }
 
     return (
         <div id={mainStyles.root}>
             <Navigation menus={menus} onMenuClick={handleMenuClick}/>
-            <AppContainer tabs = {tabs} activeTab={activeTab} handelTabClick={handelTabClick} handleTabClose={handleTabClose}>
+            <AppContainer tabs = {tabs} activeTab={activeTab} handelTabClick={handelTabClick} handleTabClose={handleTabClose} dragStart={dragStart} dragEnter={dragEnter} drop={drop}>
                 <Outlet/>
             </AppContainer>
         </div>

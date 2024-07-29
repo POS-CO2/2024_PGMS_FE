@@ -3,7 +3,7 @@ import  * as headerStyles from './assets/css/header.css';
 import Tab from './Tab';
 
 
-export default function Tabbar({tabs, activeTab, handelTabClick, handleTabClose, tabBarRef}){
+export default function Tabbar({tabs, activeTab, handelTabClick, handleTabClose, tabBarRef, dragEnter, dragStart, drop}){
     console.log(tabs);
     return (
         <div className={headerStyles.tabBar} ref={tabBarRef}>
@@ -15,8 +15,8 @@ export default function Tabbar({tabs, activeTab, handelTabClick, handleTabClose,
             >
                 {'홈'}
             </div>
-            {tabs.map(tab => (
-                <Tab key={tab.name} tab={tab} activeTab={activeTab} handelTabClick={handelTabClick} handleTabClose={handleTabClose}/>
+            {tabs.map((tab, idx) => (
+                <Tab key={idx} idx={idx} tab={tab} activeTab={activeTab} handelTabClick={handelTabClick} handleTabClose={handleTabClose} dragStart={dragStart} dragEnter={dragEnter} drop={drop}/>
                 
             ))}
         </div>
