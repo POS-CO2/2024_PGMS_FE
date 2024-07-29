@@ -142,21 +142,26 @@ export default function SiteLayout(){
     const navigate = useNavigate();
 
     // 메뉴 클릭 시 해당 url 로 이동 하는 코드.
+    // 탭도 생성함
     const handleMenuClick = (item) => {
         const existingTab = tabs.find(tab => tab.url === item.url );
         // 중복 탭 여부 검사(이미 열려있는지)
-        if (!existingTab) {
-            setTabs([...tabs, item]);
+        if (item.menu.length === 0){
+            if (!existingTab) {
+                setTabs([...tabs, item]);
+            }
+            setActiveTab(item.url);
+            navigate(item.url);
         }
-        setActiveTab(item.url);
-        navigate(item.url);
     };
 
+    // 탭 클릭시 해당 url 로 이동하는 코드
     const handelTabClick = (url) => {
         setActiveTab(url);
         navigate(url);
     }
 
+    // 탭을 지우는 코드
     const handleTabClose = (url, event) => {
         event.stopPropagation();
         const filteredTabs = tabs.filter(tab => tab.url !== url);
