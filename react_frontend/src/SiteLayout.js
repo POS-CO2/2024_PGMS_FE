@@ -1,6 +1,7 @@
 import React, {useState, useEffect, useRef} from 'react';
 import Navigation from './Navigation';
 import  * as mainStyles from './assets/css/main.css';
+import  * as headerStyles from './assets/css/header.css';
 import AppContainer from './AppContainer';
 import { Outlet, useNavigate } from 'react-router';
 import Tabbar from './Tabbar';
@@ -196,9 +197,37 @@ export default function SiteLayout(){
         }
     }
 
-    
+    useEffect(() => {
+        const adjustTabWidth = () => {
+            if (tabBarRef.current) {
+                const tabBarWidth = tabBarRef.current.offsetWidth;
+                const profileWidth = document.querySelector(`.${headerStyles.header_profile}`).offsetWidth;
+                const availableWidth = tabBarWidth - profileWidth - 20; // 20은 여유 공간
+                const maxTabs = Math.floor(availableWidth / 130);
+                const newTabWidth = tabs.length > maxTabs ? availableWidth / tabs.length : 130;
 
-    
+                Array.from(tabBarRef.current.children).forEach(tab => {
+                    tab.style.minWidth = `${newTabWidth}px`;
+                    tab.style.maxWidth = `${newTabWidth}px`;
+                    tab.style.overflow = 'hidden';
+                    tab.style.textOverflow = 'ellipsis';
+                    tab.style.whiteSpace = 'nowrap';
+                });
+            }
+        };
+
+        adjustTabWidth();
+        window.addEventListener('resize', adjustTabWidth);
+        return () => {
+            window.removeEventListener('resize', adjustTabWidth);
+        };
+    }, [tabs]);
+
+    useEffect(() => {
+        if (activeTab) {
+            navigate(activeTab);
+        }
+    }, [activeTab, navigate]);
 
 
 

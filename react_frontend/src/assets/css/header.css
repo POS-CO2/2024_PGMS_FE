@@ -49,10 +49,8 @@ img {
     width: 36px;
     height: 8px;
     padding-bottom: 24%;
-
     position: relative;
 }
-
 
 .tabBar {
     display: flex;
@@ -63,6 +61,7 @@ img {
     position:absolute;
     bottom: 0px;
     overflow-x: auto;
+    width: calc(100% - 140px); /* 넓이 조정 */
 }
 
 .tab {
@@ -78,11 +77,20 @@ img {
     text-align: center;
     position: relative;
     white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    padding-right: 30px;
 }
 
 .activeTab {
     background-color: white;
     font-weight: bold;
+}
+
+.home {
+    width: 50px;
+    text-align: center;
+    padding-right: 10px;
 }
 
 .content {

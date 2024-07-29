@@ -12,7 +12,7 @@ export default function Tab({tab, activeTab, handleTabClose, handelTabClick}){
             }}
         >
             {tab.name}
-            <button onClick={(e) => handleTabClose(tab.url, e)}>x</button>
+            <button onClick={(e) => handleTabClose(tab.url, e)}>X</button>
         </div>
 );
 };

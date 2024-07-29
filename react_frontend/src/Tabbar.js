@@ -8,7 +8,7 @@ export default function Tabbar({tabs, activeTab, handelTabClick, handleTabClose,
     return (
         <div className={headerStyles.tabBar} ref={tabBarRef}>
             <div
-                className={`${headerStyles.tab} ${activeTab === '/' ? headerStyles.activeTab : ''}`}
+                className={`${headerStyles.tab} ${activeTab === '/' ? headerStyles.activeTab : ''} ${headerStyles.home}`}
                 onClick={() => {
                     handelTabClick('/')
                 }}
