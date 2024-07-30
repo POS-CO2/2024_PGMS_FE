@@ -44,14 +44,13 @@ img {
     display: flex;
     background-color: antiquewhite;
     border-radius: 70%;
-
+    margin-left: 10px;
+    margin-right: 10px;
     width: 36px;
     height: 8px;
     padding-bottom: 24%;
-
     position: relative;
 }
-
 
 .tabBar {
     display: flex;
@@ -61,6 +60,8 @@ img {
     border-bottom: none;
     position:absolute;
     bottom: 0px;
+    overflow-x: auto;
+    width: calc(100% - 140px); /* 넓이 조정 */
 }
 
 .tab {
@@ -75,11 +76,22 @@ img {
     border-radius: 10px 10px 0px 0px;
     text-align: center;
     position: relative;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    padding-right: 30px;
 }
 
 .activeTab {
     background-color: white;
     font-weight: bold;
+}
+
+.home {
+    width: 20px;
+    min-width: 20px;
+    text-align: center;
+    padding-right: 10px;
 }
 
 .content {
