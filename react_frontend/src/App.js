@@ -9,6 +9,7 @@ import Psq from './components/Psq';
 import Tep from './components/Tep';
 import Fm from './components/Fm';
 import Fad from './components/Fad';
+import Fam from './components/Fam'
 import Fl from './components/Fl';
 import Esm from './components/Esm';
 import Sd from './components/Sd';
@@ -16,6 +17,7 @@ import Cm from './components/Cm';
 import Mm from './components/Mm';
 import Um from './components/Um';
 import Mal from './components/Mal';
+import Pmg from './components/Pmg';
 import Error404 from './Error404';
 
 
@@ -50,8 +52,10 @@ export default function App() {
                     <Route path='/efm' element={<Efm/>} />
                     <Route path='/psq' element={<Psq/>}/>
                     <Route path='/tep' element={<Tep/>}/>
+                    <Route path='/pmg' element={<Pmg/>}/>
                     <Route path='/fm' element={<Fm/>}/>
                     <Route path='/fad' element={<Fad/>}/>
+                    <Route path='/fam' element={<Fam/>}/>
                     <Route path='/fl' element={<Fl/>}/>
                     <Route path='/esm' element={<Esm/>}/>
                     <Route path='/sd' element={<Sd/>}/>
