@@ -158,6 +158,9 @@ export default function SiteLayout(){
         const savedActiveTab = localStorage.getItem('activeTab');
         return savedActiveTab || null;
     });
+
+    const [fav, setFav] = useState(true);
+
     const navigate = useNavigate();
     const tabBarRef = useRef(null);
 
@@ -167,6 +170,7 @@ export default function SiteLayout(){
     // 메뉴 클릭 시 해당 url 로 이동 하는 코드.
     // 탭도 생성함
     const handleMenuClick = (item) => {
+        console.log(item);
         const existingTab = tabs.find(tab => tab.url === item.url );
         // 중복 탭 여부 검사(이미 열려있는지)
         if (item.menu.length === 0){
@@ -180,9 +184,6 @@ export default function SiteLayout(){
             navigate(item.url);
         }
     };
-    // 누가 화면을 켜놓고 가냐
-    // 프론트 천재 화면 배껴갑니다.
-    // 신찬규
 
     // 탭 클릭시 해당 url 로 이동하는 코드
     const handelTabClick = (url) => {
@@ -264,12 +265,28 @@ export default function SiteLayout(){
         setTabs(newList);
     }
 
+    const handleFavClick = () => {
+        console.log(fav);
+        setFav(!fav);
+    }
+
     
 
     return (
         <div id={mainStyles.root}>
             <Navigation menus={menus} onMenuClick={handleMenuClick}/>
-            <AppContainer tabs = {tabs} activeTab={activeTab} handelTabClick={handelTabClick} handleTabClose={handleTabClose} dragStart={dragStart} dragEnter={dragEnter} drop={drop}>
+            <AppContainer 
+                tabs = {tabs} 
+                handleMenuClick={handleMenuClick} 
+                activeTab={activeTab} 
+                handelTabClick={handelTabClick} 
+                handleTabClose={handleTabClose} 
+                dragStart={dragStart} 
+                dragEnter={dragEnter} 
+                drop={drop}
+                handleFavClick={handleFavClick}
+                fav={fav}
+            >
                 <Outlet/>
             </AppContainer>
         </div>
