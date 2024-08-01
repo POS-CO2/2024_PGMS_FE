@@ -3,21 +3,24 @@ import { BrowserRouter as Router } from 'react-router-dom';
 import {Routes, Route} from 'react-router';
 import SiteLayout from './SiteLayout';
 import Main from './Main';
-import Efm from './components/Efm';
-import Ps_1_2 from './components/Ps_1_2';
-import Psq from './components/Psq';
-import Tep from './components/Tep';
-import Fm from './components/Fm';
-import Fad from './components/Fad';
-import Fam from './components/Fam'
-import Fl from './components/Fl';
-import Esm from './components/Esm';
-import Sd from './components/Sd';
-import Cm from './components/Cm';
-import Mm from './components/Mm';
-import Um from './components/Um';
-import Mal from './components/Mal';
-import Pmg from './components/Pmg';
+import Efm from './components/fieldinfo/Efm';
+import Ps_1_2 from './components/emperf/Ps_1_2';
+import Psq from './components/emperf/perflook/Psq';
+import Tep from './components/emperf/perflook/Tep';
+import Pd from './components/fieldinfo/project/Pd'
+import Pg from './components/fieldinfo/project/Pg'
+import Rm from './components/fieldinfo/project/Rm'
+import Fm from './components/fieldinfo/facility/Fm';
+import Fad from './components/fieldinfo/facility/Fad';
+import Fam from './components/fieldinfo/facility/Fam'
+import Fl from './components/fieldinfo/facility/Fl';
+import Esm from './components/fieldinfo/emission/Esm';
+import Sd from './components/fieldinfo/emission/Sd';
+import Cm from './components/sysmng/Cm';
+import Mm from './components/sysmng/Mm';
+import Um from './components/sysmng/Um';
+import Mal from './components/sysmng/Mal';
+import Pmg from './components/emperf/Pmg';
 import Error404 from './Error404';
 
 
@@ -53,6 +56,9 @@ export default function App() {
                     <Route path='/psq' element={<Psq/>}/>
                     <Route path='/tep' element={<Tep/>}/>
                     <Route path='/pmg' element={<Pmg/>}/>
+                    <Route path='/pd' element={<Pd/>}/>
+                    <Route path='/pg' element={<Pg/>}/>
+                    <Route path='/rm' element={<Rm/>}/>
                     <Route path='/fm' element={<Fm/>}/>
                     <Route path='/fad' element={<Fad/>}/>
                     <Route path='/fam' element={<Fam/>}/>

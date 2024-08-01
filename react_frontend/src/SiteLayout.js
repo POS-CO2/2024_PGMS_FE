@@ -52,6 +52,30 @@ const menus =
         "menu" : [
             {
                 "level" : 2,
+                "name" : "프로젝트",
+                "menu" : [
+                    {
+                        "level" : 3,
+                        "name" : "프로젝트 관리",
+                        "menu" : [],
+                        "url" : "/pg"
+                    },
+                    {
+                        "level" : 3,
+                        "name" : "담당자 지정",
+                        "menu" : [],
+                        "url" : "/pd"
+                    },
+                    {
+                        "level" : 3,
+                        "name" : "매출액 관리",
+                        "menu" : [],
+                        "url" : "/rm"
+                    },
+                ]
+            },
+            {
+                "level" : 2,
                 "name" : "설비",
                 "menu" : [
                     {
@@ -59,6 +83,13 @@ const menus =
                         "name" : "설비 지정",
                         "menu" : [],
                         "url" : "/fm"
+                    },
+                    {
+                        "level" : 3,
+                        "url" : "/fl",
+                        "name" : "설비LIB 관리",
+                        "menu" : []
+                        
                     },
                     {
                         "level" : 3,
@@ -72,13 +103,7 @@ const menus =
                         "url" : "/fad",
                         "menu" : []
                     },
-                    {
-                        "level" : 3,
-                        "url" : "/fl",
-                        "name" : "설비LIB 관리",
-                        "menu" : []
-                        
-                    }
+                    
                 ]
             },
             {

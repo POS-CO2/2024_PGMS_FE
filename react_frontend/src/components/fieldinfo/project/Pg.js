@@ -1,8 +1,8 @@
 import React from 'react';
-export default function Tep() {
+export default function Pg() {
     return (
             <div>
-                <h2>총량실적</h2>
+                <h2>프로젝트 관리</h2>
             </div>
     );
 }

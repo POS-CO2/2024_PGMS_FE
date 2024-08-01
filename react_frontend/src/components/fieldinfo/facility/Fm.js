@@ -1,8 +1,8 @@
 import React from 'react';
-export default function Esm() {
+export default function Fm() {
     return (
             <div>
-                <h2>배출원관리</h2>
+                <h2>설비 지정</h2>
             </div>
     );
 }
