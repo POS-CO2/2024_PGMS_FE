@@ -1,11 +1,12 @@
 .favorite {
     position: fixed;
-    top: 40%;
+    top: var(--fav-position, 400px);
     right: 0;
     width: 100px;
     height: 200px;
     border: 1px solid black;
     border-radius: 10px 0px 0px 10px;
+    z-index: 1000;
 }
 
 .title {
@@ -23,7 +24,7 @@
 
 .fold_favorite {
     position: fixed;
-    top: 37%;
+    top: var(--fav-position, 37%);
     right: 0;
     width: 15px;
     height: 90px;

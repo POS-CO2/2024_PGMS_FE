@@ -184,13 +184,18 @@ export default function SiteLayout(){
         return savedActiveTab || null;
     });
 
-    const [fav, setFav] = useState(true);
-
     const navigate = useNavigate();
     const tabBarRef = useRef(null);
 
     const dragItem = useRef();
     const dragOverItem = useRef();
+    
+    // 드래그해서 즐겨찾기 위치 수정
+    const [fav, setFav] = useState(true);
+    const [favPosition, setFavPosition] = useState(400);
+    const favRef = useRef(null);
+    const dragStartPos = useRef(0);
+    
 
     // 메뉴 클릭 시 해당 url 로 이동 하는 코드.
     // 탭도 생성함
@@ -290,10 +295,31 @@ export default function SiteLayout(){
         setTabs(newList);
     }
 
-    const handleFavClick = () => {
+    const dragFavStart = (e) => {
+        dragStartPos.current = e.clientY;
+    }
+
+    const dragFavMove = (e) => {
+        const delta = e.clientY - dragStartPos.current;
+        console.log(dragStartPos.current);
+        setFavPosition(favPosition+ delta);
+        dragStartPos.current = e.clientY;
+    }
+
+    const dropFav = (e) => {
+        dragStartPos.current = 0;
+    }
+
+    const handleFavClick = (e) => {
         console.log(fav);
         setFav(!fav);
     }
+
+    useEffect(() => {
+        if (favRef.current) {
+            favRef.current.style.setProperty('--fav-position', `${favPosition}px`);
+        }
+    }, [favPosition]);
 
     
 
@@ -311,6 +337,10 @@ export default function SiteLayout(){
                 drop={drop}
                 handleFavClick={handleFavClick}
                 fav={fav}
+                favRef={favRef}
+                dragFavStart={dragFavStart}
+                dragFavMove={dragFavMove}
+                dropFav={dropFav}
             >
                 <Outlet/>
             </AppContainer>
