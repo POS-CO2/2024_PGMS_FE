@@ -19,5 +19,5 @@ export default function Tabbar({tabs, activeTab, handelTabClick, handleTabClose,
                 
             ))}
         </div>
-    );
+    ); 
 };
