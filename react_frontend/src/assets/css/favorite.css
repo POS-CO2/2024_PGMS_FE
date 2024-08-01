@@ -1,0 +1,27 @@
+.favorite {
+    position: fixed;
+    top: 40%;
+    right: 0;
+    width: 100px;
+    height: 200px;
+    border: 1px solid black;
+    border-radius: 10px 0px 0px 10px;
+}
+
+.title {
+    background-color: #000046;
+    border-radius: 10px 0px 0px 0px;
+    color: white;
+    text-align: center;
+    overflow: hidden;
+}
+
+.content {
+    color: gray;
+    font-size: 12px;
+}
+
+ul {
+    padding-left: 20%;
+}
+

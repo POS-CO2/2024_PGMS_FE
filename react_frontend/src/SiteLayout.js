@@ -167,6 +167,7 @@ export default function SiteLayout(){
     // 메뉴 클릭 시 해당 url 로 이동 하는 코드.
     // 탭도 생성함
     const handleMenuClick = (item) => {
+        console.log(item);
         const existingTab = tabs.find(tab => tab.url === item.url );
         // 중복 탭 여부 검사(이미 열려있는지)
         if (item.menu.length === 0){
@@ -269,7 +270,7 @@ export default function SiteLayout(){
     return (
         <div id={mainStyles.root}>
             <Navigation menus={menus} onMenuClick={handleMenuClick}/>
-            <AppContainer tabs = {tabs} activeTab={activeTab} handelTabClick={handelTabClick} handleTabClose={handleTabClose} dragStart={dragStart} dragEnter={dragEnter} drop={drop}>
+            <AppContainer tabs = {tabs} handleMenuClick={handleMenuClick} activeTab={activeTab} handelTabClick={handelTabClick} handleTabClose={handleTabClose} dragStart={dragStart} dragEnter={dragEnter} drop={drop}>
                 <Outlet/>
             </AppContainer>
         </div>
