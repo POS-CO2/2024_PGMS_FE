@@ -21,6 +21,24 @@
     font-size: 12px;
 }
 
+.fold_favorite {
+    position: fixed;
+    top: 37%;
+    right: 0;
+    width: 15px;
+    height: 90px;
+    background-color: #000046;
+    color: white;
+    text-align: center;
+    vertical-align: middle;
+    border-radius: 10px 0px 0px 10px;
+    border: 1px solid black;
+}
+
+.fold_text {
+    margin-top: 35px;
+}
+
 ul {
     padding-left: 20%;
 }

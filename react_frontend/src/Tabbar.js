@@ -4,7 +4,6 @@ import Tab from './Tab';
 
 
 export default function Tabbar({tabs, activeTab, handelTabClick, handleTabClose, tabBarRef, dragEnter, dragStart, drop}){
-    console.log(tabs);
     return (
         <div className={headerStyles.tabBar} ref={tabBarRef}>
             <div
