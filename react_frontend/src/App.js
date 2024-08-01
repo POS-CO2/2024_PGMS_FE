@@ -7,6 +7,9 @@ import Efm from './components/fieldinfo/Efm';
 import Ps_1_2 from './components/emperf/Ps_1_2';
 import Psq from './components/emperf/perflook/Psq';
 import Tep from './components/emperf/perflook/Tep';
+import Pd from './components/fieldinfo/project/Pd'
+import Pg from './components/fieldinfo/project/Pg'
+import Rm from './components/fieldinfo/project/Rm'
 import Fm from './components/fieldinfo/facility/Fm';
 import Fad from './components/fieldinfo/facility/Fad';
 import Fam from './components/fieldinfo/facility/Fam'
@@ -53,6 +56,9 @@ export default function App() {
                     <Route path='/psq' element={<Psq/>}/>
                     <Route path='/tep' element={<Tep/>}/>
                     <Route path='/pmg' element={<Pmg/>}/>
+                    <Route path='/pd' element={<Pd/>}/>
+                    <Route path='/pg' element={<Pg/>}/>
+                    <Route path='/rm' element={<Rm/>}/>
                     <Route path='/fm' element={<Fm/>}/>
                     <Route path='/fad' element={<Fad/>}/>
                     <Route path='/fam' element={<Fam/>}/>
