@@ -1,0 +1,26 @@
+.menu {
+    position: relative;
+    font-weight: 300;
+    font-size: 12px;
+    line-height: 15px;
+    margin-left: 10px;
+    display: flex;
+    align-items: center;
+    
+    color: #7D7D7D;
+    margin-top: 2px;
+}
+
+.table_title {
+    position: relative;
+    font-weight: bold;
+    line-height: 39px;
+    font-size: 20px;
+
+    margin-top: 20px;
+    margin-left: 20px;
+    display: flex;
+    align-items: center;
+
+    color: #000000
+};
