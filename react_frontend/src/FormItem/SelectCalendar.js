@@ -1,14 +1,16 @@
-import React, { useState } from 'react';
-import * as styles from '../assets/css/formitem.css'; // 네이밍 확인
+import React from 'react';
+import * as styles from '../assets/css/formItem.css';
 import { Form, DatePicker } from 'antd';
 
 const { RangePicker } = DatePicker;
 
-export default function SelectCalendar() {
+export default function SelectCalendar({ name, label, required=false }) {
     return (
         <Form.Item
             className={styles.form_item}
-            label="RangePicker"
+            name={name}
+            label={label}
+            rules={[{ required: required }]}
         >
             <RangePicker />
         </Form.Item>

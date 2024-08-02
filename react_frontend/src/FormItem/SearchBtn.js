@@ -1,11 +1,12 @@
-import React, { useState } from 'react';
-import * as styles from '../assets/css/formitem.css'; // 네이밍 확인
+import React from 'react';
+import * as styles from '../assets/css/formItem.css';
 import { Form, Button } from 'antd';
+import { SearchOutlined } from '@ant-design/icons';
 
-export default function SearchBtn() {
+export default function SearchBtn({ label="조회" }) {
     return (
         <Form.Item className={styles.search_btn}>
-            <Button type="primary" htmlType="submit">Submit</Button>
+            <Button type="primary" htmlType="submit">{label}<SearchOutlined /></Button>
         </Form.Item>
     )
 }

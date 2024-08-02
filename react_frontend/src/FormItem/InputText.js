@@ -1,13 +1,14 @@
-import React, { useState } from 'react';
-import * as styles from '../assets/css/formitem.css'; // 네이밍 확인
+import React from 'react';
+import * as styles from '../assets/css/formItem.css';
 import { Form, Input } from 'antd';
 
-export default function InputText() {
+export default function InputText({ name, label, required=false }) {
     return (
         <Form.Item
             className={styles.form_item}
-            name="email"
-            label="E-mail"
+            name={name}
+            label={label}
+            rules={[{ required: required }]}
         >
             <Input />
         </Form.Item>

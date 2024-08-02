@@ -1,18 +1,22 @@
-import React, { useState } from 'react';
-import * as styles from '../assets/css/formitem.css'; // 네이밍 확인
+import React from 'react';
+import * as styles from '../assets/css/formItem.css';
 import { Form, Select } from 'antd';
 
-export default function DropDown() {
+export default function DropDown({ name, label, required=false, options, defaultSelected = false }) {
     return (
-        <Form.Item 
+        <Form.Item
             className={styles.form_item}
-            label="Select"
+            name={name}
+            label={label}
+            rules={[{ required: required }]}
+            initialValue={defaultSelected ? options[0].value : undefined}
         >
             <Select>
-                <Select.Option value="1">드</Select.Option>
-                <Select.Option value="2">롭</Select.Option>
-                <Select.Option value="3">다</Select.Option>
-                <Select.Option value="4">운</Select.Option>
+                {options.map(option => (
+                    <Select.Option key={option.value} value={option.value}>
+                        {option.label}
+                    </Select.Option>
+                ))}
             </Select>
         </Form.Item>
     )

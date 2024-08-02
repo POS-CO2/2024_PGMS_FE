@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
-import * as styles from '../assets/css/formitem.css'; // 네이밍 확인
+import * as styles from '../assets/css/formItem.css';
 import { Form, Modal, Button, Input } from 'antd';
 
-export default function SearchAtModal() {
+export default function SearchAtModal({ name, label, required=false, modalBtnLabel="검색" }) {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const showModal = () => {
         setIsModalOpen(true);
@@ -17,14 +17,14 @@ export default function SearchAtModal() {
     return (
         <Form.Item
             className={styles.form_item}
-            name="input"
-            label="Input"
-            rules={[{ required: true }]}
+            name={name}
+            label={label}
+            rules={[{ required: required }]}
         >
             <div className={styles.input_button_container}>
                 <Input className={styles.input_field} disabled={true} />
                 <Button className={styles.modal_button} type="primary" onClick={showModal}>
-                    Open Modal
+                    {modalBtnLabel}
                 </Button>
             </div>
             <Modal title="Basic Modal" open={isModalOpen} onOk={handleOk} onCancel={handleCancel}>
