@@ -5,6 +5,8 @@
     /*background-color:rgb(31,77,145) ;*/
     height: 100vh;
     min-width: 200px;
+    flex-shrink: 0;
+    overflow-y: auto;
 }
 
 .title a > span:nth-child(1){

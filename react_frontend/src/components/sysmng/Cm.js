@@ -141,6 +141,30 @@ export default function Cm() {
                     </div>
                     <div className={layerStyles.midline}></div>
                 </ConfigProvider>
+                <ConfigProvider
+                    theme={{
+                        components: {
+                            Table: {
+                                headerColor: "white",
+                                headerBg: "#000046",
+                                borderColor: "gray",
+                            }
+                        }
+                    }}
+                >
+                    <div className={tableStyles.cm_table}>
+                    <Table 
+                        columns={columns}
+                        dataSource={data}
+                        scroll={{
+                            x: 100,
+                        }}
+                        pagination={false}
+                        bordered
+                    />
+                    </div>
+                    <div className={layerStyles.midline}></div>
+                </ConfigProvider>
             </div>
     );
 }
