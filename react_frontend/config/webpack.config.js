@@ -4,7 +4,7 @@ const CaseSensitivePathsPlugin = require('case-sensitive-paths-webpack-plugin');
 module.exports = function(env) {
     return {
         mode: "none",
-        entry: path.resolve(`src/index.js`),
+        entry: path.resolve('src/index.js'),
         output: {
             path: path.resolve('../backend/src/main/resources'),
             filename: 'assets/js/main.js',
@@ -39,20 +39,20 @@ module.exports = function(env) {
             new CaseSensitivePathsPlugin()
         ],
         devtool: "eval-source-map",        
-        devServer: {
-            host: '0.0.0.0',
-            port: 9090,
-            liveReload: true,
-            compress: true,
-            hot: false,
-            proxy: [{
-                context: ['/api'],
-                target: 'http://localhost:8080',
-            }],            
-            static: {
-                directory: path.resolve('./public')
-            },
-            historyApiFallback: true
-        }    
+        // devServer: {
+        //     host: '0.0.0.0',
+        //     port: 9090,
+        //     liveReload: true,
+        //     compress: true,
+        //     hot: false,
+        //     proxy: [{
+        //         context: ['/api'],
+        //         target: 'http://localhost:8080',
+        //     }],            
+        //     static: {
+        //         directory: path.resolve('./public')
+        //     },
+        //     historyApiFallback: true
+        // }    
     };
 }
