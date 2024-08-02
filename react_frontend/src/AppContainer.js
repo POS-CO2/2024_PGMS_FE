@@ -3,7 +3,6 @@ import * as appStyles from "./assets/css/app.css"
 import Header from "./Header";
 import MenuList from "./MenuList";
 import Favorite from "./Favorite";
-import AssignManager from "./AssignManager";
 
 export default function AppContainer({children, tabs, handleMenuClick, activeTab, handelTabClick, handleTabClose, dragEnter, dragStart, drop, handleFavClick, fav}){
     return(
@@ -13,7 +12,6 @@ export default function AppContainer({children, tabs, handleMenuClick, activeTab
                 {children}
             </div>
             <Favorite handleFavClick={handleFavClick} fav={fav}/>
-            <AssignManager />
         </div>
         );
 }
