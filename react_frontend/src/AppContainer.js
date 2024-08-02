@@ -8,7 +8,7 @@ export default function AppContainer({children, tabs, handleMenuClick, activeTab
     return(
         <div className={appStyles.app}>
             <Header tabs = {tabs} activeTab={activeTab} handelTabClick={handelTabClick} handleTabClose={handleTabClose} dragStart={dragStart} dragEnter={dragEnter} drop={drop}/>
-            <div className="comp">
+            <div className="comp" style={{boxSizing: "boarder-box"}}>
                 {children}
             </div>
             <Favorite handleFavClick={handleFavClick} fav={fav}/>

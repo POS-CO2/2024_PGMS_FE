@@ -2,4 +2,6 @@
     min-width: 600px;
     flex-grow: 1;
     height:100vh;
+    flex-direction: column;
+    overflow: auto;
 }
