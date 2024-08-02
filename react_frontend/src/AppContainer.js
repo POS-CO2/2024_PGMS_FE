@@ -1,6 +1,6 @@
 import React from "react";
 import * as appStyles from "./assets/css/app.css"
-import * as tableStyles from "./assets/css/table.css"
+import * as tableStyles from "./assets/css/newTable.css"
 import Header from "./Header";
 import MenuList from "./MenuList";
 import Favorite from "./Favorite";
@@ -19,7 +19,7 @@ export default function AppContainer({children, tabs, handleMenuClick, activeTab
 
             <div className={tableStyles.tableTitle}>조회결과</div>
             <Table />
-            
+
             <div className={tableStyles.tableTitle}>배출원목록</div>
             <Table />
         </div>
