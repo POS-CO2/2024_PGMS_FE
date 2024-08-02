@@ -4,7 +4,10 @@ import { Form, Select } from 'antd';
 
 export default function DropDown() {
     return (
-        <Form.Item label="Select" className={styles.form_item}>
+        <Form.Item 
+            className={styles.form_item}
+            label="Select"
+        >
             <Select>
                 <Select.Option value="1">드</Select.Option>
                 <Select.Option value="2">롭</Select.Option>
