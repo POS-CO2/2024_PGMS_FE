@@ -7,7 +7,7 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
-import { Box } from '@mui/material';
+import { Box, Checkbox } from '@mui/material';
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -24,45 +24,53 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
     backgroundColor: '#FFFFFF',
     color: '#25213B'
   },
-  // hide last border
   '&:last-child td, &:last-child th': {
     border: 0,
   },
 }));
 
-export default function CustomizedTables({data}) {
-  return (
-    <Box sx={{ 
-        width: '100%', 
-        overflowX: 'auto',
-        padding: '0 20px',
-        boxSizing: 'border-box'
-        }}>
-        <TableContainer component={Paper} sx={{ 
-                width: 'calc(100% - 10px)', // Box의 패딩을 제외한 너비
-                margin: '0 auto' // 가운데 정렬
+export default function CustomizedTables({data, variant = 'default'}) {
+    const [selectedRow, setSelectedRow] = React.useState(null);
+    return (
+        <Box sx={{ 
+            width: '100%', 
+            overflowX: 'auto',
+            padding: '0 20px',
+            boxSizing: 'border-box'
             }}>
-        <Table sx={{ minWidth: 600 }} aria-label="customized table">
-            <TableHead>
-            <TableRow>
-            {
-                Object.keys(data[0])?.map(col => <StyledTableCell key={col}>{col}</StyledTableCell>)
-            }
-            </TableRow>
-            </TableHead>
-            <TableBody>
-                {data.map((row, index) => (
-                        <StyledTableRow key={index}>
-                            {Object.values(row).map((value, idx) => (
-                                <StyledTableCell key={idx} align="left">
-                                    {value}
-                                </StyledTableCell>
-                            ))}
-                        </StyledTableRow>
-                    ))}
-            </TableBody>
-        </Table>
-        </TableContainer>
-    </Box>
-  );
+            <TableContainer component={Paper} sx={{ 
+                    width: 'calc(100% - 10px)',
+                    margin: '0 auto'
+                }}>
+            <Table sx={{ minWidth: 600 }} aria-label="customized table">
+                <TableHead>
+                    <TableRow>
+                        { // 컬럼 제목 설정
+                            variant !== 'default' && <StyledTableCell />    // default가 아니면 컬럼 제목 1칸 비우기
+                        }
+                        {Object.keys(data[0])?.map(col => <StyledTableCell key={col}>{col}</StyledTableCell>)};
+                    </TableRow>
+                </TableHead>
+                <TableBody>
+                    {
+                        // 표에 data 채우기
+                        data.map((row, index) => (
+                            <StyledTableRow key={index}>
+                                {variant === 'checkbox' && (
+                                    <StyledTableCell>
+                                        <Checkbox />
+                                    </StyledTableCell>
+                                )}
+                                {Object.values(row).map((value, idx) => (
+                                    <StyledTableCell key={idx} align="left">
+                                        {value}
+                                    </StyledTableCell>
+                                ))}
+                            </StyledTableRow>
+                        ))}
+                </TableBody>
+            </Table>
+            </TableContainer>
+        </Box>
+    );
 }

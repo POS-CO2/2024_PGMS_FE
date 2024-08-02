@@ -8,9 +8,10 @@
     align-items: center;
     
     color: #7D7D7D;
+    margin-top: 2px;
 }
 
-.tableTitle {
+.table_title {
     position: relative;
     font-weight: bold;
     line-height: 39px;
