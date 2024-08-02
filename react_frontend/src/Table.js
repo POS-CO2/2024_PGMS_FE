@@ -30,49 +30,36 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
   },
 }));
 
-function createData(name, calories, fat, carbs, protein) {
-  return { name, calories, fat, carbs, protein };
-}
-
-const rows = [
-  createData('Frozen yoghurt', 159, 6.0, 24, 4.0),
-  createData('Ice cream sandwich', 237, 9.0, 37, 4.3),
-  createData('Eclair', 262, 16.0, 24, 6.0),
-  createData('Cupcake', 305, 3.7, 67, 4.3),
-  createData('Gingerbread', 356, 16.0, 49, 3.9),
-];
-
-export default function CustomizedTables() {
+export default function CustomizedTables({data}) {
   return (
-    <Box sx={{ width: 'calc(100% - 20px)', marginRight: '20px', overflowX: 'auto'}}>
-        <TableContainer component={Paper} 
-            sx={{ 
-                    width: '100%',
-                    marginRight: '20px',
-                    marginLeft: '20px'
+    <Box sx={{ 
+        width: '100%', 
+        overflowX: 'auto',
+        padding: '0 20px',
+        boxSizing: 'border-box'
+        }}>
+        <TableContainer component={Paper} sx={{ 
+                width: 'calc(100% - 10px)', // Box의 패딩을 제외한 너비
+                margin: '0 auto' // 가운데 정렬
             }}>
         <Table sx={{ minWidth: 600 }} aria-label="customized table">
             <TableHead>
             <TableRow>
-                <StyledTableCell>Dessert (100g serving)</StyledTableCell>
-                <StyledTableCell align="right">Calories</StyledTableCell>
-                <StyledTableCell align="right">Fat&nbsp;(g)</StyledTableCell>
-                <StyledTableCell align="right">Carbs&nbsp;(g)</StyledTableCell>
-                <StyledTableCell align="right">Protein&nbsp;(g)</StyledTableCell>
+            {
+                Object.keys(data[0])?.map(col => <StyledTableCell key={col}>{col}</StyledTableCell>)
+            }
             </TableRow>
             </TableHead>
             <TableBody>
-            {rows.map((row) => (
-                <StyledTableRow key={row.name}>
-                <StyledTableCell component="th" scope="row">
-                    {row.name}
-                </StyledTableCell>
-                <StyledTableCell align="right">{row.calories}</StyledTableCell>
-                <StyledTableCell align="right">{row.fat}</StyledTableCell>
-                <StyledTableCell align="right">{row.carbs}</StyledTableCell>
-                <StyledTableCell align="right">{row.protein}</StyledTableCell>
-                </StyledTableRow>
-            ))}
+                {data.map((row, index) => (
+                        <StyledTableRow key={index}>
+                            {Object.values(row).map((value, idx) => (
+                                <StyledTableCell key={idx} align="left">
+                                    {value}
+                                </StyledTableCell>
+                            ))}
+                        </StyledTableRow>
+                    ))}
             </TableBody>
         </Table>
         </TableContainer>
