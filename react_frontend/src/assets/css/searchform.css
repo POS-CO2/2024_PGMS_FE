@@ -28,7 +28,7 @@
 }
 
 .full_width {
-  flex: 1; /* 수정 */
+  flex: 1;
   display: flex;
   justify-content: flex-end;
   align-items: flex-end;

@@ -232,7 +232,7 @@ export default function SiteLayout(){
         } 
         // 활성화된 탭이 없을 경우 
         else if (filteredTabs.length === 0) {
-            setActiveTab(null);
+            setActiveTab("/");
             localStorage.removeItem('activeTab');
             navigate('/')
         }
@@ -295,6 +295,7 @@ export default function SiteLayout(){
         setFav(!fav);
     }
 
+    
     
 
     return (
