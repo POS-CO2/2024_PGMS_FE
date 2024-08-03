@@ -26,9 +26,17 @@ import Error404 from './Error404';
 
 
 export default function App() {
+    // 로그인 시 true
+    const [isLogined, setIsLogined] = useState(false);
+
+    const handleLogin = () => {
+        setIsLogined(true);
+        console.log(isLogined);
+    }
     return (
         <Router>
             <Routes>
+                {isLogined ? (    
                     <Route path='/' element={<SiteLayout /> }>
                     <Route index path='' element={<Main />}/>
                     {
@@ -70,6 +78,9 @@ export default function App() {
                         <Route path='/mal' element={<Mal/>}/>
                         <Route path='*' element={<Error404 />}/>
                     </Route>
+                ) : (
+                    <Route path='/' element={<Login handleLogin={handleLogin} />}/>
+                )}
             </Routes>
         </Router>
         
