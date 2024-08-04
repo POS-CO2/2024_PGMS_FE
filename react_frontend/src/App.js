@@ -27,7 +27,7 @@ import Error404 from './Error404';
 
 export default function App() {
     // 로그인 시 true
-    const [isLogined, setIsLogined] = useState(true);
+    const [isLogined, setIsLogined] = useState(false);
 
     const handleLogin = () => {
         setIsLogined(true);

@@ -23,7 +23,7 @@ export default function Login({handleLogin}) {
 
     return (
             <div className={loginStyles.loginBox}>
-                <img src="https://i.namu.wiki/i/tjA_pQo653l_99iCxdvgLEXRyC9gFfgpd7e8aKbjKMLkTu7DBnwfIf-vRb8ibzVT5MVSEO41mFj1za47tySK-E03OoW9QtB2w4GTWwic2sFF84m8VMZXQDQzOym1c03wEyCMr3ITr7LKYlepF5hlFQ.svg" />
+                <img className={loginStyles.login_img} src="https://i.namu.wiki/i/tjA_pQo653l_99iCxdvgLEXRyC9gFfgpd7e8aKbjKMLkTu7DBnwfIf-vRb8ibzVT5MVSEO41mFj1za47tySK-E03OoW9QtB2w4GTWwic2sFF84m8VMZXQDQzOym1c03wEyCMr3ITr7LKYlepF5hlFQ.svg" />
                 <div className={loginStyles.inlineContainer}>
                     <div className={loginStyles.logo}>
                         <span>PGMS</span>
