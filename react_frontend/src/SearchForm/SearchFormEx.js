@@ -16,7 +16,7 @@ import SearchBtn from "../FormItem/SearchBtn";
  * 
  * 추가로
  * SearchAtModal
- * - modalBtnLabel: 모달 여는 버튼의 글씨
+ * - modalType: searchProject / searchLib (필수)
  * 
  * DropDown
  * - options: 드롭다운 내 옵션들, 필수
@@ -38,7 +38,7 @@ export default function SearchFormEx() {
 
     return (
         <Form layout="vertical" className={styles.form_container}>
-            <SearchAtModal name="searchProject" label="프로젝트명/코드" modalBtnLabel='버튼라벨'/>
+            <SearchAtModal name="searchProject" label="프로젝트명/코드" modalType='searchProject'/>
             <SearchAtModal name="searchProject2" label="필수 프로젝트명/코드" required={true} />
             <InputText name="email" label="이메일" />
             <DropDown name="1" label="드롭다운" options={selectOptions} />
