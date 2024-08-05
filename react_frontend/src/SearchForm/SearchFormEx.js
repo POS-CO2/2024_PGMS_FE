@@ -1,5 +1,5 @@
 import React from 'react';
-import * as styles from '../assets/css/searchForm.css';
+import * as styles from '../assets/css/searchform.css';
 import { Form } from 'antd';
 import DropDown from "../FormItem/DropDown";
 import InputText from "../FormItem/InputText";
@@ -49,3 +49,13 @@ export default function SearchFormEx() {
         </Form>
     );
 };
+
+// 프로젝트코드/명 only
+export function SearchFormPd() {
+    return (
+        <Form layout="vertical" className={styles.form_container}>
+            <SearchAtModal name="searchProject2" label="프로젝트코드/명" required={true} />
+            <SearchBtn />
+        </Form>
+    );
+}

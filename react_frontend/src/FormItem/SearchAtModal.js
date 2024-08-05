@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import * as styles from '../assets/css/formItem.css';
+import * as styles from '../assets/css/formitem.css';
 import { Form, Modal, Button, Input } from 'antd';
 
 export default function SearchAtModal({ name, label, required=false, modalBtnLabel="검색" }) {

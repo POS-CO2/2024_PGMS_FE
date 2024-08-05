@@ -1,5 +1,5 @@
 import React from 'react';
-import * as styles from '../assets/css/formItem.css';
+import * as styles from '../assets/css/formitem.css';
 import { Form, Button } from 'antd';
 import { SearchOutlined } from '@ant-design/icons';
 

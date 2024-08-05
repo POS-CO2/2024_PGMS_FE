@@ -1,5 +1,5 @@
 import React from 'react';
-import * as styles from '../assets/css/formItem.css';
+import * as styles from '../assets/css/formitem.css';
 import { Form, DatePicker } from 'antd';
 
 const { RangePicker } = DatePicker;
