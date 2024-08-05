@@ -12,7 +12,7 @@ export default function Footer() {
     return(
         <footer>
             <button className={footerStyles.language_btn} onClick={onClickLanguage}>
-                <img src={languageIcon} />
+                <img src={languageIcon} style={{width: "50px"}}/>
                 <p>{language}</p>
             </button>
         </footer>
