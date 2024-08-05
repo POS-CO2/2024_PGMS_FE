@@ -1,5 +1,5 @@
 import React from 'react';
-import * as styles from '../assets/css/searchform.css';
+import * as searchFormStyles from '../assets/css/searchForm.css';
 import { Form } from 'antd';
 import DropDown from "../FormItem/DropDown";
 import InputText from "../FormItem/InputText";
@@ -9,17 +9,17 @@ import SearchBtn from "../FormItem/SearchBtn";
 
 /**
  * 모든 FormItem에
- * - name: FormItem의 값..?, 필수
- * - label: 조건명, 필수
+ * - name: FormItem의  ID..?, *필수*
+ * - label: 조건명, *필수*
  * - required: (true||false)
  * 지정 가능합니당
  * 
  * 추가로
  * SearchAtModal
- * - modalBtnLabel: 모달 여는 버튼의 글씨
+ * - modalType: "프로젝트 찾기" / "설비LIB 찾기"
  * 
  * DropDown
- * - options: 드롭다운 내 옵션들, 필수
+ * - options: 드롭다운 내 옵션들, *필수*
  * - defaultSelected: 기본으로 선택된 값이 있을지(true||false)
  * 
  * 
@@ -27,7 +27,7 @@ import SearchBtn from "../FormItem/SearchBtn";
  * - label: 기본값은 "조회"
  */
 
-export default function SearchFormEx() {
+export default function SearchFormEx({ onFormSubmit }) {
     const selectOptions = [
         { value: '1', label: '안' },
         { value: '2', label: '녕' },
@@ -36,13 +36,20 @@ export default function SearchFormEx() {
         { value: '5', label: '요' }
     ];
 
+    const [form] = Form.useForm();
+
+    const handleFinish = (values) => {
+        onFormSubmit(values);
+    };
+
     return (
-        <Form layout="vertical" className={styles.form_container}>
-            <SearchAtModal name="searchProject" label="프로젝트명/코드" modalBtnLabel='버튼라벨'/>
-            <SearchAtModal name="searchProject2" label="필수 프로젝트명/코드" required={true} />
+        <Form form={form} layout="vertical" className={searchFormStyles.form_container} onFinish={handleFinish}>
+            <SearchAtModal name="searchProject" label="프로젝트명/코드" modalType='프로젝트 찾기' form={form} />
+            <SearchAtModal name="searchLib" label="설비LIB명" modalType='설비LIB 찾기' form={form} />
+            <SearchAtModal name="ModalTest" label="default" required={true} form={form} />
             <InputText name="email" label="이메일" />
-            <DropDown name="1" label="드롭다운" options={selectOptions} />
-            <DropDown name="2" label="필수 드롭다운" required={true} options={selectOptions} defaultSelected={true} />
+            <DropDown name="dropDown1" label="드롭다운" options={selectOptions} />
+            <DropDown name="dropDown2" label="필수 드롭다운" required={true} options={selectOptions} defaultSelected={true} />
             <SelectCalendar name="calendar" label="날짜선택" />
 
             <SearchBtn />
