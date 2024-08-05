@@ -60,7 +60,7 @@ export default function SearchFormEx({ onFormSubmit }) {
 // 프로젝트코드/명 only
 export function SearchFormPd() {
     return (
-        <Form layout="vertical" className={styles.form_container}>
+        <Form layout="vertical" className={searchFormStyles.form_container}>
             <SearchAtModal name="searchProject2" label="프로젝트코드/명" required={true} />
             <SearchBtn />
         </Form>
