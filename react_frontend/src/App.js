@@ -31,6 +31,7 @@ export default function App() {
     // 로그아웃 시 토큰 비워줄 것
     // 어떤 ajax라도 401이 뜨면, 로그아웃 절차 
     const [token,setToken] = useState(null);
+    const [menu, setMenu] = useState([]);
 
     const handleLogin = async (id,password) => {
         /*
@@ -41,7 +42,6 @@ export default function App() {
             const data = await login(id, password);
             
             localStorage.setItem('token', data.token);
-            setToken(data.token);
             window.location.href="/";
         }
         catch(error){
