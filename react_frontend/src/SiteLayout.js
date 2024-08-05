@@ -173,7 +173,7 @@ const menus =
 ]
 
 
-export default function SiteLayout(){
+export default function SiteLayout({handleLogout}){
 
     const [tabs, setTabs] = useState(() => {
         const savedTabs = localStorage.getItem('tabs');
@@ -312,6 +312,7 @@ export default function SiteLayout(){
                 drop={drop}
                 handleFavClick={handleFavClick}
                 fav={fav}
+                handleLogout={handleLogout}
             >
                 <Outlet/>
             </AppContainer>
