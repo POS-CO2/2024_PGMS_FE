@@ -1,7 +1,7 @@
 import React from "react";
 import * as tableStyles from "../../../assets/css/newTable.css"
 import Table from "../../../Table";
-import Button from "../../../Button";
+import { AddAndDeleteButton } from "../../../Button";
 import project from "../../../assets/json/selectedPjt";
 import managers from "../../../assets/json/manager";
 import { SearchFormPd } from "../../../SearchForms"
@@ -18,8 +18,8 @@ export default function Pd() {
 
             <div className={tableStyles.container}>
                 <div className={tableStyles.table_title}>담당자목록</div>
-                <div>
-                    <Button />
+                <div style={{marginRight: '23px'}}>
+                    <AddAndDeleteButton />
                 </div>
             </div>
             <Table data={managers} />
