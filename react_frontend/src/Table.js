@@ -33,14 +33,46 @@ const StyledTableRow = styled(TableRow)(({ theme, selected }) => ({
     },
 }));
 
-export default function CustomizedTables({data, variant = 'default'}) {
-    const [selectedRow, setSelectedRow] = React.useState(null);
+// Checkbox를 스타일링하는 컴포넌트
+const StyledCheckbox = styled(Checkbox)(({ theme }) => ({
+    '& .MuiSvgIcon-root': {
+      color: '#8B83BA',
+    },
+    '&.Mui-checked .MuiSvgIcon-root': {
+      color: '#3D3B49', // 체크된 상태 배경색
+    },
+    '& .MuiCheckbox-root': {
+      backgroundColor: '#FFFFFF', // 체크박스 배경색
+    },
+}));
 
-    const handleRowClick = (index) => {
-        setSelectedRow(index);
-      };
-    console.log(variant);
-    
+export default function CustomizedTables({data, variant = 'default'}) {
+    const [selectedRow, setSelectedRow] = React.useState(null); // default variant의 선택 상태
+    const [selectedRows, setSelectedRows] = React.useState([]); // checkbox variant의 선택 상태
+
+    const handleRowClick = (index, event) => {
+        if (variant === 'default') {
+            setSelectedRow(index === selectedRow ? null : index); // 같은 행 클릭 시 선택 해제
+        } else if (variant === 'checkbox') {
+            // row 클릭시 setSelectedRows에 추가
+            if (event.target.type !== 'checkbox') {
+                setSelectedRows((prevSelectedRows) =>
+                    prevSelectedRows.includes(index)                                // prevSelectedRows 배열에 index가 포함되어 있는지 확인
+                        ? prevSelectedRows.filter(rowIndex => rowIndex !== index)   // 행이 이미 선택된 경우 배열에서 index 제거
+                        : [...prevSelectedRows, index]                              // 행이 선택되지 않은 경우 prevSelectedRows 배열의 복사본을 만들고 그 배열에 index값을 추가
+                );
+            }                       
+        }
+    };
+
+    // checkbox 클릭시 setSelectedRows에 추가
+    const handleCheckboxChange = (index) => {
+        setSelectedRows((prevSelectedRows) =>
+            prevSelectedRows.includes(index) 
+                ? prevSelectedRows.filter(rowIndex => rowIndex !== index)
+                : [...prevSelectedRows, index]                         
+        );
+    }
 
     return (
         <Box sx={{ 
@@ -72,13 +104,20 @@ export default function CustomizedTables({data, variant = 'default'}) {
                         data.map((row, index) => (
                             <StyledTableRow 
                                 key={index}
-                                selected={selectedRow === index}
-                                onClick={() => handleRowClick(index)}
+                                selected={
+                                    variant === 'checkbox' 
+                                    ? selectedRows.includes(index) 
+                                    : selectedRow === index
+                                }
+                                onClick={(e) => handleRowClick(index, e)}
                             >
                                 {   // checkbox가 있는 테이블이면 체크박스 셀 추가
                                     variant === 'checkbox' && (
                                         <StyledTableCell>
-                                            <Checkbox />
+                                            <StyledCheckbox 
+                                                checked={selectedRows.includes(index)}
+                                                onChange={() => handleCheckboxChange(index)}
+                                            />
                                         </StyledTableCell>
                                     )
                                 }
