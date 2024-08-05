@@ -28,6 +28,7 @@ import Error404 from './Error404';
 
 export default function App() {
     // 로그인 시 true
+
     // 로그아웃 시 토큰 비워줄 것
     // 어떤 ajax라도 401이 뜨면, 로그아웃 절차 
     const [token,setToken] = useState(null);
