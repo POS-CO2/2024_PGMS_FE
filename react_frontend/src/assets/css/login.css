@@ -8,7 +8,7 @@
     border-radius: 10px;
     border: 1px solid #000046;
 }
-img {
+.login_img {
     float: left;
     width: 300px;
     height: 100%;
