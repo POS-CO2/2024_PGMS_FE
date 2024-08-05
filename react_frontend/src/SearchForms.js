@@ -1,6 +1,6 @@
 import React from 'react';
 import * as searchFormStyles from './assets/css/searchForm.css';
-import { Form } from 'antd';
+import { Dropdown, Form } from 'antd';
 import DropDown from "./FormItem/DropDown";
 import InputText from "./FormItem/InputText";
 import SelectCalendar from "./FormItem/SelectCalendar";
@@ -27,15 +27,14 @@ import SearchBtn from "./FormItem/SearchBtn";
  * - label: 기본값은 "조회"
  */
 
-export default function SearchFormEx({ onFormSubmit }) {
-    const selectOptions = [
-        { value: '1', label: '안' },
-        { value: '2', label: '녕' },
-        { value: '3', label: '하' },
-        { value: '4', label: '세' },
-        { value: '5', label: '요' }
-    ];
+const formItemComponents = {
+    DropDown,
+    InputText,
+    SelectCalendar,
+    SearchAtModal
+};
 
+export default function SearchForms({ onFormSubmit, formFields }) {
     const [form] = Form.useForm();
 
     const handleFinish = (values) => {
@@ -44,14 +43,28 @@ export default function SearchFormEx({ onFormSubmit }) {
 
     return (
         <Form form={form} layout="vertical" className={searchFormStyles.form_container} onFinish={handleFinish}>
-            <SearchAtModal name="searchProject" label="프로젝트명/코드" modalType='프로젝트 찾기' form={form} />
+            {formFields.map((field, index) => {
+                const FormItemComponent = formItemComponents[field.type];
+                return (
+                    <FormItemComponent
+                        key={index}
+                        name={field.name}
+                        label={field.label}
+                        required={field.required}
+                        modalType={field.modalType}
+                        options={field.options}
+                        form={form}
+                        defaultSelected={field.defaultSelected}
+                    />
+                )
+            })};
+            {/* <SearchAtModal name="searchProject" label="프로젝트명/코드" modalType='프로젝트 찾기' form={form} />
             <SearchAtModal name="searchLib" label="설비LIB명" modalType='설비LIB 찾기' form={form} />
             <SearchAtModal name="ModalTest" label="default" required={true} form={form} />
             <InputText name="email" label="이메일" />
             <DropDown name="dropDown1" label="드롭다운" options={selectOptions} />
             <DropDown name="dropDown2" label="필수 드롭다운" required={true} options={selectOptions} defaultSelected={true} />
-            <SelectCalendar name="calendar" label="날짜선택" />
-
+            <SelectCalendar name="calendar" label="날짜선택" /> */}
             <SearchBtn />
         </Form>
     );
