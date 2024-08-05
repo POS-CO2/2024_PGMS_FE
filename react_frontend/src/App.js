@@ -39,11 +39,18 @@ export default function App() {
         */
         try{
             const data = await login(id, password);
+            
             localStorage.setItem('token', data.token);
             setToken(data.token);
+            window.location.href="/";
         }
         catch(error){
-            console.error(error);
+            console.log(error);
+            if (error.response.status === 400){
+                alert("비밀번호가 틀렸습니다.");
+                window.location.href="/";
+            }
+        
         }
     };
 
@@ -66,7 +73,7 @@ export default function App() {
     return (
         <Router>
             <Routes>
-                {token ? (    
+                {(token) ? (    
                     <Route path='/' element={<SiteLayout handleLogout={handleLogout}/> }>
                     <Route index path='' element={<Main />}/>
                     {

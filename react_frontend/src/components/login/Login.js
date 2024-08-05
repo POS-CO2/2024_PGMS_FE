@@ -76,7 +76,7 @@ export default function Login({handleLogin}) {
                     />
                     </FormControl>
                     </div>
-                    <Button onClick={async () => {await handleLogin(id,password); navigate('/') } } style={{backgroundColor: "#000046", color: "white", width: "235px"}}>로그인</Button>
+                    <Button onClick={async () => {await handleLogin(id,password); } } style={{backgroundColor: "#000046", color: "white", width: "235px"}}>로그인</Button>
                 </div>
                     
             </div>

@@ -2,7 +2,12 @@ import axiosInstance from './AxiosInstance';
 
 export const login = async (id, password) => {
     try {
-        const response = await axiosInstance.get('/auth/login', { id, password });
+        const response = await axiosInstance.post('/auth/login', null, {
+            headers: {
+                'id': id,
+                'password': password,
+            }
+        });
         return response.data;
     } catch (error) {
         throw error;
