@@ -4,7 +4,7 @@ import Header from "./Header";
 import MenuList from "./MenuList";
 import Favorite from "./Favorite";
 
-export default function AppContainer({children, tabs, handleMenuClick, activeTab, handelTabClick, handleTabClose, dragEnter, dragStart, drop, handleFavClick, fav, handleLogout}){
+export default function AppContainer({children, tabs, user, activeTab, handelTabClick, handleTabClose, dragEnter, dragStart, drop, handleFavClick, fav, handleLogout}){
     return(
         <div className={appStyles.app}>
             <Header 
@@ -16,6 +16,7 @@ export default function AppContainer({children, tabs, handleMenuClick, activeTab
             dragEnter={dragEnter} 
             drop={drop} 
             handleLogout={handleLogout}
+            user={user}
             />
             <div className="comp" style={{boxSizing: "boarder-box"}}>
                 {children}

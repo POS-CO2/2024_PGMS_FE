@@ -1,5 +1,5 @@
 import React from 'react';
-
+import * as tableStyles from '../../assets/css/table.css'
 
 export default function Cm() {
 
@@ -97,6 +97,14 @@ export default function Cm() {
     ];
 
     return (
-        <></>
+        <div className={tableStyles.cm_root}>
+            <div className={tableStyles.name}>코드 그룹 ID</div>
+            <div className={tableStyles.cm_table}>
+
+            </div>
+            <div className={tableStyles.cm_table}>
+
+            </div>
+        </div>
     );
 }
