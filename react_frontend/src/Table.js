@@ -21,7 +21,7 @@ const StyledTableCell = styled(TableCell)(({ theme }) => ({
 }));
 
 // TableRow를 스타일링하는 컴포넌트
-const StyledTableRow = styled(TableRow)(({ theme, selected }) => ({
+const StyledTableRow = styled(TableRow)(({ theme, selected, variant }) => ({
     '&:last-child td, &:last-child th': {
         border: 0,
     },
@@ -29,17 +29,17 @@ const StyledTableRow = styled(TableRow)(({ theme, selected }) => ({
         backgroundColor: '#E4DCFF', // 호버 시 배경색 설정
     },
     '&.Mui-selected': {
-        backgroundColor: '#B7AAFF !important', // 선택된 상태에서 배경색 강제 적용
+        backgroundColor: selected && variant === 'default' ? '#B7AAFF !important' : '#FFFFFF', // 선택된 상태에서 배경색 강제 적용 (default variant만)
     },
 }));
 
 // Checkbox를 스타일링하는 컴포넌트
-const StyledCheckbox = styled(Checkbox)(({ theme }) => ({
+const StyledCheckbox = styled(Checkbox)(({ theme, checked }) => ({
     '& .MuiSvgIcon-root': {
       color: '#8B83BA',
     },
     '&.Mui-checked .MuiSvgIcon-root': {
-      color: '#3D3B49', // 체크된 상태 배경색
+      color: '#6D5BD0', // 체크된 상태 배경색
     },
     '& .MuiCheckbox-root': {
       backgroundColor: '#FFFFFF', // 체크박스 배경색
