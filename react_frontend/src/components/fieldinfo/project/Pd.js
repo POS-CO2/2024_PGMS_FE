@@ -4,7 +4,7 @@ import Table from "../../../Table";
 import Button from "../../../Button";
 import project from "../../../assets/json/selectedPjt";
 import managers from "../../../assets/json/manager";
-import { SearchFormPd } from "../../../SearchForm/SearchFormEx"
+import { SearchFormPd } from "../../../SearchForms"
 
 export default function Pd() {
     return (
@@ -22,7 +22,7 @@ export default function Pd() {
                     <Button />
                 </div>
             </div>
-            <Table data={managers} variant="checkbox"/>
+            <Table data={managers} />
         </>
     );
 }
