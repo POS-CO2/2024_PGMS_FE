@@ -10,10 +10,15 @@ import InputLabel from "@mui/material/InputLabel";
 import {FilledInput, IconButton, FormControl, OutlinedInput} from "@mui/material";
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
+import { useNavigate } from 'react-router';
 
 
 export default function Login({handleLogin}) {
     const [showPassword, setShowPassword] = useState(false);
+    const [id, setId] = useState('');
+    const [password, setPassword] = useState('');
+
+    const navigate = useNavigate();
 
     const handleClickShowPassword = () => setShowPassword((show) => !show);
 
@@ -32,7 +37,7 @@ export default function Login({handleLogin}) {
                     </div>
                     <div className={loginStyles.inlineContainer}>
                     <Box sx={{display: 'flex', alignItems: 'flex-end', width: "235px"}} autoComplete="on">
-                            <TextField id='outlined-basic' label='ID' variant='outlined' InputProps={{
+                            <TextField id='outlined-basic' value={id} onChange={(e) => setId(e.target.value)} label='ID' variant='outlined' InputProps={{
                                 startAdornment: (
                                     <InputAdornment position="start">
                                         <AccountCircle sx={{ color: 'action.active', mr: 1, my: 0.5 }} />
@@ -48,6 +53,8 @@ export default function Login({handleLogin}) {
                     <OutlinedInput
                         id="outlined-adornment-password"
                         type={showPassword ? 'text' : 'password'}
+                        value={password}
+                        onChange={(e) => {setPassword(e.target.value)}}
                         startAdornment={
                             <InputAdornment position='start'>
                                 <VpnKeyIcon sx={{ color: 'action.active', mr: 1, my: 0.5}} />
@@ -69,7 +76,7 @@ export default function Login({handleLogin}) {
                     />
                     </FormControl>
                     </div>
-                    <Button onClick={() => handleLogin()} style={{backgroundColor: "#000046", color: "white", width: "235px"}}>로그인</Button>
+                    <Button onClick={async () => {await handleLogin(id,password); navigate('/') } } style={{backgroundColor: "#000046", color: "white", width: "235px"}}>로그인</Button>
                 </div>
                     
             </div>

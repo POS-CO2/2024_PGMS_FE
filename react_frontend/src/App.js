@@ -1,6 +1,7 @@
 import React, {useState, useEffect} from 'react';
 import { BrowserRouter as Router } from 'react-router-dom';
-import {Routes, Route} from 'react-router';
+import {Routes, Route, useNavigate} from 'react-router';
+import {login} from './utils/Api';
 import SiteLayout from './SiteLayout';
 import Main from './Main';
 import Efm from './components/fieldinfo/Efm';
@@ -27,17 +28,46 @@ import Error404 from './Error404';
 
 export default function App() {
     // 로그인 시 true
-    const [isLogined, setIsLogined] = useState(false);
+    // 로그아웃 시 토큰 비워줄 것
+    // 어떤 ajax라도 401이 뜨면, 로그아웃 절차 
+    const [token,setToken] = useState(null);
 
-    const handleLogin = () => {
-        setIsLogined(true);
-        console.log(isLogined);
+    const handleLogin = async (id,password) => {
+        /*
+            서버에 요청 후, 로컬스토리지에 토큰 저장, 실패했을 때는 저장 x
+            setToken
+        */
+        try{
+            const data = await login(id, password);
+            localStorage.setItem('token', data.token);
+            setToken(data.token);
+        }
+        catch(error){
+            console.error(error);
+        }
+    };
+
+    const handleLogout = ()=>{
+        /*
+            로컬 스토리지 지우고
+            naviage to "/"
+        */
+        setToken(null)
+        localStorage.removeItem("token");
     }
+
+    useEffect(()=>{
+        const jwt = localStorage.getItem("token");
+        if (jwt) {
+            setToken(jwt);
+        }
+    },[]);
+    
     return (
         <Router>
             <Routes>
-                {isLogined ? (    
-                    <Route path='/' element={<SiteLayout /> }>
+                {token ? (    
+                    <Route path='/' element={<SiteLayout handleLogout={handleLogout}/> }>
                     <Route index path='' element={<Main />}/>
                     {
                         /*
@@ -79,7 +109,7 @@ export default function App() {
                         <Route path='*' element={<Error404 />}/>
                     </Route>
                 ) : (
-                    <Route path='/' element={<Login handleLogin={handleLogin} />}/>
+                    <Route path='*' element={<Login handleLogin={handleLogin} />}/>
                 )}
             </Routes>
         </Router>
