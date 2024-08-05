@@ -17,6 +17,7 @@
 
 .header_profile {
     position:absolute;
+    top: 0px;
     right:0px;
     display: flex;
     align-items: center; 
