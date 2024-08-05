@@ -2,7 +2,7 @@ import axios from 'axios';
 
 
 const axiosInstance = axios.create({
-    baseURL: "http://3.36.105.2:8080/api",
+    baseURL: "http://52.78.229.102:8080/api",
     headers: {
         'Content-Type': 'application/json'
     },
@@ -14,7 +14,7 @@ axiosInstance.interceptors.request.use(
         // 요청 전에 공통 작업 수행 (예: 토큰 추가)
         const token = localStorage.getItem('token');
         if (token) {
-            config.headers['Authorization'] = `Bearer ${token}`;
+            config.headers['Authorization'] = `${token}`;
         }
         return config;
     },

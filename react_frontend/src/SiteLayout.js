@@ -7,173 +7,173 @@ import { Outlet, useLocation, useNavigate } from 'react-router';
 import Tabbar from './Tabbar';
 
 
-const menus =
-[
-    {
-        "level" : 1,
-        "name": "배출실적",
-        "menu": [
-            {
-                "level" : 2,
-                "url" : "/ps_1_2",
-                "name": "실적Scope 1, 2",
-                "menu": []
-            },
-            {
-                "level" : 2,
-                "name": "실적조회",
-                "menu" : [
-                    {
-                        "level" : 3,
-                        "name" : "총량실적 조회",
-                        "url" : "/tep",
-                        "menu" : []
-                    },
-                    {
-                        "level" : 3,
-                        "url" : "/psq",
-                        "name" : "프로젝트별 조회",
-                        "menu" : []
-                    },
-                ]
-            },
-            {
-                "level" : 2,
-                "name" : "실적 관리",
-                "url" : "/pmg",
-                "menu" : []
-            }
-        ]
-    },
+// const menus =
+// [
+//     {
+//         "level" : 1,
+//         "name": "배출실적",
+//         "menu": [
+//             {
+//                 "level" : 2,
+//                 "url" : "/ps_1_2",
+//                 "name": "실적Scope 1, 2",
+//                 "menu": []
+//             },
+//             {
+//                 "level" : 2,
+//                 "name": "실적조회",
+//                 "menu" : [
+//                     {
+//                         "level" : 3,
+//                         "name" : "총량실적 조회",
+//                         "url" : "/tep",
+//                         "menu" : []
+//                     },
+//                     {
+//                         "level" : 3,
+//                         "url" : "/psq",
+//                         "name" : "프로젝트별 조회",
+//                         "menu" : []
+//                     },
+//                 ]
+//             },
+//             {
+//                 "level" : 2,
+//                 "name" : "실적 관리",
+//                 "url" : "/pmg",
+//                 "menu" : []
+//             }
+//         ]
+//     },
 
-    {
-        "level" : 1,
-        "name" : "현장정보",
-        "menu" : [
-            {
-                "level" : 2,
-                "name" : "프로젝트",
-                "menu" : [
-                    {
-                        "level" : 3,
-                        "name" : "프로젝트 관리",
-                        "menu" : [],
-                        "url" : "/pg"
-                    },
-                    {
-                        "level" : 3,
-                        "name" : "담당자 지정",
-                        "menu" : [],
-                        "url" : "/pd"
-                    },
-                    {
-                        "level" : 3,
-                        "name" : "매출액 관리",
-                        "menu" : [],
-                        "url" : "/rm"
-                    },
-                ]
-            },
-            {
-                "level" : 2,
-                "name" : "설비",
-                "menu" : [
-                    {
-                        "level" : 3,
-                        "name" : "설비 지정",
-                        "menu" : [],
-                        "url" : "/fm"
-                    },
-                    {
-                        "level" : 3,
-                        "url" : "/fl",
-                        "name" : "설비LIB 관리",
-                        "menu" : []
+//     {
+//         "level" : 1,
+//         "name" : "현장정보",
+//         "menu" : [
+//             {
+//                 "level" : 2,
+//                 "name" : "프로젝트",
+//                 "menu" : [
+//                     {
+//                         "level" : 3,
+//                         "name" : "프로젝트 관리",
+//                         "menu" : [],
+//                         "url" : "/pg"
+//                     },
+//                     {
+//                         "level" : 3,
+//                         "name" : "담당자 지정",
+//                         "menu" : [],
+//                         "url" : "/pd"
+//                     },
+//                     {
+//                         "level" : 3,
+//                         "name" : "매출액 관리",
+//                         "menu" : [],
+//                         "url" : "/rm"
+//                     },
+//                 ]
+//             },
+//             {
+//                 "level" : 2,
+//                 "name" : "설비",
+//                 "menu" : [
+//                     {
+//                         "level" : 3,
+//                         "name" : "설비 지정",
+//                         "menu" : [],
+//                         "url" : "/fm"
+//                     },
+//                     {
+//                         "level" : 3,
+//                         "url" : "/fl",
+//                         "name" : "설비LIB 관리",
+//                         "menu" : []
                         
-                    },
-                    {
-                        "level" : 3,
-                        "name" : "활동자료 관리",
-                        "url" : "/fam",
-                        "menu" : []
-                    },
-                    {
-                        "level" : 3,
-                        "name" : "활동자료 지정",
-                        "url" : "/fad",
-                        "menu" : []
-                    },
+//                     },
+//                     {
+//                         "level" : 3,
+//                         "name" : "활동자료 관리",
+//                         "url" : "/fam",
+//                         "menu" : []
+//                     },
+//                     {
+//                         "level" : 3,
+//                         "name" : "활동자료 지정",
+//                         "url" : "/fad",
+//                         "menu" : []
+//                     },
                     
-                ]
-            },
-            {
-                "level" : 2,
-                "name" : "배출원",
-                "menu" : [
-                    {
-                        "level" : 3,
-                        "name" : "배출원 지정",
-                        "url" : "/esm",
-                        "menu" : []
-                    },
-                    {
-                        "level" : 3,
-                        "name" : "증빙자료 관리",
-                        "url" : "/sd",
-                        "menu" : []
-                    }
-                ]
-            },
+//                 ]
+//             },
+//             {
+//                 "level" : 2,
+//                 "name" : "배출원",
+//                 "menu" : [
+//                     {
+//                         "level" : 3,
+//                         "name" : "배출원 지정",
+//                         "url" : "/esm",
+//                         "menu" : []
+//                     },
+//                     {
+//                         "level" : 3,
+//                         "name" : "증빙자료 관리",
+//                         "url" : "/sd",
+//                         "menu" : []
+//                     }
+//                 ]
+//             },
 
-            {
-                "level" : 2,
-                "url" : "/efm",
-                "name" : "배출계수 관리",
-                "menu" : [
+//             {
+//                 "level" : 2,
+//                 "url" : "/efm",
+//                 "name" : "배출계수 관리",
+//                 "menu" : [
         
-                ]
-            }
+//                 ]
+//             }
 
-        ]
+//         ]
 
         
-    },
+//     },
 
-    {
-        "level" : 1,
-        "name" : "시스템관리",
-        "menu" : [
-            {
-                "level" : 2,
-                "name" : "코드 관리",
-                "url" : "/cm",
-                "menu" : []
-            },
-            {
-                "level" : 2,
-                "name" : "사용자 관리",
-                "url" : "/um",
-                "menu" : []
-            },
-            {
-                "level": 2,
-                "name" : "메뉴 관리",
-                "url" : "/mm",
-                "menu" : []
-            },
-            {
-                "level" : 2,
-                "url" : "/mal",
-                "name" : "접속로그 조회",
-                "menu" : []
-            }
-        ]
+//     {
+//         "level" : 1,
+//         "name" : "시스템관리",
+//         "menu" : [
+//             {
+//                 "level" : 2,
+//                 "name" : "코드 관리",
+//                 "url" : "/cm",
+//                 "menu" : []
+//             },
+//             {
+//                 "level" : 2,
+//                 "name" : "사용자 관리",
+//                 "url" : "/um",
+//                 "menu" : []
+//             },
+//             {
+//                 "level": 2,
+//                 "name" : "메뉴 관리",
+//                 "url" : "/mm",
+//                 "menu" : []
+//             },
+//             {
+//                 "level" : 2,
+//                 "url" : "/mal",
+//                 "name" : "접속로그 조회",
+//                 "menu" : []
+//             }
+//         ]
 
-    }
-]
+//     }
+// ]
 
 
-export default function SiteLayout({handleLogout}){
+export default function SiteLayout({handleLogout, menus, user}){
 
     const [tabs, setTabs] = useState(() => {
         const savedTabs = localStorage.getItem('tabs');
@@ -313,6 +313,7 @@ export default function SiteLayout({handleLogout}){
                 handleFavClick={handleFavClick}
                 fav={fav}
                 handleLogout={handleLogout}
+                user={user}
             >
                 <Outlet/>
             </AppContainer>

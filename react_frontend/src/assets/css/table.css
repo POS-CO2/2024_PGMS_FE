@@ -1,5 +1,19 @@
+.cm_root {
+    display: flex;
+}
+
 .cm_table {
+    display: inline-flex;
     width: 600px;
     padding-left: 70px;
     padding-top: 30px;
+}
+
+
+.name {
+    display: inline-flex;
+    font-weight: 700;
+    font-size: 20px;
+    white-space: no-wrap;
+    width: 150px;
 }
