@@ -64,6 +64,12 @@ export const formField_um = [
     ]},
 ]
 
+export const formField_mal = [
+    { type: 'InputText', name: 'userName', label: "사용자명"},
+    { type: 'InputText', name: 'userID', label: "사용자 아이디"},
+    { type: 'SelectCalendar', name: 'calendar', label: "조회기간"},
+]
+
 // 필요한 서치바 여기서 만들어서 데이터 임포트 해서 사용하기
 // import {formField_ps12} from "../../assets/json/searchFormData.js"
 // import { formField_ps12 } from './searchFormData';

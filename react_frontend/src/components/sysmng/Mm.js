@@ -243,10 +243,10 @@ export default function Mm({menus}) {
     const items = convertMenusToTreeItems(menus);
     console.log(items);
 
-    const [showtable, setShowTable] = useState(false);
+    const [showtable, setShowTable] = useState(showtable ? true : false);
 
     const clickMenuHandler = () => {
-        setShowTable(true);
+        setShowTable(!showtable);
     }
 
     return (

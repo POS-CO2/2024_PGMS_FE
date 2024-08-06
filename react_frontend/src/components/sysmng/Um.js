@@ -13,11 +13,11 @@ export default function Um() {
         setUserList(data);
     }
 
-    const [infoShow ,setInfoShow] = useState(false);
+    const [infoShow ,setInfoShow] = useState(infoShow ? true : false);
 
 
     const handleRowClick = () => {
-        setInfoShow(true);
+        setInfoShow(!infoShow);
     };
 
     return (

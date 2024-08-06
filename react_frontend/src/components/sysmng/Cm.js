@@ -12,11 +12,10 @@ export default function Cm() {
         setCodeGroup(data);
     }
 
-    const [showTable, setShowTable] = useState(false);
+    const [showTable, setShowTable] = useState(showTable ? true : false);
 
     const handleRowClick = () => {
-        setShowTable(true);
-        console.log(showTable);
+        setShowTable(!showTable);
     }
 
     return (
