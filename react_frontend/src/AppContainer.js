@@ -1,10 +1,11 @@
-import React from "react";
+import React, { cloneElement } from "react";
 import * as appStyles from "./assets/css/app.css"
 import Header from "./Header";
 import MenuList from "./MenuList";
 import Favorite from "./Favorite";
+import Mm from "./components/sysmng/Mm";
 
-export default function AppContainer({children, tabs, user, activeTab, handelTabClick, handleTabClose, dragEnter, dragStart, drop, handleFavClick, fav, handleLogout}){
+export default function AppContainer({children, tabs, user, activeTab, handelTabClick, handleTabClose, dragEnter, dragStart, drop, handleFavClick, fav, handleLogout, menus}){
     return(
         <div className={appStyles.app}>
             <Header 

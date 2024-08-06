@@ -122,7 +122,7 @@ export default function App() {
                         <Route path='/sd' element={<Sd/>}/>
                         <Route path='/cm' element={<Cm/>}/>
                         <Route path='/um' element={<Um/>}/>
-                        <Route path='/mm' element={<Mm/>}/>
+                        <Route path='/mm' element={<Mm menus={menu}/>}/>
                         <Route path='/mal' element={<Mal/>}/>
                         <Route path='*' element={<Error404 />}/>
                     </Route>

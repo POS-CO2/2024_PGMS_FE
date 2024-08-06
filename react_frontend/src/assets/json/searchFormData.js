@@ -25,6 +25,7 @@ export const formFieldEx2 = [
     { type: 'SelectCalendar', name: 'calendar', label: '날짜선택' }
 ]
 
+
 // 필요한 서치바 여기서 만들어서 데이터 임포트 해서 사용하기
 // import {formField_ps12} from "../../assets/json/searchFormData.js"
 // <SearchForms onFormSubmit={handleFormSubmit} formFields={formField_ps12}/>
