@@ -17,6 +17,7 @@ export default function Login({handleLogin}) {
     const [showPassword, setShowPassword] = useState(false);
     const [id, setId] = useState('');
     const [password, setPassword] = useState('');
+    const [text, setText] = useState('');
 
     const navigate = useNavigate();
 
@@ -24,6 +25,16 @@ export default function Login({handleLogin}) {
 
     const handleMouseDownPassword = (event) => {
         event.preventDefault();
+    }
+
+    const activeButton = () => {
+        console.log("enter");
+    } 
+
+    const activeEnter = (e) => {
+        if(e.key === "Enter") {
+            onsubmit();
+        }
     }
 
     return (
@@ -73,6 +84,11 @@ export default function Login({handleLogin}) {
                         </InputAdornment>
                         }
                         label="Password"
+                        onKeyDown={(e) => {
+                            if (e.key === 'Enter') {
+                                handleLogin(id, password);
+                            }
+                        }}
                     />
                     </FormControl>
                     </div>
