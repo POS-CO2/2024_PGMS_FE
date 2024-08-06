@@ -1,6 +1,6 @@
 import React from 'react';
 import * as searchFormStyles from './assets/css/searchForm.css';
-import { Dropdown, Form } from 'antd';
+import { Form } from 'antd';
 import DropDown from "./FormItem/DropDown";
 import InputText from "./FormItem/InputText";
 import SelectCalendar from "./FormItem/SelectCalendar";
@@ -17,6 +17,7 @@ import SearchBtn from "./FormItem/SearchBtn";
  * 추가로
  * SearchAtModal
  * - modalType: "프로젝트 찾기" / "설비LIB 찾기"
+ * - form={form} 속성 주기
  * 
  * DropDown
  * - options: 드롭다운 내 옵션들, *필수*

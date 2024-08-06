@@ -1,6 +1,30 @@
+// 필요한 서치바 여기서 만들어서 데이터 임포트 해서 사용하기
+// import {formField_ps12} from "../../assets/json/searchFormData.js"
+// <SearchForms onFormSubmit={handleFormSubmit} formFields={formField_ps12}/>
+// 이런식으로 사용하면됨
+
 export const formField_ps12 = [
+    { type: 'SearchAtModal', name: 'searchProject', label: '프로젝트코드/명', /*required: true,*/ modalType: '프로젝트 찾기' },
+    { type: 'DropDown', name: 'selectYears', label: '대상년도', required: true, options: [
+        { value: '2024', label: '2024' },
+        { value: '2023', label: '2023' },
+        { value: '2022', label: '2022' },
+        { value: '2021', label: '2021' },
+        { value: '2020', label: '2020' }
+    ], defaultSelected: true },
+    { type: 'DropDown', name: 'emissionActivityType', label: '배출활동유형', options: [
+        { value: 'option1', label: 'Option 1' },
+        { value: 'option2', label: 'Option 2' },
+        { value: 'option3', label: 'Option 3' },
+        { value: 'option4', label: 'Option 4' },
+        { value: 'option5', label: 'Option 5' }
+    ] },
+];
+
+export const formFieldEx1 = [
     { type: 'SearchAtModal', name: 'searchProject', label: '프로젝트명/코드', modalType: '프로젝트 찾기' },
     { type: 'SearchAtModal', name: 'searchLib', label: '설비LIB명', modalType: '설비LIB 찾기' },
+    { type: 'SearchAtModal', name: 'ModalTest', label: 'default', required: true },
     { type: 'InputText', name: 'email', label: '이메일' },
     { type: 'DropDown', name: 'dropDown1', label: '드롭다운', options: [
         { value: '1', label: '안' },
@@ -24,6 +48,7 @@ export const formFieldEx2 = [
     { type: 'InputText', name: 'email', label: '이메일' },
     { type: 'SelectCalendar', name: 'calendar', label: '날짜선택' }
 ]
+
 
 export const formField_cm = [
     { type: 'InputText', name: 'codeGroupId', label: '코드그룹ID'},
