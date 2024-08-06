@@ -27,6 +27,7 @@ export default function Cm() {
             <div>
                 {"코드그룹ID"}
             </div>
+            {/** 모달 추가 필요 */}
             <TableCustom title="코드그룹ID" data={table_cm_group} button="AllButton" onRowClick={handleRowClick}/>
             <div>{"코드리스트"}</div>
             {showTable ? (

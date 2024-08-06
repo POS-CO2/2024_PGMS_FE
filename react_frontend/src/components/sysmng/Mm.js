@@ -268,6 +268,7 @@ export default function Mm({menus}) {
             </div>
             {showtable ? (
                 /** 테이블 컴포넌트 하나 생성해서 할당 */
+                /** 권한 부여 현황 어케 할건지 및 등록, 수정화면 필요 */
                 <Paper elevation={6} style={{width:"1000px", height:"1000px"}}>
                     <div style={{width: "120px", height: "1000px", backgroundColor:"red"}}></div>
                 </Paper>

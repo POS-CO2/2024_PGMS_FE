@@ -3,6 +3,7 @@ import { SearchFormPd } from '../../../SearchForms';
 import { formField_fm } from '../../../assets/json/searchFormData';
 import { table_fm_facList, table_fm_res } from '../../../assets/json/selectedPjt';
 import TableCustom from '../../../TableCustom';
+import { AllButton } from '../../../Button';
 
 export default function Fm() {
 
@@ -36,7 +37,8 @@ export default function Fm() {
                     <TableCustom title="조회결과" data={table_fm_res} onRowClick={handleRowClick}/>
                     {showFacList ? (
                         <>
-                            <TableCustom title="설비목록" data={table_fm_facList}/>
+                            {/** 버튼 변경 필요(엑셀 다운로드, 삭제, 등록) 및 등록 클릭 시 모달 추가 */}
+                            <TableCustom title="설비목록" data={table_fm_facList} button="AllButton"/>
                         </>
                     ) : (
                         <></>

@@ -31,7 +31,7 @@ export default function Um() {
             <div>{"사용자 상세 정보"}</div>
             <AllButton />
             {infoShow ? (
-                <div>イムさん</div>
+                <div>イムさん{/** 그 사용자 상세정보 어떻게 할건지 정해야함 모달도 필요 */}</div>
             ) : (
                 <div>
                     
