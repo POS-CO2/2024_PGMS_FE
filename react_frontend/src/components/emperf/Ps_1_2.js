@@ -1,5 +1,8 @@
 import React, { useState } from 'react';
-import { SearchForm_Ps_1_2 } from "../../SearchForms.js";
+
+import SearchForms from "../../SearchForms.js";
+import {formField_ps12} from "../../assets/json/searchFormData.js"
+
 import InnerTabs from "../../InnerTabs.js";
 import { Tabs, Table } from 'antd';
 
@@ -41,7 +44,8 @@ export default function Ps_1_2() {
     return (
         <div>
             <h2>실적스코프1,2</h2>
-            <SearchForm_Ps_1_2 onFormSubmit={handleFormSubmit} />
+
+            <SearchForms onFormSubmit={handleFormSubmit} formFields={formField_ps12}/>
 
             <InnerTabs items={tabItems} />;
 

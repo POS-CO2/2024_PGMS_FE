@@ -24,12 +24,13 @@
 }
 
 .header_name {
+    position: relative;
     width: 80px;
     height: 50px;
     font-size: 18px;
     text-align: center;
     font-weight: bold;
-
+    font-family: 'NanumSquareRoundExtraBold';
     color: white;
     
     vertical-align: middle; /* 수직 가운데 정렬 */
@@ -115,4 +116,13 @@ img {
 
 .tab button:hover {
     color: red;
+}
+
+.header_menu {
+    position: absolute ;
+    top: 0px;
+    right:1px !important;
+    width: 200px;
+    z-index: 1;
+    display: flex;
 }
