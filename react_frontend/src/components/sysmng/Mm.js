@@ -241,8 +241,8 @@ const CustomTreeItem = React.forwardRef(function CustomTreeItem(props, ref) {
 
 export default function Mm({menus}) {
     const items = convertMenusToTreeItems(menus);
-    console.log(items);
-
+    
+    // 수정해야함
     const [showtable, setShowTable] = useState(showtable ? true : false);
 
     const clickMenuHandler = () => {

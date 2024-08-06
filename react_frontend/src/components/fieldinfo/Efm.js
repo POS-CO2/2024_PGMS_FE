@@ -1,8 +1,41 @@
-import React from 'react';
+import React, { useState } from 'react';
+import {SearchFormEfm} from '../../SearchForms';
+import { formField_efm } from '../../assets/json/searchFormData';
+import { table_efm_list } from '../../assets/json/selectedPjt';
+import TableCustom from '../../TableCustom';
+import { AllButton } from '../../Button';
+
+
 export default function Efm() {
+
+    const [efm, setEfm] = useState([]);
+
+    const handleFormSubmit = (data) => {
+        setEfm(data);
+    }
+
+    const [showSearchResult, setShowSearchResult] = useState(showSearchResult ? true : false);
+
+    const handleSearchClick = () => {
+        setShowSearchResult(!showSearchResult);
+        console.log(showSearchResult);
+    }
+
+    const handleRowClick = () => {
+
+    }
+
     return (
+        <>
             <div>
-                <h2>배출계수관리</h2>
+                {"현장정보 > 설비 > 배출계수관리"}
             </div>
+            <SearchFormEfm onFormSubmit={handleFormSubmit} formFields={formField_efm} onSearch={handleSearchClick}/>
+            {showSearchResult ? (
+                <TableCustom title="배출계수목록" data={table_efm_list} button="AllButton" onRowClick={handleRowClick} />
+            ) : (
+                <></>
+            )}
+        </>
     );
 }

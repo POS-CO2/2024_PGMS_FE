@@ -74,3 +74,32 @@ export function SearchFormPd({ onSearch }) {
         </Form>
     );
 }
+
+export function SearchFormEfm({ onFormSubmit, formFields, onSearch }) {
+    const [form] = Form.useForm();
+
+    const handleFinish = (values) => {
+        onFormSubmit(values);
+    };
+
+    return (
+        <Form form={form} layout="vertical" className={searchFormStyles.form_container} onFinish={handleFinish}>
+            {formFields.map((field, index) => {
+                const FormItemComponent = formItemComponents[field.type];
+                return (
+                    <FormItemComponent
+                        key={index}
+                        name={field.name}
+                        label={field.label}
+                        required={field.required}
+                        modalType={field.modalType}
+                        options={field.options}
+                        form={form}
+                        defaultSelected={field.defaultSelected}
+                    />
+                )
+            })}
+            <SearchBtn onClick={onSearch}/>
+        </Form>
+    );
+};
