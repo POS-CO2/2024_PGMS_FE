@@ -314,6 +314,7 @@ export default function SiteLayout({handleLogout, menus, user}){
                 fav={fav}
                 handleLogout={handleLogout}
                 user={user}
+                menus={menus}
             >
                 <Outlet/>
             </AppContainer>
