@@ -1,6 +1,5 @@
 import * as React from 'react';
 import clsx from 'clsx';
-import { useOutletContext } from "react-router-dom";
 import { animated, useSpring } from '@react-spring/web';
 import { styled, alpha } from '@mui/material/styles';
 
@@ -8,60 +7,22 @@ import Box from '@mui/material/Box';
 import Collapse from '@mui/material/Collapse';
 import Typography from '@mui/material/Typography';
 import ArticleIcon from '@mui/icons-material/Article';
-import DeleteIcon from '@mui/icons-material/Delete';
 import FolderOpenIcon from '@mui/icons-material/FolderOpen';
 import FolderRounded from '@mui/icons-material/FolderRounded';
-import ImageIcon from '@mui/icons-material/Image';
-import PictureAsPdfIcon from '@mui/icons-material/PictureAsPdf';
-import VideoCameraBackIcon from '@mui/icons-material/VideoCameraBack';
 import { RichTreeView } from '@mui/x-tree-view/RichTreeView';
 import { treeItemClasses } from '@mui/x-tree-view/TreeItem';
 import { unstable_useTreeItem2 as useTreeItem2 } from '@mui/x-tree-view/useTreeItem2';
 import {
-  TreeItem2Checkbox,
-  TreeItem2Content,
-  TreeItem2IconContainer,
-  TreeItem2Label,
-  TreeItem2Root,
+    TreeItem2Checkbox,
+    TreeItem2Content,
+    TreeItem2IconContainer,
+    TreeItem2Label,
+    TreeItem2Root,
 } from '@mui/x-tree-view/TreeItem2';
 import { TreeItem2Icon } from '@mui/x-tree-view/TreeItem2Icon';
 import { TreeItem2Provider } from '@mui/x-tree-view/TreeItem2Provider';
 import { TreeItem2DragAndDropOverlay } from '@mui/x-tree-view/TreeItem2DragAndDropOverlay';
-
-const ITEMS = [
-    {
-      id: '1',
-      label: 'Documents',
-      children: [
-        {
-          id: '1.1',
-          label: 'Company',
-          children: [
-            { id: '1.1.1', label: 'Invoice', fileType: 'pdf' },
-            { id: '1.1.2', label: 'Meeting notes', fileType: 'doc' },
-            { id: '1.1.3', label: 'Tasks list', fileType: 'doc' },
-            { id: '1.1.4', label: 'Equipment', fileType: 'pdf' },
-            { id: '1.1.5', label: 'Video conference', fileType: 'video' },
-          ],
-        },
-        { id: '1.2', label: 'Personal', fileType: 'folder' },
-        { id: '1.3', label: 'Group photo', fileType: 'image' },
-      ],
-    },
-    {
-      id: '2',
-      label: 'Bookmarked',
-      fileType: 'pinned',
-      children: [
-        { id: '2.1', label: 'Learning materials', fileType: 'folder' },
-        { id: '2.2', label: 'News', fileType: 'folder' },
-        { id: '2.3', label: 'Forums', fileType: 'folder' },
-        { id: '2.4', label: 'Travel documents', fileType: 'pdf' },
-      ],
-    },
-    { id: '3', label: 'History', fileType: 'folder' },
-    { id: '4', label: 'Trash', fileType: 'trash' },
-  ];
+import { AllButton } from '../../Button';
 
 function DotIcon() {
     return (
@@ -213,24 +174,16 @@ const isExpandable = (reactChildren) => {
 
 const getIconFromFileType = (fileType) => {
     switch (fileType) {
-      case 'image':
-        return ImageIcon;
-      case 'pdf':
-        return PictureAsPdfIcon;
-      case 'doc':
-        return ArticleIcon;
-      case 'video':
-        return VideoCameraBackIcon;
-      case 'folder':
-        return FolderRounded;
-      case 'pinned':
-        return FolderOpenIcon;
-      case 'trash':
-        return DeleteIcon;
-      default:
-        return ArticleIcon;
+        case 'doc':
+            return ArticleIcon;
+        case 'folder':
+            return FolderRounded;
+        case 'pinned':
+            return FolderOpenIcon;
+        default:
+            return ArticleIcon;
     }
-  };
+};
 
 const CustomTreeItem = React.forwardRef(function CustomTreeItem(props, ref) {
     const { id, itemId, label, disabled, children, ...other } = props;
@@ -292,6 +245,7 @@ export default function Mm({menus}) {
             <div>
                 {"홈 > 시스템관리 > 메뉴 관리"}
             </div>
+            <AllButton/>
             <RichTreeView
             items={items}
             defaultExpandedItems={['1', '1.1']}
@@ -299,11 +253,7 @@ export default function Mm({menus}) {
             sx={{ height: 'fit-content', flexGrow: 1, maxWidth: 400, overflowY: 'auto' }}
             slots={{ item: CustomTreeItem }}
             />
-                {/* {items.map((item) => (
-                    <CustomTreeItem key={item.id} {...item} />
-                ))} */}
             
-        
         </>
     );
 }
