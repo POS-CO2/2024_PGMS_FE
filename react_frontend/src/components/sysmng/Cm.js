@@ -17,6 +17,10 @@ export default function Cm() {
                 {"시스템관리 > 코드 관리"}
             </div>
             <SearchForms onFormSubmit={handleFormSubmit} formFields={formField_cm}/>
+            <div>
+                {"코드그룹ID"}
+            </div>
+            
         </>
     );
 }
