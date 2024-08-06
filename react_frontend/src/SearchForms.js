@@ -69,3 +69,13 @@ export default function SearchForms({ onFormSubmit, formFields }) {
         </Form>
     );
 };
+
+// 프로젝트코드/명 only
+export function SearchFormPd() {
+    return (
+        <Form layout="vertical" className={searchFormStyles.form_container}>
+            <SearchAtModal name="searchProject2" label="프로젝트코드/명" required={true} />
+            <SearchBtn />
+        </Form>
+    );
+}
