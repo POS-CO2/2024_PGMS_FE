@@ -63,6 +63,7 @@ export default function CustomizedTables({data, variant = 'default'}) {
                 );
             }                       
         }
+        console.log(selectedRow);
     };
 
     // checkbox 클릭시 setSelectedRows에 추가
@@ -109,6 +110,7 @@ export default function CustomizedTables({data, variant = 'default'}) {
                                     ? selectedRows.includes(index) 
                                     : selectedRow === index
                                 }
+                                variant={variant}
                                 onClick={(e) => handleRowClick(index, e)}
                             >
                                 {   // checkbox가 있는 테이블이면 체크박스 셀 추가
