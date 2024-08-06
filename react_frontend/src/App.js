@@ -32,6 +32,7 @@ export default function App() {
     // 어떤 ajax라도 401이 뜨면, 로그아웃 절차 
     const [token,setToken] = useState(null);
     const [menu, setMenu] = useState([]);
+    const [user, setUser] = useState([]);
 
     const handleLogin = async (id,password) => {
         /*
@@ -39,16 +40,17 @@ export default function App() {
             setToken
         */
         try{
-            const data = await login(id, password);
-            
-            localStorage.setItem('token', data.token);
+            const {data,headers} = await login(id, password);
+            console.log(headers['authorization'])
+            localStorage.setItem('token', headers['authorization']);
+            localStorage.setItem('user', JSON.stringify(data.user));
+            localStorage.setItem('menu', JSON.stringify(data.menu));
             window.location.href="/";
         }
         catch(error){
             console.log(error);
-            if (error.response.status === 400){
+            if (error.response?.status === 400){
                 alert("비밀번호가 틀렸습니다.");
-                window.location.href="/";
             }
         
         }
@@ -61,12 +63,21 @@ export default function App() {
         */
         setToken(null)
         localStorage.removeItem("token");
+        localStorage.removeItem("menu");
+        localStorage.removeItem("user");
+        localStorage.removeItem("tabs");
+        localStorage.removeItem("activeTab");
     }
 
     useEffect(()=>{
         const jwt = localStorage.getItem("token");
+        const roleMenu = localStorage.getItem("menu");
+        const loginUser = localStorage.getItem("user");
+        console.log(loginUser);
         if (jwt) {
             setToken(jwt);
+            setMenu(JSON.parse(roleMenu));
+            setUser(JSON.parse(loginUser));
         }
     },[]);
     
@@ -74,7 +85,7 @@ export default function App() {
         <Router>
             <Routes>
                 {(token) ? (    
-                    <Route path='/' element={<SiteLayout handleLogout={handleLogout}/> }>
+                    <Route path='/' element={<SiteLayout handleLogout={handleLogout} menus={menu} user = {user}/> }>
                     <Route index path='' element={<Main />}/>
                     {
                         /*
