@@ -46,7 +46,7 @@ const StyledCheckbox = styled(Checkbox)(({ theme, checked }) => ({
     },
 }));
 
-export default function CustomizedTables({data, variant = 'default'}) {
+export default function CustomizedTables({data, variant = 'default', onRowClick }) {
     const [selectedRow, setSelectedRow] = React.useState(null); // default variant의 선택 상태
     const [selectedRows, setSelectedRows] = React.useState([]); // checkbox variant의 선택 상태
 
@@ -63,7 +63,10 @@ export default function CustomizedTables({data, variant = 'default'}) {
                 );
             }                       
         }
-        console.log(selectedRow);
+
+        if (onRowClick) {
+            onRowClick(data[index]);
+        }
     };
 
     // checkbox 클릭시 setSelectedRows에 추가
