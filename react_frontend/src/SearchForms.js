@@ -17,6 +17,7 @@ import SearchBtn from "./FormItem/SearchBtn";
  * 추가로
  * SearchAtModal
  * - modalType: "프로젝트 찾기" / "설비LIB 찾기"
+ * - form={form} 속성 주기
  * 
  * DropDown
  * - options: 드롭다운 내 옵션들, *필수*
@@ -27,7 +28,7 @@ import SearchBtn from "./FormItem/SearchBtn";
  * - label: 기본값은 "조회"
  */
 
-export default function SearchFormEx({ onFormSubmit }) {
+export function SearchFormEx({ onFormSubmit }) {
     const selectOptions = [
         { value: '1', label: '안' },
         { value: '2', label: '녕' },
@@ -56,3 +57,46 @@ export default function SearchFormEx({ onFormSubmit }) {
         </Form>
     );
 };
+
+// 프로젝트코드/명 only
+export function SearchFormPd() {
+    return (
+        <Form layout="vertical" className={searchFormStyles.form_container}>
+            <SearchAtModal name="searchProject2" label="프로젝트코드/명" required={true} />
+            <SearchBtn />
+        </Form>
+    );
+}
+
+export function SearchForm_Ps_1_2({ onFormSubmit }) {
+    const selectYears = [
+        { value: '2024', label: '2024' },
+        { value: '2023', label: '2023' },
+        { value: '2022', label: '2022' },
+        { value: '2021', label: '2021' },
+        { value: '2020', label: '2020' }
+    ];
+    const selectOptions = [
+        { value: 'option1', label: 'Option 1' },
+        { value: 'option2', label: 'Option 2' },
+        { value: 'option3', label: 'Option 3' },
+        { value: 'option4', label: 'Option 4' },
+        { value: 'option5', label: 'Option 5' }
+    ];
+
+    const [form] = Form.useForm();
+
+    const handleFinish = (values) => {
+        onFormSubmit(values);
+    };
+
+    return (
+        <Form form={form} layout="vertical" className={searchFormStyles.form_container} onFinish={handleFinish}>
+            <SearchAtModal name="searchProject" label="프로젝트코드/명" required={true} modalType='프로젝트 찾기' form={form} />
+            <DropDown name="selectYears" label="대상년도" required={true} options={selectYears} defaultSelected={true} />
+            <DropDown name="emissionActivityType" label="배출활동유형" options={selectOptions} />
+
+            <SearchBtn />
+        </Form>
+    );
+}
