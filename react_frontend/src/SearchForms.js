@@ -34,7 +34,7 @@ const formItemComponents = {
     SearchAtModal
 };
 
-export default function SearchForms({ onFormSubmit, formFields }) {
+export default function SearchForms({ onFormSubmit, formFields, onSearch }) {
     const [form] = Form.useForm();
 
     const handleFinish = (values) => {
@@ -57,7 +57,7 @@ export default function SearchForms({ onFormSubmit, formFields }) {
                         defaultSelected={field.defaultSelected}
                     />
                 )
-            })};
+            })}
             {/* <SearchAtModal name="searchProject" label="프로젝트명/코드" modalType='프로젝트 찾기' form={form} />
             <SearchAtModal name="searchLib" label="설비LIB명" modalType='설비LIB 찾기' form={form} />
             <SearchAtModal name="ModalTest" label="default" required={true} form={form} />
@@ -65,7 +65,7 @@ export default function SearchForms({ onFormSubmit, formFields }) {
             <DropDown name="dropDown1" label="드롭다운" options={selectOptions} />
             <DropDown name="dropDown2" label="필수 드롭다운" required={true} options={selectOptions} defaultSelected={true} />
             <SelectCalendar name="calendar" label="날짜선택" /> */}
-            <SearchBtn />
+            <SearchBtn onClick={onSearch}/>
         </Form>
     );
 };

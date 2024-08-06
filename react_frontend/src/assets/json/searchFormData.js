@@ -1,5 +1,5 @@
 export const formField_ps12 = [
-    { type: 'SearchAtModal', name: 'searchProject', label: '프로젝트명/코드', modalType: '프로젝트 찾기' },
+    { type: 'SearchAtModal', name: 'searchProject', label: '프로젝트명/코드', required: true, modalType: '프로젝트 찾기' },
     { type: 'SearchAtModal', name: 'searchLib', label: '설비LIB명', modalType: '설비LIB 찾기' },
     { type: 'InputText', name: 'email', label: '이메일' },
     { type: 'DropDown', name: 'dropDown1', label: '드롭다운', options: [
