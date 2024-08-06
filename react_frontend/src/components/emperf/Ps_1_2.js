@@ -2,8 +2,8 @@ import React, { useState } from 'react';
 import SearchForms from "../../SearchForms";
 import { formField_ps12 } from "../../assets/json/searchFormData"
 import InnerTabs from "../../InnerTabs";
+import TableCustom from "../../TableCustom.js";
 
-import Table from "../../Table.js";
 import project from "../../assets/json/selectedPjt";
 
 export default function Ps_1_2() {
@@ -13,24 +13,14 @@ export default function Ps_1_2() {
         setFormData(data);
     };
 
-    const tabItems = [
-        {
-            label: '사용량',
-            key: '1',
-            children: <Usage formData={formData} />,
-        },
-        {
-            label: '사용금액',
-            key: '2',
-            children: <AmountUsed formData={formData} />,
-        },
-    ];
-
     return (
         <div>
-            <h2>실적스코프1,2</h2>
+            <p>배출실적 &gt; 실적스코프1,2</p>
             <SearchForms onFormSubmit={handleFormSubmit} formFields={formField_ps12} />
-            <InnerTabs items={tabItems} />
+            <InnerTabs items={[
+                { label: '사용량', key: '1', children: <Usage formData={formData} />, },
+                { label: '사용금액', key: '2', children: <AmountUsed formData={formData} />, },
+            ]} />
         </div>
     );
 }
@@ -38,19 +28,19 @@ export default function Ps_1_2() {
 
 function Usage({ formData }) {
     if (!formData || Object.keys(formData).length === 0) {
-        return <p>검색조건을 선택하세요</p>;
+        return <p>검색조건을 선택하세요</p>
     }
 
     return (
         <div>
-            <Table data={project}/>
+            <TableCustom title="실적목록" data={project} button="AllButton" />
         </div>
     )
 }
 
 function AmountUsed({ formData }) {
     if (!formData || Object.keys(formData).length === 0) {
-        return <p>검색조건을 선택하세요</p>;
+        return <p>검색조건을 선택하세요</p>
     }
 
     const formDataForTable = Object.entries(formData).map(([key, value]) => {
@@ -58,7 +48,7 @@ function AmountUsed({ formData }) {
     })
     return (
         <div>
-            <Table data={formDataForTable}/>
+            <TableCustom title="실적목록" data={formDataForTable} button="AddButton" />
         </div>
     )
 }

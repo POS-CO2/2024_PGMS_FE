@@ -4,7 +4,13 @@ import Button from '@mui/material/Button';
 import ControlPointIcon from '@mui/icons-material/ControlPoint';
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import CachedIcon from '@mui/icons-material/Cached';
-
+/*
+const buttonMap = {
+  Add: AddButton,
+  Delete: DeleteButton,
+  Edit: EditButton
+};
+*/
 const CustomButton = styled(Button)(({ theme }) => ({
     fontSize: '16px',
     marginLeft: '3px',
@@ -21,6 +27,42 @@ const CustomButton = styled(Button)(({ theme }) => ({
         fontSize: '20px',
     },
 }));
+/*
+export function AddButton() {
+  return (
+    <CustomButton variant="contained">
+      등록 <ControlPointIcon className="icon" />
+    </CustomButton>
+  );
+}
+
+export function DeleteButton() {
+  return (
+    <CustomButton variant="contained">
+      삭제 <DeleteForeverIcon className="icon" />
+    </CustomButton>
+  );
+}
+
+export function EditButton() {
+  return (
+    <CustomButton variant="contained">
+      수정 <CachedIcon className="icon" />
+    </CustomButton>
+  );
+}
+
+export function TableCustom({ buttons }) {
+  return (
+    <div style={{ display: 'flex', gap: '8px' }}>
+      {buttons.map(button => {
+        const ButtonComponent = buttonMap[button];
+        return <ButtonComponent key={button} />;
+      })}
+    </div>
+  );
+}
+*/
 
 export function AddButton() {
   return (
@@ -60,4 +102,5 @@ export function AddAndDeleteButton() {
       </div>
     );
   }
+
 
