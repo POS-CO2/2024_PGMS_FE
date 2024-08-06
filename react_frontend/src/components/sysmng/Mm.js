@@ -23,6 +23,8 @@ import { TreeItem2Icon } from '@mui/x-tree-view/TreeItem2Icon';
 import { TreeItem2Provider } from '@mui/x-tree-view/TreeItem2Provider';
 import { TreeItem2DragAndDropOverlay } from '@mui/x-tree-view/TreeItem2DragAndDropOverlay';
 import { AllButton } from '../../Button';
+import { useState } from 'react';
+import Paper from '@mui/material/Paper';
 
 function DotIcon() {
     return (
@@ -240,6 +242,13 @@ const CustomTreeItem = React.forwardRef(function CustomTreeItem(props, ref) {
 export default function Mm({menus}) {
     const items = convertMenusToTreeItems(menus);
     console.log(items);
+
+    const [showtable, setShowTable] = useState(false);
+
+    const clickMenuHandler = () => {
+        setShowTable(true);
+    }
+
     return (
         <>
             <div>
@@ -252,8 +261,17 @@ export default function Mm({menus}) {
             defaultSelectedItems="1.1"
             sx={{ height: 'fit-content', flexGrow: 1, maxWidth: 400, overflowY: 'auto' }}
             slots={{ item: CustomTreeItem }}
+            onItemClick={() => clickMenuHandler()}
             />
-            
+            <div>
+                {"권한 부여 현황"}
+            </div>
+            {showtable ? (
+                /** 테이블 컴포넌트 하나 생성해서 할당 */
+                <Paper elevation={6} style={{width:"1000px", height:"1000px"}}>
+                    <div style={{width: "120px", height: "1000px", backgroundColor:"red"}}></div>
+                </Paper>
+            ) : <></>}
         </>
     );
 }

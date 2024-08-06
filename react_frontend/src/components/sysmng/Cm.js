@@ -1,110 +1,22 @@
-import React from 'react';
+import React, { useState } from 'react';
+import SearchForms from '../../SearchForms';
 import * as tableStyles from '../../assets/css/table.css'
+import { formField_cm } from '../../assets/json/searchFormData';
 
 export default function Cm() {
+    const [codeGroup, setCodeGroup] = useState([]);
 
-    const columns = [
-        {
-            title: 'Full Name',
-            width: 10,
-            dataIndex: 'name',
-        },
-        {
-            title: 'Age',
-            width: 10,
-            dataIndex: 'age',
-        },
-        {
-            title: 'Full Name',
-            width: 10,
-            dataIndex: 'name',
-        },
-        {
-            title: 'Age',
-            width: 10,
-            dataIndex: 'age',
-        },
-    ];
+    const handleFormSubmit = (data) => {
+        setCodeGroup(data);
+    }
 
-    const data = [
-        {
-            key: '1',
-            name: "BbingDdang",
-            age: 20,
-            address: 'poscodx'
-        },
-        {
-            key: '2',
-            name: "BbingDdang",
-            age: 20,
-            address: 'poscodx'
-        },
-        {
-            key: '3',
-            name: "BbingDdang",
-            age: 20,
-            address: 'poscodx'
-        },
-        {
-            key: '4',
-            name: "BbingDdang",
-            age: 20,
-            address: 'poscodx'
-        },
-        {
-            key: '5',
-            name: "BbingDdang",
-            age: 20,
-            address: 'poscodx'
-        },
-        {
-            key: '6',
-            name: "BbingDdang",
-            age: 20,
-            address: 'poscodx'
-        },
-        {
-            key: '7',
-            name: "BbingDdang",
-            age: 20,
-            address: 'poscodx'
-        },
-        {
-            key: '8',
-            name: "BbingDdang",
-            age: 20,
-            address: 'poscodx'
-        },
-        {
-            key: '9',
-            name: "BbingDdang",
-            age: 20,
-            address: 'poscodx'
-        },
-        {
-            key: '10',
-            name: "BbingDdang",
-            age: 20,
-            address: 'poscodx'
-        },
-        {
-            key: '11',
-            name: "BbingDdang",
-            age: 20,
-            address: 'poscodx'
-        },
-
-    ];
 
     return (
-        <div className={tableStyles.cm_root}>
-            <div className={tableStyles.name}>코드 그룹 ID</div>
-            <div className={tableStyles.cm_table}>
-
+        <>
+            <div>
+                {"시스템관리 > 코드 관리"}
             </div>
-            <div className={tableStyles.cm_table}>
-
-            </div>
-        </div>
+            <SearchForms onFormSubmit={handleFormSubmit} formFields={formField_cm}/>
+        </>
     );
 }
