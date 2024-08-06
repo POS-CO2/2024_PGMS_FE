@@ -54,6 +54,16 @@ export const formField_cm = [
     { type: 'InputText', name: 'codeGroupId', label: '코드그룹ID'},
 ]
 
+export const formField_um = [
+    { type: 'InputText', name: 'loginId', label: '로그인 아이디'},
+    { type: 'InputText', name: 'name', label: '이름'},
+    { type: 'DropDown', name: 'priviledge', label: '권한', required: true, options: [
+        {value: '1', label: '현장 담당자'},
+        {value: '2', label: '본사 담당자'},
+        {value: '3', label: '시스템 관리자'},
+    ]},
+]
+
 // 필요한 서치바 여기서 만들어서 데이터 임포트 해서 사용하기
 // import {formField_ps12} from "../../assets/json/searchFormData.js"
 // import { formField_ps12 } from './searchFormData';
