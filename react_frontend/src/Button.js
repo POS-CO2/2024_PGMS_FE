@@ -22,7 +22,7 @@ const CustomButton = styled(Button)(({ theme }) => ({
     },
 }));
 
-export default function AddButton() {
+export function AddButton() {
   return (
     <div style={{ display: 'flex', gap: '8px' }}>
         <CustomButton variant="contained">
