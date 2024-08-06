@@ -22,6 +22,11 @@ export default function SearchAtModal({ name, label, required = false, modalType
         form.setFieldsValue({ [name]: selectedOption  }); // 선택된 label을 폼 필드에 설정
         setInputValue(selectedLabel);
     };
+    const handleOk2 = (data) => {
+        setIsModalOpen(false);
+        const selectedData = data;
+        setInputValue(selectedData);
+    };
     const handleCancel = () => {
         setIsModalOpen(false);
     };
@@ -29,7 +34,7 @@ export default function SearchAtModal({ name, label, required = false, modalType
     const renderModal = () => {
         switch (modalType) {
             case "프로젝트 찾기":
-                return <SearchProjectModal isModalOpen={isModalOpen} handleOk={handleOk} handleCancel={handleCancel} />;
+                return <SearchProjectModal isModalOpen={isModalOpen} handleOk={handleOk2} handleCancel={handleCancel} />;
             case "설비LIB 찾기":
                 return <SearchLibModal isModalOpen={isModalOpen} handleOk={handleOk} handleCancel={handleCancel} />;
             default:
