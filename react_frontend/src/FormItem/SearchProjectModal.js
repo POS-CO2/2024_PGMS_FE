@@ -1,12 +1,22 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Modal } from 'antd';
 import * as pjtModalStyles from "../assets/css/pjtModal.css";
+import Table from "../Table";
+import project from "../assets/json/project.js"
 
 export default function ModalComponent({ isModalOpen, handleOk, handleCancel }) {
+  const [showResults, setShowResults] = useState(false);  // 프로젝트 목록을 표시할지 여부
+  
+  // 찾기 버튼 클릭 시 호출될 함수
+  const handleSearch = () => {
+    setShowResults(true);
+  };
+
   return (
     <Modal 
       open={isModalOpen} 
       onOk={handleOk} 
+      width={1300}
       onCancel={handleCancel} 
       footer={null}             //Ant Design의 기본 footer 제거(Cancel, OK 버튼)
     >
@@ -21,16 +31,17 @@ export default function ModalComponent({ isModalOpen, handleOk, handleCancel }) 
           <div className={pjtModalStyles.search_title}>프로젝트명</div>
           <div className={pjtModalStyles.search_container}>
             <input className={pjtModalStyles.search_name}/>
-            <button className={pjtModalStyles.search_button}>찾기</button>
+            <button className={pjtModalStyles.search_button} onClick={handleSearch}>찾기</button>
           </div>
         </div>
       </div>
 
       <div className={pjtModalStyles.result_container}>
-        
+        {/* showResults 상태가 true일 때만 프로젝트 목록을 표시 */}
+        {showResults && ( <Table data={project} /> )}
       </div>
 
-      <button className={pjtModalStyles.select_button}>선택</button>
+      <button className={pjtModalStyles.select_button} onClick={handleOk}>선택</button>
     </Modal>
   )
 }

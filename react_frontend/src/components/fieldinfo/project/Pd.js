@@ -6,7 +6,6 @@ import project from "../../../assets/json/selectedPjt";
 import managers from "../../../assets/json/manager";
 import SearchForms from "../../../SearchForms"
 import {formField_ps12} from "../../../assets/json/searchFormData.js"
-//import {Modal} from ".."
 
 export default function Pd() {
     const [showResults, setShowResults] = useState(false);      // 조회결과와 담당자목록을 표시할지 여부
