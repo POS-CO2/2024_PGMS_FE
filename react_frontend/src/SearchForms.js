@@ -64,11 +64,12 @@ export default function SearchForms({ onFormSubmit, formFields }) {
 };
 
 // 프로젝트코드/명 only
-export function SearchFormPd() {
+export function SearchFormPd({ onSearch }) {
     return (
         <Form layout="vertical" className={searchFormStyles.form_container}>
             <SearchAtModal name="searchProject2" label="프로젝트코드/명" required={true} />
-            <SearchBtn />
+            {/* SearchBtn 컴포넌트 클릭 시 onSearch 함수 호출 */}
+            <SearchBtn onClick={onSearch} />
         </Form>
     );
 }
