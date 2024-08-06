@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import SearchForms from '../../SearchForms';
 import * as tableStyles from '../../assets/css/table.css'
 import { formField_cm } from '../../assets/json/searchFormData';
+import TableCustom from '../../TableCustom';
+import { table_cm_group, table_cm_code } from '../../assets/json/selectedPjt';
 
 export default function Cm() {
     const [codeGroup, setCodeGroup] = useState([]);
@@ -10,6 +12,12 @@ export default function Cm() {
         setCodeGroup(data);
     }
 
+    const [showTable, setShowTable] = useState(false);
+
+    const handleRowClick = () => {
+        setShowTable(true);
+        console.log(showTable);
+    }
 
     return (
         <>
@@ -20,6 +28,13 @@ export default function Cm() {
             <div>
                 {"코드그룹ID"}
             </div>
+            <TableCustom title="코드그룹ID" data={table_cm_group} button="AllButton" onRowClick={handleRowClick}/>
+            <div>{"코드리스트"}</div>
+            {showTable ? (
+                <TableCustom title="코드그룹ID" data={table_cm_code} button="AllButton" />
+            ) : (
+                <></>
+            )}
             
         </>
     );
