@@ -3,7 +3,7 @@ import { useTheme } from '@mui/material/styles';
 import { LineChart, axisClasses } from '@mui/x-charts';
 import { CustomBarChart } from './Chart';
 import { temp_data } from './assets/json/chartData';
-
+import * as gridStyles from './assets/css/grid.css'
 // Generate Sales Data
 function createData(time, amount) {
     return { time, amount: amount ?? null };
@@ -25,7 +25,7 @@ export default function Main() {
     const theme = useTheme();
 
     return (
-            <div>
+            <div className={gridStyles.grid_container}>
                 <React.Fragment>
                     <div style={{ width: '400px', height: '300px', flexGrow: 1, overflow: 'hidden'}}>
                         <LineChart
