@@ -67,7 +67,7 @@ export default function Pd() {
                         <TableCustom 
                             title='담당자목록' 
                             data={managers} 
-                            buttons={['Add', 'Delete']}
+                            buttons={['Delete', 'Add']}
                             onRowClick={handleManagerClick}
                             modal={{
                                 'buttonClick': showModal,

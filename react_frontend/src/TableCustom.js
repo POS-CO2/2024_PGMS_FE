@@ -13,7 +13,7 @@ export default function TableCustom({ title, data, buttons, onRowClick, modal })
         <>
             <div className={tableStyles.container}>
                 <div className={tableStyles.table_title}>{title}</div>
-                <ButtonGroup buttons={buttons} />
+                <ButtonGroup buttons={buttons} onClick={modal.buttonClick} />
                 {renderModal()}
             </div>
             <Table data={data} onRowClick={onRowClick} />
