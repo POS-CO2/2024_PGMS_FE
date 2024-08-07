@@ -33,60 +33,60 @@ const CustomButton = styled(Button)(({ theme }) => ({
   },
 }));
 
-function AddButton() {
+function AddButton({onClick}) {
   return (
-    <CustomButton variant="contained">
+    <CustomButton variant="contained" onClick={onClick}>
       등록 <ControlPointIcon className="icon" />
     </CustomButton>
   );
 }
 
-function DeleteButton() {
+function DeleteButton({onClick}) {
   return (
-    <CustomButton variant="contained">
+    <CustomButton variant="contained" onClick={onClick}>
       삭제 <DeleteForeverIcon className="icon" />
     </CustomButton>
   );
 }
 
-function EditButton() {
+function EditButton({onClick}) {
   return (
-    <CustomButton variant="contained">
+    <CustomButton variant="contained" onClick={onClick}>
       수정 <CachedIcon className="icon" />
     </CustomButton>
   );
 }
 
-function UploadExcelButton() {
+function UploadExcelButton({onClick}) {
   return (
-    <CustomButton variant="contained">
+    <CustomButton variant="contained" onClick={onClick}>
       엑셀 업로드 <UploadIcon className="icon" />
     </CustomButton>
   );
 }
 
-function DownloadExcelFormButton() {
+function DownloadExcelFormButton({onClick}) {
   return (
-    <CustomButton variant="contained">
+    <CustomButton variant="contained" onClick={onClick}>
       엑셀 양식 다운로드 <DownloadIcon className="icon" />
     </CustomButton>
   );
 }
 
-function DownloadExcelButton() {
+function DownloadExcelButton({onClick}) {
   return (
-    <CustomButton variant="contained">
+    <CustomButton variant="contained" onClick={onClick}>
       엑셀 다운로드 <DownloadIcon className="icon" />
     </CustomButton>
   );
 }
 
-export function ButtonGroup({ buttons = [] }) {
+export function ButtonGroup({ buttons = [], onClick}) {
   return (
     <div style={{ display: 'flex', gap: '8px', marginRight: '23px' }}>
       {buttons.map(button => {
         const ButtonComponent = buttonMap[button];
-        return ButtonComponent ? <ButtonComponent key={button} /> : null;
+        return ButtonComponent ? <ButtonComponent key={button} onClick={onClick} /> : null;
       })}
     </div>
   );

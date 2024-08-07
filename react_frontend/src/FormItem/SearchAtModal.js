@@ -25,7 +25,7 @@ export default function SearchAtModal({ name, label, required = false, modalType
     const handleOk2 = (data) => {
         setIsModalOpen(false);
         const selectedData = data;
-        setInputValue(selectedData);
+        setInputValue(selectedData[0] + '/' + selectedData[1]);
     };
     const handleCancel = () => {
         setIsModalOpen(false);
