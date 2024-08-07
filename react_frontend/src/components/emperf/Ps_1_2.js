@@ -8,10 +8,24 @@ import project from "../../assets/json/selectedPjt";
 
 export default function Ps_1_2() {
     const [formData, setFormData] = useState({});
+    const [isModalOpen, setIsModalOpen] = useState(false);
 
     const handleFormSubmit = (data) => {
         setFormData(data);
     };
+
+    const showModal = () => {
+        setIsModalOpen(true);
+    };
+
+    // 담당자 지정 등록 버튼 클릭 시 호출될 함수
+    const handleOk = (data) => {
+        setIsModalOpen(false);
+    };
+
+    const handleCancel = () => {
+        setIsModalOpen(false);
+    }; 
 
     return (
         <div>
@@ -33,7 +47,16 @@ function Usage({ formData }) {
 
     return (
         <div>
-            <TableCustom title="실적목록" data={project} buttons={['UploadExcel', 'DownloadExcelForm']} />
+            <TableCustom
+                title="실적목록"
+                data={project}
+                buttons={['UploadExcel', 'DownloadExcelForm']}
+                modal={{
+                    'buttonClick': showModal,
+                    'isModalOpen': isModalOpen,
+                    'handleOk': handleOk,
+                    'handleCancel': handleCancel
+                }} />
         </div>
     )
 }
