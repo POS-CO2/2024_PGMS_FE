@@ -14,6 +14,9 @@ export default function Pd() {
     const [formData, setFormData] = useState({});
     const [searchResult, setSearchResult] = useState('');
 
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [inputValue, setInputValue] = useState("");
+
     const handleFormSubmit = (data) => {
         
     };
@@ -33,9 +36,22 @@ export default function Pd() {
         setSelectedManager(row.UserId);
     };
 
+    const showModal = () => {
+        setIsModalOpen(true);
+    };
+
+    // 담당자 지정 등록 버튼 클릭 시 호출될 함수
+    const handleOk = (data) => {
+        setIsModalOpen(false);
+        setInputValue(data);
+    };
+
+    const handleCancel = () => {
+        setIsModalOpen(false);
+    }; 
+
     return (
         <>
-            {console.log(selectedPjt)}
             <div className={tableStyles.menu}>현장정보 &gt; 프로젝트 &gt; 담당자 지정</div>
             
             <SearchForms onFormSubmit={handleFormSubmit} formFields={[formField_ps12[0]]} onSearch={handleSearch} />
@@ -51,8 +67,14 @@ export default function Pd() {
                         <TableCustom 
                             title='담당자목록' 
                             data={managers} 
-                            buttons={['Add', 'Delete']}
+                            buttons={['Delete', 'Add']}
                             onRowClick={handleManagerClick}
+                            modal={{
+                                'buttonClick': showModal,
+                                'isModalOpen': isModalOpen,
+                                'handleOk': handleOk,
+                                'handleCancel': handleCancel
+                            }}
                         />
                     )}
                 </>
