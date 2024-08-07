@@ -12,11 +12,27 @@ export default function Cm() {
         setCodeGroup(data);
     }
 
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [inputValue, setInputValue] = useState("");
     const [showTable, setShowTable] = useState(showTable ? true : false);
 
     const handleRowClick = () => {
         setShowTable(!showTable);
     }
+
+    const showModal = () => {
+        setIsModalOpen(true);
+    };
+
+    // 담당자 지정 등록 버튼 클릭 시 호출될 함수
+    const handleOk = (data) => {
+        setIsModalOpen(false);
+        setInputValue(data);
+    };
+
+    const handleCancel = () => {
+        setIsModalOpen(false);
+    }; 
 
     return (
         <>
@@ -28,10 +44,24 @@ export default function Cm() {
                 {"코드그룹ID"}
             </div>
             {/** 모달 추가 필요 */}
-            <TableCustom title="코드그룹ID" data={table_cm_group} button="AllButton" onRowClick={handleRowClick}/>
+            <TableCustom title="코드그룹ID" data={table_cm_group} buttons={["Edit", "Delete", "Add"]} onRowClick={handleRowClick} modal={
+                {
+                    'buttonClick': showModal,
+                    'isModalOpen': isModalOpen,
+                    'handleOk': handleOk,
+                    'handleCancel': handleCancel
+                }
+            }/>
             <div>{"코드리스트"}</div>
             {showTable ? (
-                <TableCustom title="코드그룹ID" data={table_cm_code} button="AllButton" />
+                <TableCustom title="코드그룹ID" data={table_cm_code} buttons={["Edit", "Delete", "Add"]} modal={
+                    {
+                        'buttonClick': showModal,
+                        'isModalOpen': isModalOpen,
+                        'handleOk': handleOk,
+                        'handleCancel': handleCancel
+                    }
+                }/>
             ) : (
                 <></>
             )}

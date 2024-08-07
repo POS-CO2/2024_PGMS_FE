@@ -3,7 +3,7 @@ import { Modal } from 'antd';
 import * as modalStyles from "../assets/css/pdModal.css";
 import Table from "../Table";
 import { employee } from "../assets/json/manager.js"
- 
+
 export default function PdModal({ emp, isModalOpen, handleOk, handleCancel }) {
     const [showResults, setShowResults] = useState(false);    // 사원 목록을 표시할지 여부
     const [selectedEmps, setSelectedEmps] = useState([]);     // 선택된 사원의 loginId list
