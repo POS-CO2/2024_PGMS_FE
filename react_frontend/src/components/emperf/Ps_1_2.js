@@ -33,7 +33,7 @@ function Usage({ formData }) {
 
     return (
         <div>
-            <TableCustom title="실적목록" data={project} button="AllButton" />
+            <TableCustom title="실적목록" data={project} buttons={['UploadExcel', 'DownloadExcelForm']} />
         </div>
     )
 }
@@ -48,7 +48,7 @@ function AmountUsed({ formData }) {
     })
     return (
         <div>
-            <TableCustom title="실적목록" data={formDataForTable} button="AddButton" />
+            <TableCustom title="실적목록" data={formDataForTable} buttons={['UploadExcel', 'DownloadExcelForm']} />
         </div>
     )
 }
