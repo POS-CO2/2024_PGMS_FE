@@ -3,7 +3,7 @@ import { Modal } from 'antd';
 import * as pjtModalStyles from "../assets/css/pjtModal.css";
 import Table from "../Table";
 import project from "../assets/json/project.js"
-
+ 
 export default function ModalComponent({ isModalOpen, handleOk, handleCancel }) {
   const [showResults, setShowResults] = useState(false);  // 프로젝트 목록을 표시할지 여부
   const [selectedPjt, setSelectedPjt] = useState([]);     // 선택된 프로젝트

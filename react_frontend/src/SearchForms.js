@@ -41,7 +41,7 @@ export default function SearchForms({ onFormSubmit, formFields, onSearch }) {
     // 조회 버튼 클릭 시 호출될 함수
     const handleFinish = (values) => {
         onFormSubmit(values);
-    };
+    }; 
 
     return (
         <Form form={form} layout="vertical" className={searchFormStyles.form_container} onFinish={handleFinish}>

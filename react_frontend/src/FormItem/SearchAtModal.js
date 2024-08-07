@@ -40,7 +40,7 @@ export default function SearchAtModal({ name, label, required = false, modalType
             default:
                 return <ModalComponent title={modalType} contents="테스트" isModalOpen={isModalOpen} handleOk={handleOk} handleCancel={handleCancel} />;
         }
-    };
+    }; 
 
     return (
         <Form.Item
