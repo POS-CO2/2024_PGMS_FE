@@ -35,52 +35,13 @@ const formItemComponents = {
     SearchAtModal
 };
 
-export default function SearchForms({ onFormSubmit, formFields }) {
+export default function SearchForms({ onFormSubmit, formFields, onSearch }) {
     const [form] = Form.useForm();
 
+    // 조회 버튼 클릭 시 호출될 함수
     const handleFinish = (values) => {
         onFormSubmit(values);
-    };
-
-    return (
-        <Form form={form} layout="vertical" className={searchFormStyles.form_container} onFinish={handleFinish}>
-            {formFields.map((field, index) => {
-                const FormItemComponent = formItemComponents[field.type];
-                return (
-                    <FormItemComponent
-                        key={index}
-                        name={field.name}
-                        label={field.label}
-                        required={field.required}
-                        modalType={field.modalType}
-                        options={field.options}
-                        form={form}
-                        defaultSelected={field.defaultSelected}
-                    />
-                )
-            })}
-            <SearchBtn />
-        </Form>
-    );
-};
-
-// 프로젝트코드/명 only
-export function SearchFormPd({ onSearch }) {
-    return (
-        <Form layout="vertical" className={searchFormStyles.form_container}>
-            <SearchAtModal name="searchProject2" label="프로젝트코드/명" required={true} />
-            {/* SearchBtn 컴포넌트 클릭 시 onSearch 함수 호출 */}
-            <SearchBtn onClick={onSearch} />
-        </Form>
-    );
-}
-
-export function SearchFormEfm({ onFormSubmit, formFields, onSearch }) {
-    const [form] = Form.useForm();
-
-    const handleFinish = (values) => {
-        onFormSubmit(values);
-    };
+    }; 
 
     return (
         <Form form={form} layout="vertical" className={searchFormStyles.form_container} onFinish={handleFinish}>

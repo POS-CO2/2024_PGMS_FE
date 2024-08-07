@@ -1,6 +1,8 @@
 import React from 'react';
 import { useTheme } from '@mui/material/styles';
 import { LineChart, axisClasses } from '@mui/x-charts';
+import { CustomBarChart } from './Chart';
+import { temp_data } from './assets/json/chartData';
 
 // Generate Sales Data
 function createData(time, amount) {
@@ -25,7 +27,7 @@ export default function Main() {
     return (
             <div>
                 <React.Fragment>
-                    <div style={{ width: '100%', height: '500px', flexGrow: 1, overflow: 'hidden'}}>
+                    <div style={{ width: '400px', height: '300px', flexGrow: 1, overflow: 'hidden'}}>
                         <LineChart
                         dataset={data}
                         margin={{
@@ -71,6 +73,7 @@ export default function Main() {
                         />
                     </div>
                 </React.Fragment>
+                <CustomBarChart data={temp_data}/>
             </div>
     );
 }
