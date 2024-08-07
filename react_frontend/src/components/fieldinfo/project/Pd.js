@@ -62,21 +62,19 @@ export default function Pd() {
                     <div className={tableStyles.table_title}>조회결과</div>
                     <Table data={project} onRowClick={handlePjtClick} />
 
-                    {/* 선택된 프로젝트가 있을 때만 담당자 목록을 표시 */}
-                    {selectedPjt && (
-                        <TableCustom 
-                            title='담당자목록' 
-                            data={managers} 
-                            buttons={['Delete', 'Add']}
-                            onRowClick={handleManagerClick}
-                            modal={{
-                                'buttonClick': showModal,
-                                'isModalOpen': isModalOpen,
-                                'handleOk': handleOk,
-                                'handleCancel': handleCancel
-                            }}
-                        />
-                    )}
+                    <TableCustom 
+                        title='담당자목록' 
+                        data={managers} 
+                        buttons={['Delete', 'Add']}
+                        onRowClick={handleManagerClick}
+                        modal={{
+                            'modalType': 'PD',
+                            'buttonClick': showModal,
+                            'isModalOpen': isModalOpen,
+                            'handleOk': handleOk,
+                            'handleCancel': handleCancel
+                        }}
+                    />
                 </>
             )}
         </>
