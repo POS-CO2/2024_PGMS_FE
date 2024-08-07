@@ -26,54 +26,12 @@ export default function Main() {
 
     return (
             <div className={gridStyles.grid_container}>
-                <React.Fragment>
-                    <div style={{ width: '400px', height: '300px', flexGrow: 1, overflow: 'hidden'}}>
-                        <LineChart
-                        dataset={data}
-                        margin={{
-                            top: 16,
-                            right: 20,
-                            left: 70,
-                            bottom: 30,
-                        }}
-                        xAxis={[
-                            {
-                            scaleType: 'point',
-                            dataKey: 'time',
-                            tickNumber: 2,
-                            tickLabelStyle: theme.typography.body2,
-                            },
-                        ]}
-                        yAxis={[
-                            {
-                            label: 'Sales ($)',
-                            labelStyle: {
-                                ...theme.typography.body1,
-                                fill: theme.palette.text.primary,
-                            },
-                            tickLabelStyle: theme.typography.body2,
-                            max: 2500,
-                            tickNumber: 3,
-                            },
-                        ]}
-                        series={[
-                            {
-                            dataKey: 'amount',
-                            showMark: false,
-                            color: theme.palette.primary.light,
-                            },
-                        ]}
-                        sx={{
-                            [`.${axisClasses.root} line`]: { stroke: theme.palette.text.secondary },
-                            [`.${axisClasses.root} text`]: { fill: theme.palette.text.secondary },
-                            [`& .${axisClasses.left} .${axisClasses.label}`]: {
-                            transform: 'translateX(-25px)',
-                            },
-                        }}
-                        />
-                    </div>
-                </React.Fragment>
-                <CustomBarChart data={temp_data}/>
+                <div className={gridStyles.box1}>box1</div>
+                <div className={gridStyles.box2}>box2</div>
+                <div className={gridStyles.box3}>box3</div>
+                <div className={gridStyles.box4}>box4</div>
+                <div className={gridStyles.box5}>box5</div>
+                <div className={gridStyles.box6}>box6</div>
             </div>
     );
 }
