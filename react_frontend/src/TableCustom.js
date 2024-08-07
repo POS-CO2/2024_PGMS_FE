@@ -1,33 +1,16 @@
 import React from 'react';
 import Table from "./Table.js";
 import * as tableStyles from "./assets/css/newTable.css"
-import { AddButton, AddAndDeleteButton, AllButton } from "./Button.js";
+import { ButtonGroup } from './Button';
 
-export default function TablePage({ title, data, button, onRowClick }) {
-    let ButtonComponent;
-    switch (button) {
-        case 'AddButton':
-            ButtonComponent = AddButton;
-            break;
-        case 'AddAndDeleteButton':
-            ButtonComponent = AddAndDeleteButton;
-            break;
-        case 'AllButton':
-            ButtonComponent = AllButton;
-            break;
-        default:
-            ButtonComponent = null;
-    }
-
+export default function TableCustom({ title, data, buttons, onRowClick }) {
     return (
         <>
             <div className={tableStyles.container}>
                 <div className={tableStyles.table_title}>{title}</div>
-                <div style={{ marginRight: '23px' }}>
-                    {ButtonComponent && <ButtonComponent />}
-                </div>
+                <ButtonGroup buttons={buttons} />
             </div>
-            <Table data={data} onRowClick={onRowClick}/>
+            <Table data={data} onRowClick={onRowClick} />
         </>
     );
 }
