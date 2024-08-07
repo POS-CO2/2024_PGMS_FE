@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { SearchFormPd } from '../../../SearchForms';
+import SearchForms from '../../../SearchForms';
 import { formField_fm } from '../../../assets/json/searchFormData';
 import { table_fm_facList, table_fm_res } from '../../../assets/json/selectedPjt';
 import TableCustom from '../../../TableCustom';
@@ -31,7 +31,7 @@ export default function Fm() {
             <div>
                 {"현장정보 > 설비 > 설비지정"}
             </div>
-            <SearchFormPd onSearch={handleSearchClick}/>
+            <SearchForms onFormSubmit={handleFormSubmit} formFields={formField_fm} onSearch={handleSearchClick}/>
             {showSearchResult ? (
                 <>
                     <TableCustom title="조회결과" data={table_fm_res} onRowClick={handleRowClick}/>

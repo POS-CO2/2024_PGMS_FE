@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import {SearchFormEfm} from '../../SearchForms';
+import SearchForms from '../../SearchForms';
 import { formField_efm } from '../../assets/json/searchFormData';
 import { table_efm_list } from '../../assets/json/selectedPjt';
 import TableCustom from '../../TableCustom';
@@ -30,7 +30,7 @@ export default function Efm() {
             <div>
                 {"현장정보 > 설비 > 배출계수관리"}
             </div>
-            <SearchFormEfm onFormSubmit={handleFormSubmit} formFields={formField_efm} onSearch={handleSearchClick}/>
+            <SearchForms onFormSubmit={handleFormSubmit} formFields={formField_efm} onSearch={handleSearchClick}/>
             {showSearchResult ? (
                 <TableCustom title="배출계수목록" data={table_efm_list} button="AllButton" onRowClick={handleRowClick} />
             ) : (
