@@ -3,7 +3,7 @@
 // <SearchForms onFormSubmit={handleFormSubmit} formFields={formField_ps12}/>
 // 이런식으로 사용하면됨
 
-export const formField_ps12 = [
+export const formField_ps12 = [ 
     { type: 'SearchAtModal', name: 'searchProject', label: '프로젝트코드/명', /*required: true,*/ modalType: '프로젝트 찾기' },
     { type: 'DropDown', name: 'selectYears', label: '대상년도', required: true, options: [
         { value: '2024', label: '2024' },

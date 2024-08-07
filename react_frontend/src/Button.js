@@ -22,23 +22,25 @@ const CustomButton = styled(Button)(({ theme }) => ({
     },
 }));
 
-export function AddButton() {
+export function AddButton({onClick}) {
   return (
     <div style={{ display: 'flex', gap: '8px' }}>
-        <CustomButton variant="contained">
+        <CustomButton variant="contained" onClick={onClick}>
             등록 <ControlPointIcon className="icon" />
         </CustomButton>
+
+        
     </div>
   );
 }
 
-export function AddAndDeleteButton() {
+export function AddAndDeleteButton({onClick}) {
     return (
       <div style={{ display: 'flex', gap: '8px' }}>
           <CustomButton variant="contained">
               삭제 <DeleteForeverIcon className="icon" />
           </CustomButton>
-          <CustomButton variant="contained">
+          <CustomButton variant="contained" onClick={onClick}>
               등록 <ControlPointIcon className="icon" />
           </CustomButton>
       </div>

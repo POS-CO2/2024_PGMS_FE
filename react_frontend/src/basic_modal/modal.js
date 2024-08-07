@@ -6,7 +6,6 @@ export default function ModalComponent({ isModalOpen, handleOk, handleCancel }) 
   return (
     <Modal 
       open={isModalOpen} 
-      onOk={handleOk} 
       onCancel={handleCancel} 
     >
       <div className={basicStyles.title}>프로젝트 찾기</div>
