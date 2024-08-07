@@ -3,7 +3,7 @@ import SearchForms from '../../SearchForms';
 import { formField_um } from '../../assets/json/searchFormData';
 import TableCustom from '../../TableCustom';
 import { table_um_list } from '../../assets/json/selectedPjt';
-import { AllButton } from '../../Button';
+import { ButtonGroup } from '../../Button';
 
 export default function Um() {
 
@@ -29,7 +29,7 @@ export default function Um() {
             <div>{"사용자 목록"}</div>
             <TableCustom title="사용자목록" data={table_um_list} button="" onRowClick={handleRowClick}/>
             <div>{"사용자 상세 정보"}</div>
-            <AllButton />
+            <ButtonGroup buttons={['Add', 'Delete', 'Edit']}/>
             {infoShow ? (
                 <div>イムさん{/** 그 사용자 상세정보 어떻게 할건지 정해야함 모달도 필요 */}</div>
             ) : (

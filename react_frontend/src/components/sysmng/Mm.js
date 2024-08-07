@@ -22,7 +22,7 @@ import {
 import { TreeItem2Icon } from '@mui/x-tree-view/TreeItem2Icon';
 import { TreeItem2Provider } from '@mui/x-tree-view/TreeItem2Provider';
 import { TreeItem2DragAndDropOverlay } from '@mui/x-tree-view/TreeItem2DragAndDropOverlay';
-import { AllButton } from '../../Button';
+import { ButtonGroup } from '../../Button';
 import { useState } from 'react';
 import Paper from '@mui/material/Paper';
 
@@ -254,7 +254,7 @@ export default function Mm({menus}) {
             <div>
                 {"홈 > 시스템관리 > 메뉴 관리"}
             </div>
-            <AllButton/>
+            <ButtonGroup buttons={['Add', 'Delete', 'Edit']}/>
             <RichTreeView
             items={items}
             defaultExpandedItems={['1', '1.1']}
