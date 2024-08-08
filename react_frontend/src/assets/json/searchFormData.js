@@ -4,7 +4,7 @@
 // 이런식으로 사용하면됨
 
 export const formField_ps12 = [ 
-    { type: 'SearchAtModal', name: 'searchProject', label: '프로젝트코드/명', /*required: true,*/ modalType: '프로젝트 찾기' },
+    { type: 'SearchAtModal', name: 'searchProject', label: '프로젝트코드/명', required: true, modalType: '프로젝트 찾기' },
     { type: 'DropDown', name: 'actvYear', label: '대상년도', required: true, options: [
         { value: '2024', label: '2024' },
         { value: '2023', label: '2023' },
@@ -109,6 +109,81 @@ export const formField_efm = [
         {value: '3', label: '단코3'},
     ]},
 ]
+export const formField_pg = [
+    { type: 'InputText', name: 'pjtCode', label: '프로젝트코드'},
+    { type: 'InputText', name: 'pjtName', label: '프로젝트명'},
+    { type: 'InputText', name: 'managerId', label: '담당자사번'},
+    { type: 'InputText', name: 'managerName', label: '담당자명'},
+    { type: 'InputText', name: 'DivName', label: '본부명'},
+    { type: 'DropDown', name: 'PjtProgStus', label: '프로젝트진행상태', options: [
+        {value: '1', label: 1},
+        {value: '2', label: 2},
+        {value: '3', label: 9},
+    ]},
+    { type: 'DropDown', name: 'reg', label: '지역', options: [
+        {value: '1', label: '서울'},
+        {value: '2', label: '강원도'},
+        {value: '3', label: '대전'},
+        {value: '4', label: '충남'},
+        {value: '5', label: '충북'},
+        {value: '6', label: '인천'},
+        {value: '7', label: '경기도'},
+        {value: '8', label: '광주'},
+        {value: '9', label: '전남'},
+        {value: '10', label: '전남 광양시'},
+        {value: '11', label: '전북'},
+        {value: '12', label: '부산'},
+        {value: '13', label: '울산'},
+        {value: '14', label: '제주'},
+        {value: '15', label: '대구'},
+        {value: '16', label: '경남'},
+        {value: '17', label: '경북 포항시'},
+        {value: '18', label: '세종시'},
+    ]}
+]
+
+export const formField_fl = [
+    { type: 'InputText', name: 'EquipName', label: '설비LIB명'},
+    { type: 'DropDown', name: 'EqupDvs', label: '설비구분', options: [
+        {value: '1', label: 1},
+        {value: '2', label: 2},
+        {value: '3', label: 3},
+        {value: '4', label: 4},
+        {value: '5', label: 5}
+    ]},
+    { type: 'DropDown', name: 'EquipType', label: '설비유형', options: [
+        {value: '1', label: 1},
+        {value: '2', label: 3},
+        {value: '3', label: 6},
+        {value: '4', label: 9},
+        {value: '5', label: 11}
+    ]},
+    { type: 'DropDown', name: 'EquipSpecUnit', label: '설비사양단위', options: [
+        {value: '1', label: 'kWh'},
+        {value: '2', label: 'ℓ'},
+        {value: '3', label: 'TJ'},
+        {value: '4', label: 'N㎥'}
+    ]},
+]
+
+export const formField_fam = [
+    { type: 'InputText', name: 'ActvDataName', label: '활동자료명'},
+    { type: 'DropDown', name: 'ActvDataDvs', label: '활동자료구분', options: [
+        {value: '1', label: '제철용 PCI탄'},
+        {value: '2', label: '석유코크(고체)'},
+        {value: '3', label: '폐기물 소각열'},
+        {value: '4', label: '공정폐열'},
+        {value: '5', label: '원유'},
+        {value: '6', label: '오리멀젼'},
+        {value: '7', label: '천연가스액(NGL)'},
+        {value: '8', label: '휘발유'}
+    ]}
+]
+
+export const formField_fad = [
+    { type: 'SearchAtModal', name: 'searchLib', label: '설비LIB명', required: true, modalType: '설비LIB 찾기' }
+];
+
 // 필요한 서치바 여기서 만들어서 데이터 임포트 해서 사용하기
 // import {formField_ps12} from "../../assets/json/searchFormData.js"
 // import { formField_ps12 } from './searchFormData';

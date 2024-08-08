@@ -18,8 +18,6 @@ export default function TableCustom({
     onRowClick = () => { },  // 기본값으로 빈 함수 설정
     modal = {}
 }) {
-    
-
     const renderModal = () => {
         if (modal.isModalOpen) {
             return (
