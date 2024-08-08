@@ -1,11 +1,12 @@
 import React from 'react';
 import Table from "./Table.js";
 import * as tableStyles from "./assets/css/newTable.css"
-import PdModal from "./modals/PdModal.js";
+import PdModal, { CmModal } from "./modals/PdModal.js";
 import { ButtonGroup } from './Button';
 
 const modalMap = {
     PD: PdModal,
+    CM: CmModal,
 }
 
 export default function TableCustom({

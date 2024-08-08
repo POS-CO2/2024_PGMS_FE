@@ -2,6 +2,7 @@ import * as React from 'react';
 import clsx from 'clsx';
 import { animated, useSpring } from '@react-spring/web';
 import { styled, alpha } from '@mui/material/styles';
+import * as sysStyles from '../../assets/css/sysmng.css'
 
 import Box from '@mui/material/Box';
 import Collapse from '@mui/material/Collapse';
@@ -22,9 +23,10 @@ import {
 import { TreeItem2Icon } from '@mui/x-tree-view/TreeItem2Icon';
 import { TreeItem2Provider } from '@mui/x-tree-view/TreeItem2Provider';
 import { TreeItem2DragAndDropOverlay } from '@mui/x-tree-view/TreeItem2DragAndDropOverlay';
-import { ButtonGroup } from '../../Button';
+import { ButtonGroup, ButtonGroupMm } from '../../Button';
 import { useState } from 'react';
 import Paper from '@mui/material/Paper';
+import { Card } from '@mui/material';
 
 function DotIcon() {
     return (
@@ -243,10 +245,10 @@ export default function Mm({menus}) {
     const items = convertMenusToTreeItems(menus);
     
     // 수정해야함
-    const [showtable, setShowTable] = useState(showtable ? true : false);
+    const [showtable, setShowTable] = useState(false);
 
     const clickMenuHandler = () => {
-        setShowTable(!showtable);
+        setShowTable(true);
     }
 
     return (
@@ -254,25 +256,30 @@ export default function Mm({menus}) {
             <div>
                 {"홈 > 시스템관리 > 메뉴 관리"}
             </div>
-            <ButtonGroup buttons={['Add', 'Delete', 'Edit']}/>
-            <RichTreeView
-            items={items}
-            defaultExpandedItems={['1', '1.1']}
-            defaultSelectedItems="1.1"
-            sx={{ height: 'fit-content', flexGrow: 1, maxWidth: 400, overflowY: 'auto' }}
-            slots={{ item: CustomTreeItem }}
-            onItemClick={() => clickMenuHandler()}
-            />
-            <div>
-                {"권한 부여 현황"}
+            <div className={sysStyles.main_grid}>
+                <Card sx={{width:"50%", borderRadius:"15px"}}>
+                <ButtonGroupMm className={sysStyles.btn_group} buttons={['Add', 'Delete', 'Edit']}/>
+                <RichTreeView
+                items={items}
+                sx={{ height: 'fit-content', flexGrow: 1, maxWidth: 400, overflowY: 'auto', width:"300px"}}
+                slots={{ item: CustomTreeItem }}
+                onItemClick={() => clickMenuHandler()}
+                />
+                </Card>
+                <div>
+                    {"권한 부여 현황"}
+                </div>
+                
+                <Card sx={{width:"1000px", height:"1000px", borderRadius:"15px"}}>
+                {showtable ? (
+                    /** 테이블 컴포넌트 하나 생성해서 할당 */
+                    /** 권한 부여 현황 어케 할건지 및 등록, 수정화면 필요 */
+                    
+                    <Paper elevation={6} style={{width:"1000px", height:"1000px"}}>
+                    </Paper>
+                ) : <></>}
+                </Card>
             </div>
-            {showtable ? (
-                /** 테이블 컴포넌트 하나 생성해서 할당 */
-                /** 권한 부여 현황 어케 할건지 및 등록, 수정화면 필요 */
-                <Paper elevation={6} style={{width:"1000px", height:"1000px"}}>
-                    <div style={{width: "120px", height: "1000px", backgroundColor:"red"}}></div>
-                </Paper>
-            ) : <></>}
         </>
     );
 }

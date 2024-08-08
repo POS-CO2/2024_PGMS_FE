@@ -7,4 +7,5 @@
   border-radius: 8px; /* 모서리를 둥글게 */
   padding: 20px 30px 5px 30px; /* 내부 여백 추가 */
   margin: 30px; /* 양 옆 여백 */
+  background-color: white;
 }

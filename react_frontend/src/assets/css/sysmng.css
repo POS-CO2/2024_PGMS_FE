@@ -1,0 +1,8 @@
+.main_grid {
+    display: flex;
+    flex-direction: row
+}
+
+.btn_group {
+    justify-content: flex-end !important;
+}

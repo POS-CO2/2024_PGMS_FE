@@ -4,7 +4,7 @@ import * as tableStyles from '../../assets/css/table.css'
 import { formField_cm } from '../../assets/json/searchFormData';
 import TableCustom from '../../TableCustom';
 import { table_cm_group, table_cm_code } from '../../assets/json/selectedPjt';
-import PD from '../../modals/PdModal';
+import PD, { CmModal } from '../../modals/PdModal';
 
 
 export default function Cm() {
@@ -42,13 +42,14 @@ export default function Cm() {
             <div>
                 {"시스템관리 > 코드 관리"}
             </div>
-            <SearchForms onFormSubmit={handleFormSubmit} formFields={formField_cm}/>
+            <SearchForms onFormSubmit={handleFormSubmit} formFields={formField_cm} />
             <div>
                 {"코드그룹ID"}
             </div>
             {/** 모달 추가 필요 */}
             <TableCustom title="코드그룹ID" data={table_cm_group} buttons={["Edit", "Delete", "Add"]} onRowClick={handleRowClick} modal={
                 {
+                    "modalType" : CmModal,
                     'buttonClick': showModal,
                     'isModalOpen': isModalOpen,
                     'handleOk': handleOk,
