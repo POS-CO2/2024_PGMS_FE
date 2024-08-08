@@ -4,15 +4,13 @@ import Table from "../../../Table";
 import TableCustom from "../../../TableCustom";
 import project from "../../../assets/json/selectedPjt";
 import managers from "../../../assets/json/manager";
-import SearchForms from "../../../SearchForms"
-import {formField_ps12} from "../../../assets/json/searchFormData.js"
+import SearchForms from "../../../SearchForms";
+import {formField_ps12} from "../../../assets/json/searchFormData.js";
 
 export default function Pd() {
     const [showResults, setShowResults] = useState(false);            // 조회결과와 담당자목록을 표시할지 여부
     const [selectedPjt, setSelectedPjt] = useState(null);             // 선택된 프로젝트 코드
-    const [selectedManager, setSelectedManager] = useState([]);       // 선택된 매니저
-    const [formData, setFormData] = useState({});
-    const [searchResult, setSearchResult] = useState('');
+    const [selectedManagers, setSelectedManagers] = useState([]);     // 선택된 매니저
 
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [inputValue, setInputValue] = useState("");
@@ -33,7 +31,7 @@ export default function Pd() {
 
     // 담당자 row 클릭 시 호출될 함수
     const handleManagerClick = (row) => {
-        setSelectedManager(row.UserId);
+        setSelectedManagers(row.UserId);
     };
 
     const showModal = () => {
