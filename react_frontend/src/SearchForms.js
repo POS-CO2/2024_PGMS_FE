@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import * as searchFormStyles from './assets/css/searchForm.css';
 import { Form } from 'antd';
 import DropDown from "./FormItem/DropDown";
@@ -35,28 +35,8 @@ const formItemComponents = {
     SearchAtModal
 };
 
-export default function SearchForms({ onFormSubmit, formFields, onSearch, autoSubmitOnInit=false }) {
+export default function SearchForms({ onFormSubmit, formFields, onSearch }) {
     const [form] = Form.useForm();
-    const [isInitialSubmit, setIsInitialSubmit] = useState(autoSubmitOnInit); // 첫 렌더링 여부를 추적하는 상태
-
-    // 초기 렌더링 시 폼을 제출하는 함수
-    const autoSubmitForm = () => {
-        form.validateFields()
-            .then(values => {
-                onFormSubmit(values);
-                setIsInitialSubmit(false); // 초기 제출 후 상태 업데이트
-            })
-            .catch(info => {
-                console.log('Validation Failed:', info);
-            });
-    };
-
-    // 초기 렌더링 시에만 폼 제출
-    useEffect(() => {
-        if (isInitialSubmit) {
-            autoSubmitForm();
-        }
-    }, [isInitialSubmit, formFields, form]);
 
     // 조회 버튼 클릭 시 호출될 함수
     const handleFinish = (values) => {

@@ -78,11 +78,6 @@ export default function CustomizedTables({data, variant = 'default', onRowClick 
         );
     }
 
-    if (!data.length) {
-        // 데이터가 비어 있을 경우 처리
-        return <p>No data available</p>;
-    }
-
     return (
         <Box sx={{ 
             width: '100%', 

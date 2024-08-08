@@ -2,12 +2,10 @@ import React from 'react';
 import Table from "./Table.js";
 import * as tableStyles from "./assets/css/newTable.css"
 import PdModal from "./modals/PdModal.js";
-import Ps12Modal from "./modals/Ps12Modal.js";
 import { ButtonGroup } from './Button';
 
 const modalMap = {
     PD: PdModal,
-    Ps12: Ps12Modal,
 }
 
 export default function TableCustom({
