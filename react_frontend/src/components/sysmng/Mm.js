@@ -251,6 +251,14 @@ export default function Mm({menus}) {
         setShowTable(true);
     }
 
+    // const columns=[
+    //     {
+    //         field: '대분류',
+    //         headerName: 'BigMenu',
+    //         editable
+    //     }   
+    // ]
+
     return (
         <>
             <div>
@@ -266,16 +274,13 @@ export default function Mm({menus}) {
                 onItemClick={() => clickMenuHandler()}
                 />
                 </Card>
-                <div>
-                    {"권한 부여 현황"}
-                </div>
-                
                 <Card sx={{width:"1000px", height:"1000px", borderRadius:"15px"}}>
                 {showtable ? (
                     /** 테이블 컴포넌트 하나 생성해서 할당 */
                     /** 권한 부여 현황 어케 할건지 및 등록, 수정화면 필요 */
-                    
                     <Paper elevation={6} style={{width:"1000px", height:"1000px"}}>
+                        <div>{"권한 부여 현황"}</div>
+                        {/* <DataGrid rows = {} columns={} /> */}
                     </Paper>
                 ) : <></>}
                 </Card>

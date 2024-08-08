@@ -1,8 +1,11 @@
 .main_grid {
     display: flex;
-    flex-direction: row
+    flex-direction: row;
+    margin-right: auto;
+    margin-left: auto;
+    gap: 8px;
 }
 
 .btn_group {
-    justify-content: flex-end !important;
+    justify-content: flex-end ;
 }
