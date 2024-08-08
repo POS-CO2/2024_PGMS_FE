@@ -14,6 +14,7 @@ export default function TableCustom({
     title = "Default Title",
     data = [],
     buttons = [],
+    onClicks = [],
     onRowClick = () => { },  // 기본값으로 빈 함수 설정
     modal = {}
 }) {
@@ -32,7 +33,7 @@ export default function TableCustom({
         <>
             <div className={tableStyles.container}>
                 <div className={tableStyles.table_title}>{title}</div>
-                <ButtonGroup buttons={buttons} onClick={modal.buttonClick} />
+                <ButtonGroup buttons={buttons} onClicks={onClicks} />
                 {renderModal()}
             </div>
             <Table data={data} onRowClick={onRowClick} />

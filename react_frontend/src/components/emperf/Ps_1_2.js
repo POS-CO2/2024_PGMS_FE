@@ -51,12 +51,20 @@ function Usage({ formData, modalProps }) {
         return <p>검색조건을 선택하세요</p>
     }
 
+    const onUploadExcelClick = () => {
+        console.log("onUploadExcelClick");
+    };
+    const onDownloadExcelFormClick = () => {
+        console.log("onDownloadExcelFormClick");
+    };
+
     return (
         <div>
             <TableCustom
                 title="실적목록"
                 data={project}
                 buttons={['UploadExcel', 'DownloadExcelForm']}
+                onClicks={{onUploadExcelClick, onDownloadExcelFormClick}}
                 modal={
                     modalProps
                 } />
