@@ -9,7 +9,15 @@ export function CustomBarChart({ data }){
             barLabel={(item, context) => {
                 return context.bar.height < 60 ? null : item.value?.toString();
             }}
-            width={600}
+            xAxis={[
+                {
+                    scaleType: 'band',
+                    data: ['Jan', 'Feb', 'Mar', "Apr", "May", "June", "July", "Aug", "Sep", "Oct", "Nov", "Dec"],
+                    id: 'months'
+                }
+            ]}
+            leftAxis={null}
+            width={800}
             height={350}
         />
     );

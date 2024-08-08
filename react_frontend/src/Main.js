@@ -5,7 +5,10 @@ import { OrbitControls, Html } from '@react-three/drei';
 import * as THREE from 'three';
 import { TextureLoader } from 'three';
 import earthTextureUrl from './assets/images/earth.jpg';
-import { GaugeContainer, GaugeValueArc, GaugeReferenceArc, useGaugeState } from '@mui/x-charts';
+import { GaugeContainer, GaugeValueArc, GaugeReferenceArc, useGaugeState, Gauge, gaugeClasses} from '@mui/x-charts';
+import { Card,CardContent } from '@mui/material';
+import { CustomBarChart } from './Chart';
+import { temp_data } from './assets/json/chartData';
 
 function GaugePointer() {
     const { valueAngle, outerRadius, cx, cy } = useGaugeState();
@@ -86,22 +89,23 @@ function Earth() {
 }
 
 export default function Main() {
-    
+    const settings = {
+        width: 150,
+        height: 150,
+        value: 33,
+    };
 
     return (
             <div className={gridStyles.grid_container}>
-                <div className={gridStyles.box1}>
-                <Canvas>
-                    <ambientLight intensity={2.0} />
-                    <pointLight position={[10, 10, 10]} />
-                    <Earth />
-                    <OrbitControls />
-                </Canvas>
-                </div>
-                <div className={gridStyles.box2}>
+                <Card className={gridStyles.box1} sx={{borderRadius:"10px"}}>
+                    {"실적스코프"}
+                    <CustomBarChart data={temp_data} />
+                </Card>
+                <Card className={gridStyles.box2} sx={{borderRadius:"10px"}}>
+                    <CardContent>                        
                     <GaugeContainer
-                        width={200}
-                        height={200}
+                        width={450}
+                        height={150}
                         startAngle={-110}
                         endAngle={110}
                         value={86}
@@ -110,12 +114,57 @@ export default function Main() {
                     <GaugeValueArc />
                     <GaugePointer />
                     </GaugeContainer>
-                    <div className={gridStyles.box2_text}>{"86/100"}</div>
-                </div>
-                <div className={gridStyles.box3}>box3</div>
-                <div className={gridStyles.box4}>box4</div>
-                <div className={gridStyles.box5}>box5</div>
-                <div className={gridStyles.box6}>box6</div>
+                    <div className={gridStyles.box2_text}>{`${GaugeContainer.value}/100`}</div>
+                    </CardContent>
+                </Card>
+                <Card className={gridStyles.box3} sx={{borderRadius:"10px"}}>
+                    <div>
+                    <Gauge 
+                    {...settings}
+                    cornerRadius="50%"
+                    sx={(theme) => ({
+                        [`& .${gaugeClasses.valueText}`]: {
+                        fontSize: 40,
+                        },
+                        [`& .${gaugeClasses.valueArc}`]: {
+                        fill: '#52b202',
+                        },
+                        [`& .${gaugeClasses.referenceArc}`]: {
+                        fill: theme.palette.text.disabled,
+                        },
+                    })}
+                    />
+                    {"프로젝트1"}
+                    </div>
+                    <div>
+                    <Gauge
+                    {...settings}
+                    cornerRadius="50%"
+                    sx={(theme) => ({
+                        [`& .${gaugeClasses.valueText}`]: {
+                        fontSize: 40,
+                        },
+                        [`& .${gaugeClasses.valueArc}`]: {
+                        fill: '#52b202',
+                        },
+                        [`& .${gaugeClasses.referenceArc}`]: {
+                        fill: theme.palette.text.disabled,
+                        },
+                    })}
+                    />
+                    {"프로젝트2"}
+                    </div>
+                </Card>
+                <Card className={gridStyles.box4} sx={{borderRadius:"10px"}}>box4</Card>
+                <Card className={gridStyles.box5} sx={{borderRadius:"10px"}}>box5</Card>
+                <Card className={gridStyles.box6} sx={{borderRadius:"10px"}}>
+                    <Canvas>
+                        <ambientLight intensity={2.0} />
+                        <pointLight position={[10, 10, 10]} />
+                        <Earth />
+                        <OrbitControls />
+                    </Canvas>
+                </Card>
             </div>
     );
 }
