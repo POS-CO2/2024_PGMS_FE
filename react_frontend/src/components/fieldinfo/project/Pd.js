@@ -70,6 +70,7 @@ export default function Pd() {
                             buttons={['Delete', 'Add']}
                             onRowClick={handleManagerClick}
                             modal={{
+                                'modalType': 'PD',
                                 'buttonClick': showModal,
                                 'isModalOpen': isModalOpen,
                                 'handleOk': handleOk,
