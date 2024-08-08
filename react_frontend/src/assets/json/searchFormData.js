@@ -12,7 +12,7 @@ export const formField_ps12 = [
         { value: '2021', label: '2021' },
         { value: '2020', label: '2020' }
     ], defaultSelected: true },
-    { type: 'DropDown', name: 'equipType', label: '배출활동유형', options: [
+    { type: 'DropDown', name: 'equipType', label: '배출활동유형', required: true, options: [
         { value: 'option1', label: 'Option 1' },
         { value: 'option2', label: 'Option 2' },
         { value: 'option3', label: 'Option 3' },
@@ -60,6 +60,16 @@ export const formField_tep = [
     ], defaultSelected: true },
 ];
 
+export const formField_psq = [
+    { type: 'SearchAtModal', name: 'searchProject', label: '프로젝트코드/명', required: true, modalType: '프로젝트 찾기' },
+    { type: 'DropDown', name: 'actvYear', label: '대상년도', required: true, options: [
+        { value: '2024', label: '2024' },
+        { value: '2023', label: '2023' },
+        { value: '2022', label: '2022' },
+        { value: '2021', label: '2021' },
+        { value: '2020', label: '2020' }
+    ], defaultSelected: true },
+];
 
 export const formField_cm = [
     { type: 'InputText', name: 'codeGroupId', label: '코드그룹ID'},

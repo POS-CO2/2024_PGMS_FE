@@ -81,11 +81,12 @@ function DownloadExcelButton({onClick}) {
   );
 }
 
-export function ButtonGroup({ buttons = [], onClick}) {
+export function ButtonGroup({ buttons=[], onClicks=[] }) {
   return (
     <div style={{ display: 'flex', gap: '8px', marginRight: '23px' }}>
-      {buttons.map(button => {
+      {buttons.map((button, index) => {
         const ButtonComponent = buttonMap[button];
+        const onClick = onClicks[index];
         return ButtonComponent ? <ButtonComponent key={button} onClick={onClick} /> : null;
       })}
     </div>
