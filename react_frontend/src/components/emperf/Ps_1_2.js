@@ -17,16 +17,13 @@ export default function Ps_1_2() {
     const showModal = () => {
         setIsModalOpen(true);
     };
-
     // 담당자 지정 등록 버튼 클릭 시 호출될 함수
     const handleOk = (data) => {
         setIsModalOpen(false);
     };
-
     const handleCancel = () => {
         setIsModalOpen(false);
     };
-
     // 모달 관련 속성들을 하나의 객체로 묶음
     const modalProps = {
         modalType: 'Ps12',
