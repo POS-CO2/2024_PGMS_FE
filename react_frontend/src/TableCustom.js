@@ -4,26 +4,28 @@ import * as tableStyles from "./assets/css/newTable.css"
 import PdModal from "./modals/PdModal.js";
 import { ButtonGroup } from './Button';
 
+const modalMap = {
+    PD: PdModal,
+}
+
 export default function TableCustom({
-    title = "Default Title", 
-    data = [], 
-    buttons = [], 
-    onRowClick = () => {},  // 기본값으로 빈 함수 설정
+    title = "Default Title",
+    data = [],
+    buttons = [],
+    onRowClick = () => { },  // 기본값으로 빈 함수 설정
     modal = {}
 }) {
+    
+
     const renderModal = () => {
         if (modal.isModalOpen) {
             return (
-                <PdModal 
-                    isModalOpen={modal.isModalOpen} 
-                    handleOk={modal.handleOk || (() => {})} 
-                    handleCancel={modal.handleCancel || (() => {})}
-                />
+                <ModalGroup modal={modal} />
             );
         }
         return null;
     };
-    
+
     return (
         <>
             <div className={tableStyles.container}>
@@ -34,4 +36,13 @@ export default function TableCustom({
             <Table data={data} onRowClick={onRowClick} />
         </>
     );
+}
+
+export function ModalGroup({ modal }) {
+    const ModalComponent = modalMap[modal.modalType];
+    return ModalComponent ? <ModalComponent
+                                isModalOpen={modal.isModalOpen}
+                                handleOk={modal.handleOk || (() => { })}
+                                handleCancel={modal.handleCancel || (() => { })}
+                            /> : null;
 }

@@ -4,9 +4,12 @@ import * as tableStyles from '../../assets/css/table.css'
 import { formField_cm } from '../../assets/json/searchFormData';
 import TableCustom from '../../TableCustom';
 import { table_cm_group, table_cm_code } from '../../assets/json/selectedPjt';
+import PD from '../../modals/PdModal';
+
 
 export default function Cm() {
     const [codeGroup, setCodeGroup] = useState([]);
+    console.log(PD);
 
     const handleFormSubmit = (data) => {
         setCodeGroup(data);
@@ -56,6 +59,7 @@ export default function Cm() {
             {showTable ? (
                 <TableCustom title="코드그룹ID" data={table_cm_code} buttons={["Edit", "Delete", "Add"]} modal={
                     {
+                        'modalType' : 'PD',
                         'buttonClick': showModal,
                         'isModalOpen': isModalOpen,
                         'handleOk': handleOk,
