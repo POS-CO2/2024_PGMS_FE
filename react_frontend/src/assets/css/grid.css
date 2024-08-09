@@ -20,37 +20,43 @@
     grid-column: 4 / -1;
     display: inline-flex;
     align-items: center;
+    justify-content: center;
     flex-direction: column;
-
+    min-height: fit-content;
 }
 
 .box2_text {
     align-items: center;
     text-align: center;
+    
     font-size: 50px;
 }
 
 .box3{
     display: flex;
     justify-content: space-around;
+    align-items: center;
+    min-height: fit-content;
     grid-row: 3 / 5;
     grid-column: 4 / -1;
 }
 
 .box4{
     background-color: blueviolet;
-    grid-row: 4 / 5;
+    display: flex;
+    grid-row: 3 / 4;
     grid-column: 1 / 4;
+    justify-content: stretch;
 }
 
 .box5{
     background-color: greenyellow;
-    grid-row: 5 / -1;
+    grid-row: 4 / -1;
     grid-column: 1 / 4;
 }
 
 .box6{
-    grid-row: 5 / -1;
+    grid-row: 4 / -1;
     grid-column: 4 / -1;
 }
 

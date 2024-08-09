@@ -9,15 +9,15 @@ export default function AppContainer({children, tabs, user, activeTab, handelTab
     return(
         <div className={appStyles.app}>
             <Header 
-            tabs = {tabs} 
-            activeTab={activeTab} 
-            handelTabClick={handelTabClick} 
-            handleTabClose={handleTabClose} 
-            dragStart={dragStart} 
-            dragEnter={dragEnter} 
-            drop={drop} 
-            handleLogout={handleLogout}
-            user={user}
+                tabs = {tabs} 
+                activeTab={activeTab} 
+                handelTabClick={handelTabClick} 
+                handleTabClose={handleTabClose} 
+                dragStart={dragStart} 
+                dragEnter={dragEnter} 
+                drop={drop} 
+                handleLogout={handleLogout}
+                user={user}
             />
             <div className="comp" style={{boxSizing: "boarder-box"}}>
                 {children}

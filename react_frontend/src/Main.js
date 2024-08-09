@@ -97,14 +97,13 @@ export default function Main() {
 
     return (
             <div className={gridStyles.grid_container}>
-                <Card className={gridStyles.box1} sx={{borderRadius:"10px"}}>
+                <Card className={gridStyles.box1} sx={{borderRadius:"10px", height: "20rem"}}>
                     {"실적스코프"}
                     <CustomBarChart data={temp_data} />
                 </Card>
-                <Card className={gridStyles.box2} sx={{borderRadius:"10px"}}>
+                <Card className={gridStyles.box2} sx={{borderRadius:"10px", height: "20rem"}}>
                     <CardContent>                        
                     <GaugeContainer
-                        width={450}
                         height={150}
                         startAngle={-110}
                         endAngle={110}
@@ -117,7 +116,7 @@ export default function Main() {
                     <div className={gridStyles.box2_text}>{`${GaugeContainer.value}/100`}</div>
                     </CardContent>
                 </Card>
-                <Card className={gridStyles.box3} sx={{borderRadius:"10px"}}>
+                <Card className={gridStyles.box3} sx={{borderRadius:"10px", height:"15rem"}}>
                     <div>
                     <Gauge 
                     {...settings}
@@ -155,9 +154,9 @@ export default function Main() {
                     {"프로젝트2"}
                     </div>
                 </Card>
-                <Card className={gridStyles.box4} sx={{borderRadius:"10px"}}>box4</Card>
+                <Card className={gridStyles.box4} sx={{borderRadius:"10px", height:"15rem"}}>box4</Card>
                 <Card className={gridStyles.box5} sx={{borderRadius:"10px"}}>box5</Card>
-                <Card className={gridStyles.box6} sx={{borderRadius:"10px"}}>
+                <Card className={gridStyles.box6} sx={{borderRadius:"10px", height:"30rem"}}>
                     <Canvas>
                         <ambientLight intensity={2.0} />
                         <pointLight position={[10, 10, 10]} />

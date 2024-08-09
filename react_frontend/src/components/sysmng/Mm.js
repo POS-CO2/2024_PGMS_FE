@@ -1,7 +1,7 @@
 import * as React from 'react';
 import clsx from 'clsx';
 import { animated, useSpring } from '@react-spring/web';
-import { styled, alpha } from '@mui/material/styles';
+import { styled, alpha, createTheme } from '@mui/material/styles';
 import * as sysStyles from '../../assets/css/sysmng.css'
 
 import Box from '@mui/material/Box';
@@ -26,7 +26,9 @@ import { TreeItem2DragAndDropOverlay } from '@mui/x-tree-view/TreeItem2DragAndDr
 import { ButtonGroup, ButtonGroupMm } from '../../Button';
 import { useState } from 'react';
 import Paper from '@mui/material/Paper';
-import { Card } from '@mui/material';
+import { Card, TextField } from '@mui/material';
+import TableCustom from '../../TableCustom';
+import { table_mm } from '../../assets/json/selectedPjt';
 
 function DotIcon() {
     return (
@@ -265,7 +267,7 @@ export default function Mm({menus}) {
                 {"홈 > 시스템관리 > 메뉴 관리"}
             </div>
             <div className={sysStyles.main_grid}>
-                <Card sx={{width:"50%", borderRadius:"15px"}}>
+                <Card sx={{width:"24%", borderRadius:"15px"}}>
                 <ButtonGroupMm className={sysStyles.btn_group} buttons={['Add', 'Delete', 'Edit']}/>
                 <RichTreeView
                 items={items}
@@ -274,16 +276,40 @@ export default function Mm({menus}) {
                 onItemClick={() => clickMenuHandler()}
                 />
                 </Card>
-                <Card sx={{width:"1000px", height:"1000px", borderRadius:"15px"}}>
                 {showtable ? (
                     /** 테이블 컴포넌트 하나 생성해서 할당 */
                     /** 권한 부여 현황 어케 할건지 및 등록, 수정화면 필요 */
-                    <Paper elevation={6} style={{width:"1000px", height:"1000px"}}>
-                        <div>{"권한 부여 현황"}</div>
+                    <>
+                    <Card className={sysStyles.card_box} sx={{width:"38%", height:"800px", borderRadius:"15px"}}>
+                        <div className={sysStyles.mid_title}>{"메뉴 정보"}</div>
+                        <div className={sysStyles.text_field} style={{marginTop:"2rem"}}>
+                            <div className={sysStyles.text}>
+                                {"메뉴 이름"}
+                            </div>
+                            <TextField id='menuName' label="메뉴 관리" disabled={true} variant='outlined' sx={{width:"30rem", backgroundColor:"rgb(223,223,223)"}}/>
+                        </div>
+                        <div className={sysStyles.text_field}>
+                            <div className={sysStyles.text}>{"상위 폴더"}</div>
+                            <TextField id='upperFolder' label="시스템 관리" disabled={true} variant='outlined' sx={{width:"30rem", backgroundColor:"rgb(223,223,223)"}}/>
+                        </div>
+                        <div className={sysStyles.text_field}>
+                            <div className={sysStyles.text}>{"접근 권한"}</div>
+                            <TextField id='access' label="ADMIN" disabled={true} variant='outlined' sx={{width:"30rem", backgroundColor:"rgb(223,223,223)"}}/>
+                        </div>
+                    </Card> 
+                    <Card className={sysStyles.card_box} sx={{width:"38%"}}>
+                        <div className={sysStyles.mid_title}>{"권한 부여 현황"}</div>
+                        <TableCustom title='' data={table_mm} />
                         {/* <DataGrid rows = {} columns={} /> */}
-                    </Paper>
-                ) : <></>}
-                </Card>
+                    </Card>
+                    </>
+                ) : (
+                    <Card className={sysStyles.card_box} sx={{width:"38%", height:"800px", borderRadius:"15px"}}>
+                        <div className={sysStyles.mid_title}>{"권한 부여 현황"}</div>
+                        <TableCustom title='' data={table_mm} />
+                    </Card>
+                )}
+                
             </div>
         </>
     );

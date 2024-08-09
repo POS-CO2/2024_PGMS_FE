@@ -17,8 +17,8 @@ export function CustomBarChart({ data }){
                 }
             ]}
             leftAxis={null}
-            width={800}
-            height={350}
+            width={900}
+            height={300}
         />
     );
 }

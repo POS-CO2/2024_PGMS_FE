@@ -1,5 +1,6 @@
 import axiosInstance from './AxiosInstance';
 
+// 로그인 정보 받아오기
 export const login = async (id, password) => {
     try {
         const response = await axiosInstance.post('/auth/login', null, {
