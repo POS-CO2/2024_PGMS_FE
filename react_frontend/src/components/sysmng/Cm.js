@@ -4,7 +4,6 @@ import * as tableStyles from '../../assets/css/table.css'
 import { formField_cm } from '../../assets/json/searchFormData';
 import TableCustom from '../../TableCustom';
 import { table_cm_group, table_cm_code } from '../../assets/json/selectedPjt';
-import PD, { CmModal } from '../../modals/PdModal';
 import * as sysStyles from '../../assets/css/sysmng.css';
 import * as mainStyle from '../../assets/css/main.css';
 import { Card } from '@mui/material';
@@ -12,33 +11,47 @@ import { Card } from '@mui/material';
 
 export default function Cm() {
     const [codeGroup, setCodeGroup] = useState([]);
-    console.log(PD);
 
     const handleFormSubmit = (data) => {
         setCodeGroup(data);
     }
 
-    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [isModalOpen, setIsModalOpen] = useState({
+        CMAdd: false,
+        CMEdit: false,
+        CMDelete: false
+    });
     const [inputValue, setInputValue] = useState("");
-    const [showTable, setShowTable] = useState(showTable ? true : false);
+    const [showTable, setShowTable] = useState(false);
 
     const handleRowClick = () => {
-        setShowTable(!showTable);
+        setShowTable(true);
     }
 
-    const showModal = () => {
-        setIsModalOpen(true);
+    const showModal = (modalType) => {
+        setIsModalOpen(prevState => ({...prevState, [modalType]: true}));
     };
 
     // 담당자 지정 등록 버튼 클릭 시 호출될 함수
-    const handleOk = (data) => {
-        setIsModalOpen(false);
-        setInputValue(data);
+    const handleOk = (modalType) => (data) => {
+        setIsModalOpen(prevState => ({ ...prevState, [modalType]: false }));
     };
 
-    const handleCancel = () => {
-        setIsModalOpen(false);
+    const handleCancel = (modalType) => () => {
+        setIsModalOpen(prevState => ({ ...prevState, [modalType]: false }));
     }; 
+
+    const handleAddClick = () => {
+        showModal('CMAdd');
+    }
+
+    const handleEditClick = () => {
+        showModal('CMEdit');
+    }
+
+    const handleDeleteClick = () => {
+        showModal('CMDelete');
+    }
 
     return (
         <>
@@ -52,14 +65,28 @@ export default function Cm() {
                 {"코드그룹ID"}
             </div>
             {/** 모달 추가 필요 */}
-            <TableCustom title="" data={table_cm_group} buttons={["Edit", "Delete", "Add"]} onRowClick={handleRowClick} modal={
-                {
-                    "modalType" : CmModal,
-                    'buttonClick': showModal,
-                    'isModalOpen': isModalOpen,
-                    'handleOk': handleOk,
-                    'handleCancel': handleCancel
-                }
+            <TableCustom title="" data={table_cm_group} buttons={["Add", "Edit", "Delete"]} onRowClick={handleRowClick} onClicks={[handleAddClick, handleEditClick, handleDeleteClick]} modals={
+                [
+                    {
+                        "modalType" : 'CMAdd',
+                        'isModalOpen': isModalOpen.CMAdd,
+                        'handleOk': handleOk('CMAdd'),
+                        'handleCancel': handleCancel('CMAdd')
+                    },
+                    {
+                        "modalType" : 'CMEdit',
+                        'isModalOpen': isModalOpen.CMEdit,
+                        'handleOk': handleOk('CMEdit'),
+                        'handleCancel': handleCancel('CMEdit')
+                    },
+                    {
+                        "modalType" : 'CMDelete',
+                        'isModalOpen': isModalOpen.CMDelete,
+                        'handleOk': handleOk('CMDelete'),
+                        'handleCancel': handleCancel('CMDelete')
+                    },
+
+                ]
             }/>
             </Card>
             <Card className={sysStyles.card_box} sx={{width:"50%"}}>
@@ -68,10 +95,9 @@ export default function Cm() {
                 <TableCustom title="" data={table_cm_code} buttons={["Edit", "Delete", "Add"]} modal={
                     {
                         'modalType' : 'PD',
-                        'buttonClick': showModal,
-                        'isModalOpen': isModalOpen,
-                        'handleOk': handleOk,
-                        'handleCancel': handleCancel
+                        'isModalOpen': isModalOpen.PD,
+                        'handleOk': handleOk('PD'),
+                        'handleCancel': handleCancel('PD')
                     }
                 }/>
             ) : (
