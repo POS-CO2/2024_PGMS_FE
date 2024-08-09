@@ -15,16 +15,17 @@ export default function SearchAtModal({ name, label, required = false, modalType
     const showModal = () => {
         setIsModalOpen(true);
     };
-    const handleOk = (option) => {
+    const handleOkForDropDown = (option) => {
         setIsModalOpen(false);
         const selectedOption = option.value; // 값 가져오기
         const selectedLabel = option.label; // 라벨 가져오기
         form.setFieldsValue({ [name]: selectedOption  }); // 선택된 label을 폼 필드에 설정
         setInputValue(selectedLabel);
     };
-    const handleOk2 = (data) => {
+    const handleOk = (data) => {
         setIsModalOpen(false);
         const selectedData = data;
+        form.setFieldsValue({ [name]: selectedData  });
         setInputValue(selectedData[0] + '/' + selectedData[1]);
     };
     const handleCancel = () => {
@@ -34,7 +35,7 @@ export default function SearchAtModal({ name, label, required = false, modalType
     const renderModal = () => {
         switch (modalType) {
             case "프로젝트 찾기":
-                return <SearchProjectModal isModalOpen={isModalOpen} handleOk={handleOk2} handleCancel={handleCancel} />;
+                return <SearchProjectModal isModalOpen={isModalOpen} handleOk={handleOk} handleCancel={handleCancel} />;
             case "설비LIB 찾기":
                 return <SearchLibModal isModalOpen={isModalOpen} handleOk={handleOk} handleCancel={handleCancel} />;
             default:

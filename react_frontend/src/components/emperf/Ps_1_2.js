@@ -31,28 +31,24 @@ function Usage({ formData }) {
         return <p>검색조건을 선택하세요</p>
     }
 
-    const [isModalOpen, setIsModalOpen] = useState({
-        Ps12: false,
-        PD: false
-    });
-    const showModal = (modalType) => {
-        setIsModalOpen(prevState => ({ ...prevState, [modalType]: true }));
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const showModal = () => {
+        setIsModalOpen(true);
     };
-    // modalType에 따라 결과 처리 해주기
-    const handleOk = (modalType) => (data) => {
-        setIsModalOpen(prevState => ({ ...prevState, [modalType]: false }));
+    const handleOk = (data) => {
+        // 결과 처리
+        setIsModalOpen(false);
     };
-    const handleCancel = (modalType) => () => {
-        setIsModalOpen(prevState => ({ ...prevState, [modalType]: false }));
+    const handleCancel = () => {
+        setIsModalOpen(false);
     };
 
     const onUploadExcelClick = () => {
         console.log("onUploadExcelClick");
-        showModal('Ps12');
+        showModal();
     };
     const onDownloadExcelFormClick = () => {
         console.log("onDownloadExcelFormClick");
-        showModal('PD');
     };
 
     return (
@@ -65,16 +61,9 @@ function Usage({ formData }) {
                 modals={[
                     {
                         modalType: 'Ps12',
-                        //buttonClick: showModal('Ps12'),
-                        isModalOpen: isModalOpen.Ps12,
-                        handleOk: handleOk('Ps12'),
-                        handleCancel: handleCancel('Ps12'),
-                    }, {
-                        modalType: 'PD',
-                        //buttonClick: showModal('PD'),
-                        isModalOpen: isModalOpen.PD,
-                        handleOk: handleOk('PD'),
-                        handleCancel: handleCancel('PD'),
+                        isModalOpen: isModalOpen,
+                        handleOk: handleOk,
+                        handleCancel: handleCancel
                     }
                 ]}
             />

@@ -3,11 +3,15 @@ import Table from "./Table.js";
 import * as tableStyles from "./assets/css/newTable.css"
 import PdModal from "./modals/PdModal.js";
 import Ps12Modal from "./modals/Ps12Modal.js";
+import EsmAddModal from "./modals/EsmAddModal.js";
+import EsmDeleteModal from "./modals/EsmDeleteModal.js";
 import { ButtonGroup } from './Button';
 
 const modalMap = {
     PD: PdModal,
     Ps12: Ps12Modal,
+    EsmAdd: EsmAddModal,
+    EsmDelete: EsmDeleteModal,
 }
 
 export default function TableCustom({
