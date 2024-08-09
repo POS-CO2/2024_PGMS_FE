@@ -253,14 +253,6 @@ export default function Mm({menus}) {
         setShowTable(true);
     }
 
-    // const columns=[
-    //     {
-    //         field: '대분류',
-    //         headerName: 'BigMenu',
-    //         editable
-    //     }   
-    // ]
-
     return (
         <>
             <div>
