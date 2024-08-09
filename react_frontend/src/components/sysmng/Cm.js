@@ -5,6 +5,8 @@ import { formField_cm } from '../../assets/json/searchFormData';
 import TableCustom from '../../TableCustom';
 import { table_cm_group, table_cm_code } from '../../assets/json/selectedPjt';
 import PD, { CmModal } from '../../modals/PdModal';
+import * as sysStyles from '../../assets/css/sysmng.css';
+import { Card } from '@mui/material';
 
 
 export default function Cm() {
@@ -43,11 +45,13 @@ export default function Cm() {
                 {"시스템관리 > 코드 관리"}
             </div>
             <SearchForms onFormSubmit={handleFormSubmit} formFields={formField_cm} />
-            <div>
+            <div className={sysStyles.main_grid}>
+            <Card className={sysStyles.card_box} sx={{width:"50%", height:"100vh"}}>
+            <div className={sysStyles.mid_title}>
                 {"코드그룹ID"}
             </div>
             {/** 모달 추가 필요 */}
-            <TableCustom title="코드그룹ID" data={table_cm_group} buttons={["Edit", "Delete", "Add"]} onRowClick={handleRowClick} modal={
+            <TableCustom title="" data={table_cm_group} buttons={["Edit", "Delete", "Add"]} onRowClick={handleRowClick} modal={
                 {
                     "modalType" : CmModal,
                     'buttonClick': showModal,
@@ -56,9 +60,11 @@ export default function Cm() {
                     'handleCancel': handleCancel
                 }
             }/>
-            <div>{"코드리스트"}</div>
+            </Card>
+            <Card className={sysStyles.card_box} sx={{width:"50%"}}>
+            <div className={sysStyles.mid_title}>{"코드리스트"}</div>
             {showTable ? (
-                <TableCustom title="코드그룹ID" data={table_cm_code} buttons={["Edit", "Delete", "Add"]} modal={
+                <TableCustom title="" data={table_cm_code} buttons={["Edit", "Delete", "Add"]} modal={
                     {
                         'modalType' : 'PD',
                         'buttonClick': showModal,
@@ -70,7 +76,8 @@ export default function Cm() {
             ) : (
                 <></>
             )}
-            
+            </Card>
+            </div>
         </>
     );
 }

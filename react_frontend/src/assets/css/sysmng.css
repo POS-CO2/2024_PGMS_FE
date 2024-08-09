@@ -4,13 +4,21 @@
     width: 98%;
     margin-right: auto;
     margin-left: auto;
-    gap: 8px;
+    gap: 1rem;
+}
+
+.main_grid_fm {
+    display: flex;
+    flex-direction: column;
+    width: 98%;
+    margin-right: auto;
+    margin-left: auto;
+    gap: 1rem;
 }
 
 .btn_group {
     justify-content: flex-end ;
 }
-
 
 .mid_title {
     font-size: 2rem;

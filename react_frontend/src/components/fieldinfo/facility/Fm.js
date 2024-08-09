@@ -4,6 +4,8 @@ import { formField_fm } from '../../../assets/json/searchFormData';
 import { table_fm_facList, table_fm_res } from '../../../assets/json/selectedPjt';
 import TableCustom from '../../../TableCustom';
 import { AllButton } from '../../../Button';
+import * as sysStyles from '../../../assets/css/sysmng.css';
+import { Card } from '@mui/material';
 
 export default function Fm() {
 
@@ -32,21 +34,22 @@ export default function Fm() {
                 {"현장정보 > 설비 > 설비지정"}
             </div>
             <SearchForms onFormSubmit={handleFormSubmit} formFields={formField_fm} onSearch={handleSearchClick}/>
-            {showSearchResult ? (
-                <>
-                    <TableCustom title="조회결과" data={table_fm_res} onRowClick={handleRowClick}/>
-                    {showFacList ? (
-                        <>
-                            {/** 버튼 변경 필요(엑셀 다운로드, 삭제, 등록) 및 등록 클릭 시 모달 추가 */}
-                            <TableCustom title="설비목록" data={table_fm_facList} button="AllButton"/>
-                        </>
-                    ) : (
-                        <></>
-                    )}
-                </>
-            ):(
-                <></>
-            )}
+            <div className={sysStyles.main_grid_fm}>
+            
+                {showSearchResult ? (
+                    <>  
+                        <Card className={sysStyles.card_box} sx={{width:"100%", height:"fit-content"}}>
+                            <TableCustom title="조회결과" data={table_fm_res} onRowClick={handleRowClick}/>
+                        </Card>
+                        {/** 버튼 변경 필요(엑셀 다운로드, 삭제, 등록) 및 등록 클릭 시 모달 추가 */}
+                        <Card className={sysStyles.card_box} sx={{width:"100%", height:"fit-content"}}>
+                        <TableCustom title="설비목록" data={table_fm_facList} button="AllButton"/>
+                        </Card>
+                    </>
+                ):(
+                    <></>
+                )}
+            </div>
         </>
     );
 }

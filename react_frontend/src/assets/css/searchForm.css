@@ -1,11 +1,12 @@
 .form_container {
-  width: 95%;
+  width: 97%;
   display: flex;
   flex-wrap: wrap;
   gap: 16px;
   border: 2px solid #ccc; /* 테두리 추가 */
   border-radius: 8px; /* 모서리를 둥글게 */
   padding: 20px 30px 5px 30px; /* 내부 여백 추가 */
-  margin: 30px; /* 양 옆 여백 */
+  /* margin: 30px; 양 옆 여백 */
+  margin: 1rem auto;
   background-color: white;
 }

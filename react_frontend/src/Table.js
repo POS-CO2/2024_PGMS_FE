@@ -88,7 +88,8 @@ export default function CustomizedTables({data, variant = 'default', onRowClick 
             width: '100%', 
             overflowX: 'auto',
             padding: '0 20px',
-            boxSizing: 'border-box'
+            boxSizing: 'border-box',
+            margin: '0 auto 2rem'
             }}>
             <TableContainer component={Paper} sx={{ 
                     width: 'calc(100% - 10px)',
