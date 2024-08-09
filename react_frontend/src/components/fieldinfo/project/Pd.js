@@ -79,15 +79,16 @@ export default function Pd() {
                         onRowClick={handleManagerClick}
                         modals={[
                             {
-                                'modalType': 'PdAdd',
-                                'isModalOpen': isModalOpen.PdAdd,
-                                'handleOk': handleOk('PdAdd'),
-                                'handleCancel': handleCancel('PdAdd')
-                            }, {
                                 'modalType': 'PdDel',
                                 'isModalOpen': isModalOpen.PdDel,
                                 'handleOk': handleOk('PdDel'),
                                 'handleCancel': handleCancel('PdDel')
+                            },
+                            {
+                                'modalType': 'PdAdd',
+                                'isModalOpen': isModalOpen.PdAdd,
+                                'handleOk': handleOk('PdAdd'),
+                                'handleCancel': handleCancel('PdAdd')
                             }
                         ]}
                     />
