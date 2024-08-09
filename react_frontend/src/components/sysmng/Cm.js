@@ -19,7 +19,9 @@ export default function Cm() {
     const [isModalOpen, setIsModalOpen] = useState({
         CMAdd: false,
         CMEdit: false,
-        CMDelete: false
+        Delete: false,
+        CMListAdd: false,
+        CMListEdit: false,
     });
     const [inputValue, setInputValue] = useState("");
     const [showTable, setShowTable] = useState(false);
@@ -50,7 +52,15 @@ export default function Cm() {
     }
 
     const handleDeleteClick = () => {
-        showModal('CMDelete');
+        showModal('Delete');
+    }
+
+    const handleListAddClick = () => {
+        showModal('CMListAdd');
+    }
+
+    const handleListEditClick = () => {
+        showModal('CMListEdit');
     }
 
     return (
@@ -80,10 +90,10 @@ export default function Cm() {
                         'handleCancel': handleCancel('CMEdit')
                     },
                     {
-                        "modalType" : 'CMDelete',
-                        'isModalOpen': isModalOpen.CMDelete,
-                        'handleOk': handleOk('CMDelete'),
-                        'handleCancel': handleCancel('CMDelete')
+                        "modalType" : 'Delete',
+                        'isModalOpen': isModalOpen.Delete,
+                        'handleOk': handleOk('Delete'),
+                        'handleCancel': handleCancel('Delete')
                     },
 
                 ]
@@ -92,13 +102,28 @@ export default function Cm() {
             <Card className={sysStyles.card_box} sx={{width:"50%"}}>
             <div className={sysStyles.mid_title}>{"코드리스트"}</div>
             {showTable ? (
-                <TableCustom title="" data={table_cm_code} buttons={["Edit", "Delete", "Add"]} modal={
-                    {
-                        'modalType' : 'PD',
-                        'isModalOpen': isModalOpen.PD,
-                        'handleOk': handleOk('PD'),
-                        'handleCancel': handleCancel('PD')
-                    }
+                <TableCustom title="" data={table_cm_code} buttons={["Add", "Edit", "Delete"]} onRowClick={handleRowClick} onClicks={[handleListAddClick, handleListEditClick, handleDeleteClick]} modals={
+                    [
+                        {
+                            "modalType" : 'CMListAdd',
+                            'isModalOpen': isModalOpen.CMListAdd,
+                            'handleOk': handleOk('CMListAdd'),
+                            'handleCancel': handleCancel('CMListAdd')
+                        },
+                        {
+                            "modalType" : 'CMListEdit',
+                            'isModalOpen': isModalOpen.CMListEdit,
+                            'handleOk': handleOk('CMListEdit'),
+                            'handleCancel': handleCancel('CMListEdit')
+                        },
+                        {
+                            "modalType" : 'Delete',
+                            'isModalOpen': isModalOpen.Delete,
+                            'handleOk': handleOk('Delete'),
+                            'handleCancel': handleCancel('Delete')
+                        },
+    
+                    ]
                 }/>
             ) : (
                 <></>
