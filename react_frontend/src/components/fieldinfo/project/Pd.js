@@ -11,7 +11,7 @@ export default function Pd() {
     const [searchedPjt, setSearchedPjt] = useState(null);             // 프로젝트 찾기 결과(api 연동해서 받아올 data)
     const [formData, setFormData] = useState({});                     // 검색 데이터
     const [searchResult, setsearchResult] = useState(null);           // 프로젝트 조회 결과(api 연동해서 받아올 data)
-    const [selectedManagers, setSelectedManagers] = useState([]);     // 선택된 담당자들
+    const [selectedManagers, setSelectedManagers] = useState([]);     // 선택된 담당자들(PK column only)
 
     const [isModalOpen, setIsModalOpen] = useState({
         PdAdd: false,
@@ -30,8 +30,7 @@ export default function Pd() {
 
     // 담당자 row 클릭 시 호출될 함수
     const handleManagerClick = (manager) => {
-        setSelectedManagers([...selectedManagers, manager]);
-        console.log(selectedManagers);
+        setSelectedManagers([...selectedManagers, manager.loginId]);
     };
 
     // 모달 열기
@@ -66,15 +65,15 @@ export default function Pd() {
             <SearchForms onFormSubmit={handleFormSubmit} formFields={[formField_ps12[0]]} />
             
             {(!formData || Object.keys(formData).length === 0) ?
-            <></> : (
+            <></> : ( //TODO: 백엔드에서 받아온 값으로 바꾸기(data 파라미터)
                 <>
                     <div className={tableStyles.table_title}>조회결과</div>
-                    <Table data={project} />
+                    <Table data={project} />                    
 
                     <TableCustom 
                         title='담당자목록' 
                         variant='checkbox'
-                        data={managers} 
+                        data={managers}                   
                         buttons={['Delete', 'Add']}
                         onClicks={[onDeleteClick, onAddClick]}
                         onRowClick={handleManagerClick}

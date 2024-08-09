@@ -52,7 +52,6 @@ export default function PdModal({ isModalOpen, handleOk, handleCancel }) {
             footer={null}             //Ant Design의 기본 footer 제거(Cancel, OK 버튼)
         >
             <div className={modalStyles.title}>현장 담당자 지정</div>
-            
             <div className={modalStyles.search_container}>
                 <div className={modalStyles.search_item}>
                     <div className={modalStyles.search_title}>사번</div>
