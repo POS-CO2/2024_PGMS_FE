@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Modal } from 'antd';
 import * as modalStyles from "../assets/css/pdModal.css";
  
-export default function Ps12Modal({ isModalOpen, handleOk, handleCancel }) { // '엑셀 업로드' 모달
+export default function EsmDeleteModal({ isModalOpen, handleOk, handleCancel }) {
 
     return (
         <Modal 
@@ -14,7 +14,7 @@ export default function Ps12Modal({ isModalOpen, handleOk, handleCancel }) { // 
             <div className={modalStyles.title}>배출원 삭제</div>
             
 
-            <button className={modalStyles.select_button} >삭제</button>
+            <button className={modalStyles.select_button} onClick={handleOk}>삭제</button>
         </Modal>
     )
 }

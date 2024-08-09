@@ -14,7 +14,7 @@ export default function Ps12Modal({ isModalOpen, handleOk, handleCancel }) { // 
             <div className={modalStyles.title}>배출원 등록</div>
             
 
-            <button className={modalStyles.select_button} >등록</button>
+            <button className={modalStyles.select_button} onClick={handleOk}>등록</button>
         </Modal>
     )
 }

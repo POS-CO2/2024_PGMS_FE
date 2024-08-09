@@ -31,7 +31,6 @@ export default function Esm() {
     const handlePjtClick = (row) => {
         setSelectedPjt(row.PjtCode);   // 클릭된 프로젝트의 코드로 상태를 설정
     };
-
     // 배출원 row 클릭 시 호출될 함수
     const handleEmtnClick = (row) => {
         setSelectedEmtns(row.equipName);
@@ -72,8 +71,9 @@ export default function Esm() {
                         title='배출원목록' 
                         data={emsData} 
                         buttons={['Delete', 'Add']}
-                        onRowClick={[onAddClick, onDeleteClick]}
-                        modal={[
+                        onClicks={[onDeleteClick, onAddClick]}
+                        onRowClick={handleEmtnClick}
+                        modals={[
                             {
                                 modalType: 'EsmAdd',
                                 isModalOpen: isModalOpen.EsmAdd,
