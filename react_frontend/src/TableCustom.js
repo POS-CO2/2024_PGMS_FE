@@ -18,7 +18,7 @@ export default function TableCustom({
     onRowClick = () => { },  // 기본값으로 빈 함수 설정
     modals = []
 }) {
-    
+
     return (
         <>
             <div className={tableStyles.container}>

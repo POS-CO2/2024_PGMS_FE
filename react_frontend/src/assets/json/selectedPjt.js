@@ -101,4 +101,115 @@ export const employee = [
         "이산화탄소배출량" : 0.872916,
         // 컬럼 수정 예정
     }, 
+]
+
+export const saleAmt = [
+    {
+        "year" : 2024,
+        "month" : 2,
+        "saleAmt" : 288842
+    },
+    {
+        "year" : 2022,
+        "month" : 1,
+        "saleAmt" : 288842
+    },
+    {
+        "year" : 2023,
+        "month" : 3,
+        "saleAmt" : 222222
+    },
+]
+
+export const pjt = [
+    {
+        "PjtCode": "B80593CA",
+        "PjtName": "양산 석산지역주택조합 공동주택",
+        "PjtType": 1,
+        "RegCode": 2900,
+        "CtrtFrYear": 2021,
+        "CtrtFrMth": 6,
+        "CtrtToYear": 2024,
+        "CtrtToMth": 2,
+        "DivCode": "CEBOI00",
+        "BldArea": 126396.69,
+        "PjtProgStus": 2
+    }
+]
+
+export const lib = [
+    {
+        "EquipName": "가설사무실 전력",
+        "equipDvs": 4,
+        "equipType": 9,
+        "equipSpecUnit": "kWh"
+    },
+    {
+        "EquipName": "임대사무실 전력",
+        "equipDvs": 4,
+        "equipType": 9,
+        "equipSpecUnit": "kWh"
+    },
+    {
+        "EquipName": "현장식당 전력",
+        "equipDvs": 4,
+        "equipType": 9,
+        "equipSpecUnit": "kWh"
+    },
+    {
+        "EquipName": "법인차량",
+        "equipDvs": 1,
+        "equipType": 1,
+        "equipSpecUnit": "ℓ"
+    },
+    {
+        "EquipName": "직원 유류비",
+        "equipDvs": 1,
+        "equipType": 1,
+        "equipSpecUnit": "ℓ"
+    },
+]
+
+
+export const actv = [
+    {
+        "actvDataName": "제철용 PCI탄",
+        "actvDataDvs": "F0",
+        "emtnActvType": 1001,
+        "calUnit": "ton",
+        "inputUnit": "kg",
+        "unitConvCoef": 0.001
+    },
+    {
+        "actvDataName": "석유코크(고체)",
+        "actvDataDvs": "F0",
+        "emtnActvType": 1001,
+        "calUnit": "ton",
+        "inputUnit": "kg",
+        "unitConvCoef": 0.001
+    },
+    {
+        "actvDataName": "폐기물 소각열",
+        "actvDataDvs": "F0",
+        "emtnActvType": 1001,
+        "calUnit": "TJ",
+        "inputUnit": "TJ",
+        "unitConvCoef": 0.001
+    },
+    {
+        "actvDataName": "공정폐열",
+        "actvDataDvs": "F0",
+        "emtnActvType": 1001,
+        "calUnit": "TJ",
+        "inputUnit": "TJ",
+        "unitConvCoef": 1
+    },
+    {
+        "actvDataName": "원유",
+        "actvDataDvs": "F0",
+        "emtnActvType": 1001,
+        "calUnit": "ton",
+        "inputUnit": "kg",
+        "unitConvCoef": 1
+    },
 ];
