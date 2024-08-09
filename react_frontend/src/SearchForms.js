@@ -61,6 +61,7 @@ export default function SearchForms({ onFormSubmit, formFields, onSearch, autoSu
     // 조회 버튼 클릭 시 호출될 함수
     const handleFinish = (values) => {
         onFormSubmit(values);
+        console.log(values);
     }; 
 
     return (

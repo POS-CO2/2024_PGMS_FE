@@ -13,13 +13,13 @@ const modalMap = {
 
 export default function TableCustom({
     title = "Default Title",
+    variant = 'default',
     data = [],
     buttons = [],
     onClicks = [],
     onRowClick = () => { },  // 기본값으로 빈 함수 설정
     modals = []
 }) {
-
     return (
         <>
             <div className={tableStyles.container}>
@@ -38,7 +38,7 @@ export default function TableCustom({
                     ) : null;
                 })}
             </div>
-            <Table data={data} onRowClick={onRowClick} />
+            <Table data={data} variant={variant} onRowClick={onRowClick} />
         </>
     );
 }

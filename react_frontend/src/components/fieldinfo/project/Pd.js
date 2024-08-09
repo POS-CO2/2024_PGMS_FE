@@ -8,9 +8,9 @@ import SearchForms from "../../../SearchForms";
 import {formField_ps12} from "../../../assets/json/searchFormData.js";
 
 export default function Pd() {
-    const [searchedPjt, setSearchedPjt] = useState(null);             // 프로젝트 찾기 결과
+    const [searchedPjt, setSearchedPjt] = useState(null);             // 프로젝트 찾기 결과(api 연동해서 받아올 data)
     const [formData, setFormData] = useState({});                     // 검색 데이터
-    const [searchResult, setsearchResult] = useState(null);           // 프로젝트 조회 결과
+    const [searchResult, setsearchResult] = useState(null);           // 프로젝트 조회 결과(api 연동해서 받아올 data)
     const [selectedManagers, setSelectedManagers] = useState([]);     // 선택된 담당자들
 
     const [isModalOpen, setIsModalOpen] = useState({
@@ -29,8 +29,9 @@ export default function Pd() {
     };
 
     // 담당자 row 클릭 시 호출될 함수
-    const handleManagerClick = (row) => {
-        setSelectedManagers(row.UserId);
+    const handleManagerClick = (manager) => {
+        setSelectedManagers([...selectedManagers, manager]);
+        console.log(selectedManagers);
     };
 
     // 모달 열기
@@ -68,10 +69,11 @@ export default function Pd() {
             <></> : (
                 <>
                     <div className={tableStyles.table_title}>조회결과</div>
-                    <Table data={project} onRowClick={handlePjtClick} />
+                    <Table data={project} />
 
                     <TableCustom 
                         title='담당자목록' 
+                        variant='checkbox'
                         data={managers} 
                         buttons={['Delete', 'Add']}
                         onClicks={[onDeleteClick, onAddClick]}
