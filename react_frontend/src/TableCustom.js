@@ -6,19 +6,20 @@ import Ps12Modal from "./modals/Ps12Modal.js";
 import { ButtonGroup } from './Button';
 
 const modalMap = {
-    PD: PdModal,
+    PdAdd: PdModal,
+    PdDel: PdModal,
     Ps12: Ps12Modal,
 }
 
 export default function TableCustom({
     title = "Default Title",
+    variant = 'default',
     data = [],
     buttons = [],
     onClicks = [],
     onRowClick = () => { },  // 기본값으로 빈 함수 설정
     modals = []
 }) {
-
     return (
         <>
             <div className={tableStyles.container}>
@@ -32,11 +33,12 @@ export default function TableCustom({
                             isModalOpen={modal.isModalOpen}
                             handleOk={modal.handleOk || (() => {})}
                             handleCancel={modal.handleCancel || (() => {})}
+                            onRowClick={onRowClick}
                         />
                     ) : null;
                 })}
             </div>
-            <Table data={data} onRowClick={onRowClick} />
+            <Table data={data} variant={variant} onRowClick={onRowClick} />
         </>
     );
 }
