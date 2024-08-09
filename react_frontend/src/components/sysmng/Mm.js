@@ -29,6 +29,7 @@ import Paper from '@mui/material/Paper';
 import { Card, TextField } from '@mui/material';
 import TableCustom from '../../TableCustom';
 import { table_mm } from '../../assets/json/selectedPjt';
+import * as mainStyle from '../../assets/css/main.css';
 
 function DotIcon() {
     return (
@@ -255,7 +256,7 @@ export default function Mm({menus}) {
 
     return (
         <>
-            <div>
+            <div className={mainStyle.breadcrumb}>
                 {"홈 > 시스템관리 > 메뉴 관리"}
             </div>
             <div className={sysStyles.main_grid}>

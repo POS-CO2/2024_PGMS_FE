@@ -5,6 +5,7 @@ import TableCustom from '../../TableCustom';
 import { table_um_list } from '../../assets/json/selectedPjt';
 import { ButtonGroup, ButtonGroupMm } from '../../Button';
 import * as sysStyles from '../../assets/css/sysmng.css';
+import * as mainStyle from '../../assets/css/main.css';
 import { Card } from '@mui/material';
 
 export default function Um() {
@@ -24,7 +25,7 @@ export default function Um() {
 
     return (
         <>
-            <div>
+            <div className={mainStyle.breadcrumb}>
                 {"시스템관리 > 사용자 관리"}
             </div>
             <SearchForms onFormSubmit={handleFormSubmit} formFields={formField_um}/>

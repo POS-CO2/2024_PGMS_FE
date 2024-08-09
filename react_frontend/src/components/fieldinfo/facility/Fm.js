@@ -5,6 +5,7 @@ import { table_fm_facList, table_fm_res } from '../../../assets/json/selectedPjt
 import TableCustom from '../../../TableCustom';
 import { AllButton } from '../../../Button';
 import * as sysStyles from '../../../assets/css/sysmng.css';
+import * as mainStyle from '../../../assets/css/main.css';
 import { Card } from '@mui/material';
 
 export default function Fm() {
@@ -30,7 +31,7 @@ export default function Fm() {
 
     return (
         <>
-            <div>
+            <div className={mainStyle.breadcrumb}>
                 {"현장정보 > 설비 > 설비지정"}
             </div>
             <SearchForms onFormSubmit={handleFormSubmit} formFields={formField_fm} onSearch={handleSearchClick}/>

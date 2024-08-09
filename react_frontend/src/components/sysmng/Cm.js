@@ -6,6 +6,7 @@ import TableCustom from '../../TableCustom';
 import { table_cm_group, table_cm_code } from '../../assets/json/selectedPjt';
 import PD, { CmModal } from '../../modals/PdModal';
 import * as sysStyles from '../../assets/css/sysmng.css';
+import * as mainStyle from '../../assets/css/main.css';
 import { Card } from '@mui/material';
 
 
@@ -41,7 +42,7 @@ export default function Cm() {
 
     return (
         <>
-            <div>
+            <div className={mainStyle.breadcrumb}>
                 {"시스템관리 > 코드 관리"}
             </div>
             <SearchForms onFormSubmit={handleFormSubmit} formFields={formField_cm} />

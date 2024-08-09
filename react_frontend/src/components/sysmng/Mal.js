@@ -4,7 +4,9 @@ import { formField_mal } from '../../assets/json/searchFormData';
 import { table_mal_list, table_um_list } from '../../assets/json/selectedPjt';
 import TableCustom from '../../TableCustom';
 import * as sysStyles from '../../assets/css/sysmng.css';
+import * as mainStyle from '../../assets/css/main.css';
 import { Card } from '@mui/material';
+
 
 export default function Mal() {
 
@@ -22,7 +24,7 @@ export default function Mal() {
 
     return (
         <>
-            <div>
+            <div className={mainStyle.breadcrumb}>
                 {"시스템관리 > 접속로그 조회"}
             </div>
             <SearchForms onFormSubmit={handleFormSubmit} formFields={formField_mal} />

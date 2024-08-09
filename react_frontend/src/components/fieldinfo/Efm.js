@@ -5,6 +5,7 @@ import { table_efm_list } from '../../assets/json/selectedPjt';
 import TableCustom from '../../TableCustom';
 import { AllButton } from '../../Button';
 import * as sysStyles from '../../assets/css/sysmng.css';
+import * as mainStyle from '../../assets/css/main.css';
 import { Card } from '@mui/material';
 
 
@@ -29,13 +30,13 @@ export default function Efm() {
 
     return (
         <>
-            <div>
+            <div className={mainStyle.breadcrumb}>
                 {"현장정보 > 설비 > 배출계수관리"}
             </div>
             <SearchForms onFormSubmit={handleFormSubmit} formFields={formField_efm} onSearch={handleSearchClick}/>
             <div className={sysStyles.main_grid}>
                 {showSearchResult ? (
-                    <Card className={sysStyles.card_box} sx={{width:"100%", height:"100vh"}}>
+                    <Card className={sysStyles.card_box} sx={{width:"100%", height:"fit-content"}}>
                         <TableCustom title="배출계수목록" data={table_efm_list} button="AllButton" onRowClick={handleRowClick} />
                     </Card>
                 ) : (
