@@ -8,20 +8,19 @@ import SearchForms from "../../../SearchForms";
 import {formField_ps12} from "../../../assets/json/searchFormData.js";
 
 export default function Pd() {
-    const [showResults, setShowResults] = useState(false);            // 조회결과와 담당자목록을 표시할지 여부
-    const [selectedPjt, setSelectedPjt] = useState(null);             // 선택된 프로젝트 코드
-    const [selectedManagers, setSelectedManagers] = useState([]);     // 선택된 매니저
+    const [searchedPjt, setSearchedPjt] = useState(null);             // 프로젝트 찾기 결과
+    const [formData, setFormData] = useState({});                     // 검색 데이터
+    const [searchResult, setsearchResult] = useState(null);           // 프로젝트 조회 결과
+    const [selectedManagers, setSelectedManagers] = useState([]);     // 선택된 담당자들
 
-    const [isModalOpen, setIsModalOpen] = useState(false);
-    const [inputValue, setInputValue] = useState("");
+    const [isModalOpen, setIsModalOpen] = useState({
+        PdAdd: false,
+        PdDel: false
+    });
 
+    //조회 버튼 클릭시 호출될 함수
     const handleFormSubmit = (data) => {
-        
-    };
-
-    // 조회 버튼 클릭 시 호출될 함수
-    const handleSearch = () => {
-        setShowResults(true);
+        setFormData(data);
     };
 
     // 프로젝트 row 클릭 시 호출될 함수
@@ -34,28 +33,39 @@ export default function Pd() {
         setSelectedManagers(row.UserId);
     };
 
-    const showModal = () => {
-        setIsModalOpen(true);
+    // 모달 열기
+    const showModal = (modalType) => {
+        setIsModalOpen(prevState => ({ ...prevState, [modalType]: true }));
     };
 
     // 담당자 지정 등록 버튼 클릭 시 호출될 함수
-    const handleOk = (data) => {
-        setIsModalOpen(false);
-        setInputValue(data);
+    // modalType에 따라 결과 처리 해주기
+    const handleOk = (modalType) => (data) => {
+        setIsModalOpen(prevState => ({ ...prevState, [modalType]: false })); //모달 닫기
+        //setInputValue(data);
     };
 
-    const handleCancel = () => {
-        setIsModalOpen(false);
-    }; 
+    // 모달 닫기
+    const handleCancel = (modalType) => () => {
+        setIsModalOpen(prevState => ({ ...prevState, [modalType]: false }));
+    };
+
+    // 버튼 클릭 시 모달 열림 설정 - showModal(modalType);
+    const onAddClick = () => {
+        showModal('PdAdd');
+    };
+    const onDeleteClick = () => {
+        //showModal('PdDelete');
+    };
 
     return (
         <>
             <div className={tableStyles.menu}>현장정보 &gt; 프로젝트 &gt; 담당자 지정</div>
             
-            <SearchForms onFormSubmit={handleFormSubmit} formFields={[formField_ps12[0]]} onSearch={handleSearch} />
+            <SearchForms onFormSubmit={handleFormSubmit} formFields={[formField_ps12[0]]} />
             
-            {/* showResults 상태가 true일 때만 결과를 표시 */}
-            {showResults && (
+            {(!formData || Object.keys(formData).length === 0) ?
+            <></> : (
                 <>
                     <div className={tableStyles.table_title}>조회결과</div>
                     <Table data={project} onRowClick={handlePjtClick} />
@@ -64,14 +74,21 @@ export default function Pd() {
                         title='담당자목록' 
                         data={managers} 
                         buttons={['Delete', 'Add']}
+                        onClicks={[onDeleteClick, onAddClick]}
                         onRowClick={handleManagerClick}
-                        modal={{
-                            'modalType': 'PD',
-                            'buttonClick': showModal,
-                            'isModalOpen': isModalOpen,
-                            'handleOk': handleOk,
-                            'handleCancel': handleCancel
-                        }}
+                        modals={[
+                            {
+                                'modalType': 'PdAdd',
+                                'isModalOpen': isModalOpen.PdAdd,
+                                'handleOk': handleOk('PdAdd'),
+                                'handleCancel': handleCancel('PdAdd')
+                            }, {
+                                'modalType': 'PdDel',
+                                'isModalOpen': isModalOpen.PdDel,
+                                'handleOk': handleOk('PdDel'),
+                                'handleCancel': handleCancel('PdDel')
+                            }
+                        ]}
                     />
                 </>
             )}

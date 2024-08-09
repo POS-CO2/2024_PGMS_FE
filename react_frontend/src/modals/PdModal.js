@@ -4,13 +4,25 @@ import * as modalStyles from "../assets/css/pdModal.css";
 import Table from "../Table";
 import { employee } from "../assets/json/manager.js"
  
-export default function PdModal({ emp, isModalOpen, handleOk, handleCancel }) {
+export default function PdModal({ isModalOpen, handleOk, handleCancel }) {
     const [showResults, setShowResults] = useState(false);    // 사원 목록을 표시할지 여부
     const [selectedEmps, setSelectedEmps] = useState([]);     // 선택된 사원의 loginId list
+    
+    // 각 input의 값을 상태로 관리
+    const [empId, setEmpId] = useState('');
+    const [empName, setEmpName] = useState('');
+    const [dept, setDept] = useState('');
 
     // 찾기 버튼 클릭 시 호출될 함수
     const handleSearch = () => {
         setShowResults(true);
+
+        // 백엔드로 데이터를 전송
+        const searchParams = {
+            empId,
+            empName,
+            dept,
+        };
     };
 
     // 사원 row 클릭 시 호출될 함수
@@ -60,8 +72,8 @@ export default function PdModal({ emp, isModalOpen, handleOk, handleCancel }) {
             </div>
             
             <div className={modalStyles.result_container}>
-                {/* showResults 상태가 true일 때만 프로젝트 목록을 표시 */}
-                {showResults && ( <Table data={employee} variant='checkbox' onRowClick={handleEmpClick} /> )}
+                {showResults ? <Table data={employee} variant='checkbox' onRowClick={handleEmpClick} />
+                    : <></>}
             </div>
 
             <button className={modalStyles.select_button} onClick={handleSelect}>등록</button>

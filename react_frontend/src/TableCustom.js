@@ -6,7 +6,8 @@ import Ps12Modal from "./modals/Ps12Modal.js";
 import { ButtonGroup } from './Button';
 
 const modalMap = {
-    PD: PdModal,
+    PdAdd: PdModal,
+    PdDel: PdModal,
     Ps12: Ps12Modal,
 }
 
@@ -32,6 +33,7 @@ export default function TableCustom({
                             isModalOpen={modal.isModalOpen}
                             handleOk={modal.handleOk || (() => {})}
                             handleCancel={modal.handleCancel || (() => {})}
+                            onRowClick={onRowClick}
                         />
                     ) : null;
                 })}
