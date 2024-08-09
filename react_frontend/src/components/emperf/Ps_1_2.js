@@ -8,7 +8,7 @@ import project from "../../assets/json/selectedPjt";
 
 export default function Ps_1_2() {
     const [formData, setFormData] = useState({});
-    
+
     const handleFormSubmit = (data) => {
         setFormData(data);
     };
@@ -82,7 +82,7 @@ function Usage({ formData }) {
     )
 }
 
-function AmountUsed({ formData, modalProps }) {
+function AmountUsed({ formData }) {
     if (!formData || Object.keys(formData).length === 0) {
         return <p>검색조건을 선택하세요</p>
     }
@@ -90,9 +90,22 @@ function AmountUsed({ formData, modalProps }) {
     const formDataForTable = Object.entries(formData).map(([key, value]) => {
         return { key: key, value: value != null ? value.toString() : '' };
     })
-/*
+
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const showModal = () => {
+        setIsModalOpen(true);
+    };
+    const handleOk = (data) => {
+        // 결과 처리
+        setIsModalOpen(false);
+    };
+    const handleCancel = () => {
+        setIsModalOpen(false);
+    };
+
     const onUploadExcelClick = () => {
         console.log("onUploadExcelClick2");
+        showModal();
     };
     const onDownloadExcelFormClick = () => {
         console.log("onDownloadExcelFormClick2");
@@ -105,16 +118,15 @@ function AmountUsed({ formData, modalProps }) {
                 data={formDataForTable}
                 buttons={['UploadExcel', 'DownloadExcelForm']}
                 onClicks={[onUploadExcelClick, onDownloadExcelFormClick]}
-                modal={
-                    modalProps
-                }
+                modals={[
+                    {
+                        modalType: 'Ps12',
+                        isModalOpen: isModalOpen,
+                        handleOk: handleOk,
+                        handleCancel: handleCancel
+                    }
+                ]}
             />
         </div>
     )
-*/
-return (
-    <div>
-        test
-    </div>
-)
 }

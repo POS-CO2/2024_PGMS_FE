@@ -25,7 +25,7 @@ export default function TableCustom({
                 <div className={tableStyles.table_title}>{title}</div>
                 <ButtonGroup buttons={buttons} onClicks={onClicks} />
                 
-                {modals.map((modal, index) => {
+                {modals.map((modal) => {
                     const ModalComponent = modalMap[modal.modalType];
                     return ModalComponent ? (
                         <ModalComponent
