@@ -60,7 +60,7 @@ function Usage({ formData }) {
                 onClicks={[onUploadExcelClick, onDownloadExcelFormClick]}
                 modals={[
                     {
-                        modalType: 'Ps12',
+                        modalType: 'Ps12UploadExcel',
                         isModalOpen: isModalOpen,
                         handleOk: handleOk,
                         handleCancel: handleCancel
@@ -109,7 +109,7 @@ function AmountUsed({ formData }) {
                 onClicks={[onUploadExcelClick, onDownloadExcelFormClick]}
                 modals={[
                     {
-                        modalType: 'Ps12',
+                        modalType: 'Ps12UploadExcel',
                         isModalOpen: isModalOpen,
                         handleOk: handleOk,
                         handleCancel: handleCancel

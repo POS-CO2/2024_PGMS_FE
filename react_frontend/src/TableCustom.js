@@ -2,7 +2,7 @@ import React from 'react';
 import Table from "./Table.js";
 import * as tableStyles from "./assets/css/newTable.css"
 import PdModal from "./modals/PdModal.js";
-import Ps12Modal from "./modals/Ps12Modal.js";
+import Ps12UploadExcelModal from "./modals/Ps12UploadExcelModal.js";
 import EsmAddModal from "./modals/EsmAddModal.js";
 import EsmDeleteModal from "./modals/EsmDeleteModal.js";
 import { ButtonGroup } from './Button';
@@ -10,7 +10,7 @@ import { ButtonGroup } from './Button';
 const modalMap = {
     PdAdd: PdModal,
     PdDel: PdModal,
-    Ps12: Ps12Modal,
+    Ps12UploadExcel: Ps12UploadExcelModal,
     EsmAdd: EsmAddModal,
     EsmDelete: EsmDeleteModal,
 }

@@ -33,7 +33,7 @@ const CustomButton = styled(Button)(({ theme }) => ({
   },
 }));
 
-function AddButton({onClick}) {
+export function AddButton({onClick}) {
   return (
     <CustomButton variant="contained" onClick={onClick}>
       등록 <ControlPointIcon className="icon" />

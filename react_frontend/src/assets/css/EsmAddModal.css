@@ -1,0 +1,29 @@
+.title {
+    font-weight: 700;
+    font-size: 25px;
+    line-height: 34px;
+    color: #000000;
+    position: relative; 
+    margin-bottom: 20px;
+}
+
+/* title 하단의 line css */
+.title::after {
+    content: ""; 
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 30%;                             /* 선의 너비 조정 */
+    border-bottom: 2px solid #4D5861;     /* 선의 두께와 색상 설정 */
+}
+
+.select_button {
+    width: 100%;            /* 모달 창의 전체 너비로 확장 */
+    height: 41px;
+    padding: 5px 10px;
+    background: #9284DC;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
