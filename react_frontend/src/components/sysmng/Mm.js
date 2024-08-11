@@ -254,6 +254,36 @@ export default function Mm({menus}) {
         setShowTable(true);
     }
 
+    const [isModalOpen, setIsModalOpen] = useState({
+        MmAdd: false,
+        Delete: false
+    });
+
+    const showModal = (modalType) => {
+        setIsModalOpen(prevState => ({...prevState, [modalType]: true}));
+    };
+
+    // 담당자 지정 등록 버튼 클릭 시 호출될 함수
+    const handleOk = (modalType) => (data) => {
+        setIsModalOpen(prevState => ({ ...prevState, [modalType]: false }));
+    };
+
+    const handleCancel = (modalType) => () => {
+        setIsModalOpen(prevState => ({ ...prevState, [modalType]: false }));
+    }; 
+
+    const handleAddClick = () => {
+        showModal('MmAdd');
+    }
+
+    const handleDeleteClick = () => {
+        showModal('Delete');
+    }
+
+    const handleEditClick = () => {
+
+    }
+
     return (
         <>
             <div className={mainStyle.breadcrumb}>
@@ -261,7 +291,20 @@ export default function Mm({menus}) {
             </div>
             <div className={sysStyles.main_grid}>
                 <Card sx={{width:"24%", borderRadius:"15px"}}>
-                <ButtonGroupMm className={sysStyles.btn_group} buttons={['Add', 'Delete', 'Edit']}/>
+                <TableCustom title='' className={sysStyles.btn_group} buttons={['Add', 'Delete', 'Edit']} onClicks={[handleAddClick,handleDeleteClick, handleEditClick]} table={false} modals={[
+                    {
+                        "modalType" : 'MmAdd',
+                        'isModalOpen': isModalOpen.MmAdd,
+                        'handleOk': handleOk('MmAdd'),
+                        'handleCancel': handleCancel('MmAdd')
+                    },
+                    {
+                        "modalType" : 'Delete',
+                        'isModalOpen': isModalOpen.Delete,
+                        'handleOk': handleOk('Delete'),
+                        'handleCancel': handleCancel('Delete')
+                    },
+                ]}/>
                 <RichTreeView
                 items={items}
                 sx={{ height: 'fit-content', flexGrow: 1, maxWidth: 400, overflowY: 'auto', width:"300px"}}

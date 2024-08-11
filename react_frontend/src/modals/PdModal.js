@@ -421,3 +421,74 @@ export function UmAddModal({isModalOpen, handleOk, handleCancel}){
         </Modal>
     )
 }
+
+export function MmAddModal({isModalOpen, handleOk, handleCancel}){
+    const [showResults, setShowResults] = useState(false);    // 사원 목록을 표시할지 여부
+    const [selectedEmps, setSelectedEmps] = useState([]);     // 선택된 사원의 loginId list
+    const access = [
+        {
+            value: 'None',
+            label: 'None'
+        },
+        {
+            value: '현장담당자',
+            label: '현장담당자'
+        },
+        {
+            value: '본사담당자',
+            label: '본사담당자'
+        },
+        {
+            value: '시스템관리자',
+            label: '시스템관리자'
+        },
+    ]
+
+    // 등록 버튼 클릭 시 호출될 함수
+    const handleSelect = () => {
+        handleOk(selectedEmps);
+    };
+
+    return (
+        <Modal 
+            open={isModalOpen} 
+            onCancel={handleCancel} 
+            width={680}
+            footer={null}             //Ant Design의 기본 footer 제거(Cancel, OK 버튼)
+        >
+            <div className={modalStyles.title}>메뉴 등록</div>
+            <div className={sysStyles.card_box}>
+                <div className={sysStyles.text_field} style={{marginTop:"2rem"}}>
+                    <div className={sysStyles.text}>
+                        {"메뉴 이름"}
+                    </div>
+                    <TextField id='menuName' label="메뉴 이름" variant='outlined' sx={{width:"20rem"}}/>
+                </div>
+                <div className={sysStyles.text_field}>
+                    <div className={sysStyles.text}>{"상위 폴더"}</div>
+                    <TextField id='parentDir' label="상위 폴더" variant='outlined' sx={{width:"20rem"}}/>
+                </div>
+                <div className={sysStyles.text_field}>
+                    <div className={sysStyles.text}>{"접근 권한"}</div>
+                    <TextField
+                        id="outlined-select-currency-native"
+                        select
+                        label="접근 권한"
+                        defaultValue="현장담당자"
+                        SelectProps={{
+                            native: true,
+                        }}
+                        sx={{width:"20rem"}}
+                        >
+                        {access.map((option) => (
+                            <option key={option.value} value={option.value}>
+                                {option.label}
+                            </option>
+                        ))}
+                    </TextField>
+                </div>
+            </div>
+            <button className={modalStyles.select_button} onClick={handleSelect}>등록</button>
+        </Modal>
+    )
+}
