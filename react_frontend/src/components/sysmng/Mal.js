@@ -16,10 +16,10 @@ export default function Mal() {
         setLog(data);
     }
 
-    const [showLog, setShowLog] = useState(showLog ? true : false);
+    const [showLog, setShowLog] = useState(false);
 
     const handleRowClick = () => {
-        setShowLog(!showLog);
+        setShowLog(true);
     }
 
     return (

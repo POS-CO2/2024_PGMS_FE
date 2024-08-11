@@ -16,6 +16,13 @@ export default function Cm() {
         setCodeGroup(data);
     }
 
+    const [inputValue, setInputValue] = useState("");
+    const [showTable, setShowTable] = useState(false);
+
+    const handleRowClick = () => {
+        setShowTable(true);
+    }
+
     const [isModalOpen, setIsModalOpen] = useState({
         CMAdd: false,
         CMEdit: false,
@@ -23,12 +30,6 @@ export default function Cm() {
         CMListAdd: false,
         CMListEdit: false,
     });
-    const [inputValue, setInputValue] = useState("");
-    const [showTable, setShowTable] = useState(false);
-
-    const handleRowClick = () => {
-        setShowTable(true);
-    }
 
     const showModal = (modalType) => {
         setIsModalOpen(prevState => ({...prevState, [modalType]: true}));

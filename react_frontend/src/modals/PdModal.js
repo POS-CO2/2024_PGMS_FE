@@ -288,3 +288,136 @@ export function CmListEditModal({isModalOpen, handleOk, handleCancel}){
         </Modal>
     )
 }
+
+export function FmAddModal({isModalOpen, handleOk, handleCancel}){
+    const [showResults, setShowResults] = useState(false);    // 사원 목록을 표시할지 여부
+    const [selectedEmps, setSelectedEmps] = useState([]);     // 선택된 사원의 loginId list
+    
+    // 각 input의 값을 상태로 관리
+    const [empId, setEmpId] = useState('');
+    const [empName, setEmpName] = useState('');
+    const [dept, setDept] = useState('');
+
+    // 찾기 버튼 클릭 시 호출될 함수
+    const handleSearch = () => {
+        setShowResults(true);
+
+        // 백엔드로 데이터를 전송
+        const searchParams = {
+            empId,
+            empName,
+            dept,
+        };
+    };
+
+    // 사원 row 클릭 시 호출될 함수
+    const handleEmpClick = (emp) => {
+        setSelectedEmps((prevSelectedEmp) => {
+            // 선택된 사원의 loginId가 이미 배열에 존재하는지 확인
+            if (prevSelectedEmp.includes(emp.loginId)) {
+                // 존재한다면 배열에서 제거
+                return prevSelectedEmp.filter((id) => id !== emp.loginId);
+            } else {
+                // 존재하지 않는다면 배열에 추가
+                return [...prevSelectedEmp, emp.loginId];
+            }
+        });
+    };
+
+    // 등록 버튼 클릭 시 호출될 함수
+    const handleSelect = () => {
+        handleOk(selectedEmps);
+    };
+
+    return (
+        <Modal 
+            open={isModalOpen} 
+            onCancel={handleCancel} 
+            width={680}
+            footer={null}             //Ant Design의 기본 footer 제거(Cancel, OK 버튼)
+        >
+            <div className={modalStyles.title}>현장 담당자 지정</div>
+            
+            <div className={modalStyles.result_container}>
+                <Table data={employee} variant='checkbox' onRowClick={handleEmpClick} />
+            </div>
+
+            <button className={modalStyles.select_button} onClick={handleSelect}>등록</button>
+        </Modal>
+    )
+}
+
+export function UmAddModal({isModalOpen, handleOk, handleCancel}){
+    const [showResults, setShowResults] = useState(false);    // 사원 목록을 표시할지 여부
+    const [selectedEmps, setSelectedEmps] = useState([]);     // 선택된 사원의 loginId list
+    const access = [
+        {
+            value: 'None',
+            label: 'None'
+        },
+        {
+            value: '현장담당자',
+            label: '현장담당자'
+        },
+        {
+            value: '본사담당자',
+            label: '본사담당자'
+        },
+        {
+            value: '시스템관리자',
+            label: '시스템관리자'
+        },
+    ]
+
+    // 등록 버튼 클릭 시 호출될 함수
+    const handleSelect = () => {
+        handleOk(selectedEmps);
+    };
+
+    return (
+        <Modal 
+            open={isModalOpen} 
+            onCancel={handleCancel} 
+            width={680}
+            footer={null}             //Ant Design의 기본 footer 제거(Cancel, OK 버튼)
+        >
+            <div className={modalStyles.title}>사용자 등록</div>
+            <div className={sysStyles.card_box}>
+                <div className={sysStyles.text_field} style={{marginTop:"2rem"}}>
+                    <div className={sysStyles.text}>
+                        {"로그인 ID"}
+                    </div>
+                    <TextField id='loginId' label="로그인 ID" variant='outlined' sx={{width:"20rem"}}/>
+                </div>
+                <div className={sysStyles.text_field}>
+                    <div className={sysStyles.text}>{"이름"}</div>
+                    <TextField id='userName' label="이름" variant='outlined' sx={{width:"20rem"}}/>
+                </div>
+                <div className={sysStyles.text_field}>
+                    <div className={sysStyles.text}>{"사업장"}</div>
+                    <TextField id='brnachName' label="사업장" variant='outlined' sx={{width:"20rem"}}/>
+                </div>
+                <div className={sysStyles.text_field}>
+                    <div className={sysStyles.text}>{"권한"}</div>
+                    <TextField
+                        id="outlined-select-currency-native"
+                        select
+                        label="권한"
+                        defaultValue="None"
+                        SelectProps={{
+                            native: true,
+                        }}
+                        sx={{width:"20rem"}}
+                        >
+                        {access.map((option) => (
+                            <option key={option.value} value={option.value}>
+                                {option.label}
+                            </option>
+                        ))}
+                    </TextField>
+                </div>
+            </div>
+            <button className={modalStyles.select_button} onClick={handleSelect}>등록</button>
+        </Modal>
+    )
+}

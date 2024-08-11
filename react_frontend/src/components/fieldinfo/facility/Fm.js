@@ -16,18 +16,43 @@ export default function Fm() {
         setFac(data);
     };
 
-    const [showSearchResult, setShowSearchResult] = useState(showSearchResult ? true : false);
+    const [showSearchResult, setShowSearchResult] = useState(false);
 
     const handleSearchClick = () => {
-        setShowSearchResult(!showSearchResult);
-        console.log(showSearchResult);
+        setShowSearchResult(true);
     };
 
-    const [showFacList, setShowFacList] = useState(showFacList ? true : false);
+    const [showFacList, setShowFacList] = useState(false);
 
     const handleRowClick = () => {
-        setShowFacList(!showFacList);
+        setShowFacList(false);
     };
+
+    const [isModalOpen, setIsModalOpen] = useState({
+        FmAdd: false,
+        Delete: false
+    });
+
+    const showModal = (modalType) => {
+        setIsModalOpen(prevState => ({...prevState, [modalType]: true}));
+    };
+
+    // 담당자 지정 등록 버튼 클릭 시 호출될 함수
+    const handleOk = (modalType) => (data) => {
+        setIsModalOpen(prevState => ({ ...prevState, [modalType]: false }));
+    };
+
+    const handleCancel = (modalType) => () => {
+        setIsModalOpen(prevState => ({ ...prevState, [modalType]: false }));
+    }; 
+
+    const handleAddClick = () => {
+        showModal('FmAdd');
+    }
+
+    const handleDeleteClick = () => {
+        showModal('Delete');
+    }
 
     return (
         <>
@@ -44,7 +69,22 @@ export default function Fm() {
                         </Card>
                         {/** 버튼 변경 필요(엑셀 다운로드, 삭제, 등록) 및 등록 클릭 시 모달 추가 */}
                         <Card className={sysStyles.card_box} sx={{width:"100%", height:"fit-content"}}>
-                        <TableCustom title="설비목록" data={table_fm_facList} button="AllButton"/>
+                        <TableCustom title="설비목록" data={table_fm_facList} buttons={["DownloadExcel", "Delete", "Add"]} onClicks={[() => {}, handleDeleteClick,handleAddClick]} onRowClick={handleRowClick} modals={
+                            [
+                                {
+                                    "modalType" : 'FmAdd',
+                                    'isModalOpen': isModalOpen.FmAdd,
+                                    'handleOk': handleOk('FmAdd'),
+                                    'handleCancel': handleCancel('FmAdd')
+                                },
+                                {
+                                    "modalType" : 'Delete',
+                                    'isModalOpen': isModalOpen.Delete,
+                                    'handleOk': handleOk('Delete'),
+                                    'handleCancel': handleCancel('Delete')
+                                },
+                            ]
+                        }/>
                         </Card>
                     </>
                 ):(
