@@ -6,8 +6,9 @@ import * as delStyle from "../assets/css/delModal.css";
 import Table from "../Table";
 import { employee } from "../assets/json/manager.js"
 import * as sysStyles from "../assets/css/sysmng.css"
-import { TextField, Box, InputLabel, MenuItem, FormControl, Select } from '@mui/material';
+import { TextField, Box, InputLabel, MenuItem, FormControl } from '@mui/material';
 import WarningAmberIcon from '@mui/icons-material/WarningAmber';
+import { Select } from 'antd';
 
 export function PdAddModal({ isModalOpen, handleOk, handleCancel }) {
     const [showResults, setShowResults] = useState(false);    // 사원 목록을 표시할지 여부
@@ -160,37 +161,31 @@ export function FlAddModal({ isModalOpen, handleOk, handleCancel }) {
             <div className={rmStyles.search_container}>
                 <div className={rmStyles.search_item}>
                     <div className={rmStyles.search_title}>설비라이브러리명</div>
-                    <input 
-                        className={rmStyles.search} 
-                        id="eqLibName" 
-                    />
+                    <input className={rmStyles.search} id="eqLibName" />
                 </div>
                 <div className={rmStyles.search_item}>
                     <div className={rmStyles.search_title}>설비구분</div>
-                    <select className={rmStyles.search} id="eqDvs">
-                        <option value="">선택하세요</option>
-                        <option value="구분1">구분1</option>
-                        <option value="구분2">구분2</option>
-                        <option value="구분3">구분3</option>
-                    </select>
+                    <Select id="eqDvs">
+                        <Select.Option key={"구분1"} value={"구분1"}>{"구분1"}</Select.Option>
+                        <Select.Option key={"구분2"} value={"구분2"}>{"구분2"}</Select.Option>
+                        <Select.Option key={"구분3"} value={"구분3"}>{"구분3"}</Select.Option>
+                    </Select>
                 </div>
                 <div className={rmStyles.search_item}>
                     <div className={rmStyles.search_title}>설비유형</div>
-                    <select className={rmStyles.search} id="eqType">
-                        <option value="">선택하세요</option>
-                        <option value="유형1">유형1</option>
-                        <option value="유형2">유형2</option>
-                        <option value="유형3">유형3</option>
-                    </select>
+                    <Select id="eqType">
+                        <Select.Option key={"유형1"} value={"유형1"}>{"유형1"}</Select.Option>
+                        <Select.Option key={"유형2"} value={"유형2"}>{"유형2"}</Select.Option>
+                        <Select.Option key={"유형3"} value={"유형3"}>{"유형3"}</Select.Option>
+                    </Select>
                 </div>
                 <div className={rmStyles.search_item}>
                     <div className={rmStyles.search_title}>설비사양단위</div>
-                    <select className={rmStyles.search} id="eqSpecUnit">
-                        <option value="">선택하세요</option>
-                        <option value="단위1">단위1</option>
-                        <option value="단위2">단위2</option>
-                        <option value="단위3">단위3</option>
-                    </select>
+                    <Select id="eqSpecUnit">
+                        <Select.Option key={"단위1"} value={"단위1"}>{"단위1"}</Select.Option>
+                        <Select.Option key={"단위2"} value={"단위2"}>{"단위2"}</Select.Option>
+                        <Select.Option key={"단위3"} value={"단위3"}>{"단위3"}</Select.Option>
+                    </Select>
                 </div>
             </div>
             
