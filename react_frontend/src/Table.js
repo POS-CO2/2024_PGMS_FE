@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React, {useState} from 'react';
 import { styled } from '@mui/material/styles';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
@@ -46,7 +46,7 @@ const StyledCheckbox = styled(Checkbox)(({ theme, checked }) => ({
     },
 }));
 
-export default function CustomizedTables({data, variant = 'default', onRowClick }) {
+export default function CustomizedTables({data = [], variant = 'default', onRowClick = () => { } }) {
     const [selectedRow, setSelectedRow] = React.useState(null); // default variant의 선택 상태
     const [selectedRows, setSelectedRows] = React.useState([]); // checkbox variant의 선택 상태
     const [page, setPage] = React.useState(0);
@@ -63,6 +63,7 @@ export default function CustomizedTables({data, variant = 'default', onRowClick 
     const handleRowClick = (index, event) => {
         if (variant === 'default') {
             setSelectedRow(index === selectedRow ? null : index); // 같은 행 클릭 시 선택 해제
+            onRowClick(data[index]);
         } else if (variant === 'checkbox') {
             // row 클릭시 setSelectedRows에 추가
             if (event.target.type !== 'checkbox') {
@@ -70,12 +71,10 @@ export default function CustomizedTables({data, variant = 'default', onRowClick 
                     prevSelectedRows.includes(index)                                // prevSelectedRows 배열에 index가 포함되어 있는지 확인
                         ? prevSelectedRows.filter(rowIndex => rowIndex !== index)   // 행이 이미 선택된 경우 배열에서 index 제거
                         : [...prevSelectedRows, index]                              // 행이 선택되지 않은 경우 prevSelectedRows 배열의 복사본을 만들고 그 배열에 index값을 추가
-                );
+                )
+            
+                onRowClick(data[index]);
             }                       
-        }
-
-        if (onRowClick) {
-            onRowClick(data[index]);
         }
     };
 

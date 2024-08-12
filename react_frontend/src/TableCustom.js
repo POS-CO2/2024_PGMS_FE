@@ -1,20 +1,20 @@
 import React from 'react';
 import Table from "./Table.js";
 import * as tableStyles from "./assets/css/newTable.css"
-import PdModal, { CmAddModal, DeleteModal, CmEditModal, CmListAddModal, CmListEditModal, FmAddModal, UmAddModal, MmAddModal } from "./modals/PdModal.js";
-import Ps12Modal from "./modals/Ps12Modal.js";
+import { PdAddModal, RmAddModal, Ps12Modal, DelModal, CmAddModal, DeleteModal, CmEditModal, CmListAddModal, CmListEditModal, FmAddModal, UmAddModal, MmAddModal } from "./modals/PdModal.js";
 import { ButtonGroup } from './Button';
 
 const modalMap = {
-    PD: PdModal,
     CMAdd: CmAddModal,
     CMEdit: CmEditModal,
     CMListAdd: CmListAddModal,
     CMListEdit: CmListEditModal,
     Delete: DeleteModal,
-    PdAdd: PdModal,
-    PdDel: PdModal,
     Ps12: Ps12Modal,
+    PdAdd: PdAddModal,
+    Del: DelModal,
+    RmAdd: RmAddModal,
+    RmDel: RmAddModal,
     FmAdd: FmAddModal,
     UmAdd: UmAddModal,
     MmAdd: MmAddModal,
