@@ -46,11 +46,19 @@ const StyledCheckbox = styled(Checkbox)(({ theme, checked }) => ({
     },
 }));
 
+<<<<<<< HEAD
 export default function CustomizedTables({data, variant = 'default', onRowClick }) {
     const [selectedRow, setSelectedRow] = useState(null);           // default variant의 선택 상태
     const [selectedRows, setSelectedRows] = useState([]);           // checkbox variant의 선택 상태
     const [editableData, setEditableData] = useState(data);         // 수정기능을 위한 state
     const [editingCell, setEditingCell] = useState({ row: null, col: null }); // 현재 편집 중인 셀
+=======
+export default function CustomizedTables({data = [], variant = 'default', onRowClick = () => { } }) {
+    const [selectedRow, setSelectedRow] = React.useState(null); // default variant의 선택 상태
+    const [selectedRows, setSelectedRows] = React.useState([]); // checkbox variant의 선택 상태
+    const [page, setPage] = React.useState(0);
+    const [rowsPerPage, setRowsPerPage] = React.useState(10); // default page row length
+>>>>>>> d3a26a2d637adf308a589537800cca19806acfff
 
     //TODO: 하나의 로직으로 리팩토링하기
     const handleRowClick = (index, event) => {
@@ -64,7 +72,11 @@ export default function CustomizedTables({data, variant = 'default', onRowClick 
                     prevSelectedRows.includes(index)                                // prevSelectedRows 배열에 index가 포함되어 있는지 확인
                         ? prevSelectedRows.filter(rowIndex => rowIndex !== index)   // 행이 이미 선택된 경우 배열에서 index 제거
                         : [...prevSelectedRows, index]                              // 행이 선택되지 않은 경우 prevSelectedRows 배열의 복사본을 만들고 그 배열에 index값을 추가
+<<<<<<< HEAD
                 );
+=======
+                )
+>>>>>>> d3a26a2d637adf308a589537800cca19806acfff
             
                 onRowClick(data[index]);
             }                       
