@@ -40,6 +40,7 @@ export default function TableCustom({
                     const ModalComponent = modalMap[modal.modalType];
                     return ModalComponent ? (
                         <ModalComponent
+                            key={ModalComponent} // warning 삭제
                             isModalOpen={modal.isModalOpen}
                             handleOk={modal.handleOk || (() => {})}
                             handleCancel={modal.handleCancel || (() => {})}
