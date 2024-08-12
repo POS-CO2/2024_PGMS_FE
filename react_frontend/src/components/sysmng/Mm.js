@@ -168,7 +168,6 @@ const convertMenusToTreeItems = (menus) => {
         label: 'root',
         children: traverse(menus),
     };
-
     return [rootItem];
 };
 
@@ -244,16 +243,55 @@ const CustomTreeItem = React.forwardRef(function CustomTreeItem(props, ref) {
     );
 });
 
+
 export default function Mm({menus}) {
+    const findParentFolder = (id, menus) => {
+        const parentId = id.slice(0, id.lastIndexOf('.'));
+        console.log(parentId);
+        return parentId ? findMenuItemById(parentId, menus) : null;
+    };
+    const findMenuItemById = (id, menus) => {
+        for (const node of menus) {
+            if (node.id === id) {
+                return node;
+            }
+            if (node.children) {
+                const found = findMenuItemById(id, node.children);
+                if (found) return found;
+            }
+        }
+        return null;
+    };
     const items = convertMenusToTreeItems(menus);
     
     // 수정해야함
     const [showtable, setShowTable] = useState(false);
 
-    const clickMenuHandler = () => {
+    const clickMenuHandler = (e, item) => {
         setShowTable(true);
-    }
+        const clickedItem = findMenuItemById(item, menus); // items는 전체 메뉴 트리입니다.
+        console.log(clickedItem); // null됨 ㅠㅠ
+        if (clickedItem) {
+            // 상위 폴더 찾기
+            const upperFolder = findParentFolder(item, menus);
 
+            const newMenuInfo = {
+                name: clickedItem.label, // 메뉴 이름
+                upperFolder: upperFolder ? upperFolder.label : '상위 폴더 없음', // 상위 폴더 이름
+                access: 'ADMIN' // 접근 권한 (필요 시 다른 값을 설정)
+            };
+
+            setSelectedMenu(newMenuInfo); // 상태 업데이트
+        }
+    };
+
+    const [selectedMenu, setSelectedMenu] = useState({
+        name: '',
+        parentDir: '',
+        access: '',
+    });
+
+    // 모달 구현부
     const [isModalOpen, setIsModalOpen] = useState({
         MmAdd: false,
         Delete: false
@@ -309,7 +347,7 @@ export default function Mm({menus}) {
                 items={items}
                 sx={{ height: 'fit-content', flexGrow: 1, maxWidth: 400, overflowY: 'auto', width:"300px"}}
                 slots={{ item: CustomTreeItem }}
-                onItemClick={() => clickMenuHandler()}
+                onItemClick={(e, item) => {clickMenuHandler(e, item); console.log(item);}}
                 />
                 </Card>
                 {showtable ? (
@@ -322,15 +360,15 @@ export default function Mm({menus}) {
                             <div className={sysStyles.text}>
                                 {"메뉴 이름"}
                             </div>
-                            <TextField id='menuName' label="메뉴 관리" disabled={true} variant='outlined' sx={{width:"30rem", backgroundColor:"rgb(223,223,223)"}}/>
+                            <TextField id='menuName' label="메뉴 관리" disabled={true} defaultValue={selectedMenu.name} value={selectedMenu.name} variant='outlined' sx={{width:"30rem", backgroundColor:"rgb(223,223,223)"}}/>
                         </div>
                         <div className={sysStyles.text_field}>
                             <div className={sysStyles.text}>{"상위 폴더"}</div>
-                            <TextField id='upperFolder' label="시스템 관리" disabled={true} variant='outlined' sx={{width:"30rem", backgroundColor:"rgb(223,223,223)"}}/>
+                            <TextField id='parentDir' label="시스템 관리" disabled={true} variant='outlined' value={selectedMenu.parentDir} sx={{width:"30rem", backgroundColor:"rgb(223,223,223)"}}/>
                         </div>
                         <div className={sysStyles.text_field}>
                             <div className={sysStyles.text}>{"접근 권한"}</div>
-                            <TextField id='access' label="ADMIN" disabled={true} variant='outlined' sx={{width:"30rem", backgroundColor:"rgb(223,223,223)"}}/>
+                            <TextField id='access' label="ADMIN" disabled={true} variant='outlined' value={selectedMenu.access} sx={{width:"30rem", backgroundColor:"rgb(223,223,223)"}}/>
                         </div>
                     </Card> 
                     <Card className={sysStyles.card_box} sx={{width:"38%"}}>

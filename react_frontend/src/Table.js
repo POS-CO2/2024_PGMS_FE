@@ -7,7 +7,7 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
-import { Box, Checkbox } from '@mui/material';
+import { Box, Checkbox, TablePagination } from '@mui/material';
 
 // TableCell을 스타일링하는 컴포넌트
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
@@ -49,7 +49,17 @@ const StyledCheckbox = styled(Checkbox)(({ theme, checked }) => ({
 export default function CustomizedTables({data, variant = 'default', onRowClick }) {
     const [selectedRow, setSelectedRow] = React.useState(null); // default variant의 선택 상태
     const [selectedRows, setSelectedRows] = React.useState([]); // checkbox variant의 선택 상태
+    const [page, setPage] = React.useState(0);
+    const [rowsPerPage, setRowsPerPage] = React.useState(10); // default page row length
 
+    const handleChangePage = (event, newPage) => {
+        setPage(newPage);
+    };
+
+    const handleChangeRowsPerPage = (event) => {
+        setRowsPerPage(+event.target.value);
+        setPage(0);
+    };
     const handleRowClick = (index, event) => {
         if (variant === 'default') {
             setSelectedRow(index === selectedRow ? null : index); // 같은 행 클릭 시 선택 해제
@@ -93,9 +103,10 @@ export default function CustomizedTables({data, variant = 'default', onRowClick 
             }}>
             <TableContainer component={Paper} sx={{ 
                     width: 'calc(100% - 10px)',
-                    margin: '0 auto'
+                    margin: '0 auto',
+                    maxHeight: '100%'
                 }}>
-            <Table sx={{ minWidth: 600 }} aria-label="customized table">
+            <Table sx={{ minWidth: 600 }} stickyHeader aria-label="customized table">
                 <TableHead>
                     <TableRow>
                         {
@@ -111,7 +122,9 @@ export default function CustomizedTables({data, variant = 'default', onRowClick 
                 <TableBody>
                     {
                         // 표에 data 채우기
-                        data.map((row, index) => (
+                        data
+                        .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                        .map((row, index) => (
                             <StyledTableRow 
                                 key={index}
                                 selected={
@@ -145,6 +158,15 @@ export default function CustomizedTables({data, variant = 'default', onRowClick 
                 </TableBody>
             </Table>
             </TableContainer>
+            <TablePagination 
+                rowsPerPageOptions={[10, 25, 100]} // page row length custom
+                component="div"
+                count={data.length}
+                rowsPerPage={rowsPerPage}
+                page={page}
+                onPageChange={handleChangePage}
+                onRowsPerPageChange={handleChangeRowsPerPage}
+            />
         </Box>
     );
 }
