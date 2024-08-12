@@ -48,7 +48,9 @@ export default function TableCustom({
                     ) : null;
                 })}
             </div>
-            {table ? (<Table data={data} variant={variant} onRowClick={onRowClick} />) : (<></>)}
+            {table ? (
+            <Table data={data} variant={variant} onRowClick={onRowClick} />
+            ) : (<></>)}
             
         </>
     );
