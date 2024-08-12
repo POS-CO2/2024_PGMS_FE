@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { AddButton } from "../../../Button";
-//import SdAddModal from "../../../modals/SdAddModal";
+import {SdAddModal} from "../../../modals/PdModal";
 /*
 import * as tableStyles from "../../../assets/css/newTable.css"
 import Table from "../../../Table";

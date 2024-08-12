@@ -1,0 +1,53 @@
+.input_container {
+    display: flex;
+    flex-direction: column; /* 세로 방향으로 정렬 */
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin: 40px 0;
+
+    /* 테두리 스타일 */
+    border: 1.3px solid #D9D9D9;
+    box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.25);
+    border-radius: 10px;
+    padding: 16px 16px;
+}
+
+.select_item {
+    display: flex;
+    gap: 10px; /* Select 컴포넌트 간의 간격 */
+}
+
+.input_item {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding-bottom: 10px;
+    width: 100%; /* 모달의 전체 너비를 사용하도록 설정 */
+}
+
+.input_title {
+    font-weight: bolder;
+    font-size: 16px;
+    line-height: 10px;
+}
+
+.search {
+    background: #ECF1F4;
+    border-radius: 5px;
+    border: none;
+    padding: 5px;
+    height: 25px;
+    width: 100%; /* input 요소가 부모의 너비에 맞도록 설정 */
+}
+.select_button {
+    width: 100%;            /* 모달 창의 전체 너비로 확장 */
+    height: 41px;
+    padding: 5px 10px;
+    background: #9284DC;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin: 4rem auto 0;
+}

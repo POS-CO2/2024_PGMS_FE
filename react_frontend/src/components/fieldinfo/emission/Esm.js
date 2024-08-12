@@ -13,7 +13,7 @@ import emsData from "../../../assets/json/ems";
 import sdData from "../../../assets/json/sd";
 import SearchForms from "../../../SearchForms";
 import { formField_esm } from "../../../assets/json/searchFormData.js";
-import { SdAddModal } from "../../../modals/PdModal";
+import { SdAddModal, DeleteModal } from "../../../modals/PdModal";
 
 const selectOptions = [
     { value: '2024', label: '2024' },
@@ -34,10 +34,10 @@ export default function Esm() {
 
     const [isModalOpen, setIsModalOpen] = useState({
         EsmAdd: false, // 배출원 등록
-        EsmDelete: false, // 배출원 삭제
         SdAdd: false, // 증빙자료 등록
-        SdDelete: false, // 증빙자료 삭제
-        SdShowDetails: false // 증빙자료 상세보기
+        SdShowDetails: false, // 증빙자료 상세보기
+        Del: false,
+        Delete: false
     });
 
     const handleFormSubmit = (data) => {
@@ -79,14 +79,14 @@ export default function Esm() {
         showModal('EsmAdd');
     };
     const onEmsDeleteClick = () => {
-        showModal('EsmDelete');
+        showModal('Del');
     };
 
     const onSdAddClick = () => {
         showModal('SdAdd');
     };
     const onSdDeleteClick = () => {
-        showModal('SdDelete');
+        showModal('Delete');
     };
     const onSdShowDetailsClick = () => {
         showModal('SdShowDetails');
@@ -124,10 +124,10 @@ export default function Esm() {
                                         handleOk: handleOk('EsmAdd'),
                                         handleCancel: handleCancel('EsmAdd'),
                                     }, {
-                                        modalType: 'EsmDelete',
-                                        isModalOpen: isModalOpen.EsmDelete,
-                                        handleOk: handleOk('EsmDelete'),
-                                        handleCancel: handleCancel('EsmDelete'),
+                                        modalType: 'Del',
+                                        isModalOpen: isModalOpen.Del,
+                                        handleOk: handleOk('Del'),
+                                        handleCancel: handleCancel('Del'),
                                     }
                                 ]}
                             />
@@ -158,11 +158,11 @@ export default function Esm() {
                                         handleOk={handleOk('SdAdd')}
                                         handleCancel={handleCancel('SdAdd')}
                                     />
-                                    {/*<SdDeleteModal
-                                        isModalOpen={isModalOpen.SdDelete}
-                                        handleOk={handleOk('SdDelete')}
-                                        handleCancel={handleCancel('SdDelete')}
-                                    />*/}
+                                    <DeleteModal
+                                        isModalOpen={isModalOpen.Delete}
+                                        handleOk={handleOk('Delete')}
+                                        handleCancel={handleCancel('Delete')}
+                                    />
                                     {/*<SdShowDetailsModal
                                         isModalOpen={isModalOpen.SdShowDetails}
                                         handleOk={handleOk('SdShowDetails')}
