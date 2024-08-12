@@ -79,6 +79,7 @@ export default function Rm() {
                         buttons={['Edit', 'Delete', 'Add']}
                         onClicks={[() => {}, onDeleteClick, onAddClick]}
                         onRowClick={handleSAClick}
+                        selectedRows={selectedSAs}
                         modals={[
                             {
                                 'modalType': 'Del',

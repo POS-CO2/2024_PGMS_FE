@@ -30,12 +30,21 @@ export default function TableCustom({
     onRowClick = () => { },  // 기본값으로 빈 함수 설정
     modals = [],
     table = true,
+    selectedRows = [],       // 테이블에서 선택된 row 리스트
 }) {
+    // 버튼 활성화 상태 결정
+    const buttonStatus = buttons.map((button, index) => {
+        if (button === 'Edit' || button === 'Delete') {
+            return selectedRows.length > 0;
+        }
+        return true;  // 'Add' 버튼은 항상 활성화
+    });
+
     return (
         <>
             <div className={tableStyles.container}>
                 <div className={tableStyles.table_title}>{title}</div>
-                <ButtonGroup buttons={buttons} onClicks={onClicks} />
+                <ButtonGroup buttons={buttons} onClicks={onClicks} buttonStatus={buttonStatus} />
                 
                 {modals.map((modal) => {
                     const ModalComponent = modalMap[modal.modalType];
