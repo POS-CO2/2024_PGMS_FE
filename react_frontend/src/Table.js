@@ -54,6 +54,15 @@ export default function CustomizedTables({data = [], variant = 'default', onRowC
     const [editableData, setEditableData] = useState(data);         // 수정기능을 위한 state
     const [editingCell, setEditingCell] = useState({ row: null, col: null }); // 현재 편집 중인 셀
 
+    const handleChangePage = (event, newPage) => {
+        setPage(newPage);
+    };
+
+    const handleChangeRowsPerPage = (event) => {
+        setRowsPerPage(+event.target.value);
+        setPage(0);
+    };
+
     //TODO: 하나의 로직으로 리팩토링하기
     const handleRowClick = (index, event) => {
         if (variant === 'default') {
