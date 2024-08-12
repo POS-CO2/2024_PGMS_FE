@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React, {useState} from 'react';
 import { styled } from '@mui/material/styles';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
@@ -7,7 +7,7 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
-import { Box, Checkbox } from '@mui/material';
+import { Box, Checkbox, TextField  } from '@mui/material';
 
 // TableCell을 스타일링하는 컴포넌트
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
@@ -46,13 +46,17 @@ const StyledCheckbox = styled(Checkbox)(({ theme, checked }) => ({
     },
 }));
 
-export default function CustomizedTables({data, variant = 'default'}) {
-    const [selectedRow, setSelectedRow] = React.useState(null); // default variant의 선택 상태
-    const [selectedRows, setSelectedRows] = React.useState([]); // checkbox variant의 선택 상태
+export default function CustomizedTables({data, variant = 'default', onRowClick }) {
+    const [selectedRow, setSelectedRow] = useState(null);           // default variant의 선택 상태
+    const [selectedRows, setSelectedRows] = useState([]);           // checkbox variant의 선택 상태
+    const [editableData, setEditableData] = useState(data);         // 수정기능을 위한 state
+    const [editingCell, setEditingCell] = useState({ row: null, col: null }); // 현재 편집 중인 셀
 
+    //TODO: 하나의 로직으로 리팩토링하기
     const handleRowClick = (index, event) => {
         if (variant === 'default') {
             setSelectedRow(index === selectedRow ? null : index); // 같은 행 클릭 시 선택 해제
+            onRowClick(data[index]);
         } else if (variant === 'checkbox') {
             // row 클릭시 setSelectedRows에 추가
             if (event.target.type !== 'checkbox') {
@@ -61,6 +65,8 @@ export default function CustomizedTables({data, variant = 'default'}) {
                         ? prevSelectedRows.filter(rowIndex => rowIndex !== index)   // 행이 이미 선택된 경우 배열에서 index 제거
                         : [...prevSelectedRows, index]                              // 행이 선택되지 않은 경우 prevSelectedRows 배열의 복사본을 만들고 그 배열에 index값을 추가
                 );
+            
+                onRowClick(data[index]);
             }                       
         }
     };
@@ -72,6 +78,26 @@ export default function CustomizedTables({data, variant = 'default'}) {
                 ? prevSelectedRows.filter(rowIndex => rowIndex !== index)
                 : [...prevSelectedRows, index]                         
         );
+        onRowClick(data[index]);
+    }
+
+    const handleDoubleClick = (rowIndex, colIndex) => {
+        setEditingCell({ row: rowIndex, col: colIndex });
+      };
+    
+      const handleInputChange = (e, rowIndex, colIndex) => {
+        const newData = [...editableData];
+        newData[rowIndex][colIndex] = e.target.value;
+        setEditableData(newData);
+      };
+    
+      const handleBlur = () => {
+        setEditingCell({ row: null, col: null });
+      };
+
+    if (!data.length) {
+        // 데이터가 비어 있을 경우 처리
+        return <p>No data available</p>;
     }
 
     return (
@@ -85,54 +111,69 @@ export default function CustomizedTables({data, variant = 'default'}) {
                     width: 'calc(100% - 10px)',
                     margin: '0 auto'
                 }}>
-            <Table sx={{ minWidth: 600 }} aria-label="customized table">
-                <TableHead>
-                    <TableRow>
+                <Table sx={{ minWidth: 600 }} aria-label="customized table">
+                    <TableHead>
+                        <TableRow>
+                            {
+                                // checkbox가 있는 테이블이면 체크박스 셀 추가
+                                variant === 'checkbox' && <StyledTableCell></StyledTableCell> } 
+                            {
+                                // 컬럼 제목 설정
+                                Object.keys(data[0])?.map(col => (<StyledTableCell key={col}>{col}</StyledTableCell>
+                                ))    
+                            }
+                        </TableRow>
+                    </TableHead>
+                    <TableBody>
                         {
-                            // checkbox가 있는 테이블이면 체크박스 셀 추가
-                            variant === 'checkbox' && <StyledTableCell></StyledTableCell> } 
-                        {
-                            // 컬럼 제목 설정
-                            Object.keys(data[0])?.map(col => (<StyledTableCell key={col}>{col}</StyledTableCell>
-                            ))    
+                            // 표에 data 채우기
+                            editableData.map((row, rowIndex) => (
+                                <StyledTableRow 
+                                    key={rowIndex}
+                                    selected={
+                                        variant === 'checkbox' 
+                                        ? selectedRows.includes(rowIndex) 
+                                        : selectedRow === rowIndex
+                                    }
+                                    variant={variant}
+                                    onClick={(e) => handleRowClick(rowIndex, e)}
+                                >
+                                    {   // checkbox가 있는 테이블이면 체크박스 셀 추가
+                                        variant === 'checkbox' && (
+                                            <StyledTableCell>
+                                                <StyledCheckbox 
+                                                    checked={selectedRows.includes(rowIndex)}
+                                                    onChange={() => handleCheckboxChange(rowIndex)}
+                                                />
+                                            </StyledTableCell>
+                                        )
+                                    }
+                                    {   // 데이터 값 채우기
+                                        Object.values(row).map((value, colIndex) => (
+                                            <StyledTableCell 
+                                                key={colIndex} 
+                                                align="left"
+                                                onDoubleClick={() => handleDoubleClick(rowIndex, colIndex)}
+                                            >
+                                                {editingCell.row === rowIndex && editingCell.col === colIndex ? (
+                                                <TextField
+                                                    value={value}
+                                                    onChange={(e) => handleInputChange(e, rowIndex, colIndex)}
+                                                    onBlur={handleBlur}
+                                                    autoFocus
+                                                    size="small"
+                                                />
+                                            ) : (
+                                                value
+                                            )}
+                                            </StyledTableCell>
+                                        ))
+                                    }
+                                </StyledTableRow>
+                            ))
                         }
-                    </TableRow>
-                </TableHead>
-                <TableBody>
-                    {
-                        // 표에 data 채우기
-                        data.map((row, index) => (
-                            <StyledTableRow 
-                                key={index}
-                                selected={
-                                    variant === 'checkbox' 
-                                    ? selectedRows.includes(index) 
-                                    : selectedRow === index
-                                }
-                                onClick={(e) => handleRowClick(index, e)}
-                            >
-                                {   // checkbox가 있는 테이블이면 체크박스 셀 추가
-                                    variant === 'checkbox' && (
-                                        <StyledTableCell>
-                                            <StyledCheckbox 
-                                                checked={selectedRows.includes(index)}
-                                                onChange={() => handleCheckboxChange(index)}
-                                            />
-                                        </StyledTableCell>
-                                    )
-                                }
-                                {   // 데이터 값 채우기
-                                    Object.values(row).map((value, idx) => (
-                                        <StyledTableCell key={idx} align="left">
-                                            {value}
-                                        </StyledTableCell>
-                                    ))
-                                }
-                            </StyledTableRow>
-                        ))
-                    }
-                </TableBody>
-            </Table>
+                    </TableBody>
+                </Table>
             </TableContainer>
         </Box>
     );
