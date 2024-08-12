@@ -1,0 +1,45 @@
+/* delModal.css */
+.container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1rem;
+    margin-bottom: 1rem;
+    text-align: center;
+    padding: 1.5rem 2rem;
+    margin-left: -1rem;
+}
+
+.buttonContainer {
+    display: flex;
+    justify-content: flex-end;  /* 버튼들을 오른쪽으로 정렬 */
+    width: 70%;                 /* 전체 컨테이너의 50% 너비 */
+    margin-left: auto;          /* 컨테이너 안에서 오른쪽으로 치우치게 설정 */
+}
+
+.cancelButton, .okButton {
+    width: 45%;
+    padding: 0 1rem;
+    font-size: 1.2rem;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.cancelButton {
+    background-color: #f0f0f0;
+    color: #333;
+}
+
+.okButton {
+    background-color: #d9534f;
+    color: white;
+}
+
+.cancelButton:hover {
+    background-color: #e0e0e0;
+}
+
+.okButton:hover {
+    background-color: #c9302c;
+}

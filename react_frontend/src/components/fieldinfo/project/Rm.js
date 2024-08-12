@@ -3,25 +3,23 @@ import * as tableStyles from "../../../assets/css/newTable.css"
 import Table from "../../../Table";
 import TableCustom from "../../../TableCustom";
 import {pjt, saleAmt} from "../../../assets/json/selectedPjt";
-import managers from "../../../assets/json/manager";
 import SearchForms from "../../../SearchForms";
 import {formField_ps12} from "../../../assets/json/searchFormData.js";
 
 export default function Rm() {
-    const [showResults, setShowResults] = useState(false);            // 조회결과와 담당자목록을 표시할지 여부
-    const [selectedPjt, setSelectedPjt] = useState(null);             // 선택된 프로젝트 코드
-    const [selectedSM, setSelectedSM] = useState([]);                 // 선택된 매출액
+    const [searchedPjt, setSearchedPjt] = useState(null);             // 프로젝트 찾기 결과(api 연동해서 받아올 data)
+    const [formData, setFormData] = useState({});                     // 검색 데이터
+    const [searchResult, setsearchResult] = useState(null);           // 프로젝트 조회 결과(api 연동해서 받아올 data)
+    const [selectedSMs, setSelectedSMs] = useState([]);               // 선택된 매출액 목록(PK column only)
 
-    const [isModalOpen, setIsModalOpen] = useState(false);
-    const [inputValue, setInputValue] = useState("");
+    const [isModalOpen, setIsModalOpen] = useState({
+        RmAdd: false,
+        Del: false
+    });
 
+    //조회 버튼 클릭시 호출될 함수
     const handleFormSubmit = (data) => {
-        
-    };
-
-    // 조회 버튼 클릭 시 호출될 함수
-    const handleSearch = () => {
-        setShowResults(true);
+        setFormData(data);
     };
 
     // 프로젝트 row 클릭 시 호출될 함수
@@ -30,48 +28,67 @@ export default function Rm() {
     };
 
     // 매출액 row 클릭 시 호출될 함수
-    const handleSMClick = (row) => {
-        setSelectedSM(row.year);
+    const handleManagerClick = (saleAnt) => {
+        setSelectedSMs([...selectedSMs, saleAnt.saleAmt]);
     };
 
-    const showModal = () => {
-        setIsModalOpen(true);
+    // 모달 열기
+    const showModal = (modalType) => {
+        setIsModalOpen(prevState => ({ ...prevState, [modalType]: true }));
     };
 
-    // 모달 저장 버튼 눌렀을 때 호출될 함수
-    const handleOk = (data) => {
-        setIsModalOpen(false);
-        setInputValue(data);
+    // 담당자 지정 등록 버튼 클릭 시 호출될 함수
+    // modalType에 따라 결과 처리 해주기
+    const handleOk = (modalType) => (data) => {
+        setIsModalOpen(prevState => ({ ...prevState, [modalType]: false })); //모달 닫기
     };
 
-    const handleCancel = () => {
-        setIsModalOpen(false);
-    }; 
+    // 모달 닫기
+    const handleCancel = (modalType) => () => {
+        setIsModalOpen(prevState => ({ ...prevState, [modalType]: false }));
+    };
+
+    // 버튼 클릭 시 모달 열림 설정 - showModal(modalType);
+    const onAddClick = () => {
+        showModal('RmAdd');
+    };
+    const onDeleteClick = () => {
+        showModal('Del');
+    };
 
     return (
         <>
             <div className={tableStyles.menu}>현장정보 &gt; 프로젝트 &gt; 매출액 관리</div>
             
-            <SearchForms onFormSubmit={handleFormSubmit} formFields={[formField_ps12[0], formField_ps12[1]]} onSearch={handleSearch} />
+            <SearchForms onFormSubmit={handleFormSubmit} formFields={[formField_ps12[0]]} />
             
-            {/* showResults 상태가 true일 때만 결과를 표시 */}
-            {showResults && (
+            {(!formData || Object.keys(formData).length === 0) ?
+            <></> : ( //TODO: 백엔드에서 받아온 값으로 바꾸기(data 파라미터)
                 <>
                     <div className={tableStyles.table_title}>조회결과</div>
-                    <Table data={pjt} onRowClick={handlePjtClick} />
+                    <Table data={pjt} />                    
 
                     <TableCustom 
                         title='매출액목록' 
-                        data={saleAmt} 
-                        buttons={['Edit', 'Delete', 'Add']}
-                        onRowClick={handleSMClick}
-                        modal={{
-                            'modalType': 'PD',
-                            'buttonClick': showModal,
-                            'isModalOpen': isModalOpen,
-                            'handleOk': handleOk,
-                            'handleCancel': handleCancel
-                        }}
+                        variant='checkbox'
+                        data={saleAmt}                   
+                        buttons={['Delete', 'Add']}
+                        onClicks={[onDeleteClick, onAddClick]}
+                        onRowClick={handleManagerClick}
+                        modals={[
+                            {
+                                'modalType': 'Del',
+                                'isModalOpen': isModalOpen.Del,
+                                'handleOk': handleOk('Del'),
+                                'handleCancel': handleCancel('Del')
+                            },
+                            {
+                                'modalType': 'RmAdd',
+                                'isModalOpen': isModalOpen.RmAdd,
+                                'handleOk': handleOk('RmAdd'),
+                                'handleCancel': handleCancel('RmAdd')
+                            },
+                        ]}
                     />
                 </>
             )}

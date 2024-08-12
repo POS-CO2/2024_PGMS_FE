@@ -1,12 +1,15 @@
 import React, { useState } from 'react';
 import { Modal } from 'antd';
 import * as modalStyles from "../assets/css/pdModal.css";
+import * as rmStyles from "../assets/css/rmModal.css";
+import * as delStyle from "../assets/css/delModal.css";
 import Table from "../Table";
 import { employee } from "../assets/json/manager.js"
 import * as sysStyles from "../assets/css/sysmng.css"
 import { TextField, Box, InputLabel, MenuItem, FormControl, Select } from '@mui/material';
+import WarningAmberIcon from '@mui/icons-material/WarningAmber';
 
-export default function PdModal({ isModalOpen, handleOk, handleCancel }) {
+export function PdAddModal({ isModalOpen, handleOk, handleCancel }) {
     const [showResults, setShowResults] = useState(false);    // 사원 목록을 표시할지 여부
     const [selectedEmps, setSelectedEmps] = useState([]);     // 선택된 사원의 loginId list
     
@@ -78,6 +81,124 @@ export default function PdModal({ isModalOpen, handleOk, handleCancel }) {
             </div>
 
             <button className={modalStyles.select_button} onClick={handleSelect}>등록</button>
+        </Modal>
+    )
+}
+
+export function RmAddModal({ isModalOpen, handleOk, handleCancel }) {
+    // 각 입력 필드의 상태 관리
+    const [pjtCode, setPjtCode] = useState('');
+    const [pjtName, setPjtName] = useState('');
+    const [year, setYear] = useState('');
+    const [month, setMonth] = useState('');
+    const [saleAmt, setSaleAmt] = useState('');
+
+    // 등록 버튼 클릭 시 호출될 함수(등록할 매출액의 data를 전달)
+    const handleSelect = () => {
+        const formData = {
+            pjtCode,
+            pjtName,
+            year,
+            month,
+            saleAmt,
+        };
+        handleOk(formData);  // 입력된 데이터를 handleOk 함수로 전달
+    };
+
+    return (
+        <Modal 
+            open={isModalOpen} 
+            onCancel={handleCancel} 
+            style={{ width: '25rem', maxWidth: '25rem', important: true }}
+            footer={null}                                                   //Ant Design의 기본 footer 제거(Cancel, OK 버튼)
+        >
+            <div className={rmStyles.title}>매출액 등록</div>
+
+            <div className={rmStyles.search_container}>
+                <div className={rmStyles.search_item}>
+                    <div className={rmStyles.search_title}>프로젝트코드</div>
+                    <input 
+                        className={rmStyles.search}
+                        value={pjtCode} 
+                        onChange={(e) => setPjtCode(e.target.value)} 
+                    />
+                </div>
+                <div className={rmStyles.search_item}>
+                    <div className={rmStyles.search_title}>프로젝트명</div>
+                    <input 
+                        className={rmStyles.search} 
+                        value={pjtName} 
+                        onChange={(e) => setPjtName(e.target.value)} 
+                    />
+                </div>
+                <div className={rmStyles.search_item}>
+                    <div className={rmStyles.search_title}>년</div>
+                    <input 
+                        className={rmStyles.search} 
+                        value={year} 
+                        onChange={(e) => setYear(e.target.value)} 
+                    />
+                </div>
+                <div className={rmStyles.search_item}>
+                    <div className={rmStyles.search_title}>월</div>
+                    <input 
+                        className={rmStyles.search} 
+                        value={month} 
+                        onChange={(e) => setMonth(e.target.value)} 
+                    />
+                </div>
+                <div className={rmStyles.search_item}>
+                    <div className={rmStyles.search_title}>매출액</div>
+                    <input 
+                        className={rmStyles.search} 
+                        value={saleAmt} 
+                        onChange={(e) => setSaleAmt(e.target.value)} 
+                    />
+                </div>
+            </div>
+            
+            <button className={rmStyles.select_button} onClick={handleSelect}>등록</button>
+        </Modal>
+    )
+}
+
+export function Ps12Modal({ isModalOpen, handleOk, handleCancel }) { // '엑셀 업로드' 모달
+
+    return (
+        <Modal 
+            open={isModalOpen} 
+            onCancel={handleCancel} 
+            width={680}
+            footer={null}             //Ant Design의 기본 footer 제거(Cancel, OK 버튼)
+        >
+            <div className={modalStyles.title}>엑셀 업로드</div>
+            
+
+            <button className={modalStyles.select_button} >등록</button>
+        </Modal>
+    )
+}
+
+export function DelModal({ isModalOpen, handleOk, handleCancel }) { // '엑셀 업로드' 모달
+
+    return (
+        <Modal 
+            open={isModalOpen} 
+            onCancel={handleCancel} 
+            centered                     // 모달이 기본적으로 가운데 오도록 설정
+            style={{ width: '20rem', 
+                maxWidth: '20rem', 
+                important: true }}
+            footer={null}
+        >
+            <div className={delStyle.container}>
+                <WarningAmberIcon style={{ fontSize: '2rem', marginRight: '0.5rem', verticalAlign: 'middle' }} />
+                정말 삭제하시겠습니까?
+            </div>
+            <div className={delStyle.buttonContainer}>
+                <button className={delStyle.cancelButton} onClick={handleCancel}>취소</button>
+                <button className={delStyle.okButton} onClick={handleOk}>삭제</button>
+            </div>
         </Modal>
     )
 }
