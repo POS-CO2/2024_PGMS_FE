@@ -2,8 +2,10 @@ import React, { useState } from 'react';
 import { Modal } from 'antd';
 import * as modalStyles from "./assets/css/pdModal.css";
 import * as rmStyles from "./assets/css/rmModal.css";
+import * as delStyle from "./assets/css/delModal.css";
 import Table from "./Table";
 import { employee } from "./assets/json/manager";
+import WarningAmberIcon from '@mui/icons-material/WarningAmber';
 
 export function PdAddModal({ isModalOpen, handleOk, handleCancel }) {
     const [showResults, setShowResults] = useState(false);    // 사원 목록을 표시할지 여부
@@ -171,6 +173,30 @@ export function Ps12Modal({ isModalOpen, handleOk, handleCancel }) { // '엑셀 
             
 
             <button className={modalStyles.select_button} >등록</button>
+        </Modal>
+    )
+}
+
+export function DelModal({ isModalOpen, handleOk, handleCancel }) { // '엑셀 업로드' 모달
+
+    return (
+        <Modal 
+            open={isModalOpen} 
+            onCancel={handleCancel} 
+            centered                     // 모달이 기본적으로 가운데 오도록 설정
+            style={{ width: '20rem', 
+                maxWidth: '20rem', 
+                important: true }}
+            footer={null}
+        >
+            <div className={delStyle.container}>
+                <WarningAmberIcon style={{ fontSize: '2rem', marginRight: '0.5rem', verticalAlign: 'middle' }} />
+                정말 삭제하시겠습니까?
+            </div>
+            <div className={delStyle.buttonContainer}>
+                <button className={delStyle.cancelButton} onClick={handleCancel}>취소</button>
+                <button className={delStyle.okButton} onClick={handleOk}>삭제</button>
+            </div>
         </Modal>
     )
 }

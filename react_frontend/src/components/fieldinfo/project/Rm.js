@@ -14,7 +14,7 @@ export default function Rm() {
 
     const [isModalOpen, setIsModalOpen] = useState({
         RmAdd: false,
-        RmDel: false
+        Del: false
     });
 
     //조회 버튼 클릭시 호출될 함수
@@ -53,7 +53,7 @@ export default function Rm() {
         showModal('RmAdd');
     };
     const onDeleteClick = () => {
-        showModal('RmDel');
+        showModal('Del');
     };
 
     return (
@@ -77,10 +77,10 @@ export default function Rm() {
                         onRowClick={handleManagerClick}
                         modals={[
                             {
-                                'modalType': 'RmDel',
-                                'isModalOpen': isModalOpen.RmDel,
-                                'handleOk': handleOk('RmDel'),
-                                'handleCancel': handleCancel('RmDel')
+                                'modalType': 'Del',
+                                'isModalOpen': isModalOpen.Del,
+                                'handleOk': handleOk('Del'),
+                                'handleCancel': handleCancel('Del')
                             },
                             {
                                 'modalType': 'RmAdd',
