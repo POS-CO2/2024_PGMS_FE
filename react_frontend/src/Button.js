@@ -49,10 +49,10 @@ function DeleteButton({onClick}) {
   );
 }
 
-function EditButton({onClick}) {
+function EditButton({onClick, isEditing}) {
   return (
     <CustomButton variant="contained" onClick={onClick}>
-      수정 <CachedIcon className="icon" />
+      {isEditing ? '저장' : '수정'} <CachedIcon className="icon" />
     </CustomButton>
   );
 }
@@ -81,7 +81,7 @@ function DownloadExcelButton({onClick}) {
   );
 }
 
-export function ButtonGroup({ buttons=[], onClicks=[], buttonStatus = []}) {
+export function ButtonGroup({ buttons=[], onClicks=[], buttonStatus = [], isEditing = false}) {
   return (
     <div style={{ display: 'flex', gap: '8px', marginRight: '23px' }}>
       {buttons.map((button, index) => {
@@ -91,7 +91,7 @@ export function ButtonGroup({ buttons=[], onClicks=[], buttonStatus = []}) {
 
         return ButtonComponent ? (
           isEnabled ? (
-            <ButtonComponent key={button} onClick={onClick} />
+            <ButtonComponent key={button} onClick={onClick} isEditing={isEditing} />
           ) : null
         ) : null;
       })}

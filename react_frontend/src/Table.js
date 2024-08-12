@@ -46,13 +46,18 @@ const StyledCheckbox = styled(Checkbox)(({ theme, checked }) => ({
     },
 }));
 
-export default function CustomizedTables({data = [], variant = 'default', onRowClick = () => { } }) {
+export default function CustomizedTables({
+        data = [], 
+        variant = 'default', 
+        onRowClick = () => { }, 
+        handleDoubleClick = () => { },
+        handleInputChange = () => { }, 
+        handleBlur = () => { },
+        editingCell = {}
+    }) {
     const [selectedRows, setSelectedRows] = useState([]); 
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(10);             // default page row length
-    const [editableData, setEditableData] = useState(data);         // 수정기능을 위한 state
-    const [editingCell, setEditingCell] = useState({ row: null, col: null }); // 현재 편집 중인 셀
-
     const handleChangePage = (event, newPage) => {
         setPage(newPage);
     };
@@ -80,18 +85,9 @@ export default function CustomizedTables({data = [], variant = 'default', onRowC
         onRowClick(data[index]);
     };
 
-    const handleDoubleClick = (rowIndex, colIndex) => {
-        setEditingCell({ row: rowIndex, col: colIndex });
-      };
-
-    const handleInputChange = (e, rowIndex, colIndex) => {
-        const newData = [...editableData];
-        newData[rowIndex][colIndex] = e.target.value;
-        setEditableData(newData);
-    };
-
-    const handleBlur = () => {
-        setEditingCell({ row: null, col: null });
+    const handleCheckboxClick = (e, index) => {
+        e.stopPropagation();  // Checkbox 클릭 시 Row 클릭 이벤트가 발생하지 않도록 함
+        handleRowClick(index);
     };
 
     if (!data.length) {
@@ -128,7 +124,7 @@ export default function CustomizedTables({data = [], variant = 'default', onRowC
                     <TableBody>
                             {
                                 // 표에 data 채우기
-                                editableData.map((row, rowIndex) => (
+                                data.map((row, rowIndex) => (
                                     <StyledTableRow 
                                         key={rowIndex}
                                         selected={selectedRows.includes(rowIndex)}
@@ -140,7 +136,7 @@ export default function CustomizedTables({data = [], variant = 'default', onRowC
                                                 <StyledTableCell>
                                                     <StyledCheckbox 
                                                         checked={selectedRows.includes(rowIndex)}
-                                                        onChange={() => handleRowClick(rowIndex)}
+                                                        onClick={(e) => handleCheckboxClick(e, rowIndex)}
                                                     />
                                                 </StyledTableCell>
                                             )

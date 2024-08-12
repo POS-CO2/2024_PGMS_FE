@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import * as tableStyles from "../../../assets/css/newTable.css"
 import Table from "../../../Table";
-import TableCustom from "../../../TableCustom";
+import TableCustom, {TableCustomEditModal} from "../../../TableCustom";
 import {pjt, saleAmt} from "../../../assets/json/selectedPjt";
 import SearchForms from "../../../SearchForms";
 import {formField_ps12} from "../../../assets/json/searchFormData.js";
@@ -11,7 +11,6 @@ export default function Rm() {
     const [formData, setFormData] = useState({});                     // 검색 데이터
     const [searchResult, setsearchResult] = useState(null);           // 프로젝트 조회 결과(api 연동해서 받아올 data)
     const [selectedSAs, setSelectedSAs] = useState([]);   
-
     const [isModalOpen, setIsModalOpen] = useState({
         RmAdd: false,
         Del: false
@@ -41,8 +40,7 @@ export default function Rm() {
         setIsModalOpen(prevState => ({ ...prevState, [modalType]: true }));
     };
 
-    // 담당자 지정 등록 버튼 클릭 시 호출될 함수
-    // modalType에 따라 결과 처리 해주기
+    // 매출액 등록 버튼 클릭 시 호출될 함수
     const handleOk = (modalType) => (data) => {
         setIsModalOpen(prevState => ({ ...prevState, [modalType]: false })); //모달 닫기
     };
@@ -52,10 +50,11 @@ export default function Rm() {
         setIsModalOpen(prevState => ({ ...prevState, [modalType]: false }));
     };
 
-    // 버튼 클릭 시 모달 열림 설정 - showModal(modalType);
+    // 버튼 클릭 시 모달 열림 설정
     const onAddClick = () => {
         showModal('RmAdd');
     };
+
     const onDeleteClick = () => {
         showModal('Del');
     };
@@ -72,12 +71,12 @@ export default function Rm() {
                     <div className={tableStyles.table_title}>조회결과</div>
                     <Table data={pjt} />                    
 
-                    <TableCustom 
+                    <TableCustomEditModal 
                         title='매출액목록' 
                         variant='checkbox'
                         data={saleAmt}                   
-                        buttons={['Edit', 'Delete', 'Add']}
-                        onClicks={[() => {}, onDeleteClick, onAddClick]}
+                        buttons={['Delete', 'Edit', 'Add']}
+                        onClicks={[onDeleteClick, () => {}, onAddClick]}
                         onRowClick={handleSAClick}
                         selectedRows={selectedSAs}
                         modals={[
