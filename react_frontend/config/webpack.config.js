@@ -31,7 +31,7 @@ module.exports = function(env) {
                     'sass-loader'
                 ]
             }, {
-                test: /\.(png|gif|jp?eg|svg|ico|tif?f|bmp)/i,
+                test: /\.(png|gif|jpg|svg|ico|tif?f|bmp)/i,
                 type: 'asset/resource'
             }]
         },
@@ -45,10 +45,6 @@ module.exports = function(env) {
             liveReload: true,
             compress: true,
             hot: false,
-            proxy: [{
-                context: ['/api'],
-                target: 'http://localhost:8080',
-            }],            
             static: {
                 directory: path.resolve('./public')
             },

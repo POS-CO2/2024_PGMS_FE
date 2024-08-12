@@ -1,0 +1,26 @@
+.form_item {
+    width: 280px;
+}
+
+.input_button_container {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.input_field {
+    width: 70%;
+    color: #000000 !important; 
+    font-size: 12px;
+    font-weight: bold;
+}
+.modal_button {
+    width: 30%;
+}
+
+.search_btn {
+    flex: 1;
+    display: flex;
+    justify-content: flex-end;
+    align-items: flex-end;
+}

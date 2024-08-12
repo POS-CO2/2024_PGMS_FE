@@ -15,8 +15,6 @@
     display: flex;
     justify-content: space-between; /* 컨테이너의 자식 요소를 양쪽 끝에 배치합니다 */
     align-items: center; /* 버튼과 제목을 세로 가운데 정렬합니다 */
-    margin-top: 20px; /* 제목과 버튼 사이의 여백을 추가 */
-    margin-left: 20px; /* 제목과 버튼의 왼쪽 여백을 추가 */
 }
 
 .table_title {
