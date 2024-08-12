@@ -56,6 +56,7 @@ export default function Fl() {
             
             {(!formData || Object.keys(formData).length === 0) ?
             <></> : ( //TODO: 백엔드에서 받아온 값으로 바꾸기(Table 컴포넌트의 data 파라미터)
+
                 <>
                     <TableCustom 
                         title='설비LIB목록' 

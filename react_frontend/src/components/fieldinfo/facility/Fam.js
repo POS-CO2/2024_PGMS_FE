@@ -46,8 +46,8 @@ export default function Fam() {
             
             <SearchForms onFormSubmit={handleFormSubmit} formFields={formField_fam} onSearch={handleSearch} />
             
-            {/* showResults 상태가 true일 때만 결과를 표시 */}
-            {showResults && (
+            {(!formData || Object.keys(formData).length === 0) ?
+            <></> : ( //TODO: 백엔드에서 받아온 값으로 바꾸기(data 파라미터)
                 <>
                     <TableCustom 
                         title='활동자료목록' 
