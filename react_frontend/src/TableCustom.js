@@ -50,7 +50,7 @@ export default function TableCustom({
                 })}
             </div>
             {table ? (
-            <Table data={data} variant={variant} onRowClick={onRowClick} />
+            <Table data={data} variant={variant} onRowClick={onRowClick}/>
             ) : (<></>)}
             
         </>

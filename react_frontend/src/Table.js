@@ -7,7 +7,7 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
-import { Box, Checkbox, TablePagination } from '@mui/material';
+import { Box, Checkbox, TablePagination, Button } from '@mui/material';
 
 // TableCell을 스타일링하는 컴포넌트
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
@@ -46,7 +46,7 @@ const StyledCheckbox = styled(Checkbox)(({ theme, checked }) => ({
     },
 }));
 
-export default function CustomizedTables({data = [], variant = 'default', onRowClick = () => { } }) {
+export default function CustomizedTables({data = [], variant = 'default', onRowClick = () => { }}) {
     const [selectedRow, setSelectedRow] = React.useState(null); // default variant의 선택 상태
     const [selectedRows, setSelectedRows] = React.useState([]); // checkbox variant의 선택 상태
     const [page, setPage] = React.useState(0);
