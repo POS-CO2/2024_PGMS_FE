@@ -32,6 +32,7 @@ export default function Fl() {
     // 설비LIB 등록 버튼 클릭 시 호출될 함수
     const handleOk = (modalType) => (data) => {
         setIsModalOpen(prevState => ({ ...prevState, [modalType]: false })); //모달 닫기
+        console.log(data);
         //setInputValue(data);
     };
 
