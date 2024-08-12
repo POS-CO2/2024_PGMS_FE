@@ -47,8 +47,9 @@ export default function ModalComponent({ isModalOpen, handleOk, handleCancel }) 
       </div>
 
       <div className={pjtModalStyles.result_container}>
-        {/* showResults 상태가 true일 때만 프로젝트 목록을 표시 */}
-        {showResults && ( <Table data={project} onRowClick={handlePjtClick} /> )}
+
+      {(!formData || Object.keys(formData).length === 0) ?
+            <></> : ( <Table data={project} onRowClick={handlePjtClick} /> )}
       </div>
 
       <button className={pjtModalStyles.select_button} onClick={handleSelect}>선택</button>
