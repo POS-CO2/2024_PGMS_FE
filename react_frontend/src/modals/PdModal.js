@@ -1,10 +1,13 @@
 import React, { useState } from 'react';
 import { Modal } from 'antd';
 import * as modalStyles from "../assets/css/pdModal.css";
+import * as rmStyles from "../assets/css/rmModal.css";
+import * as delStyle from "../assets/css/delModal.css";
 import Table from "../Table";
 import { employee } from "../assets/json/manager.js"
 import * as sysStyles from "../assets/css/sysmng.css"
 import { TextField, Box, InputLabel, MenuItem, FormControl, Select } from '@mui/material';
+import WarningAmberIcon from '@mui/icons-material/WarningAmber';
 
 export function PdAddModal({ isModalOpen, handleOk, handleCancel }) {
     const [showResults, setShowResults] = useState(false);    // 사원 목록을 표시할지 여부

@@ -22,12 +22,7 @@ export default function Pd() {
     const handleFormSubmit = (data) => {
         setFormData(data);
     };
-
-    // 프로젝트 row 클릭 시 호출될 함수
-    const handlePjtClick = (row) => {
-        setSelectedPjt(row.PjtCode);   // 클릭된 프로젝트의 코드로 상태를 설정
-    };
-
+    
     // 담당자 row 클릭 시 호출될 함수
     const handleManagerClick = (manager) => {
         setSelectedManagers([...selectedManagers, manager.loginId]);
