@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import * as tableStyles from "../../../assets/css/newTable.css"
+import * as tableStyles from "../../../assets/css/newTable.css";
 import Table from "../../../Table";
 import TableCustom from "../../../TableCustom";
 import project from "../../../assets/json/selectedPjt";
