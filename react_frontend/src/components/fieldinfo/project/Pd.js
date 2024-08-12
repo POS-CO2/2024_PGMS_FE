@@ -15,19 +15,14 @@ export default function Pd() {
 
     const [isModalOpen, setIsModalOpen] = useState({
         PdAdd: false,
-        PdDel: false
+        Del: false
     });
 
     //조회 버튼 클릭시 호출될 함수
     const handleFormSubmit = (data) => {
         setFormData(data);
     };
-
-    // 프로젝트 row 클릭 시 호출될 함수
-    const handlePjtClick = (row) => {
-        setSelectedPjt(row.PjtCode);   // 클릭된 프로젝트의 코드로 상태를 설정
-    };
-
+    
     // 담당자 row 클릭 시 호출될 함수
     const handleManagerClick = (manager) => {
         setSelectedManagers([...selectedManagers, manager.loginId]);
@@ -55,13 +50,12 @@ export default function Pd() {
         showModal('PdAdd');
     };
     const onDeleteClick = () => {
-        //showModal('PdDelete');
+        showModal('Del');
     };
 
     return (
         <>
             <div className={tableStyles.menu}>현장정보 &gt; 프로젝트 &gt; 담당자 지정</div>
-            
             <SearchForms onFormSubmit={handleFormSubmit} formFields={[formField_ps12[0]]} />
             
             {(!formData || Object.keys(formData).length === 0) ?
@@ -79,15 +73,16 @@ export default function Pd() {
                         onRowClick={handleManagerClick}
                         modals={[
                             {
+                                'modalType': 'Del',
+                                'isModalOpen': isModalOpen.Del,
+                                'handleOk': handleOk('Del'),
+                                'handleCancel': handleCancel('Del')
+                            },
+                            {
                                 'modalType': 'PdAdd',
                                 'isModalOpen': isModalOpen.PdAdd,
                                 'handleOk': handleOk('PdAdd'),
                                 'handleCancel': handleCancel('PdAdd')
-                            }, {
-                                'modalType': 'PdDel',
-                                'isModalOpen': isModalOpen.PdDel,
-                                'handleOk': handleOk('PdDel'),
-                                'handleCancel': handleCancel('PdDel')
                             }
                         ]}
                     />

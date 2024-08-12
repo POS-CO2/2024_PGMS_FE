@@ -1,14 +1,18 @@
 import React, { useState } from 'react';
-import { Modal } from 'antd';
+import { Modal, Button, Upload } from 'antd';
+import { InboxOutlined, UploadOutlined } from '@ant-design/icons';
 import * as modalStyles from "../assets/css/pdModal.css";
+import * as rmStyles from "../assets/css/rmModal.css";
+import * as delStyle from "../assets/css/delModal.css";
 import Table from "../Table";
 import { employee } from "../assets/json/manager.js"
 import emsData from "../assets/json/ems";
 import sdData, {selectOptions} from "../assets/json/sd";
 import * as sysStyles from "../assets/css/sysmng.css"
 import { TextField, Box, InputLabel, MenuItem, FormControl, Select } from '@mui/material';
+import WarningAmberIcon from '@mui/icons-material/WarningAmber';
 
-export default function PdModal({ isModalOpen, handleOk, handleCancel }) {
+export function PdAddModal({ isModalOpen, handleOk, handleCancel }) {
     const [showResults, setShowResults] = useState(false);    // 사원 목록을 표시할지 여부
     const [selectedEmps, setSelectedEmps] = useState([]);     // 선택된 사원의 loginId list
     
@@ -80,6 +84,165 @@ export default function PdModal({ isModalOpen, handleOk, handleCancel }) {
             </div>
 
             <button className={modalStyles.select_button} onClick={handleSelect}>등록</button>
+        </Modal>
+    )
+}
+
+export function RmAddModal({ isModalOpen, handleOk, handleCancel }) {
+    // 각 입력 필드의 상태 관리
+    const [pjtCode, setPjtCode] = useState('');
+    const [pjtName, setPjtName] = useState('');
+    const [year, setYear] = useState('');
+    const [month, setMonth] = useState('');
+    const [saleAmt, setSaleAmt] = useState('');
+
+    // 등록 버튼 클릭 시 호출될 함수(등록할 매출액의 data를 전달)
+    const handleSelect = () => {
+        const formData = {
+            pjtCode,
+            pjtName,
+            year,
+            month,
+            saleAmt,
+        };
+        handleOk(formData);  // 입력된 데이터를 handleOk 함수로 전달
+    };
+
+    return (
+        <Modal 
+            open={isModalOpen} 
+            onCancel={handleCancel} 
+            style={{ width: '25rem', maxWidth: '25rem', important: true }}
+            footer={null}                                                   //Ant Design의 기본 footer 제거(Cancel, OK 버튼)
+        >
+            <div className={rmStyles.title}>매출액 등록</div>
+
+            <div className={rmStyles.search_container}>
+                <div className={rmStyles.search_item}>
+                    <div className={rmStyles.search_title}>프로젝트코드</div>
+                    <input 
+                        className={rmStyles.search}
+                        value={pjtCode} 
+                        onChange={(e) => setPjtCode(e.target.value)} 
+                    />
+                </div>
+                <div className={rmStyles.search_item}>
+                    <div className={rmStyles.search_title}>프로젝트명</div>
+                    <input 
+                        className={rmStyles.search} 
+                        value={pjtName} 
+                        onChange={(e) => setPjtName(e.target.value)} 
+                    />
+                </div>
+                <div className={rmStyles.search_item}>
+                    <div className={rmStyles.search_title}>년</div>
+                    <input 
+                        className={rmStyles.search} 
+                        value={year} 
+                        onChange={(e) => setYear(e.target.value)} 
+                    />
+                </div>
+                <div className={rmStyles.search_item}>
+                    <div className={rmStyles.search_title}>월</div>
+                    <input 
+                        className={rmStyles.search} 
+                        value={month} 
+                        onChange={(e) => setMonth(e.target.value)} 
+                    />
+                </div>
+                <div className={rmStyles.search_item}>
+                    <div className={rmStyles.search_title}>매출액</div>
+                    <input 
+                        className={rmStyles.search} 
+                        value={saleAmt} 
+                        onChange={(e) => setSaleAmt(e.target.value)} 
+                    />
+                </div>
+            </div>
+            
+            <button className={rmStyles.select_button} onClick={handleSelect}>등록</button>
+        </Modal>
+    )
+}
+
+const { Dragger } = Upload;
+const uploadProps = {
+    name: 'file',
+    multiple: true,
+    action: 'https://660d2bd96ddfa2943b33731c.mockapi.io/api/upload',
+    /*beforeUpload: (file) => {
+        const isPNG = file.type === 'image/png';
+        if (!isPNG) {
+            message.error(`${file.name} is not a png file`);
+        }
+        return isPNG || Upload.LIST_IGNORE;
+    },*/
+    onChange: (info) => {
+        const { status } = info.file;
+        if (status !== 'uploading') {
+            console.log(info.file.name + " uploading");
+        }
+        if (status === 'uploading') {
+            console.log(info.file.name + " uploading2");
+        }
+        if (status === 'done') {
+            console.log("file uploaded successfully.");
+        } else if (status === 'error') {
+            console.log("file upload failed.");
+        }
+    },
+    onDrop: (e) => {
+        console.log('Dropped files', e.dataTransfer.files);
+    },
+};
+export function Ps12UploadExcelModal({ isModalOpen, handleOk, handleCancel }) { // '엑셀 업로드' 모달
+
+    return (
+        <Modal
+            open={isModalOpen}
+            onCancel={handleCancel}
+            width={550}
+            footer={null}             //Ant Design의 기본 footer 제거(Cancel, OK 버튼)
+        >
+            <div className={modalStyles.title}>엑셀 업로드</div>
+
+            <div>
+                <Upload {...uploadProps}>
+                    <Button>업로드<UploadOutlined /></Button>
+                </Upload>
+                <Dragger {...uploadProps}>
+                    <p className="ant-upload-drag-icon">
+                        <InboxOutlined />
+                    </p>
+                    <p className="ant-upload-text">파일을 마우스로 끌어오세요</p>
+                </Dragger>
+            </div>
+
+            <button className={modalStyles.select_button} onClick={handleOk}>등록</button>
+        </Modal>
+    )
+}
+
+export function DelModal({ isModalOpen, handleOk, handleCancel }) { // '엑셀 업로드' 모달
+
+    return (
+        <Modal 
+            open={isModalOpen} 
+            onCancel={handleCancel} 
+            centered                     // 모달이 기본적으로 가운데 오도록 설정
+            style={{ width: '20rem', 
+                maxWidth: '20rem', 
+                important: true }}
+            footer={null}
+        >
+            <div className={delStyle.container}>
+                <WarningAmberIcon style={{ fontSize: '2rem', marginRight: '0.5rem', verticalAlign: 'middle' }} />
+                정말 삭제하시겠습니까?
+            </div>
+            <div className={delStyle.buttonContainer}>
+                <button className={delStyle.cancelButton} onClick={handleCancel}>취소</button>
+                <button className={delStyle.okButton} onClick={handleOk}>삭제</button>
+            </div>
         </Modal>
     )
 }
