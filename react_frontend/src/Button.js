@@ -41,7 +41,7 @@ export function AddButton({onClick}) {
   );
 }
 
-function DeleteButton({onClick}) {
+export function DeleteButton({onClick}) {
   return (
     <CustomButton variant="contained" onClick={onClick}>
       삭제 <DeleteForeverIcon className="icon" />
@@ -49,7 +49,7 @@ function DeleteButton({onClick}) {
   );
 }
 
-function EditButton({onClick}) {
+export function EditButton({onClick}) {
   return (
     <CustomButton variant="contained" onClick={onClick}>
       수정 <CachedIcon className="icon" />
@@ -57,7 +57,7 @@ function EditButton({onClick}) {
   );
 }
 
-function UploadExcelButton({onClick}) {
+export function UploadExcelButton({onClick}) {
   return (
     <CustomButton variant="contained" onClick={onClick}>
       엑셀 업로드 <UploadIcon className="icon" />
@@ -65,7 +65,7 @@ function UploadExcelButton({onClick}) {
   );
 }
 
-function DownloadExcelFormButton({onClick}) {
+export function DownloadExcelFormButton({onClick}) {
   return (
     <CustomButton variant="contained" onClick={onClick}>
       엑셀 양식 다운로드 <DownloadIcon className="icon" />
@@ -73,7 +73,7 @@ function DownloadExcelFormButton({onClick}) {
   );
 }
 
-function DownloadExcelButton({onClick}) {
+export function DownloadExcelButton({onClick}) {
   return (
     <CustomButton variant="contained" onClick={onClick}>
       엑셀 다운로드 <DownloadIcon className="icon" />

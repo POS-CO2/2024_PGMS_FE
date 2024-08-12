@@ -5,7 +5,7 @@ import TableCustom from "../../../TableCustom";
 import project from "../../../assets/json/selectedPjt";
 import emsData from "../../../assets/json/ems";
 import SearchForms from "../../../SearchForms";
-import {formField_esm} from "../../../assets/json/searchFormData.js";
+import { formField_esm } from "../../../assets/json/searchFormData.js";
 
 export default function Esm() {
     const [formData, setFormData] = useState({});
@@ -58,35 +58,66 @@ export default function Esm() {
     return (
         <>
             <div className={tableStyles.menu}>현장정보 &gt; 배출원 &gt; 배출원 지정</div>
-            
+
             <SearchForms onFormSubmit={handleFormSubmit} formFields={formField_esm} />
-            
+
             {/* showResults 상태가 true일 때만 결과를 표시 */}
             {showResults && (
                 <>
                     <div className={tableStyles.table_title}>조회결과</div>
                     <Table data={project} onRowClick={handlePjtClick} />
 
-                    <TableCustom 
-                        title='배출원목록' 
-                        data={emsData} 
-                        buttons={['Delete', 'Add']}
-                        onClicks={[onDeleteClick, onAddClick]}
-                        onRowClick={handleEmtnClick}
-                        modals={[
-                            {
-                                modalType: 'EsmAdd',
-                                isModalOpen: isModalOpen.EsmAdd,
-                                handleOk: handleOk('EsmAdd'),
-                                handleCancel: handleCancel('EsmAdd'),
-                            }, {
-                                modalType: 'EsmDelete',
-                                isModalOpen: isModalOpen.EsmDelete,
-                                handleOk: handleOk('EsmDelete'),
-                                handleCancel: handleCancel('EsmDelete'),
-                            }
-                        ]}
-                    />
+
+
+                    <div className={esmStyles.resultContent}>
+                        <div className={esmStyles.leftSide}>
+                            <TableCustom
+                                title='배출원목록'
+                                data={emsData}
+                                buttons={['Delete', 'Add']}
+                                onClicks={[onDeleteClick, onAddClick]}
+                                onRowClick={handleEmtnClick}
+                                modals={[
+                                    {
+                                        modalType: 'EsmAdd',
+                                        isModalOpen: isModalOpen.EsmAdd,
+                                        handleOk: handleOk('EsmAdd'),
+                                        handleCancel: handleCancel('EsmAdd'),
+                                    }, {
+                                        modalType: 'EsmDelete',
+                                        isModalOpen: isModalOpen.EsmDelete,
+                                        handleOk: handleOk('EsmDelete'),
+                                        handleCancel: handleCancel('EsmDelete'),
+                                    }
+                                ]}
+                            />
+                        </div>
+
+                        <div className={esmStyles.divider} /> {/* 구분선 추가 */}
+
+                        <div className={esmStyles.rightSide}>
+                        <TableCustom
+                                title='증빙자료 목록'
+                                data={emsData}
+                                buttons={['Delete', 'Add']}
+                                onClicks={[onDeleteClick, onAddClick]}
+                                onRowClick={handleEmtnClick}
+                                modals={[
+                                    {
+                                        modalType: 'EsmAdd',
+                                        isModalOpen: isModalOpen.EsmAdd,
+                                        handleOk: handleOk('EsmAdd'),
+                                        handleCancel: handleCancel('EsmAdd'),
+                                    }, {
+                                        modalType: 'EsmDelete',
+                                        isModalOpen: isModalOpen.EsmDelete,
+                                        handleOk: handleOk('EsmDelete'),
+                                        handleCancel: handleCancel('EsmDelete'),
+                                    }
+                                ]}
+                            />
+                        </div>
+                    </div>
                 </>
             )}
         </>
