@@ -289,7 +289,7 @@ export function CmListEditModal({isModalOpen, handleOk, handleCancel}){
     )
 }
 
-export function FmAddModal({isModalOpen, handleOk, handleCancel}){
+export function FmAddModal({ isModalOpen, handleOk, handleCancel }) {
     const [showResults, setShowResults] = useState(false);    // 사원 목록을 표시할지 여부
     const [selectedEmps, setSelectedEmps] = useState([]);     // 선택된 사원의 loginId list
     
@@ -336,10 +336,21 @@ export function FmAddModal({isModalOpen, handleOk, handleCancel}){
             width={680}
             footer={null}             //Ant Design의 기본 footer 제거(Cancel, OK 버튼)
         >
-            <div className={modalStyles.title}>현장 담당자 지정</div>
+            <div className={modalStyles.title}>설비 지정</div>
+            <div className={modalStyles.search_container}>
+                <div className={modalStyles.search_item}>
+                    <div className={modalStyles.search_title}>사번</div>
+                    <input className={modalStyles.search}/>
+                    <div className={modalStyles.input_with_btn}>
+                        <button className={modalStyles.search_button} onClick={handleSearch}>조회</button>
+                    </div>
+                </div>
+                
+            </div>
             
             <div className={modalStyles.result_container}>
-                <Table data={employee} variant='checkbox' onRowClick={handleEmpClick} />
+                {showResults ? <Table data={employee} variant='checkbox' onRowClick={handleEmpClick} />
+                    : <></>}
             </div>
 
             <button className={modalStyles.select_button} onClick={handleSelect}>등록</button>
@@ -492,3 +503,4 @@ export function MmAddModal({isModalOpen, handleOk, handleCancel}){
         </Modal>
     )
 }
+
