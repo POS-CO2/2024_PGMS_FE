@@ -7,7 +7,7 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
-import { Box, Checkbox, TextField  } from '@mui/material';
+import { Box, Checkbox, TablePagination } from '@mui/material';
 
 // TableCell을 스타일링하는 컴포넌트
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
@@ -47,10 +47,9 @@ const StyledCheckbox = styled(Checkbox)(({ theme, checked }) => ({
 }));
 
 export default function CustomizedTables({data = [], variant = 'default', onRowClick = () => { } }) {
-    const [selectedRow, setSelectedRow] = useState(null); // default variant의 선택 상태
-    const [selectedRows, setSelectedRows] = useState([]); // checkbox variant의 선택 상태
+    const [selectedRows, setSelectedRows] = useState([]); 
     const [page, setPage] = useState(0);
-    const [rowsPerPage, setRowsPerPage] = useState(10); // default page row length
+    const [rowsPerPage, setRowsPerPage] = useState(10);             // default page row length
     const [editableData, setEditableData] = useState(data);         // 수정기능을 위한 state
     const [editingCell, setEditingCell] = useState({ row: null, col: null }); // 현재 편집 중인 셀
 
@@ -63,48 +62,37 @@ export default function CustomizedTables({data = [], variant = 'default', onRowC
         setPage(0);
     };
 
-    //TODO: 하나의 로직으로 리팩토링하기
-    const handleRowClick = (index, event) => {
-        if (variant === 'default') {
-            setSelectedRow(index === selectedRow ? null : index); // 같은 행 클릭 시 선택 해제
-            onRowClick(data[index]);
-        } else if (variant === 'checkbox') {
-            // row 클릭시 setSelectedRows에 추가
-            if (event.target.type !== 'checkbox') {
-                setSelectedRows((prevSelectedRows) =>
-                    prevSelectedRows.includes(index)                                // prevSelectedRows 배열에 index가 포함되어 있는지 확인
-                        ? prevSelectedRows.filter(rowIndex => rowIndex !== index)   // 행이 이미 선택된 경우 배열에서 index 제거
-                        : [...prevSelectedRows, index]                              // 행이 선택되지 않은 경우 prevSelectedRows 배열의 복사본을 만들고 그 배열에 index값을 추가
-                );
-            
-                onRowClick(data[index]);
-            }                       
+    const handleRowClick = (index) => {
+        if(variant === 'default') {
+            // 같은 행 클릭 시 선택 해제
+            setSelectedRows((prevSelectedRows) =>
+                prevSelectedRows.includes(index)                               
+                    ? [] : [index]                             
+            )
         }
-    };
-
-    // checkbox 클릭시 setSelectedRows에 추가
-    const handleCheckboxChange = (index) => {
-        setSelectedRows((prevSelectedRows) =>
-            prevSelectedRows.includes(index) 
-                ? prevSelectedRows.filter(rowIndex => rowIndex !== index)
-                : [...prevSelectedRows, index]                         
-        );
+        if(variant === 'checkbox') {
+            setSelectedRows((prevSelectedRows) =>
+                prevSelectedRows.includes(index)                                // prevSelectedRows 배열에 index가 포함되어 있는지 확인
+                    ? prevSelectedRows.filter(rowIndex => rowIndex !== index)   // 행이 이미 선택된 경우 배열에서 index 제거
+                    : [...prevSelectedRows, index]                              // 행이 선택되지 않은 경우 prevSelectedRows 배열의 복사본을 만들고 그 배열에 index값을 추가
+            )
+        }
         onRowClick(data[index]);
-    }
+    };
 
     const handleDoubleClick = (rowIndex, colIndex) => {
         setEditingCell({ row: rowIndex, col: colIndex });
       };
-    
-      const handleInputChange = (e, rowIndex, colIndex) => {
+
+    const handleInputChange = (e, rowIndex, colIndex) => {
         const newData = [...editableData];
         newData[rowIndex][colIndex] = e.target.value;
         setEditableData(newData);
-      };
-    
-      const handleBlur = () => {
+    };
+
+    const handleBlur = () => {
         setEditingCell({ row: null, col: null });
-      };
+    };
 
     if (!data.length) {
         // 데이터가 비어 있을 경우 처리
@@ -116,13 +104,15 @@ export default function CustomizedTables({data = [], variant = 'default', onRowC
             width: '100%', 
             overflowX: 'auto',
             padding: '0 20px',
-            boxSizing: 'border-box'
-            }}>
+            boxSizing: 'border-box',
+            margin: '0 auto 2rem'
+        }}>
             <TableContainer component={Paper} sx={{ 
                     width: 'calc(100% - 10px)',
-                    margin: '0 auto'
-                }}>
-                <Table sx={{ minWidth: 600 }} aria-label="customized table">
+                    margin: '0 auto',
+                    maxHeight: '100%'
+            }}>
+                <Table sx={{ minWidth: 600 }} stickyHeader aria-label="customized table">
                     <TableHead>
                         <TableRow>
                             {
@@ -136,56 +126,62 @@ export default function CustomizedTables({data = [], variant = 'default', onRowC
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        {
-                            // 표에 data 채우기
-                            editableData.map((row, rowIndex) => (
-                                <StyledTableRow 
-                                    key={rowIndex}
-                                    selected={
-                                        variant === 'checkbox' 
-                                        ? selectedRows.includes(rowIndex) 
-                                        : selectedRow === rowIndex
-                                    }
-                                    variant={variant}
-                                    onClick={(e) => handleRowClick(rowIndex, e)}
-                                >
-                                    {   // checkbox가 있는 테이블이면 체크박스 셀 추가
-                                        variant === 'checkbox' && (
-                                            <StyledTableCell>
-                                                <StyledCheckbox 
-                                                    checked={selectedRows.includes(rowIndex)}
-                                                    onChange={() => handleCheckboxChange(rowIndex)}
-                                                />
-                                            </StyledTableCell>
-                                        )
-                                    }
-                                    {   // 데이터 값 채우기
-                                        Object.values(row).map((value, colIndex) => (
-                                            <StyledTableCell 
-                                                key={colIndex} 
-                                                align="left"
-                                                onDoubleClick={() => handleDoubleClick(rowIndex, colIndex)}
-                                            >
-                                                {editingCell.row === rowIndex && editingCell.col === colIndex ? (
-                                                <TextField
-                                                    value={value}
-                                                    onChange={(e) => handleInputChange(e, rowIndex, colIndex)}
-                                                    onBlur={handleBlur}
-                                                    autoFocus
-                                                    size="small"
-                                                />
-                                            ) : (
-                                                value
-                                            )}
-                                            </StyledTableCell>
-                                        ))
-                                    }
-                                </StyledTableRow>
-                            ))
-                        }
-                    </TableBody>
+                            {
+                                // 표에 data 채우기
+                                editableData.map((row, rowIndex) => (
+                                    <StyledTableRow 
+                                        key={rowIndex}
+                                        selected={selectedRows.includes(rowIndex)}
+                                        variant={variant}
+                                        onClick={() => handleRowClick(rowIndex)}
+                                    >
+                                        {   // checkbox가 있는 테이블이면 체크박스 셀 추가
+                                            variant === 'checkbox' && (
+                                                <StyledTableCell>
+                                                    <StyledCheckbox 
+                                                        checked={selectedRows.includes(rowIndex)}
+                                                        onChange={() => handleRowClick(rowIndex)}
+                                                    />
+                                                </StyledTableCell>
+                                            )
+                                        }
+
+                                        {   // 데이터 값 채우기
+                                            Object.values(row).map((value, colIndex) => (
+                                                <StyledTableCell 
+                                                    key={colIndex} 
+                                                    align="left"
+                                                    onDoubleClick={() => handleDoubleClick(rowIndex, colIndex)}
+                                                >
+                                                    {editingCell.row === rowIndex && editingCell.col === colIndex ? (
+                                                    <TextField
+                                                        value={value}
+                                                        onChange={(e) => handleInputChange(e, rowIndex, colIndex)}
+                                                        onBlur={handleBlur}
+                                                        autoFocus
+                                                        size="small"
+                                                    />
+                                                ) : (
+                                                    value
+                                                )}
+                                                </StyledTableCell>
+                                            ))
+                                        }
+                                    </StyledTableRow>
+                                ))
+                            }
+                        </TableBody>
                 </Table>
             </TableContainer>
+            <TablePagination 
+                rowsPerPageOptions={[10, 25, 100]} // page row length custom
+                component="div"
+                count={data.length}
+                rowsPerPage={rowsPerPage}
+                page={page}
+                onPageChange={handleChangePage}
+                onRowsPerPageChange={handleChangeRowsPerPage}
+            />
         </Box>
     );
 }

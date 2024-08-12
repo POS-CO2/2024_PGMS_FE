@@ -10,7 +10,7 @@ export default function Rm() {
     const [searchedPjt, setSearchedPjt] = useState(null);             // 프로젝트 찾기 결과(api 연동해서 받아올 data)
     const [formData, setFormData] = useState({});                     // 검색 데이터
     const [searchResult, setsearchResult] = useState(null);           // 프로젝트 조회 결과(api 연동해서 받아올 data)
-    const [selectedSMs, setSelectedSMs] = useState([]);               // 선택된 매출액 목록(PK column only)
+    const [selectedSAs, setSelectedSAs] = useState([]);   
 
     const [isModalOpen, setIsModalOpen] = useState({
         RmAdd: false,
@@ -22,14 +22,18 @@ export default function Rm() {
         setFormData(data);
     };
 
-    // 프로젝트 row 클릭 시 호출될 함수
-    const handlePjtClick = (row) => {
-        setSelectedPjt(row.PjtCode);   // 클릭된 프로젝트의 코드로 상태를 설정
-    };
-
     // 매출액 row 클릭 시 호출될 함수
-    const handleManagerClick = (saleAnt) => {
-        setSelectedSMs([...selectedSMs, saleAnt.saleAmt]);
+    const handleSAClick = (saleAmt) => {
+        setSelectedSAs((prevSelectedSA) => {
+            // 선택된 사원의 loginId가 이미 배열에 존재하는지 확인
+            if (prevSelectedSA.includes(saleAmt.saleAmt)) {
+                // 존재한다면 배열에서 제거
+                return prevSelectedSA.filter((id) => id !== saleAmt.saleAmt);
+            } else {
+                // 존재하지 않는다면 배열에 추가
+                return [...selectedSAs, saleAmt.saleAmt];
+            }
+        });
     };
 
     // 모달 열기
@@ -72,9 +76,9 @@ export default function Rm() {
                         title='매출액목록' 
                         variant='checkbox'
                         data={saleAmt}                   
-                        buttons={['Delete', 'Add']}
-                        onClicks={[onDeleteClick, onAddClick]}
-                        onRowClick={handleManagerClick}
+                        buttons={['Edit', 'Delete', 'Add']}
+                        onClicks={[() => {}, onDeleteClick, onAddClick]}
+                        onRowClick={handleSAClick}
                         modals={[
                             {
                                 'modalType': 'Del',
