@@ -3,13 +3,22 @@ import Table from "./Table.js";
 import * as tableStyles from "./assets/css/newTable.css"
 import { PdAddModal, RmAddModal, Ps12Modal, DelModal } from "./PdModal";
 import { ButtonGroup } from './Button';
+import { CmAddModal, DeleteModal, CmEditModal, CmListAddModal, CmListEditModal, FmAddModal, UmAddModal, MmAddModal } from "./modals/PdModal.js";
 
 const modalMap = {
+    CMAdd: CmAddModal,
+    CMEdit: CmEditModal,
+    CMListAdd: CmListAddModal,
+    CMListEdit: CmListEditModal,
+    Delete: DeleteModal,
     PdAdd: PdAddModal,
+    Ps12: Ps12Modal,
+    FmAdd: FmAddModal,
+    UmAdd: UmAddModal,
+    MmAdd: MmAddModal,
     Del: DelModal,
     RmAdd: RmAddModal,
     RmDel: RmAddModal,
-    Ps12: Ps12Modal,
 }
 
 export default function TableCustom({
@@ -19,7 +28,8 @@ export default function TableCustom({
     buttons = [],
     onClicks = [],
     onRowClick = () => { },  // 기본값으로 빈 함수 설정
-    modals = []
+    modals = [],
+    table = true,
 }) {
     return (
         <>
@@ -39,7 +49,10 @@ export default function TableCustom({
                     ) : null;
                 })}
             </div>
+            {table ? (
             <Table data={data} variant={variant} onRowClick={onRowClick} />
+            ) : (<></>)}
+            
         </>
     );
 }

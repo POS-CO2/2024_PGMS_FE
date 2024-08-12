@@ -92,3 +92,14 @@ export function ButtonGroup({ buttons=[], onClicks=[] }) {
     </div>
   );
 }
+
+export function ButtonGroupMm({ buttons = [], onClick}) {
+  return (
+    <div style={{ display: 'flex', gap: '8px', marginRight: '1rem', justifyContent:"flex-end" }}>
+      {buttons.map(button => {
+        const ButtonComponent = buttonMap[button];
+        return ButtonComponent ? <ButtonComponent key={button} onClick={onClick} /> : null;
+      })}
+    </div>
+  );
+}
