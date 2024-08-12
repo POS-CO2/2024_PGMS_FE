@@ -13,7 +13,8 @@ const buttonMap = {
   Edit: EditButton,
   UploadExcel: UploadExcelButton,
   DownloadExcelForm: DownloadExcelFormButton,
-  DownloadExcel: DownloadExcelButton
+  DownloadExcel: DownloadExcelButton,
+  ShowDetails: ShowDetailsButton
 };
 
 const CustomButton = styled(Button)(({ theme }) => ({
@@ -77,6 +78,14 @@ export function DownloadExcelButton({onClick}) {
   return (
     <CustomButton variant="contained" onClick={onClick}>
       엑셀 다운로드 <DownloadIcon className="icon" />
+    </CustomButton>
+  );
+}
+
+export function ShowDetailsButton({onClick}) {
+  return (
+    <CustomButton variant="contained" onClick={onClick}>
+      상세보기
     </CustomButton>
   );
 }

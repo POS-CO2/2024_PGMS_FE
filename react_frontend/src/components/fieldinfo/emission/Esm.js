@@ -2,21 +2,42 @@ import React, { useState } from "react";
 import * as tableStyles from "../../../assets/css/newTable.css"
 import Table from "../../../Table";
 import TableCustom from "../../../TableCustom";
+import { ButtonGroup } from "../../../Button";
+import * as sysStyles from '../../../assets/css/sysmng.css';
+import * as mainStyle from '../../../assets/css/main.css';
+import * as esmStyles from '../../../assets/css/esm.css';
+import { Card } from '@mui/material';
+import { Select } from 'antd';
 import project from "../../../assets/json/selectedPjt";
 import emsData from "../../../assets/json/ems";
+import sdData from "../../../assets/json/sd";
 import SearchForms from "../../../SearchForms";
 import { formField_esm } from "../../../assets/json/searchFormData.js";
+import { SdAddModal } from "../../../modals/PdModal";
+
+const selectOptions = [
+    { value: '2024', label: '2024' },
+    { value: '2023', label: '2023' },
+    { value: '2022', label: '2022' },
+    { value: '2021', label: '2021' },
+    { value: '2020', label: '2020' }
+];
 
 export default function Esm() {
     const [formData, setFormData] = useState({});
 
     const [showResults, setShowResults] = useState(false);            // 조회결과와 담당자목록을 표시할지 여부
     const [selectedPjt, setSelectedPjt] = useState(null);             // 선택된 프로젝트 코드
-    const [selectedEmtns, setSelectedEmtns] = useState([]);          // 선택된 배출원
+    const [selectedEmtn, setSelectedEmtn] = useState(null);           // 선택된 배출원
+    const [selectedSd, setSelectedSd] = useState(null);               // 선택된 증빙자료
+    const [showSds, setShowSds] = useState(false);
 
     const [isModalOpen, setIsModalOpen] = useState({
-        EsmAdd: false, // 모달1
-        EsmDelete: false // 모달2
+        EsmAdd: false, // 배출원 등록
+        EsmDelete: false, // 배출원 삭제
+        SdAdd: false, // 증빙자료 등록
+        SdDelete: false, // 증빙자료 삭제
+        SdShowDetails: false // 증빙자료 상세보기
     });
 
     const handleFormSubmit = (data) => {
@@ -33,7 +54,13 @@ export default function Esm() {
     };
     // 배출원 row 클릭 시 호출될 함수
     const handleEmtnClick = (row) => {
-        setSelectedEmtns(row.equipName);
+        setSelectedEmtn(row.equipName);
+        setShowSds(true);
+    };
+    // 증빙자료 row 클릭 시 호출될 함수
+    const handleSdClick = (row) => {
+        setSelectedSd(row.name);
+        console.log(selectedSd);
     };
 
     const showModal = (modalType) => {
@@ -48,16 +75,28 @@ export default function Esm() {
         setIsModalOpen(prevState => ({ ...prevState, [modalType]: false }));
     };
 
-    const onAddClick = () => {
+    const onEmsAddClick = () => {
         showModal('EsmAdd');
     };
-    const onDeleteClick = () => {
+    const onEmsDeleteClick = () => {
         showModal('EsmDelete');
+    };
+
+    const onSdAddClick = () => {
+        showModal('SdAdd');
+    };
+    const onSdDeleteClick = () => {
+        showModal('SdDelete');
+    };
+    const onSdShowDetailsClick = () => {
+        showModal('SdShowDetails');
     };
 
     return (
         <>
-            <div className={tableStyles.menu}>현장정보 &gt; 배출원 &gt; 배출원 지정</div>
+            <div className={mainStyle.breadcrumb}>
+                {"현장정보 > 배출원 > 배출원 지정"}
+            </div>
 
             <SearchForms onFormSubmit={handleFormSubmit} formFields={formField_esm} />
 
@@ -67,15 +106,16 @@ export default function Esm() {
                     <div className={tableStyles.table_title}>조회결과</div>
                     <Table data={project} onRowClick={handlePjtClick} />
 
-
-
-                    <div className={esmStyles.resultContent}>
-                        <div className={esmStyles.leftSide}>
+                    <div className={sysStyles.main_grid}>
+                        <Card className={sysStyles.card_box} sx={{ width: "50%", height: "100vh" }}>
+                            <div className={sysStyles.mid_title}>
+                                {"배출원목록"}
+                            </div>
                             <TableCustom
-                                title='배출원목록'
+                                title=""
                                 data={emsData}
                                 buttons={['Delete', 'Add']}
-                                onClicks={[onDeleteClick, onAddClick]}
+                                onClicks={[onEmsDeleteClick, onEmsAddClick]}
                                 onRowClick={handleEmtnClick}
                                 modals={[
                                     {
@@ -91,32 +131,50 @@ export default function Esm() {
                                     }
                                 ]}
                             />
-                        </div>
+                        </Card>
 
-                        <div className={esmStyles.divider} /> {/* 구분선 추가 */}
+                        <Card className={sysStyles.card_box} sx={{ width: "50%" }}>
+                            <div className={sysStyles.mid_title}>
+                                {"증빙자료 목록"}
+                            </div>
+                            {showSds ? (
+                                <>
+                                    <div className={esmStyles.select_button_container}>
+                                        <Select defaultValue="2024">
+                                            {selectOptions.map(option => (
+                                                <Select.Option key={option.value} value={option.value}>
+                                                    {option.label}
+                                                </Select.Option>
+                                            ))}
+                                        </Select>
+                                        <ButtonGroup
+                                            buttons={['Delete', 'Add', 'ShowDetails']}
+                                            onClicks={[onSdDeleteClick, onSdAddClick, onSdShowDetailsClick]} />
+                                    </div>
+                                    <Table data={sdData} variant={false} onRowClick={handleSdClick} />
 
-                        <div className={esmStyles.rightSide}>
-                        <TableCustom
-                                title='증빙자료 목록'
-                                data={emsData}
-                                buttons={['Delete', 'Add']}
-                                onClicks={[onDeleteClick, onAddClick]}
-                                onRowClick={handleEmtnClick}
-                                modals={[
-                                    {
-                                        modalType: 'EsmAdd',
-                                        isModalOpen: isModalOpen.EsmAdd,
-                                        handleOk: handleOk('EsmAdd'),
-                                        handleCancel: handleCancel('EsmAdd'),
-                                    }, {
-                                        modalType: 'EsmDelete',
-                                        isModalOpen: isModalOpen.EsmDelete,
-                                        handleOk: handleOk('EsmDelete'),
-                                        handleCancel: handleCancel('EsmDelete'),
-                                    }
-                                ]}
-                            />
-                        </div>
+                                    <SdAddModal
+                                        isModalOpen={isModalOpen.SdAdd}
+                                        handleOk={handleOk('SdAdd')}
+                                        handleCancel={handleCancel('SdAdd')}
+                                    />
+                                    {/*<SdDeleteModal
+                                        isModalOpen={isModalOpen.SdDelete}
+                                        handleOk={handleOk('SdDelete')}
+                                        handleCancel={handleCancel('SdDelete')}
+                                    />*/}
+                                    {/*<SdShowDetailsModal
+                                        isModalOpen={isModalOpen.SdShowDetails}
+                                        handleOk={handleOk('SdShowDetails')}
+                                        handleCancel={handleCancel('SdShowDetails')}
+                                    />*/}
+                                </>
+                            )
+                                : (
+                                    <></>
+                                )}
+
+                        </Card>
                     </div>
                 </>
             )}

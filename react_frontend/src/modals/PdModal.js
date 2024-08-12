@@ -3,6 +3,8 @@ import { Modal } from 'antd';
 import * as modalStyles from "../assets/css/pdModal.css";
 import Table from "../Table";
 import { employee } from "../assets/json/manager.js"
+import emsData from "../assets/json/ems";
+import sdData, {selectOptions} from "../assets/json/sd";
 import * as sysStyles from "../assets/css/sysmng.css"
 import { TextField, Box, InputLabel, MenuItem, FormControl, Select } from '@mui/material';
 
@@ -489,6 +491,112 @@ export function MmAddModal({isModalOpen, handleOk, handleCancel}){
                 </div>
             </div>
             <button className={modalStyles.select_button} onClick={handleSelect}>등록</button>
+        </Modal>
+    )
+}
+
+export function EsmAddModal({ isModalOpen, handleOk, handleCancel }) {
+    const [selectedEmtns, setSelectedEmtns] = useState([]);
+
+    // 배출원 row 클릭 시 호출될 함수
+    const handleEmtnClick = (row) => {
+        setSelectedEmtns(row.equipName);
+        console.log(selectedEmtns);
+    };
+
+    return (
+        <Modal 
+            open={isModalOpen} 
+            onCancel={handleCancel} 
+            width={800}
+            footer={null}             //Ant Design의 기본 footer 제거(Cancel, OK 버튼)
+        >
+            <div className={modalStyles.title}>배출원 등록</div>
+
+            <Table data={emsData} variant='checkbox' onRowClick={handleEmtnClick} />
+
+            <button className={modalStyles.select_button} onClick={handleOk}>등록</button>
+        </Modal>
+    )
+}
+
+export function EsmDeleteModal({ isModalOpen, handleOk, handleCancel }) {
+
+    return (
+        <Modal 
+            open={isModalOpen} 
+            onCancel={handleCancel} 
+            width={680}
+            footer={null}             //Ant Design의 기본 footer 제거(Cancel, OK 버튼)
+        >
+            <div className={modalStyles.title}>배출원 삭제</div>
+            
+
+            <button className={modalStyles.select_button} onClick={handleOk}>삭제</button>
+        </Modal>
+    )
+}
+
+export function SdAddModal({ isModalOpen, handleOk, handleCancel }) {
+    const [selectedSd, setSelectedSd] = useState();
+
+    const onAddClick = () => { // 증빙자료 등록 버튼
+        console.log("onAddClick");
+    };
+
+    // 배출원 row 클릭 시 호출될 함수
+    const handleSdClick = (row) => {
+        setSelectedSd(row.name);
+        console.log(selectedSd);
+    };
+
+    return (
+        <Modal
+            open={isModalOpen}
+            onCancel={handleCancel}
+            width={500}
+            footer={null}             //Ant Design의 기본 footer 제거(Cancel, OK 버튼)
+        >
+            <div className={modalStyles.title}>증빙서류 등록</div>
+
+            <div className={modalStyles.search_container}>
+                <div className={modalStyles.search_item}>
+                    <div className={modalStyles.search_title}>대상년월</div>
+                    <input
+                        className={modalStyles.search}
+                    /*value={pjtCode}
+                    onChange={(e) => setPjtCode(e.target.value)}*/
+                    />
+                </div>
+                <div className={modalStyles.search_item}>
+                    <div className={modalStyles.search_title}>자료명</div>
+                    <input
+                        className={modalStyles.search}
+                    /*value={pjtName}
+                    onChange={(e) => setPjtName(e.target.value)}*/
+                    />
+                </div>
+                <div className={modalStyles.search_item}>
+                    <div className={modalStyles.search_title}>비고</div>
+                    <input
+                        className={modalStyles.search}
+                    /*value={year}
+                    onChange={(e) => setYear(e.target.value)}*/
+                    />
+                </div>
+                <div className={modalStyles.search_item}>
+                    <div className={modalStyles.search_title}>첨부파일</div>
+                    <input
+                        className={modalStyles.search}
+                    /*value={month}
+                    onChange={(e) => setMonth(e.target.value)}*/
+                    />
+                </div>
+            </div>
+
+            <button className={modalStyles.select_button} /*onClick={handleSelect}*/>저장</button>
+
+
         </Modal>
     )
 }
