@@ -12,7 +12,6 @@ export default function Pd() {
     const [formData, setFormData] = useState({});                     // 검색 데이터
     const [searchResult, setsearchResult] = useState(null);           // 프로젝트 조회 결과(api 연동해서 받아올 data)
     const [selectedManagers, setSelectedManagers] = useState([]);
-    console.log("selectedManagers:" + selectedManagers);
     
     // 선택된 담당자들(PK column only)
     const [isModalOpen, setIsModalOpen] = useState({
@@ -48,7 +47,6 @@ export default function Pd() {
     // modalType에 따라 결과 처리 해주기
     const handleOk = (modalType) => (data) => {
         setIsModalOpen(prevState => ({ ...prevState, [modalType]: false })); //모달 닫기
-        console.log(data);
         //setInputValue(data);
     };
 

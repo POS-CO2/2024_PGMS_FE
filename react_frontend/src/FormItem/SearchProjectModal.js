@@ -5,12 +5,12 @@ import Table from "../Table";
 import project from "../assets/json/project.js"
  
 export default function ModalComponent({ isModalOpen, handleOk, handleCancel }) {
-  const [showResults, setShowResults] = useState(false);  // 프로젝트 목록을 표시할지 여부
+  const [formData, setFormData] = useState({});                 // 검색 데이터
   const [selectedPjt, setSelectedPjt] = useState([]);     // 선택된 프로젝트
   
-  // 찾기 버튼 클릭 시 호출될 함수
-  const handleSearch = () => {
-    setShowResults(true);
+  //찾기 버튼 클릭시 호출될 함수
+  const handleFormSubmit = (data) => {
+    setFormData(data); 
   };
 
   // 프로젝트 row 클릭 시 호출될 함수
@@ -41,7 +41,7 @@ export default function ModalComponent({ isModalOpen, handleOk, handleCancel }) 
           <div className={pjtModalStyles.search_title}>프로젝트명</div>
           <div className={pjtModalStyles.search_container}>
             <input className={pjtModalStyles.search_name}/>
-            <button className={pjtModalStyles.search_button} onClick={handleSearch}>찾기</button>
+            <button className={pjtModalStyles.search_button} onClick={handleFormSubmit}>찾기</button>
           </div>
         </div>
       </div>
