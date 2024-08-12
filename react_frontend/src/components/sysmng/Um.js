@@ -6,7 +6,7 @@ import { table_um_list } from '../../assets/json/selectedPjt';
 import { ButtonGroup, ButtonGroupMm } from '../../Button';
 import * as sysStyles from '../../assets/css/sysmng.css';
 import * as mainStyle from '../../assets/css/main.css';
-import { Card, TextField } from '@mui/material';
+import { Card, TextField, Button } from '@mui/material';
 import { Dropdown } from '@mui/base';
 
 export default function Um() {
@@ -18,11 +18,6 @@ export default function Um() {
     }
 
     const [infoShow ,setInfoShow] = useState(false);
-
-
-    const handleRowClick = () => {
-        setInfoShow(true);
-    };
 
     const access = [
         {
@@ -42,6 +37,30 @@ export default function Um() {
             label: '시스템관리자'
         },
     ]
+
+    const [selectedUser, setSelectedUser] = useState(
+        {
+            loginId: '',
+            userName: '',
+            branch: '',
+            access: 'ADMIN',
+        }
+    );
+
+    const handleRowClick = (e) => {
+        setInfoShow(true);
+        const newUserInfo = {
+            loginId: e['로그인 아이디'],
+            userName: e['이름'],
+            branch: e['사업장'],
+            access: 'ADMIN'
+        }
+
+        setSelectedUser(
+            newUserInfo
+        );
+        
+    };
 
     const [isModalOpen, setIsModalOpen] = useState({
         Delete: false,
@@ -65,7 +84,10 @@ export default function Um() {
         showModal('UmAdd');
     }
 
+    const [editable, setEditable] = useState(true);
+    
     const handleEditClick = () => {
+        setEditable(!editable);
     }
 
     const handleDeleteClick = () => {
@@ -81,7 +103,7 @@ export default function Um() {
             <div className={sysStyles.main_grid}>
                 <Card className={sysStyles.card_box} sx={{width:"50%", height:"100vh"}}>
                     <div className={sysStyles.mid_title}>{"사용자 목록"}</div>
-                    <TableCustom title="" data={table_um_list} button="" onRowClick={handleRowClick}/>
+                    <TableCustom title="" data={table_um_list} button="" onRowClick={(e) => handleRowClick(e)}/>
                 </Card>
                 <Card className={sysStyles.card_box} sx={{width:"50%"}}>
                     <div className={sysStyles.mid_title}>{"사용자 상세 정보"}</div>
@@ -109,34 +131,72 @@ export default function Um() {
                                 <div className={sysStyles.text}>
                                     {"로그인 아이디"}
                                 </div>
-                                <TextField id='loginId' label="로그인 아이디" variant='outlined' sx={{width:"100%"}}/>
+                                {!editable ? (
+                                    <TextField id='loginId' disabled={editable} variant='outlined' onChange={(e) => setSelectedUser(e.target.value)} defaultValue={selectedUser.loginId} value={selectedUser.loginId} sx={{width:"100%"}}/>
+                                ) : (
+                                    <TextField id='loginId' disabled={editable} variant='outlined' onChange={(e) => setSelectedUser(e.target.value)} defaultValue={selectedUser.loginId} value={selectedUser.loginId} sx={{width:"100%", backgroundColor:"rgb(223,223,223)"}}/>
+                                )}
+                                
                             </div>
                             <div className={sysStyles.text_field} style={{marginTop:"2rem",width:"50%"}}>
                                 <div className={sysStyles.text}>{"이름 "}</div>
-                                <TextField id='userName' label="이름" variant='outlined' sx={{width:"100%"}}/>
+                                {!editable ? (
+                                    <TextField id='userName' disabled={editable} variant='outlined' onChange={(e) => setSelectedUser(e.target.value)} defaultValue={selectedUser.userName} value={selectedUser.userName} sx={{width:"100%"}}/>
+                                ) : (
+                                    <TextField id='userName' disabled={editable} variant='outlined' onChange={(e) => setSelectedUser(e.target.value)} defaultValue={selectedUser.userName} value={selectedUser.userName} sx={{width:"100%", backgroundColor:"rgb(223,223,223)"}}/>
+                                )}
                             </div>
                             <div className={sysStyles.text_field} style={{marginTop:"2rem",width:"50%"}}>
                                 <div className={sysStyles.text}>{"사업장"}</div>
-                                <TextField id='branchName' label="사업장" variant='outlined' sx={{width:"100%"}}/>
+                                {!editable ? (
+                                    <TextField id='branchName' disabled={editable} variant='outlined' onChange={(e) => setSelectedUser(e.target.value)} defaultValue={selectedUser.branch} value={selectedUser.branch} sx={{width:"100%"}}/>
+                                ) : (
+                                    <TextField id='branchName' disabled={editable} variant='outlined' onChange={(e) => setSelectedUser(e.target.value)} defaultValue={selectedUser.branch} value={selectedUser.branch} sx={{width:"100%", backgroundColor:"rgb(223,223,223)"}}/>
+                                )}
+                                
                             </div>
                             <div className={sysStyles.text_field} style={{marginTop:"2rem",width:"50%"}}>
                                 <div className={sysStyles.text}>{"권한"}</div>
-                                <TextField
-                                    id="outlined-select-currency-native"
-                                    select
-                                    label="권한"
-                                    defaultValue="None"
-                                    SelectProps={{
-                                        native: true,
-                                    }}
-                                    sx={{width:"100%"}}
-                                    >
-                                    {access.map((option) => (
-                                        <option key={option.value} value={option.value}>
-                                            {option.label}
-                                        </option>
-                                    ))}
-                                </TextField>
+                                {!editable ? (
+                                    <TextField
+                                        id="outlined-select-currency-native"
+                                        select
+                                        disabled={editable}
+                                        defaultValue="ADMIN"
+                                        value={"ADMIN"}
+                                        SelectProps={{
+                                            native: true,
+                                        }}
+                                        sx={{width:"100%"}}
+                                        >
+                                        {access.map((option) => (
+                                            <option key={option.value} value={option.value} onChange={(e) => setSelectedUser(e.target.value)} >
+                                                {option.label}
+                                            </option>
+                                        ))}
+                                    </TextField>
+                                ) : (
+                                    <TextField
+                                        id="outlined-select-currency-native"
+                                        select
+                                        disabled={editable}
+                                        defaultValue="None"
+                                        value={"ADMIN"}
+                                        SelectProps={{
+                                            native: true,
+                                        }}
+                                        sx={{width:"100%", backgroundColor:"rgb(223,223,223)"}}
+                                        >
+                                        {access.map((option) => (
+                                            <option key={option.value} value={option.value} onChange={(e) => setSelectedUser(e.target.value)} >
+                                                {option.label}
+                                            </option>
+                                        ))}
+                                    </TextField>
+                                )}
+                            </div>
+                            <div className={sysStyles.text_field} style={{width:"50%", marginTop:"2rem"}}>
+                                {!editable && <Button variant='contained' onClick={handleEditClick} sx={{width:"100%"}}>저장</Button>}
                             </div>
                         </div>
                         </>
