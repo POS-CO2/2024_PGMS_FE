@@ -9,6 +9,7 @@ const axiosInstance = axios.create({
     timeout: 10000
 });
 
+// 서버에서 토큰 받아오기
 axiosInstance.interceptors.request.use(
     config => {
         // 요청 전에 공통 작업 수행 (예: 토큰 추가)

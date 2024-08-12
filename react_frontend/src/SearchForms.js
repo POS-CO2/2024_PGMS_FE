@@ -39,7 +39,7 @@ export default function SearchForms({ onFormSubmit, formFields, onSearch, autoSu
     const [form] = Form.useForm();
     const [isInitialSubmit, setIsInitialSubmit] = useState(autoSubmitOnInit); // 첫 렌더링 여부를 추적하는 상태
 
-    // 초기 렌더링 시 폼을 제출하는 함수
+    // 초기 렌더링 시 폼을 제출하는 함수 //default일 때 자동 폼 제출
     const autoSubmitForm = () => {
         form.validateFields()
             .then(values => {

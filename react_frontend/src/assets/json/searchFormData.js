@@ -93,6 +93,40 @@ export const formField_um = [
     ]},
 ]
 
+export const formField_mal = [
+    { type: 'InputText', name: 'userName', label: "사용자명"},
+    { type: 'InputText', name: 'userID', label: "사용자 아이디"},
+    { type: 'SelectCalendar', name: 'calendar', label: "조회기간"},
+]
+
+export const formField_fm = [
+    { type: 'SearchAtModal', name: 'searchProject', label: '프로젝트명/코드', modalType: '프로젝트 찾기' },
+]
+
+export const formField_efm = [
+    { type: 'InputText', name: 'actvDataName', label: "활동자료명"},
+    { type: 'InputText', name: 'applyYear', label: "적용년도"},
+    { type: 'DropDown', name: 'applydvs', label: "적용구분", options: [
+        {value: '1', label: '적용구분1'},
+        {value: '2', label: '적용구분2'},
+        {value: '3', label: '적용구분3'},
+    ]},
+    { type: 'DropDown', name: 'ghgCode', label: "온실가스코드", options: [
+        {value: '1', label: '온가코1'},
+        {value: '2', label: '온가코2'},
+        {value: '3', label: '온가코3'},
+    ]},
+    { type: 'DropDown', name: 'coefClassCode', label: "계수구분코드", options: [
+        {value: '1', label: '계구코1'},
+        {value: '2', label: '계구코2'},
+        {value: '3', label: '계구코3'},
+    ]},
+    { type: 'DropDown', name: 'unitCode', label: "단위코드", options: [
+        {value: '1', label: '단코1'},
+        {value: '2', label: '단코2'},
+        {value: '3', label: '단코3'},
+    ]},
+]
 export const formField_pg = [
     { type: 'InputText', name: 'pjtCode', label: '프로젝트코드'},
     { type: 'InputText', name: 'pjtName', label: '프로젝트명'},

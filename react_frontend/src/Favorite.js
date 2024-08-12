@@ -3,8 +3,6 @@ import * as favoriteStyles from './assets/css/favorite.css';
 
 function Favorite({handleFavClick, fav}) {
     
-// My Favorite is Kuromi~~
-
     if (fav) {
         return (
             <div className={favoriteStyles.favorite}>
