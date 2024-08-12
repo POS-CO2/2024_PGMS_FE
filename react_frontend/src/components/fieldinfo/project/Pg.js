@@ -7,18 +7,13 @@ import {formField_pg} from "../../../assets/json/searchFormData.js"
 
 export default function Pg() {
     const [showResults, setShowResults] = useState(false);      // 조회결과와 담당자목록을 표시할지 여부
+    const [formData, setFormData] = useState({});               // 검색 데이터
     const [selectedPjt, setSelectedPjt] = useState(null);       // 선택된 프로젝트
-
     const [isModalOpen, setIsModalOpen] = useState(false);
-    const [inputValue, setInputValue] = useState("");
 
+    //조회 버튼 클릭시 호출될 함수
     const handleFormSubmit = (data) => {
-        
-    };
-
-    // 조회 버튼 클릭 시 호출될 함수
-    const handleSearch = () => {
-        setShowResults(true);
+        setFormData(data);
     };
 
     // 프로젝트 row 클릭 시 호출될 함수
@@ -44,10 +39,10 @@ export default function Pg() {
         <>
             <div className={tableStyles.menu}>현장정보 &gt; 프로젝트 &gt; 프로젝트 관리</div>
             
-            <SearchForms onFormSubmit={handleFormSubmit} formFields={formField_pg} onSearch={handleSearch} />
+            <SearchForms onFormSubmit={handleFormSubmit} formFields={formField_pg} />
             
-            {/* showResults 상태가 true일 때만 결과를 표시 */}
-            {showResults && (
+            {(!formData || Object.keys(formData).length === 0) ?
+            <></> : ( //TODO: 백엔드에서 받아온 값으로 바꾸기(data 파라미터)
                 <>
                     <TableCustom 
                         title='프로젝트목록' 
