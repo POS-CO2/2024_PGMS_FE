@@ -9,7 +9,7 @@ export default function ChartCustom({ title, data }) {
 
             <BarChart
                 width={900}
-                height={500}
+                height={300}
                 data={data}
                 margin={{
                     top: 20,

@@ -1,11 +1,10 @@
 .navigation_container{
-    position: relative;
     color:white;
     background: linear-gradient(#000046, rgb(49,95,175));
-    /*background-color:rgb(31,77,145) ;*/
     height: 100vh;
     min-width: 200px;
     flex-shrink: 0;
+    align-items: stretch;
     overflow-y: auto;
 }
 
