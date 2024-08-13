@@ -73,9 +73,9 @@ export function TableCustomDoubleClickEdit({
     buttons = [],
     onClicks = [],
     onRowClick = () => { },  // 기본값으로 빈 함수 설정
+    selectedRows = [],       // 테이블에서 선택된 row 리스트
     modals = [],
     table = true,
-    selectedRows = [],       // 테이블에서 선택된 row 리스트
 }) {
     const [isEditing, setIsEditing] = useState(false); // 'Edit' 모드 상태 관리
     const [editableData, setEditableData] = useState(data); // 수정된 데이터 저장

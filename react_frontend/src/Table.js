@@ -55,8 +55,8 @@ export default function CustomizedTables({
         handleBlur = () => { },
         editingCell = {}
     }) {
+    const [selectedRow, setSelectedRow] = useState(null);       // default variant의 선택 상태
     const [selectedRows, setSelectedRows] = useState([]); 
-    //console.log(selectedRows);
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(10);             // default page row length
     const handleChangePage = (event, newPage) => {
@@ -70,11 +70,8 @@ export default function CustomizedTables({
 
     const handleRowClick = (index) => {
         if(variant === 'default') {
-            // 같은 행 클릭 시 선택 해제
-            setSelectedRows((prevSelectedRows) =>
-                prevSelectedRows.includes(index)                               
-                    ? [] : [index]                             
-            )
+            setSelectedRow(index === selectedRow ? null : index); // 같은 행 클릭 시 선택 해제
+            onRowClick(data[index]);
         }
         if(variant === 'checkbox') {
             const addRow = (selectedRows) =>
@@ -131,7 +128,9 @@ export default function CustomizedTables({
                                 data.map((row, rowIndex) => (
                                     <StyledTableRow 
                                         key={rowIndex}
-                                        selected={selectedRows.includes(rowIndex)}
+                                        selected={variant === 'checkbox' 
+                                                ? selectedRows.includes(rowIndex) 
+                                                : selectedRow === rowIndex}
                                         variant={variant}
                                         onClick={() => handleRowClick(rowIndex)}
                                     >

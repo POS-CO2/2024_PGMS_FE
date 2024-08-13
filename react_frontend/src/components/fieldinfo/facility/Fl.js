@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import * as tableStyles from "../../../assets/css/newTable.css";
-import TableCustom from "../../../TableCustom";
+import TableCustom, {TableCustomDoubleClickEdit} from "../../../TableCustom";
 import SearchForms from "../../../SearchForms";
 import {lib} from "../../../assets/json/selectedPjt";
 import {formField_fl} from "../../../assets/json/searchFormData.js";
@@ -56,13 +56,14 @@ export default function Fl() {
             <></> : ( //TODO: 백엔드에서 받아온 값으로 바꾸기(Table 컴포넌트의 data 파라미터)
 
                 <>
-                    <TableCustom 
+                    <TableCustomDoubleClickEdit 
                         title='설비LIB목록' 
                         variant='checkbox'
                         data={lib}                   
                         buttons={['Edit', 'Delete', 'Add']}
                         onClicks={[()=>{}, onDeleteClick, onAddClick]}
                         onRowClick={(e) => handleEqLibClick(e)}
+                        selectedRows={selectedEqLibs}
                         modals={[
                             {
                                 'modalType': 'Del',
