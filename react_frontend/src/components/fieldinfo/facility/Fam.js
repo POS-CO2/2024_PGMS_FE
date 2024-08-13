@@ -6,11 +6,11 @@ import {actv} from "../../../assets/json/selectedPjt";
 import {formField_fam} from "../../../assets/json/searchFormData.js";
 
 export default function Fam() {
-    const [formData, setFormData] = useState({});                 // 검색 데이터
-    const [selectedActves, setSelectedActves] = useState([]);     // 선택된 설비 LIB 목록(PK column only)
-
+    const [formData, setFormData] = useState({});               // 검색 데이터
+    const [selectedActv, setSelectedActv] = useState(null);     // 선택된 설비 LIB
     const [isModalOpen, setIsModalOpen] = useState({
         FamAdd: false,
+        FamEdit: false,
         Del: false
     });
 
@@ -40,9 +40,13 @@ export default function Fam() {
         setIsModalOpen(prevState => ({ ...prevState, [modalType]: false }));
     };
 
-    // 버튼 클릭 시 모달 열림 설정 - showModal(modalType);
+    // 버튼 클릭 시 모달 열림 설정
     const onAddClick = () => {
         showModal('FamAdd');
+    };
+
+    const onEditClick = () => {
+        showModal('FamEdit');
     };
 
     const onDeleteClick = () => {
@@ -59,17 +63,23 @@ export default function Fam() {
                 <>
                     <TableCustom 
                         title='활동자료목록' 
-                        variant='checkbox'
                         data={actv}                   
-                        buttons={['Edit', 'Delete', 'Add']}
-                        onClicks={[()=>{}, onDeleteClick, onAddClick]}
+                        buttons={['Delete', 'Edit', 'Add']}
+                        onClicks={[onDeleteClick, onEditClick, onAddClick]}
                         onRowClick={handleActvClick}
+                        selectedRows={[selectedActv]}
                         modals={[
                             {
                                 'modalType': 'Del',
                                 'isModalOpen': isModalOpen.Del,
                                 'handleOk': handleOk('Del'),
                                 'handleCancel': handleCancel('Del')
+                            },
+                            {
+                                'modalType': 'FamEdit',
+                                'isModalOpen': isModalOpen.FamEdit,
+                                'handleOk': handleOk('FamEdit'),
+                                'handleCancel': handleCancel('FamEdit')
                             },
                             {
                                 'modalType': 'FamAdd',

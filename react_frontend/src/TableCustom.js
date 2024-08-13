@@ -1,7 +1,7 @@
 import React, {useState} from 'react';
 import Table from "./Table.js";
 import * as tableStyles from "./assets/css/newTable.css"
-import { DelModal, PdAddModal, RmAddModal, FlAddModal, FamAddModal, Ps12Modal, CmAddModal, DeleteModal, CmEditModal, CmListAddModal, CmListEditModal, FmAddModal, UmAddModal, MmAddModal } from "./modals/PdModal.js";
+import { DelModal, PdAddModal, RmAddModal, FlAddModal, FamAddModal, FamEditModal, Ps12Modal, CmAddModal, DeleteModal, CmEditModal, CmListAddModal, CmListEditModal, FmAddModal, UmAddModal, MmAddModal } from "./modals/PdModal.js";
 import { ButtonGroup } from './Button';
 
 const modalMap = {
@@ -15,6 +15,7 @@ const modalMap = {
     RmAdd: RmAddModal,
     FlAdd: FlAddModal,
     FamAdd: FamAddModal,
+    FamEdit: FamEditModal,
     Del: DelModal,
     FmAdd: FmAddModal,
     UmAdd: UmAddModal,
