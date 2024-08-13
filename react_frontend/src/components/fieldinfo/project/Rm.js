@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import * as tableStyles from "../../../assets/css/newTable.css"
 import Table from "../../../Table";
-import TableCustom, {TableCustomDoubleClickEdit} from "../../../TableCustom";
+import {TableCustomDoubleClickEdit} from "../../../TableCustom";
 import {pjt, saleAmt} from "../../../assets/json/selectedPjt";
 import SearchForms from "../../../SearchForms";
 import {formField_ps12} from "../../../assets/json/searchFormData.js";
@@ -10,7 +10,7 @@ export default function Rm() {
     const [searchedPjt, setSearchedPjt] = useState(null);             // 프로젝트 찾기 결과(api 연동해서 받아올 data)
     const [formData, setFormData] = useState({});                     // 검색 데이터
     const [searchResult, setsearchResult] = useState(null);           // 프로젝트 조회 결과(api 연동해서 받아올 data)
-    const [selectedSAs, setSelectedSAs] = useState([]);   
+    const [selectedSA, setSelectedSA] = useState(null);   
     const [isModalOpen, setIsModalOpen] = useState({
         RmAdd: false,
         Del: false
@@ -23,16 +23,7 @@ export default function Rm() {
 
     // 매출액 row 클릭 시 호출될 함수
     const handleSAClick = (saleAmt) => {
-        setSelectedSAs((prevSelectedSA) => {
-            // 선택된 사원의 loginId가 이미 배열에 존재하는지 확인
-            if (prevSelectedSA.includes(saleAmt.saleAmt)) {
-                // 존재한다면 배열에서 제거
-                return prevSelectedSA.filter((id) => id !== saleAmt.saleAmt);
-            } else {
-                // 존재하지 않는다면 배열에 추가
-                return [...selectedSAs, saleAmt.saleAmt];
-            }
-        });
+        setSelectedSA(saleAmt?.saleAmt ?? null);
     };
 
     // 모달 열기
@@ -62,7 +53,6 @@ export default function Rm() {
     return (
         <>
             <div className={tableStyles.menu}>현장정보 &gt; 프로젝트 &gt; 매출액 관리</div>
-            
             <SearchForms onFormSubmit={handleFormSubmit} formFields={[formField_ps12[0]]} />
             
             {(!formData || Object.keys(formData).length === 0) ?
@@ -73,12 +63,11 @@ export default function Rm() {
 
                     <TableCustomDoubleClickEdit 
                         title='매출액목록' 
-                        variant='checkbox'
                         data={saleAmt}                   
                         buttons={['Delete', 'Edit', 'Add']}
                         onClicks={[onDeleteClick, () => {}, onAddClick]}
                         onRowClick={handleSAClick}
-                        selectedRows={selectedSAs}
+                        selectedRows={[selectedSA]}
                         modals={[
                             {
                                 'modalType': 'Del',
