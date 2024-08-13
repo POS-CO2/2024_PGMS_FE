@@ -3,12 +3,67 @@ import { Modal } from 'antd';
 import * as modalStyles from "../assets/css/pdModal.css";
 import * as rmStyles from "../assets/css/rmModal.css";
 import * as delStyle from "../assets/css/delModal.css";
+import * as pjtModalStyles from "../assets/css/pjtModal.css";
+import * as sysStyles from "../assets/css/sysmng.css"
 import Table from "../Table";
 import { employee } from "../assets/json/manager.js"
-import * as sysStyles from "../assets/css/sysmng.css"
+import project from "../assets/json/project.js"
 import { TextField, Box, InputLabel, MenuItem, FormControl } from '@mui/material';
 import WarningAmberIcon from '@mui/icons-material/WarningAmber';
 import { Select } from 'antd';
+
+export function PgAddModal({ isModalOpen, handleOk, handleCancel }) {
+    const [formData, setFormData] = useState({});             // 검색 데이터
+    const [selectedPjts, setSelectedPjts] = useState([]);     // 선택된 프로젝트
+    
+    //찾기 버튼 클릭시 호출될 함수
+    const handleFormSubmit = (data) => {
+        setFormData(data); 
+    };
+  
+    // 프로젝트 row 클릭 시 호출될 함수
+    const handlePjtClick = (pjts) => {
+        setSelectedPjts(pjts.map(item => item.PjtCode));   // 클릭된 프로젝트의 코드로 상태를 설정
+    };
+  
+    // 선택 버튼 클릭 시 호출될 함수
+    const handleSelect = () => {
+        handleOk(selectedPjts);                            // 선택된 프로젝트 데이터를 handleOk로 전달
+    };
+  
+    return (
+      <Modal 
+        open={isModalOpen} 
+        width={1300}
+        onCancel={handleCancel} 
+        footer={null}             //Ant Design의 기본 footer 제거(Cancel, OK 버튼)
+      >
+        <div className={pjtModalStyles.title}>프로젝트 등록</div>
+        <p className={pjtModalStyles.comment}>* 프로젝트 코드나 프로젝트 명 둘 중에 하나만 입력해도 검색이 가능합니다.</p>
+        <div className={pjtModalStyles.search_container}>
+          <div className={pjtModalStyles.search_item}>
+            <div className={pjtModalStyles.search_title}>프로젝트코드</div>
+            <input className={pjtModalStyles.search_code}/>
+          </div>
+          <div className={pjtModalStyles.search_item}>
+            <div className={pjtModalStyles.search_title}>프로젝트명</div>
+            <div className={pjtModalStyles.search_container}>
+              <input className={pjtModalStyles.search_name}/>
+              <button className={pjtModalStyles.search_button} onClick={handleFormSubmit}>찾기</button>
+            </div>
+          </div>
+        </div>
+  
+        <div className={pjtModalStyles.result_container}>
+  
+        {(!formData || Object.keys(formData).length === 0) ?
+              <></> : ( <Table data={project} variant='checkbox' onRowClick={handlePjtClick} /> )}
+        </div>
+  
+        <button className={pjtModalStyles.select_button} onClick={handleSelect}>등록</button>
+      </Modal>
+    )
+}
 
 export function PdAddModal({ isModalOpen, handleOk, handleCancel }) {
     const [showResults, setShowResults] = useState(false);    // 사원 목록을 표시할지 여부
