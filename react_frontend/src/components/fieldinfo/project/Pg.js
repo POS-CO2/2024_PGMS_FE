@@ -1,13 +1,13 @@
 import React, { useState } from "react";
 import * as tableStyles from "../../../assets/css/newTable.css"
-import TableCustom from "../../../TableCustom";
+import {TableCustomDoubleClickEdit} from "../../../TableCustom";
 import project from "../../../assets/json/project.js";
 import SearchForms from "../../../SearchForms"
 import {formField_pg} from "../../../assets/json/searchFormData.js"
 
 export default function Pg() {
-    const [formData, setFormData] = useState({});                 // 검색 데이터
-    const [selectedPjts, setSelectedPjts] = useState([]);     // 선택된 설비 LIB 목록(PK column only)
+    const [formData, setFormData] = useState({});           // 검색 데이터
+    const [selectedPjt, setSelectedPjt] = useState();     // 선택된 설비 LIB 목록(PK column only)
 
     const [isModalOpen, setIsModalOpen] = useState({
         PgAdd: false,
@@ -21,7 +21,7 @@ export default function Pg() {
 
     // 설비LIB row 클릭 시 호출될 함수
     const handlePjtClick = (pjt) => {
-        setSelectedPjts(pjt.map(item => item.PjtCode));
+        setSelectedPjt(pjt.map(item => item.PjtCode));
     };
 
     // 모달 열기
@@ -57,12 +57,13 @@ export default function Pg() {
             {(!formData || Object.keys(formData).length === 0) ?
             <></> : ( //TODO: 백엔드에서 받아온 값으로 바꾸기(Table 컴포넌트의 data 파라미터)
                 <>
-                    <TableCustom 
+                    <TableCustomDoubleClickEdit 
                         title='프로젝트목록' 
                         data={lib}                   
                         buttons={['Edit', 'Delete', 'Add']}
                         onClicks={[()=>{}, onDeleteClick, onAddClick]}
                         onRowClick={handlePjtClick}
+                        selectedRows={selectedPjt === null ? [] : [selectedPjt]}
                         modals={[
                             {
                                 'modalType': 'Del',

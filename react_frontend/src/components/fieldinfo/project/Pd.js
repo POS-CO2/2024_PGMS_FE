@@ -11,8 +11,7 @@ export default function Pd() {
     const [searchedPjt, setSearchedPjt] = useState(null);             // 프로젝트 찾기 결과(api 연동해서 받아올 data)
     const [formData, setFormData] = useState({});                     // 검색 데이터
     const [searchResult, setsearchResult] = useState(null);           // 프로젝트 조회 결과(api 연동해서 받아올 data)
-    const [selectedManager, setSelectedManager] = useState([]);       // 선택한 담당자
-
+    const [selectedManager, setSelectedManager] = useState(null);       // 선택한 담당자
     // 선택된 담당자들(PK column only)
     const [isModalOpen, setIsModalOpen] = useState({
         PdAdd: false,
@@ -26,7 +25,7 @@ export default function Pd() {
     
     // 담당자 row 클릭 시 호출될 함수
     const handleManagerClick = (manager) => {
-        setSelectedManager(manager.loginId);
+        manager === null ? setSelectedManager(null) : setSelectedManager(manager.loginId);
     };
 
     // 모달 열기
@@ -65,14 +64,13 @@ export default function Pd() {
                 <>
                     <div className={tableStyles.table_title}>조회결과</div>
                     <Table data={project} />                    
-                    {console.log("selectedManager: " + selectedManager)}
-                    <TableCustom
+                    <TableCustomDoubleClickEdit
                         title='담당자목록' 
                         data={managers}                   
                         buttons={['Delete', 'Add']}
                         onClicks={[onDeleteClick, onAddClick]}
                         onRowClick={handleManagerClick}
-                        selectedRows={selectedManager.length === 0 ? [] : [selectedManager]}
+                        selectedRows={selectedManager === null ? [] : [selectedManager]}
                         modals={[
                             {
                                 'modalType': 'Del',

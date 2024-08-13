@@ -70,8 +70,11 @@ export default function CustomizedTables({
 
     const handleRowClick = (index) => {
         if(variant === 'default') {
-            setSelectedRow(index === selectedRow ? null : index); // 같은 행 클릭 시 선택 해제
-            onRowClick(data[index]);
+            const newSelectedRow = index === selectedRow ? null : index;
+            console.log(newSelectedRow)
+            setSelectedRow(newSelectedRow); // 같은 행 클릭 시 선택 해제
+            
+            newSelectedRow === null ? onRowClick(null) : onRowClick(data[newSelectedRow]);
         }
         if(variant === 'checkbox') {
             const addRow = (selectedRows) =>

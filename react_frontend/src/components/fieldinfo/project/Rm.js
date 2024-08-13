@@ -10,7 +10,7 @@ export default function Rm() {
     const [searchedPjt, setSearchedPjt] = useState(null);             // 프로젝트 찾기 결과(api 연동해서 받아올 data)
     const [formData, setFormData] = useState({});                     // 검색 데이터
     const [searchResult, setsearchResult] = useState(null);           // 프로젝트 조회 결과(api 연동해서 받아올 data)
-    const [selectedSAs, setSelectedSAs] = useState([]);   
+    const [selectedSA, setSelectedSA] = useState();   
     const [isModalOpen, setIsModalOpen] = useState({
         RmAdd: false,
         Del: false
@@ -23,16 +23,7 @@ export default function Rm() {
 
     // 매출액 row 클릭 시 호출될 함수
     const handleSAClick = (saleAmt) => {
-        setSelectedSAs((prevSelectedSA) => {
-            // 선택된 사원의 loginId가 이미 배열에 존재하는지 확인
-            if (prevSelectedSA.includes(saleAmt.saleAmt)) {
-                // 존재한다면 배열에서 제거
-                return prevSelectedSA.filter((id) => id !== saleAmt.saleAmt);
-            } else {
-                // 존재하지 않는다면 배열에 추가
-                return [...selectedSAs, saleAmt.saleAmt];
-            }
-        });
+        saleAmt === null ? setSelectedSA(null) : setSelectedSA(saleAmt.saleAmt);
     };
 
     // 모달 열기
@@ -77,7 +68,7 @@ export default function Rm() {
                         buttons={['Delete', 'Edit', 'Add']}
                         onClicks={[onDeleteClick, () => {}, onAddClick]}
                         onRowClick={handleSAClick}
-                        selectedRows={selectedSAs}
+                        selectedRows={selectedSA === null ? [] : [selectedSA]}
                         modals={[
                             {
                                 'modalType': 'Del',
