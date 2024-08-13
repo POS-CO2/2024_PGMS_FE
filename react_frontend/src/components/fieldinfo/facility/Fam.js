@@ -14,9 +14,10 @@ export default function Fam() {
     const handleFormSubmit = (data) => {
         setFormData(data);
     };
+
     // 활동자료 목록 row 클릭 시 호출될 함수
-    const handleActvClick = (row) => {
-        setSelectedActv(row.ActvDataName);
+    const handleActvClick = (actv) => {
+        setSelectedActv(actv?.actvDataName ?? null);
     };
 
     const showModal = () => {

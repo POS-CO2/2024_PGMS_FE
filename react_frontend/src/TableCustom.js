@@ -35,7 +35,7 @@ export default function TableCustom({
     // 버튼 활성화 상태 결정
     const buttonStatus = buttons.map((button) => {
         if (button === 'Edit' || button === 'Delete') {
-            return selectedRows.length > 0;
+            return selectedRows.length > 0;     // 선택된 row가 있으면 delete 버튼 활성화
         }
         return true;  // 'Add' 버튼은 항상 활성화
     });
@@ -84,7 +84,17 @@ export function TableCustomDoubleClickEdit({
     // 버튼 활성화 상태 결정
     const buttonStatus = buttons.map((button) => {
         if (button === 'Delete') {
-            return !isEditing && selectedRows.length > 0;   // 수정 중에는 삭제 버튼의 onRowClick 이벤트 비활성화
+            if(isEditing) {
+                return false;                       // 수정 중에는 삭제 버튼의 onRowClick 이벤트 비활성화
+            }
+            else {
+                if(selectedRows.includes(null)) {
+                    return false;
+                }
+                else {
+                    return selectedRows.length > 0;     // 선택된 row가 있으면 delete 버튼 활성화
+                }
+            }
         }
         return true;  // 'Add' 버튼은 항상 활성화
     });
