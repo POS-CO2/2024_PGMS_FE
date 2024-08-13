@@ -6,7 +6,7 @@ import * as delStyle from "../assets/css/delModal.css";
 import Table from "../Table";
 import { employee } from "../assets/json/manager.js"
 import * as sysStyles from "../assets/css/sysmng.css"
-import { TextField, Box, InputLabel, MenuItem, FormControl, Select, Autocomplete } from '@mui/material';
+import { TextField, Box, InputLabel, MenuItem, FormControl, Autocomplete } from '@mui/material';
 import WarningAmberIcon from '@mui/icons-material/WarningAmber';
 import { Select } from 'antd';
 
