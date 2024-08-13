@@ -48,7 +48,7 @@ export default function Fad() {
             
             <SearchForms onFormSubmit={handleFormSubmit} formFields={formField_fad} onSearch={handleSearch} />
             
-            {(!formData || Object.keys(formData).length === 0) ?
+            {showResults ?
             <></> : ( //TODO: 백엔드에서 받아온 값으로 바꾸기(data 파라미터)
                 <>
                     <div className={tableStyles.table_title}>조회결과</div>

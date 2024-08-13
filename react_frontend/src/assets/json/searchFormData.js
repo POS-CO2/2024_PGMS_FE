@@ -149,7 +149,8 @@ export const formField_pg = [
         {value: '16', label: '경남'},
         {value: '17', label: '경북 포항시'},
         {value: '18', label: '세종시'},
-    ]}
+    ]},
+    { type: 'SelectCalendar', name: 'calendar', label: '조회기간' }
 ]
 
 export const formField_fl = [

@@ -32,10 +32,19 @@ export default function TableCustom({
     table = true,
     selectedRows = [],       // 테이블에서 선택된 row 리스트
 }) {
+    const [isEditing, setIsEditing] = useState(false); // 'Edit' 모드 상태 관리
+    const [editableData, setEditableData] = useState(data); // 수정된 데이터 저장
+    const [editingCell, setEditingCell] = useState({ row: null, col: null }); // 현재 편집 중인 셀
+    
     // 버튼 활성화 상태 결정
     const buttonStatus = buttons.map((button) => {
-        if (button === 'Edit' || button === 'Delete') {
-            return selectedRows.length > 0;
+        if (button === 'Delete') {
+            if(isEditing) {
+                return false;                       // 수정 중에는 삭제 버튼의 onRowClick 이벤트 비활성화
+            }
+            else {
+                return selectedRows.length > 0;     // 선택된 row가 있으면 delete 버튼 활성화
+            }
         }
         return true;  // 'Add' 버튼은 항상 활성화
     });
@@ -84,7 +93,12 @@ export function TableCustomDoubleClickEdit({
     // 버튼 활성화 상태 결정
     const buttonStatus = buttons.map((button) => {
         if (button === 'Delete') {
-            return !isEditing && selectedRows.length > 0;   // 수정 중에는 삭제 버튼의 onRowClick 이벤트 비활성화
+            if(isEditing) {
+                return false;                       // 수정 중에는 삭제 버튼의 onRowClick 이벤트 비활성화
+            }
+            else {
+                return selectedRows.length > 0;     // 선택된 row가 있으면 delete 버튼 활성화
+            }
         }
         return true;  // 'Add' 버튼은 항상 활성화
     });
@@ -134,6 +148,7 @@ export function TableCustomDoubleClickEdit({
                     buttonStatus={buttonStatus}
                     isEditing={isEditing}       //for edit button
                 />
+                {console.log("buttonStatus" + buttonStatus)}
                 
                 {modals.map((modal) => {
                     const ModalComponent = modalMap[modal.modalType];

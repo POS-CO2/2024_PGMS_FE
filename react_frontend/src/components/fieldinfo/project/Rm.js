@@ -73,7 +73,6 @@ export default function Rm() {
 
                     <TableCustomDoubleClickEdit 
                         title='매출액목록' 
-                        variant='checkbox'
                         data={saleAmt}                   
                         buttons={['Delete', 'Edit', 'Add']}
                         onClicks={[onDeleteClick, () => {}, onAddClick]}

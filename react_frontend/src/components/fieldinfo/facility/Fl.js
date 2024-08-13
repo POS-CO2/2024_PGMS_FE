@@ -58,7 +58,6 @@ export default function Fl() {
                 <>
                     <TableCustomDoubleClickEdit 
                         title='설비LIB목록' 
-                        variant='checkbox'
                         data={lib}                   
                         buttons={['Edit', 'Delete', 'Add']}
                         onClicks={[()=>{}, onDeleteClick, onAddClick]}
