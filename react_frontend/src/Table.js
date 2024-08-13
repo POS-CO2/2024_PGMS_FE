@@ -56,6 +56,7 @@ export default function CustomizedTables({
         editingCell = {}
     }) {
     const [selectedRows, setSelectedRows] = useState([]); 
+    //console.log(selectedRows);
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(10);             // default page row length
     const handleChangePage = (event, newPage) => {
@@ -76,13 +77,16 @@ export default function CustomizedTables({
             )
         }
         if(variant === 'checkbox') {
-            setSelectedRows((prevSelectedRows) =>
-                prevSelectedRows.includes(index)                                // prevSelectedRows 배열에 index가 포함되어 있는지 확인
-                    ? prevSelectedRows.filter(rowIndex => rowIndex !== index)   // 행이 이미 선택된 경우 배열에서 index 제거
-                    : [...prevSelectedRows, index]                              // 행이 선택되지 않은 경우 prevSelectedRows 배열의 복사본을 만들고 그 배열에 index값을 추가
-            )
+            const addRow = (selectedRows) =>
+                selectedRows.includes(index)                                // prevSelectedRows 배열에 index가 포함되어 있는지 확인
+                    ? selectedRows.filter(rowIndex => rowIndex !== index)   // 행이 이미 선택된 경우 배열에서 index 제거
+                    : [...selectedRows, index]                              // 행이 선택되지 않은 경우 prevSelectedRows 배열의 복사본을 만들고 그 배열에 index값을 추가
+            
+
+            const newSelectedRows = addRow(selectedRows)
+            setSelectedRows(newSelectedRows);                        // 행이 선택되지 않은 경우 prevSelectedRows 배열의 복사본을 만들고 그 배열에 index값을 추가
+            onRowClick(newSelectedRows.map(i => data[i]));
         }
-        onRowClick(data[index]);
     };
 
     const handleCheckboxClick = (e, index) => {

@@ -8,7 +8,6 @@ import {formField_fl} from "../../../assets/json/searchFormData.js";
 export default function Fl() {
     const [formData, setFormData] = useState({});                 // 검색 데이터
     const [selectedEqLibs, setSelectedEqLibs] = useState([]);     // 선택된 설비 LIB 목록(PK column only)
-
     const [isModalOpen, setIsModalOpen] = useState({
         FlAdd: false,
         Del: false
@@ -21,7 +20,7 @@ export default function Fl() {
 
     // 설비LIB row 클릭 시 호출될 함수
     const handleEqLibClick = (lib) => {
-        setSelectedEqLibs([...selectedEqLibs, lib.EquipName]);
+        setSelectedEqLibs(lib.map(item => item.EquipName));
     };
 
     // 모달 열기
@@ -32,7 +31,6 @@ export default function Fl() {
     // 설비LIB 등록 버튼 클릭 시 호출될 함수
     const handleOk = (modalType) => (data) => {
         setIsModalOpen(prevState => ({ ...prevState, [modalType]: false })); //모달 닫기
-        console.log(data);
         //setInputValue(data);
     };
 
@@ -64,7 +62,7 @@ export default function Fl() {
                         data={lib}                   
                         buttons={['Edit', 'Delete', 'Add']}
                         onClicks={[()=>{}, onDeleteClick, onAddClick]}
-                        onRowClick={handleEqLibClick}
+                        onRowClick={(e) => handleEqLibClick(e)}
                         modals={[
                             {
                                 'modalType': 'Del',
