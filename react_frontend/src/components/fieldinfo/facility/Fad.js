@@ -48,8 +48,8 @@ export default function Fad() {
             
             <SearchForms onFormSubmit={handleFormSubmit} formFields={formField_fad} onSearch={handleSearch} />
             
-            {/* showResults 상태가 true일 때만 결과를 표시 */}
-            {showResults && (
+            {(!formData || Object.keys(formData).length === 0) ?
+            <></> : ( //TODO: 백엔드에서 받아온 값으로 바꾸기(data 파라미터)
                 <>
                     <div className={tableStyles.table_title}>조회결과</div>
                     <Table data={lib} onRowClick={selectedLib} />

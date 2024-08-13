@@ -7,7 +7,7 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
-import { Box, Checkbox, TablePagination } from '@mui/material';
+import { Box, Checkbox, TablePagination, TextField } from '@mui/material';
 
 // TableCell을 스타일링하는 컴포넌트
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
@@ -46,12 +46,19 @@ const StyledCheckbox = styled(Checkbox)(({ theme, checked }) => ({
     },
 }));
 
-export default function CustomizedTables({data = [], variant = 'default', onRowClick = () => { } }) {
-    const [selectedRow, setSelectedRow] = React.useState(null); // default variant의 선택 상태
-    const [selectedRows, setSelectedRows] = React.useState([]); // checkbox variant의 선택 상태
-    const [page, setPage] = React.useState(0);
-    const [rowsPerPage, setRowsPerPage] = React.useState(10); // default page row length
-
+export default function CustomizedTables({
+        data = [], 
+        variant = 'default', 
+        onRowClick = () => { }, 
+        handleDoubleClick = () => { },
+        handleInputChange = () => { }, 
+        handleBlur = () => { },
+        editingCell = {}
+    }) {
+    const [selectedRow, setSelectedRow] = useState(null);       // default variant의 선택 상태
+    const [selectedRows, setSelectedRows] = useState([]); 
+    const [page, setPage] = useState(0);
+    const [rowsPerPage, setRowsPerPage] = useState(10);             // default page row length
     const handleChangePage = (event, newPage) => {
         setPage(newPage);
     };
@@ -61,32 +68,28 @@ export default function CustomizedTables({data = [], variant = 'default', onRowC
         setPage(0);
     };
 
-    const handleRowClick = (index, event) => {
-        if (variant === 'default') {
+    const handleRowClick = (index) => {
+        if(variant === 'default') {
             setSelectedRow(index === selectedRow ? null : index); // 같은 행 클릭 시 선택 해제
             onRowClick(data[index]);
-        } else if (variant === 'checkbox') {
-            // row 클릭시 setSelectedRows에 추가
-            if (event.target.type !== 'checkbox') {
-                setSelectedRows((prevSelectedRows) =>
-                    prevSelectedRows.includes(index)                                // prevSelectedRows 배열에 index가 포함되어 있는지 확인
-                        ? prevSelectedRows.filter(rowIndex => rowIndex !== index)   // 행이 이미 선택된 경우 배열에서 index 제거
-                        : [...prevSelectedRows, index]                              // 행이 선택되지 않은 경우 prevSelectedRows 배열의 복사본을 만들고 그 배열에 index값을 추가
-                )
+        }
+        if(variant === 'checkbox') {
+            const addRow = (selectedRows) =>
+                selectedRows.includes(index)                                // prevSelectedRows 배열에 index가 포함되어 있는지 확인
+                    ? selectedRows.filter(rowIndex => rowIndex !== index)   // 행이 이미 선택된 경우 배열에서 index 제거
+                    : [...selectedRows, index]                              // 행이 선택되지 않은 경우 prevSelectedRows 배열의 복사본을 만들고 그 배열에 index값을 추가
             
-                onRowClick(data[index]);
-            }                       
+
+            const newSelectedRows = addRow(selectedRows)
+            setSelectedRows(newSelectedRows);                        // 행이 선택되지 않은 경우 prevSelectedRows 배열의 복사본을 만들고 그 배열에 index값을 추가
+            onRowClick(newSelectedRows.map(i => data[i]));
         }
     };
 
-    // checkbox 클릭시 setSelectedRows에 추가
-    const handleCheckboxChange = (index) => {
-        setSelectedRows((prevSelectedRows) =>
-            prevSelectedRows.includes(index) 
-                ? prevSelectedRows.filter(rowIndex => rowIndex !== index)
-                : [...prevSelectedRows, index]                         
-        );
-    }
+    const handleCheckboxClick = (e, index) => {
+        e.stopPropagation();  // Checkbox 클릭 시 Row 클릭 이벤트가 발생하지 않도록 함
+        handleRowClick(index);
+    };
 
     if (!data.length) {
         // 데이터가 비어 있을 경우 처리
@@ -100,63 +103,74 @@ export default function CustomizedTables({data = [], variant = 'default', onRowC
             padding: '0 20px',
             boxSizing: 'border-box',
             margin: '0 auto 2rem'
-            }}>
+        }}>
             <TableContainer component={Paper} sx={{ 
                     width: 'calc(100% - 10px)',
                     margin: '0 auto',
                     maxHeight: '100%'
-                }}>
-            <Table sx={{ minWidth: 600 }} stickyHeader aria-label="customized table">
-                <TableHead>
-                    <TableRow>
-                        {
-                            // checkbox가 있는 테이블이면 체크박스 셀 추가
-                            variant === 'checkbox' && <StyledTableCell></StyledTableCell> } 
-                        {
-                            // 컬럼 제목 설정
-                            Object.keys(data[0])?.map(col => (<StyledTableCell key={col}>{col}</StyledTableCell>
-                            ))    
-                        }
-                    </TableRow>
-                </TableHead>
-                <TableBody>
-                    {
-                        // 표에 data 채우기
-                        data
-                        .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                        .map((row, index) => (
-                            <StyledTableRow 
-                                key={index}
-                                selected={
-                                    variant === 'checkbox' 
-                                    ? selectedRows.includes(index) 
-                                    : selectedRow === index
-                                }
-                                variant={variant}
-                                onClick={(e) => handleRowClick(index, e)}
-                            >
-                                {   // checkbox가 있는 테이블이면 체크박스 셀 추가
-                                    variant === 'checkbox' && (
-                                        <StyledTableCell>
-                                            <StyledCheckbox 
-                                                checked={selectedRows.includes(index)}
-                                                onChange={() => handleCheckboxChange(index)}
-                                            />
-                                        </StyledTableCell>
-                                    )
-                                }
-                                {   // 데이터 값 채우기
-                                    Object.values(row).map((value, idx) => (
-                                        <StyledTableCell key={idx} align="left">
-                                            {value}
-                                        </StyledTableCell>
-                                    ))
-                                }
-                            </StyledTableRow>
-                        ))
-                    }
-                </TableBody>
-            </Table>
+            }}>
+                <Table sx={{ minWidth: 600 }} stickyHeader aria-label="customized table">
+                    <TableHead>
+                        <TableRow>
+                            {
+                                // checkbox가 있는 테이블이면 체크박스 셀 추가
+                                variant === 'checkbox' && <StyledTableCell></StyledTableCell> } 
+                            {
+                                // 컬럼 제목 설정
+                                Object.keys(data[0])?.map(col => (<StyledTableCell key={col}>{col}</StyledTableCell>
+                                ))    
+                            }
+                        </TableRow>
+                    </TableHead>
+                    <TableBody>
+                            {
+                                // 표에 data 채우기
+                                data.map((row, rowIndex) => (
+                                    <StyledTableRow 
+                                        key={rowIndex}
+                                        selected={variant === 'checkbox' 
+                                                ? selectedRows.includes(rowIndex) 
+                                                : selectedRow === rowIndex}
+                                        variant={variant}
+                                        onClick={() => handleRowClick(rowIndex)}
+                                    >
+                                        {   // checkbox가 있는 테이블이면 체크박스 셀 추가
+                                            variant === 'checkbox' && (
+                                                <StyledTableCell>
+                                                    <StyledCheckbox 
+                                                        checked={selectedRows.includes(rowIndex)}
+                                                        onClick={(e) => handleCheckboxClick(e, rowIndex)}
+                                                    />
+                                                </StyledTableCell>
+                                            )
+                                        }
+
+                                        {   // 데이터 값 채우기
+                                            Object.values(row).map((value, colIndex) => (
+                                                <StyledTableCell 
+                                                    key={colIndex} 
+                                                    align="left"
+                                                    onDoubleClick={() => handleDoubleClick(rowIndex, colIndex)}
+                                                >
+                                                    {editingCell.row === rowIndex && editingCell.col === colIndex ? (
+                                                    <TextField
+                                                        value={value}
+                                                        onChange={(e) => handleInputChange(e, rowIndex, colIndex)}
+                                                        onBlur={handleBlur}
+                                                        autoFocus
+                                                        size="small"
+                                                    />
+                                                ) : (
+                                                    value
+                                                )}
+                                                </StyledTableCell>
+                                            ))
+                                        }
+                                    </StyledTableRow>
+                                ))
+                            }
+                        </TableBody>
+                </Table>
             </TableContainer>
             <TablePagination 
                 rowsPerPageOptions={[10, 25, 100]} // page row length custom

@@ -11,8 +11,9 @@ export default function Pd() {
     const [searchedPjt, setSearchedPjt] = useState(null);             // 프로젝트 찾기 결과(api 연동해서 받아올 data)
     const [formData, setFormData] = useState({});                     // 검색 데이터
     const [searchResult, setsearchResult] = useState(null);           // 프로젝트 조회 결과(api 연동해서 받아올 data)
-    const [selectedManagers, setSelectedManagers] = useState([]);     // 선택된 담당자들(PK column only)
-
+    const [selectedManagers, setSelectedManagers] = useState([]);
+    
+    // 선택된 담당자들(PK column only)
     const [isModalOpen, setIsModalOpen] = useState({
         PdAdd: false,
         Del: false
@@ -25,7 +26,16 @@ export default function Pd() {
     
     // 담당자 row 클릭 시 호출될 함수
     const handleManagerClick = (manager) => {
-        setSelectedManagers([...selectedManagers, manager.loginId]);
+        setSelectedManagers((prevSelectedManager) => {
+            // 선택된 사원의 loginId가 이미 배열에 존재하는지 확인
+            if (prevSelectedManager.includes(manager.loginId)) {
+                // 존재한다면 배열에서 제거
+                return prevSelectedManager.filter((id) => id !== manager.loginId);
+            } else {
+                // 존재하지 않는다면 배열에 추가
+                return [...selectedManagers, manager.loginId];
+            }
+        });
     };
 
     // 모달 열기
