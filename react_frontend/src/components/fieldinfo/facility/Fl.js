@@ -1,66 +1,83 @@
 import React, { useState } from "react";
-import * as tableStyles from "../../../assets/css/newTable.css"
-import TableCustom from "../../../TableCustom";
-import {lib} from "../../../assets/json/selectedPjt";
+import * as tableStyles from "../../../assets/css/newTable.css";
+import TableCustom, {TableCustomDoubleClickEdit} from "../../../TableCustom";
 import SearchForms from "../../../SearchForms";
+import {lib} from "../../../assets/json/selectedPjt";
 import {formField_fl} from "../../../assets/json/searchFormData.js";
 
 export default function Fl() {
-    const [showResults, setShowResults] = useState(false);      // 조회결과와 담당자목록을 표시할지 여부
-    const [selectedLib, setSelectedLib] = useState(null);       // 선택된 설비 LIB
+    const [formData, setFormData] = useState({});                 // 검색 데이터
+    const [selectedEqLibs, setSelectedEqLibs] = useState([]);     // 선택된 설비 LIB 목록(PK column only)
+    const [isModalOpen, setIsModalOpen] = useState({
+        FlAdd: false,
+        Del: false
+    });
 
-    const [isModalOpen, setIsModalOpen] = useState(false);
-    const [inputValue, setInputValue] = useState("");
-
+    //조회 버튼 클릭시 호출될 함수
     const handleFormSubmit = (data) => {
-        
+        setFormData(data);
     };
 
-    // 조회 버튼 클릭 시 호출될 함수
-    const handleSearch = () => {
-        setShowResults(true);
+    // 설비LIB row 클릭 시 호출될 함수
+    const handleEqLibClick = (lib) => {
+        setSelectedEqLibs(lib.map(item => item.EquipName));
     };
 
-    // 설비 LIB row 클릭 시 호출될 함수
-    const handleLibClick = (row) => {
-        setSelectedLib(row.EquipName);   // 클릭된 프로젝트의 코드로 상태를 설정
+    // 모달 열기
+    const showModal = (modalType) => {
+        setIsModalOpen(prevState => ({ ...prevState, [modalType]: true }));
     };
 
-    const showModal = () => {
-        setIsModalOpen(true);
+    // 설비LIB 등록 버튼 클릭 시 호출될 함수
+    const handleOk = (modalType) => (data) => {
+        setIsModalOpen(prevState => ({ ...prevState, [modalType]: false })); //모달 닫기
+        //setInputValue(data);
     };
 
-    // 모달 저장 버튼 눌렀을 때 호출될 함수
-    const handleOk = (data) => {
-        setIsModalOpen(false);
-        setInputValue(data);
+    // 모달 닫기
+    const handleCancel = (modalType) => () => {
+        setIsModalOpen(prevState => ({ ...prevState, [modalType]: false }));
     };
 
-    const handleCancel = () => {
-        setIsModalOpen(false);
-    }; 
+    // 버튼 클릭 시 모달 열림 설정 - showModal(modalType);
+    const onAddClick = () => {
+        showModal('FlAdd');
+    };
+    const onDeleteClick = () => {
+        showModal('Del');
+    };
 
     return (
         <>
             <div className={tableStyles.menu}>현장정보 &gt; 설비 &gt; 설비 LIB 관리</div>
+            <SearchForms onFormSubmit={handleFormSubmit} formFields={formField_fl} />
             
-            <SearchForms onFormSubmit={handleFormSubmit} formFields={formField_fl} onSearch={handleSearch} />
-            
-            {/* showResults 상태가 true일 때만 결과를 표시 */}
-            {showResults && (
+            {(!formData || Object.keys(formData).length === 0) ?
+            <></> : ( //TODO: 백엔드에서 받아온 값으로 바꾸기(Table 컴포넌트의 data 파라미터)
+
                 <>
-                    <TableCustom 
-                        title='설비 LIB 목록' 
-                        data={lib} 
+                    <TableCustomDoubleClickEdit 
+                        title='설비LIB목록' 
+                        variant='checkbox'
+                        data={lib}                   
                         buttons={['Edit', 'Delete', 'Add']}
-                        onRowClick={handleLibClick}
-                        modal={{
-                            'modalType': 'PD',
-                            'buttonClick': showModal,
-                            'isModalOpen': isModalOpen,
-                            'handleOk': handleOk,
-                            'handleCancel': handleCancel
-                        }}
+                        onClicks={[()=>{}, onDeleteClick, onAddClick]}
+                        onRowClick={(e) => handleEqLibClick(e)}
+                        selectedRows={selectedEqLibs}
+                        modals={[
+                            {
+                                'modalType': 'Del',
+                                'isModalOpen': isModalOpen.Del,
+                                'handleOk': handleOk('Del'),
+                                'handleCancel': handleCancel('Del')
+                            },
+                            {
+                                'modalType': 'FlAdd',
+                                'isModalOpen': isModalOpen.FlAdd,
+                                'handleOk': handleOk('FlAdd'),
+                                'handleCancel': handleCancel('FlAdd')
+                            }
+                        ]}
                     />
                 </>
             )}
