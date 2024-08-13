@@ -282,7 +282,7 @@ export const saleAmt = [
     {
         "year" : 2022,
         "month" : 1,
-        "saleAmt" : 288842
+        "saleAmt" : 288844
     },
     {
         "year" : 2023,

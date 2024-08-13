@@ -21,7 +21,7 @@ export default function Fam() {
 
     // 활동자료 row 클릭 시 호출될 함수
     const handleActvClick = (actv) => {
-        setSelectedActves([...selectedActves, actv.actvDataName]);
+        setSelectedActv(actv?.actvDataName ?? null);
     };
 
     // 모달 열기
@@ -53,9 +53,9 @@ export default function Fam() {
         <>
             <div className={tableStyles.menu}>현장정보 &gt; 설비 &gt; 활동자료 관리</div>
             <SearchForms onFormSubmit={handleFormSubmit} formFields={formField_fam} />
-            
+
             {(!formData || Object.keys(formData).length === 0) ?
-            <></> : ( //TODO: 백엔드에서 받아온 값으로 바꾸기(Table 컴포넌트의 data 파라미터)
+            <></> : ( //TODO: 백엔드에서 받아온 값으로 바꾸기(data 파라미터)
                 <>
                     <TableCustom 
                         title='활동자료목록' 

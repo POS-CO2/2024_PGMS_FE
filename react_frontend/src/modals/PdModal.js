@@ -348,7 +348,6 @@ export function CmEditModal({isModalOpen, handleOk, handleCancel}){
 
     // 등록 버튼 클릭 시 호출될 함수
     const handleSelect = () => {
-        console.log(selectedEmps);
         handleOk(selectedEmps);
     };
 
@@ -463,7 +462,6 @@ export function CmListEditModal({isModalOpen, handleOk, handleCancel}){
 
     // 등록 버튼 클릭 시 호출될 함수
     const handleSelect = () => {
-        console.log(selectedEmps);
         handleOk(selectedEmps);
     };
 
