@@ -7,7 +7,9 @@
     display:flex;
     height:100vh;
     overflow: hidden;
-    font-family: 'NanumSquareRoundExtraBold';
+    font-family: 'Pretendard-Regular';
+    font-weight: 400;
+    font-style: normal;
 }
 
 a {

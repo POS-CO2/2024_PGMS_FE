@@ -7,7 +7,7 @@ import { TextureLoader } from 'three';
 import earthTextureUrl from './assets/images/earth.jpg';
 import { GaugeContainer, GaugeValueArc, GaugeReferenceArc, useGaugeState, Gauge, gaugeClasses} from '@mui/x-charts';
 import { Card,CardContent } from '@mui/material';
-import { CustomBarChart } from './Chart';
+import { CustomBarChart, CustomLineChart } from './Chart';
 import { temp_data } from './assets/json/chartData';
 
 function GaugePointer() {
@@ -97,11 +97,20 @@ export default function Main() {
 
     return (
             <div className={gridStyles.grid_container}>
-                <Card className={gridStyles.box1} sx={{borderRadius:"10px", height: "20rem"}}>
+                <Card className={gridStyles.box1} sx={{borderRadius:"10px", backgroundColor:"rgb(28, 30, 42)", color:"white"}}>
+                    {/* <div>
                     {"실적스코프"}
-                    <CustomBarChart data={temp_data} />
+                    </div> */}
+                    <div className={gridStyles.box1_comp}>
+                    <Card className={gridStyles.box1_1} sx={{borderRadius:"10px", backgroundColor:"#3d82ab", alignItems:"center" }} >
+                        <CustomLineChart sx={{color:"white"}}/>
+                    </Card>
+                    <Card className={gridStyles.box1_2} sx={{borderRadius:"10px", backgroundColor:"#003853"}}>
+                        <CustomBarChart data={temp_data} sx={{color:"white"}}/>
+                    </Card>
+                    </div>
                 </Card>
-                <Card className={gridStyles.box2} sx={{borderRadius:"10px", height: "20rem"}}>
+                <Card className={gridStyles.box2} sx={{borderRadius:"10px"}}>
                     <CardContent>                        
                     <GaugeContainer
                         height={150}
@@ -114,7 +123,7 @@ export default function Main() {
                     <GaugePointer />
                     </GaugeContainer>
                     <div className={gridStyles.box2_text}>{`${GaugeContainer.value}/100`}</div>
-                    </CardContent>
+                    </CardContent> 
                 </Card>
                 <Card className={gridStyles.box3} sx={{borderRadius:"10px", height:"15rem"}}>
                     <div>
