@@ -60,6 +60,7 @@ export default function CustomizedTables({data = [], variant = 'default', onRowC
         setRowsPerPage(+event.target.value);
         setPage(0);
     };
+
     const handleRowClick = (index, event) => {
         if (variant === 'default') {
             setSelectedRow(index === selectedRow ? null : index); // 같은 행 클릭 시 선택 해제

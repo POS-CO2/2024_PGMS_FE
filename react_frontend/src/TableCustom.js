@@ -1,7 +1,7 @@
 import React from 'react';
 import Table from "./Table.js";
 import * as tableStyles from "./assets/css/newTable.css"
-import { PdAddModal, RmAddModal, Ps12UploadExcelModal, DelModal, CmAddModal, DeleteModal, CmEditModal, CmListAddModal, CmListEditModal, FmAddModal, UmAddModal, MmAddModal, EsmAddModal } from "./modals/PdModal.js";
+import { DelModal, PdAddModal, RmAddModal, FlAddModal, Ps12UploadExcelModal, CmAddModal, DeleteModal, CmEditModal, CmListAddModal, CmListEditModal, FmAddModal, UmAddModal, MmAddModal, EsmAddModal } from "./modals/PdModal.js";
 import { ButtonGroup } from './Button';
 
 const modalMap = {
@@ -13,13 +13,12 @@ const modalMap = {
     Ps12UploadExcel: Ps12UploadExcelModal,
     EsmAdd: EsmAddModal,
     PdAdd: PdAddModal,
-    Del: DelModal,
     RmAdd: RmAddModal,
-    RmDel: RmAddModal,
+    FlAdd: FlAddModal,
+    Del: DelModal,
     FmAdd: FmAddModal,
     UmAdd: UmAddModal,
     MmAdd: MmAddModal,
-    
 }
 
 export default function TableCustom({

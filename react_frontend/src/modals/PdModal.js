@@ -10,8 +10,9 @@ import { employee } from "../assets/json/manager.js"
 import emsData from "../assets/json/ems";
 import { selectYear, selectMonth } from "../assets/json/sd";
 import * as sysStyles from "../assets/css/sysmng.css"
-import { TextField, Box, InputLabel, MenuItem, FormControl, /*Select*/ } from '@mui/material';
+import { TextField, Box, InputLabel, MenuItem, FormControl } from '@mui/material';
 import WarningAmberIcon from '@mui/icons-material/WarningAmber';
+import { Select } from 'antd';
 
 export function PdAddModal({ isModalOpen, handleOk, handleCancel }) {
     const [showResults, setShowResults] = useState(false);    // 사원 목록을 표시할지 여부
@@ -90,21 +91,14 @@ export function PdAddModal({ isModalOpen, handleOk, handleCancel }) {
 }
 
 export function RmAddModal({ isModalOpen, handleOk, handleCancel }) {
-    // 각 입력 필드의 상태 관리
-    const [pjtCode, setPjtCode] = useState('');
-    const [pjtName, setPjtName] = useState('');
-    const [year, setYear] = useState('');
-    const [month, setMonth] = useState('');
-    const [saleAmt, setSaleAmt] = useState('');
-
     // 등록 버튼 클릭 시 호출될 함수(등록할 매출액의 data를 전달)
     const handleSelect = () => {
         const formData = {
-            pjtCode,
-            pjtName,
-            year,
-            month,
-            saleAmt,
+            pjtCode: document.getElementById('pjtCode').value,
+            pjtName: document.getElementById('pjtName').value,
+            year: document.getElementById('year').value,
+            month: document.getElementById('month').value,
+            saleAmt: document.getElementById('saleAmt').value,
         };
         handleOk(formData);  // 입력된 데이터를 handleOk 함수로 전달
     };
@@ -121,43 +115,81 @@ export function RmAddModal({ isModalOpen, handleOk, handleCancel }) {
             <div className={rmStyles.search_container}>
                 <div className={rmStyles.search_item}>
                     <div className={rmStyles.search_title}>프로젝트코드</div>
-                    <input
-                        className={rmStyles.search}
-                        value={pjtCode}
-                        onChange={(e) => setPjtCode(e.target.value)}
-                    />
+                    <input className={rmStyles.search} id="pjtCode" />
                 </div>
                 <div className={rmStyles.search_item}>
                     <div className={rmStyles.search_title}>프로젝트명</div>
-                    <input
-                        className={rmStyles.search}
-                        value={pjtName}
-                        onChange={(e) => setPjtName(e.target.value)}
-                    />
+                    <input className={rmStyles.search} id="pjtName" />
                 </div>
                 <div className={rmStyles.search_item}>
                     <div className={rmStyles.search_title}>년</div>
-                    <input
-                        className={rmStyles.search}
-                        value={year}
-                        onChange={(e) => setYear(e.target.value)}
-                    />
+                    <input className={rmStyles.search} id="year" />
                 </div>
                 <div className={rmStyles.search_item}>
                     <div className={rmStyles.search_title}>월</div>
-                    <input
-                        className={rmStyles.search}
-                        value={month}
-                        onChange={(e) => setMonth(e.target.value)}
-                    />
+                    <input className={rmStyles.search} id="month" />
                 </div>
                 <div className={rmStyles.search_item}>
                     <div className={rmStyles.search_title}>매출액</div>
-                    <input
-                        className={rmStyles.search}
-                        value={saleAmt}
-                        onChange={(e) => setSaleAmt(e.target.value)}
-                    />
+                    <input className={rmStyles.search} id="saleAmt" />
+                </div>
+            </div>
+            
+            <button className={rmStyles.select_button} onClick={handleSelect}>등록</button>
+        </Modal>
+    )
+}
+
+export function FlAddModal({ isModalOpen, handleOk, handleCancel }) {
+    // 등록 버튼 클릭 시 호출될 함수(등록할 설비LIB의 data를 전달)
+    const handleSelect = () => {
+        const formData = {
+            eqLibName: document.getElementById('eqLibName').value,
+            eqDvs: document.getElementById('eqDvs').value,
+            eqType: document.getElementById('eqType').value,
+            eqSpecUnit: document.getElementById('eqSpecUnit').value,
+        };
+
+        handleOk(formData);  // 입력된 데이터를 handleOk 함수로 전달
+    };
+
+    return (
+        <Modal 
+            open={isModalOpen} 
+            onCancel={handleCancel} 
+            style={{ width: '25rem', maxWidth: '25rem', important: true }}
+            footer={null}                                                   //Ant Design의 기본 footer 제거(Cancel, OK 버튼)
+        >
+            <div className={rmStyles.title}>설비LIB 등록</div>
+
+            <div className={rmStyles.search_container}>
+                <div className={rmStyles.search_item}>
+                    <div className={rmStyles.search_title}>설비라이브러리명</div>
+                    <input className={rmStyles.search} id="eqLibName" />
+                </div>
+                <div className={rmStyles.search_item}>
+                    <div className={rmStyles.search_title}>설비구분</div>
+                    <Select id="eqDvs">
+                        <Select.Option key={"구분1"} value={"구분1"}>{"구분1"}</Select.Option>
+                        <Select.Option key={"구분2"} value={"구분2"}>{"구분2"}</Select.Option>
+                        <Select.Option key={"구분3"} value={"구분3"}>{"구분3"}</Select.Option>
+                    </Select>
+                </div>
+                <div className={rmStyles.search_item}>
+                    <div className={rmStyles.search_title}>설비유형</div>
+                    <Select id="eqType">
+                        <Select.Option key={"유형1"} value={"유형1"}>{"유형1"}</Select.Option>
+                        <Select.Option key={"유형2"} value={"유형2"}>{"유형2"}</Select.Option>
+                        <Select.Option key={"유형3"} value={"유형3"}>{"유형3"}</Select.Option>
+                    </Select>
+                </div>
+                <div className={rmStyles.search_item}>
+                    <div className={rmStyles.search_title}>설비사양단위</div>
+                    <Select id="eqSpecUnit">
+                        <Select.Option key={"단위1"} value={"단위1"}>{"단위1"}</Select.Option>
+                        <Select.Option key={"단위2"} value={"단위2"}>{"단위2"}</Select.Option>
+                        <Select.Option key={"단위3"} value={"단위3"}>{"단위3"}</Select.Option>
+                    </Select>
                 </div>
             </div>
 
