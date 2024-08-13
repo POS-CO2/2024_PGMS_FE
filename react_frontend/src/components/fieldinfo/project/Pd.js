@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import * as tableStyles from "../../../assets/css/newTable.css";
 import Table from "../../../Table";
-import TableCustom, {TableCustomDoubleClickEdit} from "../../../TableCustom";
+import {TableCustomDoubleClickEdit} from "../../../TableCustom";
 import project from "../../../assets/json/selectedPjt";
 import managers from "../../../assets/json/manager";
 import SearchForms from "../../../SearchForms";
@@ -11,8 +11,7 @@ export default function Pd() {
     const [searchedPjt, setSearchedPjt] = useState(null);             // 프로젝트 찾기 결과(api 연동해서 받아올 data)
     const [formData, setFormData] = useState({});                     // 검색 데이터
     const [searchResult, setsearchResult] = useState(null);           // 프로젝트 조회 결과(api 연동해서 받아올 data)
-    const [selectedManager, setSelectedManager] = useState(null);       // 선택한 담당자
-    // 선택된 담당자들(PK column only)
+    const [selectedManager, setSelectedManager] = useState(null);     // 선택된 담당자들(PK column only)
     const [isModalOpen, setIsModalOpen] = useState({
         PdAdd: false,
         Del: false
@@ -25,7 +24,7 @@ export default function Pd() {
     
     // 담당자 row 클릭 시 호출될 함수
     const handleManagerClick = (manager) => {
-        manager === null ? setSelectedManager(null) : setSelectedManager(manager.loginId);
+        setSelectedManager(manager?.loginId ?? null);
     };
 
     // 모달 열기
@@ -70,7 +69,7 @@ export default function Pd() {
                         buttons={['Delete', 'Add']}
                         onClicks={[onDeleteClick, onAddClick]}
                         onRowClick={handleManagerClick}
-                        selectedRows={selectedManager === null ? [] : [selectedManager]}
+                        selectedRows={[selectedManager]}
                         modals={[
                             {
                                 'modalType': 'Del',

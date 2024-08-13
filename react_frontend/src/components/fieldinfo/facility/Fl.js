@@ -1,13 +1,13 @@
 import React, { useState } from "react";
 import * as tableStyles from "../../../assets/css/newTable.css";
-import TableCustom, {TableCustomDoubleClickEdit} from "../../../TableCustom";
+import{TableCustomDoubleClickEdit} from "../../../TableCustom";
 import SearchForms from "../../../SearchForms";
 import {lib} from "../../../assets/json/selectedPjt";
 import {formField_fl} from "../../../assets/json/searchFormData.js";
 
 export default function Fl() {
     const [formData, setFormData] = useState({});                 // 검색 데이터
-    const [selectedEqLibs, setSelectedEqLibs] = useState([]);     // 선택된 설비 LIB 목록(PK column only)
+    const [selectedEqLib, setSelectedEqLib] = useState(null);     // 선택된 설비 LIB 목록(PK column only)
     const [isModalOpen, setIsModalOpen] = useState({
         FlAdd: false,
         Del: false
@@ -20,7 +20,7 @@ export default function Fl() {
 
     // 설비LIB row 클릭 시 호출될 함수
     const handleEqLibClick = (lib) => {
-        setSelectedEqLibs(lib.map(item => item.EquipName));
+        setSelectedEqLib(lib?.EquipName ?? null);
     };
 
     // 모달 열기
@@ -62,7 +62,7 @@ export default function Fl() {
                         buttons={['Edit', 'Delete', 'Add']}
                         onClicks={[()=>{}, onDeleteClick, onAddClick]}
                         onRowClick={(e) => handleEqLibClick(e)}
-                        selectedRows={selectedEqLibs}
+                        selectedRows={[selectedEqLib]}
                         modals={[
                             {
                                 'modalType': 'Del',
