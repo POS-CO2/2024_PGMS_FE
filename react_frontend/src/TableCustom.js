@@ -32,6 +32,51 @@ export default function TableCustom({
     table = true,
     selectedRows = [],       // 테이블에서 선택된 row 리스트
 }) {
+    // 버튼 활성화 상태 결정
+    const buttonStatus = buttons.map((button) => {
+        if (button === 'Edit' || button === 'Delete') {
+            return selectedRows.length > 0;
+        }
+        return true;  // 'Add' 버튼은 항상 활성화
+    });
+
+    return (
+        <>
+            <div className={tableStyles.container}>
+                <div className={tableStyles.table_title}>{title}</div>
+                <ButtonGroup buttons={buttons} onClicks={onClicks} buttonStatus={buttonStatus} />
+                
+                {modals.map((modal) => {
+                    const ModalComponent = modalMap[modal.modalType];
+                    return ModalComponent ? (
+                        <ModalComponent
+                            isModalOpen={modal.isModalOpen}
+                            handleOk={modal.handleOk || (() => {})}
+                            handleCancel={modal.handleCancel || (() => {})}
+                            onRowClick={onRowClick}
+                        />
+                    ) : null;
+                })}
+            </div>
+            {table ? (
+            <Table data={data} variant={variant} onRowClick={onRowClick} />
+            ) : (<></>)}
+            
+        </>
+    );
+}
+
+export function TableCustomDoubleClickEdit({
+    title = "Default Title",
+    variant = 'default',
+    data = [],
+    buttons = [],
+    onClicks = [],
+    onRowClick = () => { },  // 기본값으로 빈 함수 설정
+    modals = [],
+    table = true,
+    selectedRows = [],       // 테이블에서 선택된 row 리스트
+}) {
     const [isEditing, setIsEditing] = useState(false); // 'Edit' 모드 상태 관리
     const [editableData, setEditableData] = useState(data); // 수정된 데이터 저장
     const [editingCell, setEditingCell] = useState({ row: null, col: null }); // 현재 편집 중인 셀
@@ -112,51 +157,6 @@ export default function TableCustom({
                 handleBlur={handleBlur}
                 editingCell={editingCell}
             />
-            ) : (<></>)}
-            
-        </>
-    );
-}
-
-export function TableCustomEditModal({
-    title = "Default Title",
-    variant = 'default',
-    data = [],
-    buttons = [],
-    onClicks = [],
-    onRowClick = () => { },  // 기본값으로 빈 함수 설정
-    modals = [],
-    table = true,
-    selectedRows = [],       // 테이블에서 선택된 row 리스트
-}) {
-    // 버튼 활성화 상태 결정
-    const buttonStatus = buttons.map((button) => {
-        if (button === 'Edit' || button === 'Delete') {
-            return selectedRows.length > 0;
-        }
-        return true;  // 'Add' 버튼은 항상 활성화
-    });
-
-    return (
-        <>
-            <div className={tableStyles.container}>
-                <div className={tableStyles.table_title}>{title}</div>
-                <ButtonGroup buttons={buttons} onClicks={onClicks} buttonStatus={buttonStatus} />
-                
-                {modals.map((modal) => {
-                    const ModalComponent = modalMap[modal.modalType];
-                    return ModalComponent ? (
-                        <ModalComponent
-                            isModalOpen={modal.isModalOpen}
-                            handleOk={modal.handleOk || (() => {})}
-                            handleCancel={modal.handleCancel || (() => {})}
-                            onRowClick={onRowClick}
-                        />
-                    ) : null;
-                })}
-            </div>
-            {table ? (
-            <Table data={data} variant={variant} onRowClick={onRowClick} />
             ) : (<></>)}
             
         </>

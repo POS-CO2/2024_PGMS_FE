@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import * as tableStyles from "../../../assets/css/newTable.css"
 import Table from "../../../Table";
-import TableCustom, {TableCustomEditModal} from "../../../TableCustom";
+import TableCustom, {TableCustomDoubleClickEdit} from "../../../TableCustom";
 import {pjt, saleAmt} from "../../../assets/json/selectedPjt";
 import SearchForms from "../../../SearchForms";
 import {formField_ps12} from "../../../assets/json/searchFormData.js";
@@ -71,7 +71,7 @@ export default function Rm() {
                     <div className={tableStyles.table_title}>조회결과</div>
                     <Table data={pjt} />                    
 
-                    <TableCustomEditModal 
+                    <TableCustomDoubleClickEdit 
                         title='매출액목록' 
                         variant='checkbox'
                         data={saleAmt}                   
