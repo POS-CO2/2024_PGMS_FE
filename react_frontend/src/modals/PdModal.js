@@ -7,7 +7,6 @@ import * as pjtModalStyles from "../assets/css/pjtModal.css";
 import * as sysStyles from "../assets/css/sysmng.css"
 import Table from "../Table";
 import { employee } from "../assets/json/manager.js"
-import * as sysStyles from "../assets/css/sysmng.css"
 import { TextField, Box, InputLabel, MenuItem, FormControl, Autocomplete } from '@mui/material';
 import WarningAmberIcon from '@mui/icons-material/WarningAmber';
 import { Select } from 'antd';
