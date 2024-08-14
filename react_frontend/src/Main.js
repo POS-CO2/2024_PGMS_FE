@@ -245,31 +245,6 @@ export default function Main() {
                                 </div>
                             </Card>
                         </div>
-                        {/* <div className={gridStyles.box2_1_1}>
-                            <Card sx={{borderRadius:"15px", height:"100%", background:"linear-gradient(to right, #66C869, #02A007)", width:"100%"}}>
-                                <div>
-                                    <Gauge 
-                                    {...settings}
-                                    cornerRadius="50%"
-                                    sx={(theme) => ({
-                                        [`& .${gaugeClasses.valueText}`]: {
-                                        fontSize: "1.5rem",
-                                        },
-                                        [`& .${gaugeClasses.valueArc}`]: {
-                                        fill: '#008CFF',
-                                        },
-                                        [`& .${gaugeClasses.referenceArc}`]: {
-                                        fill: theme.palette.text.disabled,
-                                        },
-                                    })}
-                                    text={
-                                        ({ value, valueMax }) => `${value} / ${valueMax}`
-                                    }
-                                    />
-                                    {"프로젝트2"}
-                                </div>
-                            </Card>
-                        </div> */}
                     </div>
                     <div className={gridStyles.box2_2}>
                         <Card sx={{borderRadius:"10px", height:"100%", backgroundColor:"black"}}>
