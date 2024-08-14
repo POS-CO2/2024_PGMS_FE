@@ -24,8 +24,12 @@ export default function Fm() {
 
     const [showFacList, setShowFacList] = useState(false);
 
-    const handleRowClick = () => {
+    const [selectedFac, setSelectedFac] = useState(null);
+
+    const handleRowClick = (e) => {
         setShowFacList(false);
+        console.log(e);
+        setSelectedFac(e?.["설비명"] ?? null)
     };
 
     const [isModalOpen, setIsModalOpen] = useState({
@@ -45,6 +49,36 @@ export default function Fm() {
     const handleCancel = (modalType) => () => {
         setIsModalOpen(prevState => ({ ...prevState, [modalType]: false }));
     }; 
+
+    const handleExcelUploadClick = (csvData, fileName) => {
+        // CSV 변환 함수
+        const csvRows = [];
+        
+        // 헤더 생성
+        const headers = Object.keys(csvData[0]);
+        csvRows.push(headers.join(','));
+        
+        // 데이터 생성
+        for (const row of csvData) {
+            const values = headers.map(header => {
+                const escaped = ('' + row[header]).replace(/"/g, '\\"');
+                return `"${escaped}"`;
+            });
+            csvRows.push(values.join(','));
+        }
+        
+        // CSV 파일 생성
+        const csvString = csvRows.join('\n');
+        const blob = new Blob([csvString], { type: 'text/csv' });
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.setAttribute('hidden', '');
+        a.setAttribute('href', url);
+        a.setAttribute('download', `${fileName}.csv`);
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+    };
 
     const handleAddClick = () => {
         showModal('FmAdd');
@@ -69,7 +103,7 @@ export default function Fm() {
                         </Card>
                         {/** 버튼 변경 필요(엑셀 다운로드, 삭제, 등록) 및 등록 클릭 시 모달 추가 */}
                         <Card className={sysStyles.card_box} sx={{width:"100%", height:"fit-content"}}>
-                        <TableCustom title="설비목록" data={table_fm_facList} buttons={["DownloadExcel", "Delete", "Add"]} onClicks={[() => {}, handleDeleteClick,handleAddClick]} onRowClick={handleRowClick} modals={
+                        <TableCustom title="설비목록" data={table_fm_facList} selectedRows={[selectedFac]} buttons={["DownloadExcel", "Delete", "Add"]} onClicks={[() => handleExcelUploadClick(table_fm_facList, 'exported_table'), handleDeleteClick,handleAddClick]} onRowClick={handleRowClick} excel={true} modals={
                             [
                                 {
                                     "modalType" : 'FmAdd',

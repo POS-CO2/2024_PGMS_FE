@@ -149,7 +149,8 @@ export const formField_pg = [
         {value: '16', label: '경남'},
         {value: '17', label: '경북 포항시'},
         {value: '18', label: '세종시'},
-    ]}
+    ]},
+    { type: 'SelectCalendar', name: 'calendar', label: '조회기간' }
 ]
 
 export const formField_fl = [
@@ -187,7 +188,22 @@ export const formField_fam = [
         {value: '6', label: '오리멀젼'},
         {value: '7', label: '천연가스액(NGL)'},
         {value: '8', label: '휘발유'}
-    ]}
+    ]},
+    { type: 'DropDown', name: 'equipType', label: '배출활동유형', options: [
+        { value: 'option1', label: 'Option 1' },
+        { value: 'option2', label: 'Option 2' },
+        { value: 'option3', label: 'Option 3' },
+        { value: 'option4', label: 'Option 4' },
+        { value: 'option5', label: 'Option 5' }
+    ] },
+    { type: 'DropDown', name: 'calUnitCode', label: '산정단위', options: [
+        { value: 'option1', label: 'Option 1' },
+        { value: 'option2', label: 'Option 2' },
+        { value: 'option3', label: 'Option 3' },
+        { value: 'option4', label: 'Option 4' },
+        { value: 'option5', label: 'Option 5' }
+    ] },
+
 ]
 
 export const formField_fad = [

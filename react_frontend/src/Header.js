@@ -20,10 +20,7 @@ export default function Header({tabs, activeTab, handleTabClose, handelTabClick,
                     <div className={headerStyles.header_profile}>
                         <div className={headerStyles.photo}><img src="http://sanriokorea.co.kr/wp-content/themes/sanrio/images/kuromi.png" /></div>
                         <div className={headerStyles.header_name}>{user.userName}
-                            
-                        
                         </div>
-                        
                     </div>
                     <Menu slots={{listbox: AnimatedListbox}} className={headerStyles.header_menu}>
                             <MenuItem onClick={() => handleLogout()}>로그아웃</MenuItem>
