@@ -275,7 +275,7 @@ export function FamAddModal({ isModalOpen, handleOk, handleCancel }) {
     )
 }
 
-export function FamEditModal({ isModalOpen, handleOk, handleCancel, selectedActv }) {
+export function FamEditModal({ isModalOpen, handleOk, handleCancel, rowData }) {
     const [formValues, setFormValues] = useState({
         actvName: '',
         actvDvs: '',
@@ -285,19 +285,19 @@ export function FamEditModal({ isModalOpen, handleOk, handleCancel, selectedActv
         unitConvCoef: ''
     });
 
-    // 모달이 열릴 때 selectedActv로부터 폼 필드 값을 설정
+    // 모달이 열릴 때 rowData로부터 폼 필드 값을 설정
     useEffect(() => {
-        if (isModalOpen && selectedActv) {
+        if (isModalOpen && rowData) {
             setFormValues({
-                actvName: selectedActv.actvDataName || '',
-                actvDvs: selectedActv.actvDataDvs || '',
-                emtnActvType: selectedActv.emtnActvType || '',
-                calUnit: selectedActv.calUnit || '',
-                inputUnit: selectedActv.inputUnit || '',
-                unitConvCoef: selectedActv.unitConvCoef || ''
+                actvName: rowData.actvDataName || '',
+                actvDvs: rowData.actvDataDvs || '',
+                emtnActvType: rowData.emtnActvType || '',
+                calUnit: rowData.calUnit || '',
+                inputUnit: rowData.inputUnit || '',
+                unitConvCoef: rowData.unitConvCoef || ''
             });
         }
-    }, [selectedActv, isModalOpen]);
+    }, [rowData, isModalOpen]);
 
     const handleChange = (e) => {
         const { id, value } = e.target;
