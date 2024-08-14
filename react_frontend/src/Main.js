@@ -6,12 +6,13 @@ import * as THREE from 'three';
 import { TextureLoader } from 'three';
 import earthTextureUrl from './assets/images/earth.jpg';
 import { GaugeContainer, GaugeValueArc, GaugeReferenceArc, useGaugeState, Gauge, gaugeClasses} from '@mui/x-charts';
-import { Card,CardContent, FormControl, Select, InputLabel, MenuItem } from '@mui/material';
+import { Card,CardContent, FormControl, Select, InputLabel, MenuItem, Chip, ButtonGroup, Button } from '@mui/material';
 import { CustomBarChart, CustomLineChart } from './Chart';
 import { temp_data } from './assets/json/chartData';
 import SsidChartRoundedIcon from '@mui/icons-material/SsidChartRounded';
 import AutoGraphIcon from '@mui/icons-material/AutoGraph';
 import { Girl } from '@mui/icons-material';
+import { color } from 'three/webgpu';
 
 function GaugePointer() {
     const { valueAngle, outerRadius, cx, cy } = useGaugeState();
@@ -118,7 +119,7 @@ export default function Main() {
                                 <div className={gridStyles.box1_1_logo}>
                                     <AutoGraphIcon fontSize='large' sx={{color:"white"}}/>분석 및 예측
                                 </div>
-                                <FormControl sx={{ m: 1, minWidth: 120, backgroundColor:"white", borderRadius:"10px" }} size="small">
+                                <FormControl sx={{ minWidth: 120, backgroundColor:"white", borderRadius:"10px" }} size="small">
                                     <InputLabel id="demo-select-small-label">년도</InputLabel>
                                     <Select
                                         labelId="demo-select-small-label"
@@ -147,13 +148,29 @@ export default function Main() {
                 <div className={gridStyles.box2}>
                     <div className={gridStyles.box2_1}>
                         <div className={gridStyles.box2_1_1}>
-                            <Card sx={{borderRadius:"10px", height:"100%"}}>
+                            <Card 
+                                className={gridStyles.box2_1_1_card}
+                                sx={{
+                                borderRadius:"15px",
+                                height:"100%", 
+                                background:"linear-gradient(to right, #FFEB7B, #FFD900 )", 
+                                width:"100%",
+                                display:"flex"
+                                }}>
                                 <div className={gridStyles.box2_1_1_1}>
                                     <div className={gridStyles.box2_1_1_1_1}>
-                                    {"프로젝트1"}
+                                    <Chip label="양산시 해피주택" variant="outlined" onClick={() => {}} sx={{backgroundColor:"white", fontSize:"1rem", fontWeight:"bold"}}/>
                                     </div>    
                                     <div className={gridStyles.box2_1_1_1_2}>
-                                    {"프로젝트 1 정보"}
+                                        <ButtonGroup
+                                            disableElevation
+                                            variant='contained'
+                                            aria-label='box2 button group'
+                                        >
+                                            <Button>프로젝트 조회</Button>
+                                            <Button>증빙자료 제출</Button>
+
+                                        </ButtonGroup>
                                     </div>
                                 </div>
                                 <div className={gridStyles.box2_1_1_2}>
@@ -163,9 +180,10 @@ export default function Main() {
                                     sx={(theme) => ({
                                         [`& .${gaugeClasses.valueText}`]: {
                                         fontSize: "1.5rem",
+                                        fontWeight:"bold",
                                         },
                                         [`& .${gaugeClasses.valueArc}`]: {
-                                        fill: '#52b202',
+                                        fill: '#008CFF',
                                         },
                                         [`& .${gaugeClasses.referenceArc}`]: {
                                         fill: theme.palette.text.disabled,
@@ -178,8 +196,57 @@ export default function Main() {
                                 </div>
                             </Card>
                         </div>
-                        <div className={gridStyles.box2_1_2}>
-                            <Card sx={{borderRadius:"10px", height:"100%"}}>
+                        <div className={gridStyles.box2_1_1}>
+                            <Card 
+                                className={gridStyles.box2_1_1_card}
+                                sx={{
+                                borderRadius:"15px",
+                                height:"100%", 
+                                background:"linear-gradient(to right, #66C869, #02A007)", 
+                                width:"100%",
+                                display:"flex"
+                                }}>
+                                <div className={gridStyles.box2_1_1_1}>
+                                    <div className={gridStyles.box2_1_1_1_1}>
+                                    <Chip label="고양시 고양이집" variant="outlined" onClick={() => {}} sx={{backgroundColor:"white", fontSize:"1rem", fontWeight:"bold"}}/>
+                                    </div>    
+                                    <div className={gridStyles.box2_1_1_1_2}>
+                                        <ButtonGroup
+                                            disableElevation
+                                            variant='contained'
+                                            aria-label='box2 button group'
+                                        >
+                                            <Button>프로젝트 조회</Button>
+                                            <Button>증빙자료 제출</Button>
+
+                                        </ButtonGroup>
+                                    </div>
+                                </div>
+                                <div className={gridStyles.box2_1_1_2}>
+                                    <Gauge 
+                                    {...settings}
+                                    cornerRadius="50%"
+                                    sx={(theme) => ({
+                                        [`& .${gaugeClasses.valueText}`]: {
+                                        fontSize: "1.5rem",
+                                        fontWeight:"bold",
+                                        },
+                                        [`& .${gaugeClasses.valueArc}`]: {
+                                        fill: '#008CFF',
+                                        },
+                                        [`& .${gaugeClasses.referenceArc}`]: {
+                                        fill: theme.palette.text.disabled,
+                                        },
+                                    })}
+                                    text={
+                                        ({ value, valueMax }) => `${value} / ${valueMax}`
+                                    }
+                                    />
+                                </div>
+                            </Card>
+                        </div>
+                        {/* <div className={gridStyles.box2_1_1}>
+                            <Card sx={{borderRadius:"15px", height:"100%", background:"linear-gradient(to right, #66C869, #02A007)", width:"100%"}}>
                                 <div>
                                     <Gauge 
                                     {...settings}
@@ -189,7 +256,7 @@ export default function Main() {
                                         fontSize: "1.5rem",
                                         },
                                         [`& .${gaugeClasses.valueArc}`]: {
-                                        fill: '#52b202',
+                                        fill: '#008CFF',
                                         },
                                         [`& .${gaugeClasses.referenceArc}`]: {
                                         fill: theme.palette.text.disabled,
@@ -202,10 +269,10 @@ export default function Main() {
                                     {"프로젝트2"}
                                 </div>
                             </Card>
-                        </div>
+                        </div> */}
                     </div>
                     <div className={gridStyles.box2_2}>
-                        <Card sx={{borderRadius:"10px", height:"100%"}}>
+                        <Card sx={{borderRadius:"10px", height:"100%", backgroundColor:"black"}}>
                         <Canvas>
                             <ambientLight intensity={2.0} />
                             <pointLight position={[10, 10, 10]} />

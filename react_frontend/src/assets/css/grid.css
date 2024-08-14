@@ -42,9 +42,13 @@
     justify-content: space-between;
 }
 .box1_1_head{
-    padding-top: 1rem;
+    padding: 1rem;
     display: flex;
     flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    box-sizing: border-box;
     
 }
 
@@ -78,7 +82,7 @@
     width: 100%;
     height: 25%;
 }
-
+/* 좌측 첫 그리드 */
 .box2_1{
     display: flex;
     flex-direction: column;
@@ -87,28 +91,49 @@
     gap: 1rem;
 }
 
+/* 그리드 */
 .box2_1_1{
     width: 100%;
     height: 50%;
 }
 
+.box2_1_1_card{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+/* 텍스트 필드 */
 .box2_1_1_1 {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+    padding: 1rem;
     gap: 1rem;
 }
 
+/* 프로젝트 명 */
 .box2_1_1_1_1 {
-    width: 100%;
-    height: 30%;
-}
-
-.box2_1_1_1_2 {
+    padding: 1rem;
     width: 100%;
     height: 70%;
 }
 
+/* 프로젝트 설명..?  */
+.box2_1_1_1_2 {
+    padding: 1rem;
+    width: 100%;
+    height: 30%;
+}
+
+/* 게이지 영역 */
 .box2_1_1_2 {
+    padding: 1rem;
     width: 50%;
-    height: 100%;
+    height: fit-content;
 }
 
 .box2_1_2{
