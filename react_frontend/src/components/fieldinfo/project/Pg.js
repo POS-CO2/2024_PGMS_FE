@@ -6,8 +6,8 @@ import SearchForms from "../../../SearchForms"
 import {formField_pg} from "../../../assets/json/searchFormData.js"
 
 export default function Pg() {
-    const [formData, setFormData] = useState({});         // 검색 데이터
-    const [selectedPjt, setSelectedPjt] = useState(null);     // 선택된 프로젝트 목록
+    const [formData, setFormData] = useState({});           // 검색 데이터
+    const [selectedPjt, setSelectedPjt] = useState(null);     // 선택된 설비 LIB 목록(PK column only)
     const [isModalOpen, setIsModalOpen] = useState({
         PgAdd: false,
         Del: false
@@ -18,7 +18,7 @@ export default function Pg() {
         setFormData(data);
     };
 
-    // 설비LIB row 클릭 시 호출될 함수
+    // 프로젝트 row 클릭 시 호출될 함수
     const handlePjtClick = (pjt) => {
         setSelectedPjt(pjt?.PjtCode ?? null);
     };
@@ -52,7 +52,7 @@ export default function Pg() {
         <>
             <div className={tableStyles.menu}>현장정보 &gt; 프로젝트 &gt; 프로젝트 관리</div>
             <SearchForms onFormSubmit={handleFormSubmit} formFields={formField_pg} />
-            
+    
             {(!formData || Object.keys(formData).length === 0) ?
             <></> : ( //TODO: 백엔드에서 받아온 값으로 바꾸기(Table 컴포넌트의 data 파라미터)
                 <>
