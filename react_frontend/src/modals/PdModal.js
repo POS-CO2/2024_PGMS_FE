@@ -4,6 +4,8 @@ import { PaperClipOutlined, CloseOutlined } from '@ant-design/icons';
 import * as modalStyles from "../assets/css/pdModal.css";
 import * as rmStyles from "../assets/css/rmModal.css";
 import * as delStyle from "../assets/css/delModal.css";
+import * as pjtModalStyles from "../assets/css/pjtModal.css";
+import * as sysStyles from "../assets/css/sysmng.css"
 import * as sdStyles from "../assets/css/sdModal.css";
 import * as ps12Styles from "../assets/css/ps12UploadExcelModal.css";
 import { EditButton } from "../Button";
@@ -11,9 +13,61 @@ import Table from "../Table";
 import { employee } from "../assets/json/manager.js"
 import emsData from "../assets/json/ems";
 import { selectYear, selectMonth } from "../assets/json/sd";
-import * as sysStyles from "../assets/css/sysmng.css"
 import { TextField, Box, InputLabel, MenuItem, FormControl, Autocomplete } from '@mui/material';
 import WarningAmberIcon from '@mui/icons-material/WarningAmber';
+
+export function PgAddModal({ isModalOpen, handleOk, handleCancel }) {
+    const [formData, setFormData] = useState({});             // 검색 데이터
+    const [selectedPjts, setSelectedPjts] = useState([]);     // 선택된 프로젝트
+    
+    //찾기 버튼 클릭시 호출될 함수
+    const handleFormSubmit = (data) => {
+        setFormData(data); 
+    };
+  
+    // 프로젝트 row 클릭 시 호출될 함수
+    const handlePjtClick = (pjts) => {
+        setSelectedPjts(pjts.map(item => item.PjtCode));   // 클릭된 프로젝트의 코드로 상태를 설정
+    };
+  
+    // 선택 버튼 클릭 시 호출될 함수
+    const handleSelect = () => {
+        handleOk(selectedPjts);                            // 선택된 프로젝트 데이터를 handleOk로 전달
+    };
+  
+    return (
+      <Modal 
+        open={isModalOpen} 
+        width={1300}
+        onCancel={handleCancel} 
+        footer={null}             //Ant Design의 기본 footer 제거(Cancel, OK 버튼)
+      >
+        <div className={pjtModalStyles.title}>프로젝트 등록</div>
+        <p className={pjtModalStyles.comment}>* 프로젝트 코드나 프로젝트 명 둘 중에 하나만 입력해도 검색이 가능합니다.</p>
+        <div className={pjtModalStyles.search_container}>
+          <div className={pjtModalStyles.search_item}>
+            <div className={pjtModalStyles.search_title}>프로젝트코드</div>
+            <input className={pjtModalStyles.search_code}/>
+          </div>
+          <div className={pjtModalStyles.search_item}>
+            <div className={pjtModalStyles.search_title}>프로젝트명</div>
+            <div className={pjtModalStyles.search_container}>
+              <input className={pjtModalStyles.search_name}/>
+              <button className={pjtModalStyles.search_button} onClick={handleFormSubmit}>찾기</button>
+            </div>
+          </div>
+        </div>
+  
+        <div className={pjtModalStyles.result_container}>
+  
+        {(!formData || Object.keys(formData).length === 0) ?
+              <></> : ( <Table data={project} variant='checkbox' onRowClick={handlePjtClick} /> )}
+        </div>
+  
+        <button className={pjtModalStyles.select_button} onClick={handleSelect}>등록</button>
+      </Modal>
+    )
+}
 
 export function PdAddModal({ isModalOpen, handleOk, handleCancel }) {
     const [showResults, setShowResults] = useState(false);    // 사원 목록을 표시할지 여부
@@ -195,6 +249,96 @@ export function FlAddModal({ isModalOpen, handleOk, handleCancel }) {
             </div>
 
             <button className={rmStyles.select_button} onClick={handleSelect}>등록</button>
+        </Modal>
+    )
+}
+
+export function FlEditModal({ isModalOpen, handleOk, handleCancel, rowData }) {
+    const [formValues, setFormValues] = useState({
+        eqLibName: '',
+        equipDvs: '',
+        equipType: '',
+        equipSpecUnit: ''
+    });
+
+    // 모달이 열릴 때 rowData로부터 폼 필드 값을 설정
+    useEffect(() => {
+        if (isModalOpen && rowData) {
+            setFormValues({
+                eqLibName: rowData.EquipName || '',
+                equipDvs: rowData.equipDvs || '',
+                equipType: rowData.equipType || '',
+                equipSpecUnit: rowData.equipSpecUnit || '',
+            });
+        }
+    }, [rowData, isModalOpen]);
+
+    const handleChange = (e) => {
+        const { id, value } = e.target;
+        setFormValues(prevValues => ({
+            ...prevValues,
+            [id]: value
+        }));
+    };
+
+    const handleSelect = () => {
+        handleOk(formValues);
+    };
+
+    return (
+        <Modal 
+            open={isModalOpen} 
+            onCancel={handleCancel} 
+            style={{ width: '25rem', maxWidth: '25rem', important: true }}
+            footer={null}                                                   //Ant Design의 기본 footer 제거(Cancel, OK 버튼)
+        >
+            <div className={rmStyles.title}>설비LIB 등록</div>
+
+            <div className={rmStyles.search_container}>
+                <div className={rmStyles.search_item}>
+                    <div className={rmStyles.search_title}>설비라이브러리명</div>
+                    <input 
+                        className={rmStyles.search} 
+                        value={formValues.eqLibName}
+                        onChange={handleChange}
+                    />
+                </div>
+                <div className={rmStyles.search_item}>
+                    <div className={rmStyles.search_title}>설비구분</div>
+                    <Select 
+                        value={formValues.equipDvs}
+                        onChange={(value) => setFormValues(prevValues => ({ ...prevValues, actvDvs: value }))}
+                    >
+                        <Select.Option key={"구분1"} value={"구분1"}>{"구분1"}</Select.Option>
+                        <Select.Option key={"구분2"} value={"구분2"}>{"구분2"}</Select.Option>
+                        <Select.Option key={"구분3"} value={"구분3"}>{"구분3"}</Select.Option>
+                    </Select>
+                </div>
+                <div className={rmStyles.search_item}>
+                    <div className={rmStyles.search_title}>설비유형</div>
+                    <Select 
+                        value={formValues.equipType}
+                        onChange={(value) => setFormValues(prevValues => ({ ...prevValues, actvDvs: value }))}
+                    >
+                        <Select.Option key={"유형1"} value={"유형1"}>{"유형1"}</Select.Option>
+                        <Select.Option key={"유형2"} value={"유형2"}>{"유형2"}</Select.Option>
+                        <Select.Option key={"유형3"} value={"유형3"}>{"유형3"}</Select.Option>
+                    </Select>
+                </div>
+                <div className={rmStyles.search_item}>
+                    <div className={rmStyles.search_title}>설비사양단위</div>
+                    <Select 
+                        value={formValues.equipSpecUnit}
+                        onChange={(value) => setFormValues(prevValues => ({ ...prevValues, actvDvs: value }))}
+                    >
+                        <Select.Option key={"단위1"} value={"단위1"}>{"단위1"}</Select.Option>
+                        <Select.Option key={"단위2"} value={"단위2"}>{"단위2"}</Select.Option>
+                        <Select.Option key={"단위3"} value={"단위3"}>{"단위3"}</Select.Option>
+                    </Select>
+                </div>
+            </div>
+            
+            <button className={rmStyles.select_button} onClick={handleSelect}>수정</button>
         </Modal>
     )
 }

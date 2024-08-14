@@ -1,15 +1,16 @@
 import React, { useState } from "react";
 import * as tableStyles from "../../../assets/css/newTable.css";
-import{TableCustomDoubleClickEdit} from "../../../TableCustom";
+import TableCustom from "../../../TableCustom";
 import SearchForms from "../../../SearchForms";
 import {lib} from "../../../assets/json/selectedPjt";
 import {formField_fl} from "../../../assets/json/searchFormData.js";
 
 export default function Fl() {
     const [formData, setFormData] = useState({});                 // 검색 데이터
-    const [selectedEqLib, setSelectedEqLib] = useState(null);     // 선택된 설비 LIB 목록(PK column only)
+    const [selectedEqLib, setSelectedEqLib] = useState({});     // 선택된 설비 LIB 목록(PK column only)
     const [isModalOpen, setIsModalOpen] = useState({
         FlAdd: false,
+        FlEdit: false,
         Del: false
     });
 
@@ -20,7 +21,7 @@ export default function Fl() {
 
     // 설비LIB row 클릭 시 호출될 함수
     const handleEqLibClick = (lib) => {
-        setSelectedEqLib(lib?.EquipName ?? null);
+        setSelectedEqLib(lib ?? {});
     };
 
     // 모달 열기
@@ -43,6 +44,11 @@ export default function Fl() {
     const onAddClick = () => {
         showModal('FlAdd');
     };
+
+    const onEditClick = () => {
+        showModal('FlEdit');
+    };
+
     const onDeleteClick = () => {
         showModal('Del');
     };
@@ -56,19 +62,26 @@ export default function Fl() {
             <></> : ( //TODO: 백엔드에서 받아온 값으로 바꾸기(Table 컴포넌트의 data 파라미터)
 
                 <>
-                    <TableCustomDoubleClickEdit 
+                    <TableCustom 
                         title='설비LIB목록' 
                         data={lib}                   
-                        buttons={['Edit', 'Delete', 'Add']}
-                        onClicks={[()=>{}, onDeleteClick, onAddClick]}
+                        buttons={['Delete', 'Edit', 'Add']}
+                        onClicks={[onDeleteClick, onEditClick, onAddClick]}
                         onRowClick={(e) => handleEqLibClick(e)}
-                        selectedRows={[selectedEqLib]}
+                        selectedRows={[selectedEqLib.EquipName]}
                         modals={[
                             {
                                 'modalType': 'Del',
                                 'isModalOpen': isModalOpen.Del,
                                 'handleOk': handleOk('Del'),
                                 'handleCancel': handleCancel('Del')
+                            },
+                            {
+                                'modalType': 'FlEdit',
+                                'isModalOpen': isModalOpen.FlEdit,
+                                'handleOk': handleOk('FlEdit'),
+                                'handleCancel': handleCancel('FlEdit'),
+                                'rowData': selectedEqLib
                             },
                             {
                                 'modalType': 'FlAdd',

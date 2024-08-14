@@ -1,7 +1,7 @@
 import React, {useState} from 'react';
 import Table from "./Table.js";
 import * as tableStyles from "./assets/css/newTable.css"
-import { DelModal, PdAddModal, RmAddModal, FlAddModal, FamAddModal, FamEditModal, Ps12UploadExcelModal, CmAddModal, DeleteModal, CmEditModal, CmListAddModal, CmListEditModal, FmAddModal, UmAddModal, MmAddModal, EsmAddModal, SdAddModal, SdShowDetailsModal } from "./modals/PdModal.js";
+import { DelModal, PgAddModal, PdAddModal, RmAddModal, FlAddModal, FlEditModal, FamAddModal, FamEditModal, Ps12UploadExcelModal, CmAddModal, DeleteModal, CmEditModal, CmListAddModal, CmListEditModal, FmAddModal, UmAddModal, MmAddModal, EsmAddModal, SdAddModal, SdShowDetailsModal } from "./modals/PdModal.js";
 import { ButtonGroup } from './Button';
 
 const modalMap = {
@@ -11,16 +11,18 @@ const modalMap = {
     CMListEdit: CmListEditModal,
     Delete: DeleteModal,
     Ps12UploadExcel: Ps12UploadExcelModal,
-    EsmAdd: EsmAddModal,
+    PgAdd: PgAddModal,
     PdAdd: PdAddModal,
     RmAdd: RmAddModal,
     FlAdd: FlAddModal,
+    FlEdit: FlEditModal,
     FamAdd: FamAddModal,
     FamEdit: FamEditModal,
     Del: DelModal,
     FmAdd: FmAddModal,
     UmAdd: UmAddModal,
     MmAdd: MmAddModal,
+    EsmAdd: EsmAddModal,
     SdAdd: SdAddModal,
     SdShowDetails: SdShowDetailsModal
 }
@@ -39,7 +41,7 @@ export default function TableCustom({
     // 버튼 활성화 상태 결정
     const buttonStatus = buttons.map((button) => {
         if (button === 'Edit' || button === 'Delete') {
-            if(selectedRows.includes(null)) {               // 선택한 row가 없으면 삭제 버튼의 onRowClick 이벤트 비활성화(variant='default')
+            if (selectedRows.includes(null) || selectedRows.includes(undefined)) {  // 선택한 row가 없으면 삭제 버튼의 onRowClick 이벤트 비활성화(variant='default')
                 return false;                               
             } else {
                 return selectedRows.length > 0;             // 선택된 row가 있으면 delete 버튼 활성화(variant='checkbox')
@@ -94,7 +96,7 @@ export function TableCustomDoubleClickEdit({
     // 버튼 활성화 상태 결정
     const buttonStatus = buttons.map((button) => {
         if (button === 'Delete') {
-            if(isEditing || selectedRows.includes(null)) {  // 수정 중이거나 선택한 row 가 없으면 삭제 버튼의 onRowClick 이벤트 비활성화
+            if (selectedRows.includes(null) || selectedRows.includes(undefined)) {  // 수정 중이거나 선택한 row 가 없으면 삭제 버튼의 onRowClick 이벤트 비활성화
                 return false;                               
             } else {
                 return selectedRows.length > 0;             // 선택된 row가 있으면 delete 버튼 활성화
