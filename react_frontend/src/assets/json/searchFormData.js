@@ -71,6 +71,14 @@ export const formField_psq = [
     ], defaultSelected: true },
 ];
 
+export const formField_esm = [
+    { type: 'SearchAtModal', name: 'searchProject', label: '프로젝트코드/명', required: true, modalType: '프로젝트 찾기' },
+];
+
+export const formField_sd = [
+    { type: 'SearchAtModal', name: 'searchProject', label: '프로젝트코드/명', required: true, modalType: '프로젝트 찾기' },
+];
+
 export const formField_cm = [
     { type: 'InputText', name: 'codeGroupId', label: '코드그룹ID'},
 ]
