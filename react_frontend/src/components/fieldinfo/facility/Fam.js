@@ -7,8 +7,7 @@ import {formField_fam} from "../../../assets/json/searchFormData.js";
 
 export default function Fam() {
     const [formData, setFormData] = useState({});               // 검색 데이터
-    const [selectedActv, setSelectedActv] = useState(null);     // 선택된 설비 LIB
-    const [selectedRow, setSelectedRow] = useState({});
+    const [selectedActv, setSelectedActv] = useState({});       // 선택된 설비 LIB
     const [isModalOpen, setIsModalOpen] = useState({
         FamAdd: false,
         FamEdit: false,
@@ -22,17 +21,12 @@ export default function Fam() {
 
     // 활동자료 row 클릭 시 호출될 함수
     const handleActvClick = (actv) => {
-        setSelectedActv(actv?.actvDataName ?? null);
-        setSelectedRow(actv ?? {});
+        setSelectedActv(actv ?? {});
     };
 
     // 모달 열기
-    const showModal = (modalType, rowData) => {
+    const showModal = (modalType) => {
         setIsModalOpen(prevState => ({ ...prevState, [modalType]: true }));
-
-        if (modalType === 'FamEdit') {
-            setSelectedActv(rowData); // 선택된 데이터 설정
-        }
     };
 
     // 활동자료 등록 버튼 클릭 시 호출될 함수
@@ -51,8 +45,8 @@ export default function Fam() {
         showModal('FamAdd');
     };
 
-    const onEditClick = (rowData) => {
-        showModal('FamEdit', rowData);
+    const onEditClick = () => {
+        showModal('FamEdit');
     };
 
     const onDeleteClick = () => {
@@ -73,7 +67,7 @@ export default function Fam() {
                         buttons={['Delete', 'Edit', 'Add']}
                         onClicks={[onDeleteClick, onEditClick, onAddClick]}
                         onRowClick={handleActvClick}
-                        selectedRows={[selectedActv]}
+                        selectedRows={[selectedActv.actvDataName]}
                         modals={[
                             {
                                 'modalType': 'Del',
@@ -86,7 +80,7 @@ export default function Fam() {
                                 'isModalOpen': isModalOpen.FamEdit,
                                 'handleOk': handleOk('FamEdit'),
                                 'handleCancel': handleCancel('FamEdit'),
-                                'rowData': selectedRow
+                                'rowData': selectedActv
                             },
                             {
                                 'modalType': 'FamAdd',
