@@ -10,8 +10,8 @@
 
 .navigation_fold{
     position: fixed;
-    top: 45%;
-    bottom: 55%;
+    top: 37%;
+    bottom: 63%;
     left: 183px;
     width: 1rem;
     height: 6rem;
@@ -29,8 +29,8 @@
 
 .navigation_unfold {
     position: fixed;
-    top: 45%;
-    bottom: 55%;
+    top: 37%;
+    bottom: 63%;
     left: 0;
     float: left;
     width: 1rem;
