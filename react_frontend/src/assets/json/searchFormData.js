@@ -188,7 +188,22 @@ export const formField_fam = [
         {value: '6', label: '오리멀젼'},
         {value: '7', label: '천연가스액(NGL)'},
         {value: '8', label: '휘발유'}
-    ]}
+    ]},
+    { type: 'DropDown', name: 'equipType', label: '배출활동유형', options: [
+        { value: 'option1', label: 'Option 1' },
+        { value: 'option2', label: 'Option 2' },
+        { value: 'option3', label: 'Option 3' },
+        { value: 'option4', label: 'Option 4' },
+        { value: 'option5', label: 'Option 5' }
+    ] },
+    { type: 'DropDown', name: 'calUnitCode', label: '산정단위', options: [
+        { value: 'option1', label: 'Option 1' },
+        { value: 'option2', label: 'Option 2' },
+        { value: 'option3', label: 'Option 3' },
+        { value: 'option4', label: 'Option 4' },
+        { value: 'option5', label: 'Option 5' }
+    ] },
+
 ]
 
 export const formField_fad = [
