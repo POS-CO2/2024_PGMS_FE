@@ -11,6 +11,7 @@ const modalMap = {
     CMListEdit: CmListEditModal,
     Delete: DeleteModal,
     Ps12: Ps12Modal,
+    PgAdd: PgAddModal,
     PdAdd: PdAddModal,
     RmAdd: RmAddModal,
     FlAdd: FlAddModal,
