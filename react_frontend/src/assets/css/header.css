@@ -21,6 +21,7 @@
     right:0px;
     display: flex;
     align-items: center; 
+    cursor: pointer;
 }
 
 .header_name {

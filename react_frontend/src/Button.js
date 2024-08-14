@@ -6,6 +6,7 @@ import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import CachedIcon from '@mui/icons-material/Cached';
 import UploadIcon from '@mui/icons-material/Upload';
 import DownloadIcon from '@mui/icons-material/Download';
+import SaveOutlinedIcon from '@mui/icons-material/SaveOutlined';
 
 const buttonMap = {
   Add: AddButton,
@@ -13,7 +14,8 @@ const buttonMap = {
   Edit: EditButton,
   UploadExcel: UploadExcelButton,
   DownloadExcelForm: DownloadExcelFormButton,
-  DownloadExcel: DownloadExcelButton
+  DownloadExcel: DownloadExcelButton,
+  ShowDetails: ShowDetailsButton
 };
 
 const CustomButton = styled(Button)(({ theme }) => ({
@@ -33,7 +35,7 @@ const CustomButton = styled(Button)(({ theme }) => ({
   },
 }));
 
-function AddButton({onClick}) {
+export function AddButton({ onClick }) {
   return (
     <CustomButton variant="contained" onClick={onClick}>
       등록 <ControlPointIcon className="icon" />
@@ -41,7 +43,7 @@ function AddButton({onClick}) {
   );
 }
 
-function DeleteButton({onClick}) {
+export function DeleteButton({ onClick }) {
   return (
     <CustomButton variant="contained" onClick={onClick}>
       삭제 <DeleteForeverIcon className="icon" />
@@ -49,15 +51,18 @@ function DeleteButton({onClick}) {
   );
 }
 
-function EditButton({onClick, isEditing}) {
+export function EditButton({ onClick, isEditing }) {
   return (
     <CustomButton variant="contained" onClick={onClick}>
-      {isEditing ? '저장' : '수정'} <CachedIcon className="icon" />
+      {isEditing
+        ? <>저장 <SaveOutlinedIcon className="icon" /></>
+        : <>수정 <CachedIcon className="icon" /></>
+      }
     </CustomButton>
   );
 }
 
-function UploadExcelButton({onClick}) {
+export function UploadExcelButton({ onClick }) {
   return (
     <CustomButton variant="contained" onClick={onClick}>
       엑셀 업로드 <UploadIcon className="icon" />
@@ -65,7 +70,7 @@ function UploadExcelButton({onClick}) {
   );
 }
 
-function DownloadExcelFormButton({onClick}) {
+export function DownloadExcelFormButton({ onClick }) {
   return (
     <CustomButton variant="contained" onClick={onClick}>
       엑셀 양식 다운로드 <DownloadIcon className="icon" />
@@ -73,7 +78,7 @@ function DownloadExcelFormButton({onClick}) {
   );
 }
 
-function DownloadExcelButton({onClick}) {
+export function DownloadExcelButton({ onClick }) {
   return (
     <CustomButton variant="contained" onClick={onClick}>
       엑셀 다운로드 <DownloadIcon className="icon" />
@@ -81,7 +86,15 @@ function DownloadExcelButton({onClick}) {
   );
 }
 
-export function ButtonGroup({ buttons=[], onClicks=[], buttonStatus = [], isEditing = false}) {
+export function ShowDetailsButton({ onClick }) {
+  return (
+    <CustomButton variant="contained" onClick={onClick}>
+      상세보기
+    </CustomButton>
+  );
+}
+
+export function ButtonGroup({ buttons = [], onClicks = [], buttonStatus = [], isEditing = false }) {
   return (
     <div style={{ display: 'flex', gap: '8px', marginRight: '23px' }}>
       {buttons.map((button, index) => {
@@ -99,9 +112,9 @@ export function ButtonGroup({ buttons=[], onClicks=[], buttonStatus = [], isEdit
   );
 }
 
-export function ButtonGroupMm({ buttons = [], onClick}) {
+export function ButtonGroupMm({ buttons = [], onClick }) {
   return (
-    <div style={{ display: 'flex', gap: '8px', marginRight: '1rem', justifyContent:"flex-end" }}>
+    <div style={{ display: 'flex', gap: '8px', marginRight: '1rem', justifyContent: "flex-end" }}>
       {buttons.map(button => {
         const ButtonComponent = buttonMap[button];
         return ButtonComponent ? <ButtonComponent key={button} onClick={onClick} /> : null;
