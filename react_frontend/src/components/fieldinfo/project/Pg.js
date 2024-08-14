@@ -18,9 +18,9 @@ export default function Pg() {
         setFormData(data);
     };
 
-    // 설비LIB row 클릭 시 호출될 함수
+    // 프로젝트 row 클릭 시 호출될 함수
     const handlePjtClick = (pjt) => {
-        setSelectedPjt(pjt.map(item => item.PjtCode));
+        setSelectedPjt(pjt?.PjtCode ?? null);
     };
 
     // 모달 열기
@@ -58,7 +58,7 @@ export default function Pg() {
                 <>
                     <TableCustomDoubleClickEdit 
                         title='프로젝트목록' 
-                        data={lib}                   
+                        data={project}                   
                         buttons={['Edit', 'Delete', 'Add']}
                         onClicks={[()=>{}, onDeleteClick, onAddClick]}
                         onRowClick={handlePjtClick}
