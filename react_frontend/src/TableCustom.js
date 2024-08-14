@@ -1,7 +1,7 @@
 import React, {useState} from 'react';
 import Table from "./Table.js";
 import * as tableStyles from "./assets/css/newTable.css"
-import { DelModal, PdAddModal, RmAddModal, FlAddModal, Ps12UploadExcelModal, CmAddModal, DeleteModal, CmEditModal, CmListAddModal, CmListEditModal, FmAddModal, UmAddModal, MmAddModal, EsmAddModal, SdAddModal, SdShowDetailsModal } from "./modals/PdModal.js";
+import { DelModal, PdAddModal, RmAddModal, FlAddModal, FamAddModal, FamEditModal, Ps12UploadExcelModal, CmAddModal, DeleteModal, CmEditModal, CmListAddModal, CmListEditModal, FmAddModal, UmAddModal, MmAddModal, EsmAddModal, SdAddModal, SdShowDetailsModal } from "./modals/PdModal.js";
 import { ButtonGroup } from './Button';
 
 const modalMap = {
@@ -15,6 +15,8 @@ const modalMap = {
     PdAdd: PdAddModal,
     RmAdd: RmAddModal,
     FlAdd: FlAddModal,
+    FamAdd: FamAddModal,
+    FamEdit: FamEditModal,
     Del: DelModal,
     FmAdd: FmAddModal,
     UmAdd: UmAddModal,
@@ -56,15 +58,18 @@ export default function TableCustom({
                     const ModalComponent = modalMap[modal.modalType];
                     return ModalComponent ? (
                         <ModalComponent
+                            key={ModalComponent} // warning 삭제
                             isModalOpen={modal.isModalOpen}
                             handleOk={modal.handleOk || (() => {})}
                             handleCancel={modal.handleCancel || (() => {})}
+                            onRowClick={onRowClick}
+                            selectedActv={modal.rowData}
                         />
                     ) : null;
                 })}
             </div>
             {table ? (
-            <Table data={data} variant={variant} onRowClick={onRowClick} />
+            <Table data={data} variant={variant} onRowClick={onRowClick}/>
             ) : (<></>)}
             
         </>

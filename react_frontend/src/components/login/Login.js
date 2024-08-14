@@ -11,6 +11,7 @@ import {FilledInput, IconButton, FormControl, OutlinedInput} from "@mui/material
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import { useNavigate } from 'react-router';
+import kuromi from '../../assets/images/kuromi.jpg';
 
 
 export default function Login({handleLogin}) {
@@ -39,7 +40,7 @@ export default function Login({handleLogin}) {
 
     return (
             <div className={loginStyles.loginBox}>
-                <img className={loginStyles.login_img} src="https://i.namu.wiki/i/tjA_pQo653l_99iCxdvgLEXRyC9gFfgpd7e8aKbjKMLkTu7DBnwfIf-vRb8ibzVT5MVSEO41mFj1za47tySK-E03OoW9QtB2w4GTWwic2sFF84m8VMZXQDQzOym1c03wEyCMr3ITr7LKYlepF5hlFQ.svg" />
+                <img className={loginStyles.login_img} src={kuromi} />
                 <div className={loginStyles.inlineContainer}>
                     <div className={loginStyles.logo}>
                         <span>PGMS</span>

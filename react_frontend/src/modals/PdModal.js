@@ -1,6 +1,11 @@
+<<<<<<< HEAD
 import React, { useState, useRef, useEffect } from 'react';
 import { Modal, Button, Upload, Select } from 'antd';
 import { PaperClipOutlined, CloseOutlined } from '@ant-design/icons';
+=======
+import React, { useState, useEffect } from 'react';
+import { Modal } from 'antd';
+>>>>>>> 1ed6ada262bc9898327064bb656f6ef95952ba67
 import * as modalStyles from "../assets/css/pdModal.css";
 import * as rmStyles from "../assets/css/rmModal.css";
 import * as delStyle from "../assets/css/delModal.css";
@@ -11,7 +16,7 @@ import { employee } from "../assets/json/manager.js"
 import emsData from "../assets/json/ems";
 import { selectYear, selectMonth } from "../assets/json/sd";
 import * as sysStyles from "../assets/css/sysmng.css"
-import { TextField, Box, InputLabel, MenuItem, FormControl } from '@mui/material';
+import { TextField, Box, InputLabel, MenuItem, FormControl, Autocomplete } from '@mui/material';
 import WarningAmberIcon from '@mui/icons-material/WarningAmber';
 
 export function PdAddModal({ isModalOpen, handleOk, handleCancel }) {
@@ -194,6 +199,191 @@ export function FlAddModal({ isModalOpen, handleOk, handleCancel }) {
             </div>
 
             <button className={rmStyles.select_button} onClick={handleSelect}>등록</button>
+        </Modal>
+    )
+}
+
+export function FamAddModal({ isModalOpen, handleOk, handleCancel }) {
+    // 등록 버튼 클릭 시 호출될 함수(등록할 활동자료의 data를 전달)
+    const handleSelect = () => {
+        const formData = {
+            actvName: document.getElementById('actvName').value,
+            actvDvs: document.getElementById('actvDvs').value,
+            emtnActvType: document.getElementById('emtnActvType').value,
+            calUnit: document.getElementById('calUnit').value,
+            inputUnit: document.getElementById('inputUnit').value,
+            unitConvCoef: document.getElementById('unitConvCoef').value,
+        };
+
+        handleOk(formData);  // 입력된 데이터를 handleOk 함수로 전달
+    };
+
+    return (
+        <Modal 
+            open={isModalOpen} 
+            onCancel={handleCancel} 
+            style={{ width: '25rem', maxWidth: '25rem', important: true }}
+            footer={null}                                                   //Ant Design의 기본 footer 제거(Cancel, OK 버튼)
+        >
+            <div className={rmStyles.title}>활동자료 등록</div>
+
+            <div className={rmStyles.search_container}>
+                <div className={rmStyles.search_item}>
+                    <div className={rmStyles.search_title}>활동자료명</div>
+                    <input className={rmStyles.search} id="actvName" />
+                </div>
+                <div className={rmStyles.search_item}>
+                    <div className={rmStyles.search_title}>활동자료구분</div>
+                    <Select id="actvDvs">
+                        <Select.Option key={"구분1"} value={"구분1"}>{"구분1"}</Select.Option>
+                        <Select.Option key={"구분2"} value={"구분2"}>{"구분2"}</Select.Option>
+                        <Select.Option key={"구분3"} value={"구분3"}>{"구분3"}</Select.Option>
+                    </Select>
+                </div>
+                <div className={rmStyles.search_item}>
+                    <div className={rmStyles.search_title}>배출활동유형</div>
+                    <Select id="emtnActvType">
+                        <Select.Option key={"유형1"} value={"유형1"}>{"유형1"}</Select.Option>
+                        <Select.Option key={"유형2"} value={"유형2"}>{"유형2"}</Select.Option>
+                        <Select.Option key={"유형3"} value={"유형3"}>{"유형3"}</Select.Option>
+                    </Select>
+                </div>
+                <div className={rmStyles.search_item}>
+                    <div className={rmStyles.search_title}>산정단위</div>
+                    <Select id="calUnit">
+                        <Select.Option key={"단위1"} value={"단위1"}>{"단위1"}</Select.Option>
+                        <Select.Option key={"단위2"} value={"단위2"}>{"단위2"}</Select.Option>
+                        <Select.Option key={"단위3"} value={"단위3"}>{"단위3"}</Select.Option>
+                    </Select>
+                </div>
+                <div className={rmStyles.search_item}>
+                    <div className={rmStyles.search_title}>입력단위</div>
+                    <Select id="inputUnit">
+                        <Select.Option key={"단위1"} value={"단위1"}>{"단위1"}</Select.Option>
+                        <Select.Option key={"단위2"} value={"단위2"}>{"단위2"}</Select.Option>
+                        <Select.Option key={"단위3"} value={"단위3"}>{"단위3"}</Select.Option>
+                    </Select>
+                </div>
+                <div className={rmStyles.search_item}>
+                    <div className={rmStyles.search_title}>단위환산계수</div>
+                    <input className={rmStyles.search} id="unitConvCoef" />
+                </div>
+            </div>
+            
+            <button className={rmStyles.select_button} onClick={handleSelect}>등록</button>
+        </Modal>
+    )
+}
+
+export function FamEditModal({ isModalOpen, handleOk, handleCancel, selectedActv }) {
+    const [formValues, setFormValues] = useState({
+        actvName: '',
+        actvDvs: '',
+        emtnActvType: '',
+        calUnit: '',
+        inputUnit: '',
+        unitConvCoef: ''
+    });
+
+    // 모달이 열릴 때 selectedActv로부터 폼 필드 값을 설정
+    useEffect(() => {
+        if (isModalOpen && selectedActv) {
+            setFormValues({
+                actvName: selectedActv.actvDataName || '',
+                actvDvs: selectedActv.actvDataDvs || '',
+                emtnActvType: selectedActv.emtnActvType || '',
+                calUnit: selectedActv.calUnit || '',
+                inputUnit: selectedActv.inputUnit || '',
+                unitConvCoef: selectedActv.unitConvCoef || ''
+            });
+        }
+    }, [selectedActv, isModalOpen]);
+
+    const handleChange = (e) => {
+        const { id, value } = e.target;
+        setFormValues(prevValues => ({
+            ...prevValues,
+            [id]: value
+        }));
+    };
+
+    const handleSelect = () => {
+        handleOk(formValues);
+    };
+
+    return (
+        <Modal 
+            open={isModalOpen} 
+            onCancel={handleCancel} 
+            style={{ width: '25rem', maxWidth: '25rem', important: true }}
+            footer={null}                                                   //Ant Design의 기본 footer 제거(Cancel, OK 버튼)
+        >
+            <div className={rmStyles.title}>활동자료 수정</div>
+
+            <div className={rmStyles.search_container}>
+                <div className={rmStyles.search_item}>
+                    <div className={rmStyles.search_title}>활동자료명</div>
+                    <input 
+                        className={rmStyles.search} 
+                        value={formValues.actvName}
+                        onChange={handleChange}
+                    />
+                </div>
+                <div className={rmStyles.search_item}>
+                    <div className={rmStyles.search_title}>활동자료구분</div>
+                    <Select 
+                        value={formValues.actvDvs}
+                        onChange={(value) => setFormValues(prevValues => ({ ...prevValues, actvDvs: value }))}
+                    >
+                        <Select.Option key={"구분1"} value={"구분1"}>{"구분1"}</Select.Option>
+                        <Select.Option key={"구분2"} value={"구분2"}>{"구분2"}</Select.Option>
+                        <Select.Option key={"구분3"} value={"구분3"}>{"구분3"}</Select.Option>
+                    </Select>
+                </div>
+                <div className={rmStyles.search_item}>
+                    <div className={rmStyles.search_title}>배출활동유형</div>
+                    <Select 
+                        value={formValues.emtnActvType}
+                        onChange={(value) => setFormValues(prevValues => ({ ...prevValues, emtnActvType: value }))}
+                    >
+                        <Select.Option key={"유형1"} value={"유형1"}>{"유형1"}</Select.Option>
+                        <Select.Option key={"유형2"} value={"유형2"}>{"유형2"}</Select.Option>
+                        <Select.Option key={"유형3"} value={"유형3"}>{"유형3"}</Select.Option>
+                    </Select>
+                </div>
+                <div className={rmStyles.search_item}>
+                    <div className={rmStyles.search_title}>산정단위</div>
+                    <Select 
+                        value={formValues.calUnit}
+                        onChange={(value) => setFormValues(prevValues => ({ ...prevValues, calUnit: value }))}
+                    >
+                        <Select.Option key={"단위1"} value={"단위1"}>{"단위1"}</Select.Option>
+                        <Select.Option key={"단위2"} value={"단위2"}>{"단위2"}</Select.Option>
+                        <Select.Option key={"단위3"} value={"단위3"}>{"단위3"}</Select.Option>
+                    </Select>
+                </div>
+                <div className={rmStyles.search_item}>
+                    <div className={rmStyles.search_title}>입력단위</div>
+                    <Select 
+                        value={formValues.inputUnit}
+                        onChange={(value) => setFormValues(prevValues => ({ ...prevValues, inputUnit: value }))}
+                    >
+                        <Select.Option key={"단위1"} value={"단위1"}>{"단위1"}</Select.Option>
+                        <Select.Option key={"단위2"} value={"단위2"}>{"단위2"}</Select.Option>
+                        <Select.Option key={"단위3"} value={"단위3"}>{"단위3"}</Select.Option>
+                    </Select>
+                </div>
+                <div className={rmStyles.search_item}>
+                    <div className={rmStyles.search_title}>단위환산계수</div>
+                    <input 
+                        className={rmStyles.search} 
+                        value={formValues.unitConvCoef}
+                        onChange={handleChange}
+                    />
+                </div>
+            </div>
+            
+            <button className={rmStyles.select_button} onClick={handleSelect}>수정</button>
         </Modal>
     )
 }
@@ -523,13 +713,7 @@ export function FmAddModal({ isModalOpen, handleOk, handleCancel }) {
     // 찾기 버튼 클릭 시 호출될 함수
     const handleSearch = () => {
         setShowResults(true);
-
-        // 백엔드로 데이터를 전송
-        const searchParams = {
-            empId,
-            empName,
-            dept,
-        };
+        
     };
 
     // 사원 row 클릭 시 호출될 함수
@@ -551,6 +735,80 @@ export function FmAddModal({ isModalOpen, handleOk, handleCancel }) {
         handleOk(selectedEmps);
     };
 
+    const sulbiLib = [
+        {
+            label: "가설사무실 전력",
+            id: 1,
+        },
+        {
+            label: "임대사무실 전력",
+            id: 2,
+        },
+        {
+            label: "현장식당 전력",
+            id: 3,
+        },
+        {
+            label: "공사용 전력",
+            id: 4,
+        },
+        {
+            label: "법인 차량",
+            id: 5,
+        },
+        {
+            label: "직원 유류비",
+            id: 6,
+        },
+        {
+            label: "직영 장비",
+            id: 7,
+        },
+        {
+            label: "난방용 보일러",
+            id: 8,
+        },
+        {
+            label: "사무실 스팀",
+            id: 9,
+        },
+        {
+            label: "현장식당 스팀",
+            id: 10,
+        },
+        {
+            label: "사무실 보일러",
+            id: 11,
+        },
+        {
+            label: "현장식당 보일러",
+            id: 12,
+        },
+        {
+            label: "사무실 연료",
+            id: 13,
+        },
+        {
+            label: "현장식당 연료",
+            id: 14,
+        },
+        {
+            label: "Test",
+            id: 15,
+        },
+    ]
+
+    const defaultProps = {
+        options: sulbiLib,
+        getOptionLabel: (option) => option.label
+    };
+
+    const flatProps = {
+        options: sulbiLib.map((option) => option.label),
+    };
+
+    const [value1, setValue] = useState([]);
+
     return (
         <Modal
             open={isModalOpen}
@@ -558,10 +816,28 @@ export function FmAddModal({ isModalOpen, handleOk, handleCancel }) {
             width={680}
             footer={null}             //Ant Design의 기본 footer 제거(Cancel, OK 버튼)
         >
-            <div className={modalStyles.title}>현장 담당자 지정</div>
-
+            <div className={modalStyles.title}>설비 지정</div>
+            <div className={modalStyles.search_container}>
+                <div className={modalStyles.search_item}>
+                    <div className={modalStyles.search_title}>설비LIB명</div>
+                    <Autocomplete 
+                        {...defaultProps}
+                        id="blur-on-select"
+                        blurOnSelect
+                        onChange={(e, v) => setValue([v])}
+                        renderInput={(params) => (
+                        <TextField {...params} variant="standard" sx={{width:"10rem"}}/>
+                        )}
+                    />
+                </div>
+                <div className={modalStyles.input_with_btn}>
+                    <button className={modalStyles.search_button} style={{marginTop:"1rem"}} onClick={handleSearch}>조회</button>
+                </div>
+            </div>
+            
             <div className={modalStyles.result_container}>
-                <Table data={employee} variant='checkbox' onRowClick={handleEmpClick} />
+                {showResults ? <Table data={value1} onRowClick={handleEmpClick} />
+                    : <></>}
             </div>
 
             <button className={modalStyles.select_button} onClick={handleSelect}>등록</button>

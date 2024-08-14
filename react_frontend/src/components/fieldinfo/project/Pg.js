@@ -7,8 +7,7 @@ import {formField_pg} from "../../../assets/json/searchFormData.js"
 
 export default function Pg() {
     const [formData, setFormData] = useState({});           // 검색 데이터
-    const [selectedPjt, setSelectedPjt] = useState();     // 선택된 설비 LIB 목록(PK column only)
-
+    const [selectedPjt, setSelectedPjt] = useState(null);     // 선택된 설비 LIB 목록(PK column only)
     const [isModalOpen, setIsModalOpen] = useState({
         PgAdd: false,
         Del: false
