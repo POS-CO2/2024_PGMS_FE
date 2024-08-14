@@ -62,7 +62,7 @@ export const table_um_list = [
     {
         "로그인 아이디" : "bbingddnag3",
         "이름" : "임뺑준",
-        "사업장" : "송도로 잘가",
+        "사업장" : null,
     },
     {
         "로그인 아이디" : "bbingddnag4",

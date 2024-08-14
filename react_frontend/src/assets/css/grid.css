@@ -80,7 +80,7 @@
     justify-content: center;
     flex-direction: row;
     width: 100%;
-    height: 25%;
+    height: 27%;
 }
 /* 좌측 첫 그리드 */
 .box2_1{
@@ -119,11 +119,35 @@
 .box2_1_1_1_1 {
     padding: 1rem;
     width: 100%;
-    height: 70%;
+    height: 20%;
+}
+/* 월 선택 */
+.box2_1_1_1_2 {
+    width: 100%;
+    height: 50%;
+}
+
+.box2_year{
+    color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.box2_monthselect {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.box2_month{
+    color: white;
+    font-size: 3rem;
+    font-weight: 600;
 }
 
 /* 프로젝트 설명..?  */
-.box2_1_1_1_2 {
+.box2_1_1_1_3 {
     padding: 1rem;
     width: 100%;
     height: 30%;
