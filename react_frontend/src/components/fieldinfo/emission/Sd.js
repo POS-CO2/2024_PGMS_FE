@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import { AddButton, UploadExcelButton } from "../../../Button";
-import { SdAddModal, Ps12UploadExcelModal } from "../../../modals/PdModal";
+import { AddButton, UploadExcelButton, ShowDetailsButton } from "../../../Button";
+import { SdAddModal, Ps12UploadExcelModal, SdShowDetailsModal } from "../../../modals/PdModal";
 /*
 import * as tableStyles from "../../../assets/css/newTable.css"
 import Table from "../../../Table";
@@ -44,9 +44,33 @@ export default function Sd() {
         showModal2();
     };
 
+    const [isModalOpen3, setIsModalOpen3] = useState(false);
+    const showModal3 = () => {
+        setIsModalOpen3(true);
+    };
+    const handleOk3 = (data) => {
+        // 결과 처리
+        setIsModalOpen3(false);
+    };
+    const handleCancel3 = () => {
+        setIsModalOpen3(false);
+    };
+    const onShowDetailsClick = () => { // 모달 여는 버튼
+        console.log("onShowDetailsClick");
+        showModal3();
+    };
+
     return (
         <div>
             <h2>증빙자료 관리</h2>
+
+            <UploadExcelButton onClick={onUploadExcelClick} />
+
+            <Ps12UploadExcelModal
+                isModalOpen={isModalOpen2}
+                handleOk={handleOk2}
+                handleCancel={handleCancel2}
+            />
 
             <AddButton onClick={onAddClick} />
 
@@ -56,12 +80,12 @@ export default function Sd() {
                 handleCancel={handleCancel}
             />
 
-            <UploadExcelButton onClick={onUploadExcelClick} />
+            <ShowDetailsButton onClick={onShowDetailsClick} />
 
-            <Ps12UploadExcelModal
-                isModalOpen={isModalOpen2}
-                handleOk={handleOk2}
-                handleCancel={handleCancel2}
+            <SdShowDetailsModal
+                isModalOpen={isModalOpen3}
+                handleOk={handleOk3}
+                handleCancel={handleCancel3}
             />
         </div>
     );

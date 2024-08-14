@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import * as tableStyles from "../../../assets/css/newTable.css"
 import Table from "../../../Table";
 import TableCustom from "../../../TableCustom";
@@ -31,6 +31,16 @@ export default function Esm() {
     const [selectedEmtn, setSelectedEmtn] = useState(null);           // 선택된 배출원
     const [selectedSd, setSelectedSd] = useState(null);               // 선택된 증빙자료
     const [showSds, setShowSds] = useState(false);
+
+    const [buttonStatus, setButtonStatus] = useState([false, false, false]);
+    useEffect(() => {
+        // selectedSd가 null인지 여부에 따라 버튼 상태를 설정합니다.
+        if (selectedSd === null) {
+            setButtonStatus([false, false, true]); // Add만 활성화
+        } else {
+            setButtonStatus([true, true, true]); // 모든 버튼 활성화
+        }
+    }, [selectedSd]);
 
     const [isModalOpen, setIsModalOpen] = useState({
         EsmAdd: false, // 배출원 등록
@@ -130,6 +140,7 @@ export default function Esm() {
                                         handleCancel: handleCancel('Del'),
                                     }
                                 ]}
+                                selectedRows={[selectedEmtn]}
                             />
                         </Card>
 
@@ -148,8 +159,9 @@ export default function Esm() {
                                             ))}
                                         </Select>
                                         <ButtonGroup
-                                            buttons={['Delete', 'Add', 'ShowDetails']}
-                                            onClicks={[onSdDeleteClick, onSdAddClick, onSdShowDetailsClick]} />
+                                            buttons={['ShowDetails', 'Delete', 'Add']}
+                                            onClicks={[onSdShowDetailsClick, onSdDeleteClick, onSdAddClick]}
+                                            buttonStatus={buttonStatus} />
                                     </div>
                                     <Table data={sdData} variant='default' onRowClick={handleSdClick} />
 

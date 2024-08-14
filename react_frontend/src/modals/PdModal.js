@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { Modal, Button, Upload, Select } from 'antd';
 import { PaperClipOutlined, CloseOutlined } from '@ant-design/icons';
 import * as modalStyles from "../assets/css/pdModal.css";
@@ -865,18 +865,29 @@ export function SdAddModal({ isModalOpen, handleOk, handleCancel }) {
 }
 
 export function SdShowDetailsModal({ selectedSd, isModalOpen, handleOk, handleCancel }) {
-    /*const [actvYear, setActvYear] = useState(selectedSd?.actvYear || '');
-    const [actvMonth, setActvMonth] = useState(selectedSd?.actvMonth || '');
-    const [name, setName] = useState(selectedSd.name);
-    const [note, setNote] = useState('');*/
     const fileInputRef = useRef(null);
     const [fileList, setFileList] = useState([]);
 
-    const onUploadClick = () => {
-        if (fileInputRef.current) {
-            fileInputRef.current.click();
+    const [formData, setFormData] = useState({
+        actvYear: '',
+        actvMonth: '',
+        name: '',
+        note: '',
+        fileList: []
+    });
+
+    useEffect(() => {
+        if (selectedSd) {
+            setFormData({
+                actvYear: selectedSd.actvYear || new Date().getFullYear().toString(),
+                actvMonth: selectedSd.actvMonth || ("00" + (new Date().getMonth() + 1)).slice(-2),
+                name: selectedSd.name || '',
+                note: selectedSd.note || '',
+                fileList: selectedSd.fileList || []
+            });
         }
-    };
+    }, [selectedSd]);
+
     const handleFileChange = (event) => {
         const newFiles = Array.from(event.target.files);
         setFileList(prevFiles => {
@@ -889,6 +900,19 @@ export function SdShowDetailsModal({ selectedSd, isModalOpen, handleOk, handleCa
     };
     const handleFileRemove = (fileName) => {
         setFileList(prevFiles => prevFiles.filter(file => file.name !== fileName));
+    };
+
+    // 등록 버튼 클릭 시 호출될 함수(등록할 매출액의 data를 전달)
+    const onSaveClick = () => {
+        const formData = {
+            pjtCode: document.getElementById('pjtCode').value,
+            pjtName: document.getElementById('pjtName').value,
+            year: document.getElementById('year').value,
+            month: document.getElementById('month').value,
+            saleAmt: document.getElementById('saleAmt').value,
+        };
+        //handleOk(formData);  // 입력된 데이터를 handleOk 함수로 전달
+        //selectedSd = 
     };
 
     return (
@@ -907,7 +931,11 @@ export function SdShowDetailsModal({ selectedSd, isModalOpen, handleOk, handleCa
                         <span className={sdStyles.requiredAsterisk}>*</span>
                     </div>
                     <div className={sdStyles.select_item}>
-                        <Select defaultValue={selectedSd.actvYear}>
+                        <Select
+                            id="actvYear"
+                            value={formData.actvYear}
+                            onChange={(value) => setFormData(prevData => ({ ...prevData, actvYear: value }))}
+                        >
                             {selectYear.map(option => (
                                 <Select.Option key={option.value} value={option.value}>
                                     {option.label}
@@ -915,7 +943,11 @@ export function SdShowDetailsModal({ selectedSd, isModalOpen, handleOk, handleCa
                             ))}
                         </Select>
                         <div>년</div>
-                        <Select defaultValue={actvMonth}>
+                        <Select
+                            id="actvMonth"
+                            value={formData.actvMonth}
+                            onChange={(value) => setFormData(prevData => ({ ...prevData, actvMonth: value }))}
+                        >
                             {selectMonth.map(option => (
                                 <Select.Option key={option.value} value={option.value}>
                                     {option.label}
@@ -930,18 +962,17 @@ export function SdShowDetailsModal({ selectedSd, isModalOpen, handleOk, handleCa
                         자료명
                         <span className={sdStyles.requiredAsterisk}>*</span>
                     </div>
-                    <input
-                        className={sdStyles.search}
-                        value={name}
-                        onChange={(e) => setName(e.target.value)}
+                    <input className={sdStyles.search} id="name"
+                        value={formData.name}
+                        onChange={(e) => setFormData(prevData => ({ ...prevData, name: e.target.value }))}
                     />
                 </div>
                 <div className={sdStyles.input_item}>
                     <div className={sdStyles.input_title}>비고</div>
                     <input
-                        className={sdStyles.search}
-                        value={note}
-                        onChange={(e) => setNote(e.target.value)}
+                        className={sdStyles.search} id="note"
+                        value={formData.note}
+                        onChange={(e) => setFormData(prevData => ({ ...prevData, note: e.target.value }))}
                     />
                 </div>
                 <div className={sdStyles.upload_item}>
@@ -950,14 +981,14 @@ export function SdShowDetailsModal({ selectedSd, isModalOpen, handleOk, handleCa
                         <div>
                             <input
                                 type="file"
-                                id="file"
-                                name="file"
+                                id="fileList"
+                                name="fileList"
                                 multiple
                                 style={{ display: 'none' }} // 숨김 처리
                                 ref={fileInputRef} // useRef로 참조
                                 onChange={handleFileChange} // 파일 선택 시 호출
                             />
-                            <button type="button" onClick={onUploadClick} className={sdStyles.upload_button}>
+                            <button type="button" onClick={() => fileInputRef.current.click()} className={sdStyles.upload_button}>
                                 파일선택 <PaperClipOutlined />
                             </button>
                         </div>
