@@ -13,7 +13,7 @@ import emsData from "../../../assets/json/ems";
 import sdData from "../../../assets/json/sd";
 import SearchForms from "../../../SearchForms";
 import { formField_esm } from "../../../assets/json/searchFormData.js";
-import { SdAddModal, DeleteModal, SdShowDetailsModal } from "../../../modals/PdModal";
+import { SdAddModal, DelModal, SdShowDetailsModal } from "../../../modals/PdModal";
 
 const selectOptions = [
     { value: '2024', label: '2024' },
@@ -46,8 +46,7 @@ export default function Esm() {
         EsmAdd: false, // 배출원 등록
         SdAdd: false, // 증빙자료 등록
         SdShowDetails: false, // 증빙자료 상세보기
-        Del: false,
-        Delete: false
+        Del: false
     });
 
     const handleFormSubmit = (data) => {
@@ -99,7 +98,7 @@ export default function Esm() {
         showModal('SdAdd');
     };
     const onSdDeleteClick = () => {
-        showModal('Delete');
+        showModal('Del');
     };
     const onSdShowDetailsClick = () => {
         showModal('SdShowDetails');
@@ -173,10 +172,10 @@ export default function Esm() {
                                         handleOk={handleOk('SdAdd')}
                                         handleCancel={handleCancel('SdAdd')}
                                     />
-                                    <DeleteModal
-                                        isModalOpen={isModalOpen.Delete}
-                                        handleOk={handleOk('Delete')}
-                                        handleCancel={handleCancel('Delete')}
+                                    <DelModal
+                                        isModalOpen={isModalOpen.Del}
+                                        handleOk={handleOk('Del')}
+                                        handleCancel={handleCancel('Del')}
                                     />
                                     <SdShowDetailsModal
                                         selectedSd={selectedSd}
