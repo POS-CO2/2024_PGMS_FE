@@ -5,15 +5,6 @@ import Table from "../Table";
 import project from "../assets/json/project.js"
  
 export default function ModalComponent({ isModalOpen, handleOk, handleCancel }) {
-<<<<<<< HEAD
-  const [formData, setFormData] = useState({});                     // 검색 데이터
-  const [selectedPjt, setSelectedPjt] = useState([]);     // 선택된 프로젝트
-  
-  // 찾기 버튼 클릭 시 호출될 함수
-  const handleFormSubmit = (data) => {
-    setFormData(data);
-};
-=======
   const [formData, setFormData] = useState({});                 // 검색 데이터
   const [selectedPjt, setSelectedPjt] = useState([]);     // 선택된 프로젝트
   
@@ -21,7 +12,6 @@ export default function ModalComponent({ isModalOpen, handleOk, handleCancel }) 
   const handleFormSubmit = (data) => {
     setFormData(data); 
   };
->>>>>>> 9bf63c89600a710587908a5707f59f81684012e9
 
   // 프로젝트 row 클릭 시 호출될 함수
   const handlePjtClick = (pjt) => {
@@ -57,10 +47,7 @@ export default function ModalComponent({ isModalOpen, handleOk, handleCancel }) 
       </div>
 
       <div className={pjtModalStyles.result_container}>
-<<<<<<< HEAD
-=======
 
->>>>>>> 9bf63c89600a710587908a5707f59f81684012e9
       {(!formData || Object.keys(formData).length === 0) ?
             <></> : ( <Table data={project} onRowClick={handlePjtClick} /> )}
       </div>
