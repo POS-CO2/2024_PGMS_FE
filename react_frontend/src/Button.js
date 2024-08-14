@@ -50,10 +50,10 @@ export function DeleteButton({onClick}) {
   );
 }
 
-export function EditButton({onClick}) {
+export function EditButton({onClick, isEditing}) {
   return (
     <CustomButton variant="contained" onClick={onClick}>
-      수정 <CachedIcon className="icon" />
+      {isEditing ? '저장' : '수정'} <CachedIcon className="icon" />
     </CustomButton>
   );
 }
@@ -90,13 +90,19 @@ export function ShowDetailsButton({onClick}) {
   );
 }
 
-export function ButtonGroup({ buttons=[], onClicks=[] }) {
+export function ButtonGroup({ buttons=[], onClicks=[], buttonStatus = [], isEditing = false}) {
   return (
     <div style={{ display: 'flex', gap: '8px', marginRight: '23px' }}>
       {buttons.map((button, index) => {
         const ButtonComponent = buttonMap[button];
         const onClick = onClicks[index];
-        return ButtonComponent ? <ButtonComponent key={button} onClick={onClick} /> : null;
+        const isEnabled = buttonStatus[index];
+
+        return ButtonComponent ? (
+          isEnabled ? (
+            <ButtonComponent key={button} onClick={onClick} isEditing={isEditing} />
+          ) : null
+        ) : null;
       })}
     </div>
   );

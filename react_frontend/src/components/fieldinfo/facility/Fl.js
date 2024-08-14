@@ -1,14 +1,13 @@
 import React, { useState } from "react";
 import * as tableStyles from "../../../assets/css/newTable.css";
-import TableCustom from "../../../TableCustom";
+import{TableCustomDoubleClickEdit} from "../../../TableCustom";
 import SearchForms from "../../../SearchForms";
 import {lib} from "../../../assets/json/selectedPjt";
 import {formField_fl} from "../../../assets/json/searchFormData.js";
 
 export default function Fl() {
     const [formData, setFormData] = useState({});                 // 검색 데이터
-    const [selectedEqLibs, setSelectedEqLibs] = useState([]);     // 선택된 설비 LIB 목록(PK column only)
-
+    const [selectedEqLib, setSelectedEqLib] = useState(null);     // 선택된 설비 LIB 목록(PK column only)
     const [isModalOpen, setIsModalOpen] = useState({
         FlAdd: false,
         Del: false
@@ -21,7 +20,7 @@ export default function Fl() {
 
     // 설비LIB row 클릭 시 호출될 함수
     const handleEqLibClick = (lib) => {
-        setSelectedEqLibs([...selectedEqLibs, lib.EquipName]);
+        setSelectedEqLib(lib?.EquipName ?? null);
     };
 
     // 모달 열기
@@ -32,7 +31,6 @@ export default function Fl() {
     // 설비LIB 등록 버튼 클릭 시 호출될 함수
     const handleOk = (modalType) => (data) => {
         setIsModalOpen(prevState => ({ ...prevState, [modalType]: false })); //모달 닫기
-        console.log(data);
         //setInputValue(data);
     };
 
@@ -56,14 +54,15 @@ export default function Fl() {
             
             {(!formData || Object.keys(formData).length === 0) ?
             <></> : ( //TODO: 백엔드에서 받아온 값으로 바꾸기(Table 컴포넌트의 data 파라미터)
+
                 <>
-                    <TableCustom 
+                    <TableCustomDoubleClickEdit 
                         title='설비LIB목록' 
-                        variant='checkbox'
                         data={lib}                   
                         buttons={['Edit', 'Delete', 'Add']}
                         onClicks={[()=>{}, onDeleteClick, onAddClick]}
-                        onRowClick={handleEqLibClick}
+                        onRowClick={(e) => handleEqLibClick(e)}
+                        selectedRows={[selectedEqLib]}
                         modals={[
                             {
                                 'modalType': 'Del',
