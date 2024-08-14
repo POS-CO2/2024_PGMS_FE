@@ -8,7 +8,7 @@ export default function ModalComponent({ isModalOpen, handleOk, handleCancel }) 
   const [formData, setFormData] = useState({});                 // 검색 데이터
   const [selectedPjt, setSelectedPjt] = useState([]);     // 선택된 프로젝트
   
-  //찾기 버튼 클릭시 호출될 함수
+  // 찾기 버튼 클릭시 호출될 함수
   const handleFormSubmit = (data) => {
     setFormData(data); 
   };

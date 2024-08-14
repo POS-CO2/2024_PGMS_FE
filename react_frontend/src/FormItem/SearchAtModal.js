@@ -26,7 +26,8 @@ export default function SearchAtModal({ name, label, required = false, modalType
         setIsModalOpen(false);
         const selectedData = data;
         form.setFieldsValue({ [name]: selectedData  });
-        setInputValue(selectedData[0] + '/' + selectedData[1]);
+        const inputValue = Array.isArray(data) ? data.join('/') : data;
+        setInputValue(inputValue);
     };
     const handleCancel = () => {
         setIsModalOpen(false);
@@ -37,7 +38,7 @@ export default function SearchAtModal({ name, label, required = false, modalType
             case "프로젝트 찾기":
                 return <SearchProjectModal isModalOpen={isModalOpen} handleOk={handleOk2} handleCancel={handleCancel} />;
             case "설비LIB 찾기":
-                return <SearchLibModal isModalOpen={isModalOpen} handleOk={handleOk} handleCancel={handleCancel} />;
+                return <SearchLibModal isModalOpen={isModalOpen} handleOk={handleOk2} handleCancel={handleCancel} />;
             default:
                 return <ModalComponent title={modalType} contents="테스트" isModalOpen={isModalOpen} handleOk={handleOk} handleCancel={handleCancel} />;
         }

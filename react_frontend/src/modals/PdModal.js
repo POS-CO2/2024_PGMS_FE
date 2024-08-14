@@ -7,6 +7,7 @@ import * as pjtModalStyles from "../assets/css/pjtModal.css";
 import * as sysStyles from "../assets/css/sysmng.css"
 import Table from "../Table";
 import { employee } from "../assets/json/manager.js"
+import { actv } from "../assets/json/selectedPjt";
 import { TextField, Box, InputLabel, MenuItem, FormControl, Autocomplete } from '@mui/material';
 import WarningAmberIcon from '@mui/icons-material/WarningAmber';
 import { Select } from 'antd';
@@ -520,6 +521,62 @@ export function FamEditModal({ isModalOpen, handleOk, handleCancel, rowData }) {
             
             <button className={rmStyles.select_button} onClick={handleSelect}>수정</button>
         </Modal>
+    )
+}
+
+export function FadAddModal({ isModalOpen, handleOk, handleCancel }) {
+    const [formData, setFormData] = useState({});             // 검색 데이터
+    const [selectedActves, setselectedActves] = useState([]);     // 선택된 프로젝트
+    
+    // 찾기 버튼 클릭시 호출될 함수
+    const handleFormSubmit = (data) => {
+        setFormData(data); 
+    };
+  
+    // 활동자료 row 클릭 시 호출될 함수
+    const handleActvClick = (actves) => {
+        setselectedActves(actves.map(actv => actv.actvDataName));
+    };
+  
+    // 선택 버튼 클릭 시 호출될 함수
+    const handleSelect = () => {
+        handleOk(selectedActves);
+    };
+  
+    return (
+      <Modal 
+        open={isModalOpen} 
+        width={800}
+        onCancel={handleCancel} 
+        footer={null}             //Ant Design의 기본 footer 제거(Cancel, OK 버튼)
+      >
+        <div className={pjtModalStyles.title}>활동자료 지정</div>
+        <p className={pjtModalStyles.comment}>* 활동자료명이나 활동자료구분 둘 중에 하나만 입력해도 검색이 가능합니다.</p>
+        <div className={pjtModalStyles.search_container}>
+            <div className={pjtModalStyles.search_item}>
+                <div className={pjtModalStyles.search_title}>활동자료명</div>
+                <input className={pjtModalStyles.search_code}/>
+            </div>
+            <div className={pjtModalStyles.search_item}>
+                <div className={pjtModalStyles.search_title}>활동자료구분</div>
+                <div className={modalStyles.input_with_btn}>
+                    <Select style={{ width: '250px' }}>
+                        <Select.Option key={"단위1"} value={"단위1"}>{"단위1"}</Select.Option>
+                        <Select.Option key={"단위2"} value={"단위2"}>{"단위2"}</Select.Option>
+                        <Select.Option key={"단위3"} value={"단위3"}>{"단위3"}</Select.Option>
+                    </Select>
+                    <button className={pjtModalStyles.search_button} onClick={handleFormSubmit}>찾기</button>
+                </div>
+            </div>
+        </div>
+  
+        <div className={pjtModalStyles.result_container}>
+            {(!formData || Object.keys(formData).length === 0) ?
+                <></> : ( <Table data={actv} variant='checkbox' onRowClick={handleActvClick} /> )}
+        </div>
+  
+        <button className={pjtModalStyles.select_button} onClick={handleSelect}>등록</button>
+      </Modal>
     )
 }
 

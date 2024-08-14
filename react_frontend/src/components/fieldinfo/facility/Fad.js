@@ -2,70 +2,87 @@ import React, { useState } from "react";
 import * as tableStyles from "../../../assets/css/newTable.css"
 import Table from "../../../Table";
 import TableCustom from "../../../TableCustom";
-import {actv, lib} from "../../../assets/json/selectedPjt";
+import {actv, selectedLib} from "../../../assets/json/selectedPjt";
 import SearchForms from "../../../SearchForms";
 import {formField_fad} from "../../../assets/json/searchFormData.js";
 
 export default function Fad() {
-    const [showResults, setShowResults] = useState(false);            // 조회결과와 담당자목록을 표시할지 여부
-    const [selectedLib, setSelectedLib] = useState(null);             // 선택된 설비 LIB
-    const [selectedActve, setSelectedActve] = useState(null);         // 선택된 활동자료
+    const [formData, setFormData] = useState({});                     // 검색 데이터
+    const [searchResult, setsearchResult] = useState(null);           // 설비LIB 조회 결과
+    const [selectedActv, setSelectedActv] = useState([]);             // 선택된 활동자료
+    const [isModalOpen, setIsModalOpen] = useState({
+        FadAdd: false,
+        Del: false
+    });
 
-    const [isModalOpen, setIsModalOpen] = useState(false);
-    const [inputValue, setInputValue] = useState("");
-
+    //조회 버튼 클릭시 호출될 함수
     const handleFormSubmit = (data) => {
-        
-    };
-
-    // 조회 버튼 클릭 시 호출될 함수
-    const handleSearch = () => {
-        setShowResults(true);
+        setFormData(data);
     };
 
     // 활동자료 row 클릭 시 호출될 함수
-    const handleActvClick = (row) => {
-        setSelectedActve(row.UserId);
+    const handleActvClick = (actv) => {
+        setSelectedActv(actv ?? {});
     };
 
-    const showModal = () => {
-        setIsModalOpen(true);
+    // 모달 열기
+    const showModal = (modalType) => {
+        setIsModalOpen(prevState => ({ ...prevState, [modalType]: true }));
     };
 
     // 담당자 지정 등록 버튼 클릭 시 호출될 함수
-    const handleOk = (data) => {
-        setIsModalOpen(false);
-        setInputValue(data);
+    // modalType에 따라 결과 처리 해주기
+    const handleOk = (modalType) => (data) => {
+        setIsModalOpen(prevState => ({ ...prevState, [modalType]: false })); //모달 닫기
     };
 
-    const handleCancel = () => {
-        setIsModalOpen(false);
-    }; 
+    // 모달 닫기
+    const handleCancel = (modalType) => () => {
+        setIsModalOpen(prevState => ({ ...prevState, [modalType]: false }));
+    };
+
+    // 버튼 클릭 시 모달 열림 설정
+    const onAddClick = () => {
+        showModal('FadAdd');
+    };
+
+    const onDeleteClick = () => {
+        showModal('Del');
+    };
 
     return (
         <>
-            <div className={tableStyles.menu}>현장정보 &gt; 프로젝트 &gt; 담당자 지정</div>
+            <div className={tableStyles.menu}>현장정보 &gt; 프로젝트 &gt; 활동자료 관리</div>
             
-            <SearchForms onFormSubmit={handleFormSubmit} formFields={formField_fad} onSearch={handleSearch} />
+            <SearchForms onFormSubmit={handleFormSubmit} formFields={formField_fad} />
             
-            {showResults ?
+            {(!formData || Object.keys(formData).length === 0) ?
             <></> : ( //TODO: 백엔드에서 받아온 값으로 바꾸기(data 파라미터)
                 <>
                     <div className={tableStyles.table_title}>조회결과</div>
-                    <Table data={lib} onRowClick={selectedLib} />
+                    <Table data={selectedLib} />                    
 
                     <TableCustom 
                         title='활동자료목록' 
-                        data={actv} 
+                        data={actv}                   
                         buttons={['Delete', 'Add']}
+                        onClicks={[onDeleteClick, onAddClick]}
                         onRowClick={handleActvClick}
-                        modal={{
-                            'modalType': 'PD',
-                            'buttonClick': showModal,
-                            'isModalOpen': isModalOpen,
-                            'handleOk': handleOk,
-                            'handleCancel': handleCancel
-                        }}
+                        selectedRows={[selectedActv.actvDataName]}
+                        modals={[
+                            {
+                                'modalType': 'Del',
+                                'isModalOpen': isModalOpen.Del,
+                                'handleOk': handleOk('Del'),
+                                'handleCancel': handleCancel('Del')
+                            },
+                            {
+                                'modalType': 'FadAdd',
+                                'isModalOpen': isModalOpen.FadAdd,
+                                'handleOk': handleOk('FadAdd'),
+                                'handleCancel': handleCancel('FadAdd')
+                            },
+                        ]}
                     />
                 </>
             )}
