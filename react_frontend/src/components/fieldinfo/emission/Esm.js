@@ -13,7 +13,7 @@ import emsData from "../../../assets/json/ems";
 import sdData from "../../../assets/json/sd";
 import SearchForms from "../../../SearchForms";
 import { formField_esm } from "../../../assets/json/searchFormData.js";
-import { SdAddModal, DeleteModal } from "../../../modals/PdModal";
+import { SdAddModal, DeleteModal, SdShowDetailsModal } from "../../../modals/PdModal";
 
 const selectOptions = [
     { value: '2024', label: '2024' },
@@ -59,7 +59,7 @@ export default function Esm() {
     };
     // 증빙자료 row 클릭 시 호출될 함수
     const handleSdClick = (row) => {
-        setSelectedSd(row.name);
+        setSelectedSd(row);
         console.log(selectedSd);
     };
 
@@ -151,7 +151,7 @@ export default function Esm() {
                                             buttons={['Delete', 'Add', 'ShowDetails']}
                                             onClicks={[onSdDeleteClick, onSdAddClick, onSdShowDetailsClick]} />
                                     </div>
-                                    <Table data={sdData} variant={false} onRowClick={handleSdClick} />
+                                    <Table data={sdData} variant='default' onRowClick={handleSdClick} />
 
                                     <SdAddModal
                                         isModalOpen={isModalOpen.SdAdd}
@@ -163,11 +163,12 @@ export default function Esm() {
                                         handleOk={handleOk('Delete')}
                                         handleCancel={handleCancel('Delete')}
                                     />
-                                    {/*<SdShowDetailsModal
+                                    <SdShowDetailsModal
+                                        selectedSd={selectedSd}
                                         isModalOpen={isModalOpen.SdShowDetails}
                                         handleOk={handleOk('SdShowDetails')}
                                         handleCancel={handleCancel('SdShowDetails')}
-                                    />*/}
+                                    />
                                 </>
                             )
                                 : (

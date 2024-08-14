@@ -1,10 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { Modal, Button, Upload, Select } from 'antd';
-import { InboxOutlined, UploadOutlined } from '@ant-design/icons';
+import { PaperClipOutlined, CloseOutlined } from '@ant-design/icons';
 import * as modalStyles from "../assets/css/pdModal.css";
 import * as rmStyles from "../assets/css/rmModal.css";
 import * as delStyle from "../assets/css/delModal.css";
 import * as sdStyles from "../assets/css/sdModal.css";
+import * as ps12Styles from "../assets/css/ps12UploadExcelModal.css";
 import Table from "../Table";
 import { employee } from "../assets/json/manager.js"
 import emsData from "../assets/json/ems";
@@ -12,7 +13,6 @@ import { selectYear, selectMonth } from "../assets/json/sd";
 import * as sysStyles from "../assets/css/sysmng.css"
 import { TextField, Box, InputLabel, MenuItem, FormControl } from '@mui/material';
 import WarningAmberIcon from '@mui/icons-material/WarningAmber';
-import { Select } from 'antd';
 
 export function PdAddModal({ isModalOpen, handleOk, handleCancel }) {
     const [showResults, setShowResults] = useState(false);    // 사원 목록을 표시할지 여부
@@ -134,7 +134,7 @@ export function RmAddModal({ isModalOpen, handleOk, handleCancel }) {
                     <input className={rmStyles.search} id="saleAmt" />
                 </div>
             </div>
-            
+
             <button className={rmStyles.select_button} onClick={handleSelect}>등록</button>
         </Modal>
     )
@@ -154,9 +154,9 @@ export function FlAddModal({ isModalOpen, handleOk, handleCancel }) {
     };
 
     return (
-        <Modal 
-            open={isModalOpen} 
-            onCancel={handleCancel} 
+        <Modal
+            open={isModalOpen}
+            onCancel={handleCancel}
             style={{ width: '25rem', maxWidth: '25rem', important: true }}
             footer={null}                                                   //Ant Design의 기본 footer 제거(Cancel, OK 버튼)
         >
@@ -198,60 +198,84 @@ export function FlAddModal({ isModalOpen, handleOk, handleCancel }) {
     )
 }
 
-const { Dragger } = Upload;
-const uploadProps = {
-    name: 'file',
-    multiple: true,
-    action: 'https://660d2bd96ddfa2943b33731c.mockapi.io/api/upload',
-    /*beforeUpload: (file) => {
-        const isPNG = file.type === 'image/png';
-        if (!isPNG) {
-            message.error(`${file.name} is not a png file`);
-        }
-        return isPNG || Upload.LIST_IGNORE;
-    },*/
-    onChange: (info) => {
-        const { status } = info.file;
-        if (status !== 'uploading') {
-            console.log(info.file.name + " uploading");
-        }
-        if (status === 'uploading') {
-            console.log(info.file.name + " uploading2");
-        }
-        if (status === 'done') {
-            console.log("file uploaded successfully.");
-        } else if (status === 'error') {
-            console.log("file upload failed.");
-        }
-    },
-    onDrop: (e) => {
-        console.log('Dropped files', e.dataTransfer.files);
-    },
-};
 export function Ps12UploadExcelModal({ isModalOpen, handleOk, handleCancel }) { // '엑셀 업로드' 모달
+    const fileInputRef = useRef(null);
+    const [fileList, setFileList] = useState([]);
+
+    const onUploadClick = () => {
+        if (fileInputRef.current) {
+            fileInputRef.current.click();
+        }
+    };
+
+    const handleFileChange = (event) => {
+        const newFiles = Array.from(event.target.files);
+        setFileList(prevFiles => {
+            const existingFileNames = new Set(prevFiles.map(file => file.name));
+            const filteredNewFiles = newFiles.filter(file => !existingFileNames.has(file.name));
+            return [...prevFiles, ...filteredNewFiles];
+        });
+        // Clear the input value to handle the same file being selected again
+        event.target.value = null;
+    };
+
+    const handleFileRemove = (fileName) => {
+        setFileList(prevFiles => prevFiles.filter(file => file.name !== fileName));
+    };
 
     return (
         <Modal
             open={isModalOpen}
             onCancel={handleCancel}
-            width={550}
+            width={450}
             footer={null}             //Ant Design의 기본 footer 제거(Cancel, OK 버튼)
         >
             <div className={modalStyles.title}>엑셀 업로드</div>
 
-            <div>
-                <Upload {...uploadProps}>
-                    <Button>업로드<UploadOutlined /></Button>
-                </Upload>
-                <Dragger {...uploadProps}>
-                    <p className="ant-upload-drag-icon">
-                        <InboxOutlined />
-                    </p>
-                    <p className="ant-upload-text">파일을 마우스로 끌어오세요</p>
-                </Dragger>
+            <div className={ps12Styles.header_container}>
+                <div className={ps12Styles.input_title}>
+                    첨부파일
+                    <span className={ps12Styles.requiredAsterisk}>*</span>
+                </div>
+                <div>
+                    <input
+                        type="file"
+                        id="file"
+                        name="file"
+                        multiple
+                        accept=".xlt,.xls,.xlsx"
+                        style={{ display: 'none' }} // 숨김 처리
+                        ref={fileInputRef} // useRef로 참조
+                        onChange={handleFileChange} // 파일 선택 시 호출
+                    />
+                    <button type="button" onClick={onUploadClick} className={ps12Styles.upload_button}>
+                        파일선택 <PaperClipOutlined />
+                    </button>
+                </div>
             </div>
 
-            <button className={modalStyles.select_button} onClick={handleOk}>등록</button>
+            <div className={ps12Styles.file_list_container}>
+                <div className={ps12Styles.file_list}>
+                    {fileList.length === 0 ? (
+                        <></>
+                    ) : (
+                        fileList.map((file, index) => (
+                            <div key={index} className={ps12Styles.file_item}>
+                                {file.name}
+                                <button
+                                    type="button"
+                                    className={ps12Styles.remove_button}
+                                    onClick={() => handleFileRemove(file.name)}
+                                >
+                                    <CloseOutlined />
+                                </button>
+                            </div>
+                        ))
+                    )}
+                </div>
+            </div>
+
+            <button className={ps12Styles.select_button} onClick={handleOk}>등록</button>
         </Modal>
     )
 }
@@ -721,6 +745,27 @@ export function EsmAddModal({ isModalOpen, handleOk, handleCancel }) {
 export function SdAddModal({ isModalOpen, handleOk, handleCancel }) {
     const [name, setName] = useState('');
     const [note, setNote] = useState('');
+    const fileInputRef = useRef(null);
+    const [fileList, setFileList] = useState([]);
+
+    const onUploadClick = () => {
+        if (fileInputRef.current) {
+            fileInputRef.current.click();
+        }
+    };
+    const handleFileChange = (event) => {
+        const newFiles = Array.from(event.target.files);
+        setFileList(prevFiles => {
+            const existingFileNames = new Set(prevFiles.map(file => file.name));
+            const filteredNewFiles = newFiles.filter(file => !existingFileNames.has(file.name));
+            return [...prevFiles, ...filteredNewFiles];
+        });
+        // Clear the input value to handle the same file being selected again
+        event.target.value = null;
+    };
+    const handleFileRemove = (fileName) => {
+        setFileList(prevFiles => prevFiles.filter(file => file.name !== fileName));
+    };
 
     return (
         <Modal
@@ -733,7 +778,10 @@ export function SdAddModal({ isModalOpen, handleOk, handleCancel }) {
 
             <div className={sdStyles.input_container}>
                 <div className={sdStyles.input_item}>
-                    <div className={sdStyles.input_title}>대상년월</div>
+                    <div className={sdStyles.input_title}>
+                        대상년월
+                        <span className={sdStyles.requiredAsterisk}>*</span>
+                    </div>
                     <div className={sdStyles.select_item}>
                         <Select defaultValue="2024">
                             {selectYear.map(option => (
@@ -742,7 +790,7 @@ export function SdAddModal({ isModalOpen, handleOk, handleCancel }) {
                                 </Select.Option>
                             ))}
                         </Select>
-                        {"년"}
+                        <div>년</div>
                         <Select defaultValue="01">
                             {selectMonth.map(option => (
                                 <Select.Option key={option.value} value={option.value}>
@@ -750,11 +798,14 @@ export function SdAddModal({ isModalOpen, handleOk, handleCancel }) {
                                 </Select.Option>
                             ))}
                         </Select>
-                        {"월"}
+                        <div>월</div>
                     </div>
                 </div>
                 <div className={sdStyles.input_item}>
-                    <div className={sdStyles.input_title}>자료명</div>
+                    <div className={sdStyles.input_title}>
+                        자료명
+                        <span className={sdStyles.requiredAsterisk}>*</span>
+                    </div>
                     <input
                         className={sdStyles.search}
                         value={name}
@@ -769,15 +820,174 @@ export function SdAddModal({ isModalOpen, handleOk, handleCancel }) {
                         onChange={(e) => setNote(e.target.value)}
                     />
                 </div>
-                <div className={sdStyles.input_item}>
-                    <div className={sdStyles.input_title}>첨부파일</div>
-                    <div></div>
+                <div className={sdStyles.upload_item}>
+                    <div className={sdStyles.upload_header}>
+                        <div className={sdStyles.input_title}>첨부파일</div>
+                        <div>
+                            <input
+                                type="file"
+                                id="file"
+                                name="file"
+                                multiple
+                                style={{ display: 'none' }} // 숨김 처리
+                                ref={fileInputRef} // useRef로 참조
+                                onChange={handleFileChange} // 파일 선택 시 호출
+                            />
+                            <button type="button" onClick={onUploadClick} className={sdStyles.upload_button}>
+                                파일선택 <PaperClipOutlined />
+                            </button>
+                        </div>
+                    </div>
+                    <div className={sdStyles.file_list_container}>
+                        <div className={sdStyles.file_list}>
+                            {fileList.length === 0 ? (
+                                <></>
+                            ) : (
+                                fileList.map((file, index) => (
+                                    <div key={index} className={sdStyles.file_item}>
+                                        {file.name}
+                                        <button
+                                            type="button"
+                                            className={sdStyles.remove_button}
+                                            onClick={() => handleFileRemove(file.name)}
+                                        >
+                                            <CloseOutlined />
+                                        </button>
+                                    </div>
+                                ))
+                            )}
+                        </div>
+                    </div>
                 </div>
             </div>
 
             <button className={sdStyles.select_button} onClick={handleOk}>저장</button>
+        </Modal>
+    )
+}
 
+export function SdShowDetailsModal({ selectedSd, isModalOpen, handleOk, handleCancel }) {
+    /*const [actvYear, setActvYear] = useState(selectedSd?.actvYear || '');
+    const [actvMonth, setActvMonth] = useState(selectedSd?.actvMonth || '');
+    const [name, setName] = useState(selectedSd.name);
+    const [note, setNote] = useState('');*/
+    const fileInputRef = useRef(null);
+    const [fileList, setFileList] = useState([]);
 
+    const onUploadClick = () => {
+        if (fileInputRef.current) {
+            fileInputRef.current.click();
+        }
+    };
+    const handleFileChange = (event) => {
+        const newFiles = Array.from(event.target.files);
+        setFileList(prevFiles => {
+            const existingFileNames = new Set(prevFiles.map(file => file.name));
+            const filteredNewFiles = newFiles.filter(file => !existingFileNames.has(file.name));
+            return [...prevFiles, ...filteredNewFiles];
+        });
+        // Clear the input value to handle the same file being selected again
+        event.target.value = null;
+    };
+    const handleFileRemove = (fileName) => {
+        setFileList(prevFiles => prevFiles.filter(file => file.name !== fileName));
+    };
+
+    return (
+        <Modal
+            open={isModalOpen}
+            onCancel={handleCancel}
+            width={400}
+            footer={null}             //Ant Design의 기본 footer 제거(Cancel, OK 버튼)
+        >
+            <div className={modalStyles.title}>증빙서류 상세보기</div>
+
+            <div className={sdStyles.input_container}>
+                <div className={sdStyles.input_item}>
+                    <div className={sdStyles.input_title}>
+                        대상년월
+                        <span className={sdStyles.requiredAsterisk}>*</span>
+                    </div>
+                    <div className={sdStyles.select_item}>
+                        <Select defaultValue={selectedSd.actvYear}>
+                            {selectYear.map(option => (
+                                <Select.Option key={option.value} value={option.value}>
+                                    {option.label}
+                                </Select.Option>
+                            ))}
+                        </Select>
+                        <div>년</div>
+                        <Select defaultValue={actvMonth}>
+                            {selectMonth.map(option => (
+                                <Select.Option key={option.value} value={option.value}>
+                                    {option.label}
+                                </Select.Option>
+                            ))}
+                        </Select>
+                        <div>월</div>
+                    </div>
+                </div>
+                <div className={sdStyles.input_item}>
+                    <div className={sdStyles.input_title}>
+                        자료명
+                        <span className={sdStyles.requiredAsterisk}>*</span>
+                    </div>
+                    <input
+                        className={sdStyles.search}
+                        value={name}
+                        onChange={(e) => setName(e.target.value)}
+                    />
+                </div>
+                <div className={sdStyles.input_item}>
+                    <div className={sdStyles.input_title}>비고</div>
+                    <input
+                        className={sdStyles.search}
+                        value={note}
+                        onChange={(e) => setNote(e.target.value)}
+                    />
+                </div>
+                <div className={sdStyles.upload_item}>
+                    <div className={sdStyles.upload_header}>
+                        <div className={sdStyles.input_title}>첨부파일</div>
+                        <div>
+                            <input
+                                type="file"
+                                id="file"
+                                name="file"
+                                multiple
+                                style={{ display: 'none' }} // 숨김 처리
+                                ref={fileInputRef} // useRef로 참조
+                                onChange={handleFileChange} // 파일 선택 시 호출
+                            />
+                            <button type="button" onClick={onUploadClick} className={sdStyles.upload_button}>
+                                파일선택 <PaperClipOutlined />
+                            </button>
+                        </div>
+                    </div>
+                    <div className={sdStyles.file_list_container}>
+                        <div className={sdStyles.file_list}>
+                            {fileList.length === 0 ? (
+                                <></>
+                            ) : (
+                                fileList.map((file, index) => (
+                                    <div key={index} className={sdStyles.file_item}>
+                                        {file.name}
+                                        <button
+                                            type="button"
+                                            className={sdStyles.remove_button}
+                                            onClick={() => handleFileRemove(file.name)}
+                                        >
+                                            <CloseOutlined />
+                                        </button>
+                                    </div>
+                                ))
+                            )}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <button className={sdStyles.select_button} onClick={handleOk}>저장</button>
         </Modal>
     )
 }

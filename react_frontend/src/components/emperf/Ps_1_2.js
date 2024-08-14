@@ -3,6 +3,7 @@ import SearchForms from "../../SearchForms";
 import { formField_ps12 } from "../../assets/json/searchFormData"
 import InnerTabs from "../../InnerTabs";
 import TableCustom from "../../TableCustom.js";
+import * as mainStyle from '../../assets/css/main.css';
 
 import project from "../../assets/json/selectedPjt";
 
@@ -15,7 +16,10 @@ export default function Ps_1_2() {
 
     return (
         <div>
-            <p>배출실적 &gt; 실적스코프1,2</p>
+            <div className={mainStyle.breadcrumb}>
+                {"배출실적 > 활동량 관리"}
+            </div>
+
             <SearchForms onFormSubmit={handleFormSubmit} formFields={formField_ps12} />
             <InnerTabs items={[
                 { label: '사용량', key: '1', children: <Usage formData={formData} />, },
