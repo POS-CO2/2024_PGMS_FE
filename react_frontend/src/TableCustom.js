@@ -60,6 +60,7 @@ export default function TableCustom({
                             handleOk={modal.handleOk || (() => {})}
                             handleCancel={modal.handleCancel || (() => {})}
                             onRowClick={onRowClick}
+                            selectedActv={modal.rowData}
                         />
                     ) : null;
                 })}
