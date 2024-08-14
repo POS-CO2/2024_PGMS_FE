@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Modal } from 'antd';
 import * as modalStyles from "../assets/css/pdModal.css";
 import * as rmStyles from "../assets/css/rmModal.css";
@@ -190,6 +190,191 @@ export function FlAddModal({ isModalOpen, handleOk, handleCancel }) {
             </div>
             
             <button className={rmStyles.select_button} onClick={handleSelect}>등록</button>
+        </Modal>
+    )
+}
+
+export function FamAddModal({ isModalOpen, handleOk, handleCancel }) {
+    // 등록 버튼 클릭 시 호출될 함수(등록할 활동자료의 data를 전달)
+    const handleSelect = () => {
+        const formData = {
+            actvName: document.getElementById('actvName').value,
+            actvDvs: document.getElementById('actvDvs').value,
+            emtnActvType: document.getElementById('emtnActvType').value,
+            calUnit: document.getElementById('calUnit').value,
+            inputUnit: document.getElementById('inputUnit').value,
+            unitConvCoef: document.getElementById('unitConvCoef').value,
+        };
+
+        handleOk(formData);  // 입력된 데이터를 handleOk 함수로 전달
+    };
+
+    return (
+        <Modal 
+            open={isModalOpen} 
+            onCancel={handleCancel} 
+            style={{ width: '25rem', maxWidth: '25rem', important: true }}
+            footer={null}                                                   //Ant Design의 기본 footer 제거(Cancel, OK 버튼)
+        >
+            <div className={rmStyles.title}>활동자료 등록</div>
+
+            <div className={rmStyles.search_container}>
+                <div className={rmStyles.search_item}>
+                    <div className={rmStyles.search_title}>활동자료명</div>
+                    <input className={rmStyles.search} id="actvName" />
+                </div>
+                <div className={rmStyles.search_item}>
+                    <div className={rmStyles.search_title}>활동자료구분</div>
+                    <Select id="actvDvs">
+                        <Select.Option key={"구분1"} value={"구분1"}>{"구분1"}</Select.Option>
+                        <Select.Option key={"구분2"} value={"구분2"}>{"구분2"}</Select.Option>
+                        <Select.Option key={"구분3"} value={"구분3"}>{"구분3"}</Select.Option>
+                    </Select>
+                </div>
+                <div className={rmStyles.search_item}>
+                    <div className={rmStyles.search_title}>배출활동유형</div>
+                    <Select id="emtnActvType">
+                        <Select.Option key={"유형1"} value={"유형1"}>{"유형1"}</Select.Option>
+                        <Select.Option key={"유형2"} value={"유형2"}>{"유형2"}</Select.Option>
+                        <Select.Option key={"유형3"} value={"유형3"}>{"유형3"}</Select.Option>
+                    </Select>
+                </div>
+                <div className={rmStyles.search_item}>
+                    <div className={rmStyles.search_title}>산정단위</div>
+                    <Select id="calUnit">
+                        <Select.Option key={"단위1"} value={"단위1"}>{"단위1"}</Select.Option>
+                        <Select.Option key={"단위2"} value={"단위2"}>{"단위2"}</Select.Option>
+                        <Select.Option key={"단위3"} value={"단위3"}>{"단위3"}</Select.Option>
+                    </Select>
+                </div>
+                <div className={rmStyles.search_item}>
+                    <div className={rmStyles.search_title}>입력단위</div>
+                    <Select id="inputUnit">
+                        <Select.Option key={"단위1"} value={"단위1"}>{"단위1"}</Select.Option>
+                        <Select.Option key={"단위2"} value={"단위2"}>{"단위2"}</Select.Option>
+                        <Select.Option key={"단위3"} value={"단위3"}>{"단위3"}</Select.Option>
+                    </Select>
+                </div>
+                <div className={rmStyles.search_item}>
+                    <div className={rmStyles.search_title}>단위환산계수</div>
+                    <input className={rmStyles.search} id="unitConvCoef" />
+                </div>
+            </div>
+            
+            <button className={rmStyles.select_button} onClick={handleSelect}>등록</button>
+        </Modal>
+    )
+}
+
+export function FamEditModal({ isModalOpen, handleOk, handleCancel, selectedActv }) {
+    const [formValues, setFormValues] = useState({
+        actvName: '',
+        actvDvs: '',
+        emtnActvType: '',
+        calUnit: '',
+        inputUnit: '',
+        unitConvCoef: ''
+    });
+
+    // 모달이 열릴 때 selectedActv로부터 폼 필드 값을 설정
+    useEffect(() => {
+        if (isModalOpen && selectedActv) {
+            setFormValues({
+                actvName: selectedActv.actvDataName || '',
+                actvDvs: selectedActv.actvDataDvs || '',
+                emtnActvType: selectedActv.emtnActvType || '',
+                calUnit: selectedActv.calUnit || '',
+                inputUnit: selectedActv.inputUnit || '',
+                unitConvCoef: selectedActv.unitConvCoef || ''
+            });
+        }
+    }, [selectedActv, isModalOpen]);
+
+    const handleChange = (e) => {
+        const { id, value } = e.target;
+        setFormValues(prevValues => ({
+            ...prevValues,
+            [id]: value
+        }));
+    };
+
+    const handleSelect = () => {
+        handleOk(formValues);
+    };
+
+    return (
+        <Modal 
+            open={isModalOpen} 
+            onCancel={handleCancel} 
+            style={{ width: '25rem', maxWidth: '25rem', important: true }}
+            footer={null}                                                   //Ant Design의 기본 footer 제거(Cancel, OK 버튼)
+        >
+            <div className={rmStyles.title}>활동자료 수정</div>
+
+            <div className={rmStyles.search_container}>
+                <div className={rmStyles.search_item}>
+                    <div className={rmStyles.search_title}>활동자료명</div>
+                    <input 
+                        className={rmStyles.search} 
+                        value={formValues.actvName}
+                        onChange={handleChange}
+                    />
+                </div>
+                <div className={rmStyles.search_item}>
+                    <div className={rmStyles.search_title}>활동자료구분</div>
+                    <Select 
+                        value={formValues.actvDvs}
+                        onChange={(value) => setFormValues(prevValues => ({ ...prevValues, actvDvs: value }))}
+                    >
+                        <Select.Option key={"구분1"} value={"구분1"}>{"구분1"}</Select.Option>
+                        <Select.Option key={"구분2"} value={"구분2"}>{"구분2"}</Select.Option>
+                        <Select.Option key={"구분3"} value={"구분3"}>{"구분3"}</Select.Option>
+                    </Select>
+                </div>
+                <div className={rmStyles.search_item}>
+                    <div className={rmStyles.search_title}>배출활동유형</div>
+                    <Select 
+                        value={formValues.emtnActvType}
+                        onChange={(value) => setFormValues(prevValues => ({ ...prevValues, emtnActvType: value }))}
+                    >
+                        <Select.Option key={"유형1"} value={"유형1"}>{"유형1"}</Select.Option>
+                        <Select.Option key={"유형2"} value={"유형2"}>{"유형2"}</Select.Option>
+                        <Select.Option key={"유형3"} value={"유형3"}>{"유형3"}</Select.Option>
+                    </Select>
+                </div>
+                <div className={rmStyles.search_item}>
+                    <div className={rmStyles.search_title}>산정단위</div>
+                    <Select 
+                        value={formValues.calUnit}
+                        onChange={(value) => setFormValues(prevValues => ({ ...prevValues, calUnit: value }))}
+                    >
+                        <Select.Option key={"단위1"} value={"단위1"}>{"단위1"}</Select.Option>
+                        <Select.Option key={"단위2"} value={"단위2"}>{"단위2"}</Select.Option>
+                        <Select.Option key={"단위3"} value={"단위3"}>{"단위3"}</Select.Option>
+                    </Select>
+                </div>
+                <div className={rmStyles.search_item}>
+                    <div className={rmStyles.search_title}>입력단위</div>
+                    <Select 
+                        value={formValues.inputUnit}
+                        onChange={(value) => setFormValues(prevValues => ({ ...prevValues, inputUnit: value }))}
+                    >
+                        <Select.Option key={"단위1"} value={"단위1"}>{"단위1"}</Select.Option>
+                        <Select.Option key={"단위2"} value={"단위2"}>{"단위2"}</Select.Option>
+                        <Select.Option key={"단위3"} value={"단위3"}>{"단위3"}</Select.Option>
+                    </Select>
+                </div>
+                <div className={rmStyles.search_item}>
+                    <div className={rmStyles.search_title}>단위환산계수</div>
+                    <input 
+                        className={rmStyles.search} 
+                        value={formValues.unitConvCoef}
+                        onChange={handleChange}
+                    />
+                </div>
+            </div>
+            
+            <button className={rmStyles.select_button} onClick={handleSelect}>수정</button>
         </Modal>
     )
 }
