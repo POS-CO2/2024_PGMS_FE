@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import * as tableStyles from "../../../assets/css/newTable.css"
-import {TableCustomDoubleClickEdit} from "../../../TableCustom";
+import TableCustom from "../../../TableCustom";
 import project from "../../../assets/json/project.js";
 import SearchForms from "../../../SearchForms"
 import {formField_pg} from "../../../assets/json/searchFormData.js"
@@ -56,13 +56,13 @@ export default function Pg() {
             {(!formData || Object.keys(formData).length === 0) ?
             <></> : ( //TODO: 백엔드에서 받아온 값으로 바꾸기(Table 컴포넌트의 data 파라미터)
                 <>
-                    <TableCustomDoubleClickEdit 
+                    <TableCustom 
                         title='프로젝트목록' 
                         data={project}                   
-                        buttons={['Edit', 'Delete', 'Add']}
-                        onClicks={[()=>{}, onDeleteClick, onAddClick]}
+                        buttons={['Delete', 'Add']}
+                        onClicks={[onDeleteClick, onAddClick]}
                         onRowClick={handlePjtClick}
-                        selectedRows={selectedPjt === null ? [] : [selectedPjt]}
+                        selectedRows={[selectedPjt]}
                         modals={[
                             {
                                 'modalType': 'Del',
@@ -71,10 +71,10 @@ export default function Pg() {
                                 'handleCancel': handleCancel('Del')
                             },
                             {
-                                'modalType': 'FlAdd',
-                                'isModalOpen': isModalOpen.FlAdd,
-                                'handleOk': handleOk('FlAdd'),
-                                'handleCancel': handleCancel('FlAdd')
+                                'modalType': 'PgAdd',
+                                'isModalOpen': isModalOpen.PgAdd,
+                                'handleOk': handleOk('PgAdd'),
+                                'handleCancel': handleCancel('PgAdd')
                             }
                         ]}
                     />
