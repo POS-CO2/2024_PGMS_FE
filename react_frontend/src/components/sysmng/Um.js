@@ -110,7 +110,9 @@ export default function Um() {
                     
                     {infoShow ? (
                         <>
-                            <TableCustom title='' buttons={['Add', 'Delete', 'Edit']} onClicks={[handleAddClick, handleDeleteClick, handleEditClick]} table={false} modals={
+                            <TableCustom title='' buttons={['Add', 'Delete', 'Edit']} onClicks={[handleAddClick, handleDeleteClick, handleEditClick]} table={false} 
+                            selectedRows={[selectedUser]}
+                            modals={
                                 [
                                     {
                                         "modalType" : 'UmAdd',

@@ -356,7 +356,11 @@ export default function Mm({menus}) {
             </div>
             <div className={sysStyles.main_grid}>
                 <Card sx={{width:"24%", borderRadius:"15px"}}>
-                <TableCustom title='' className={sysStyles.btn_group} buttons={['Add', 'Delete', 'Edit']} onClicks={[handleAddClick,handleDeleteClick, handleEditClick]} table={false} modals={[
+                <TableCustom title='' className={sysStyles.btn_group} buttons={['Add', 'Delete', 'Edit']} 
+                onClicks={[handleAddClick,handleDeleteClick, handleEditClick]} 
+                table={false} 
+                selectedRows={[selectedMenu]}
+                modals={[
                     {
                         "modalType" : 'MmAdd',
                         'isModalOpen': isModalOpen.MmAdd,
