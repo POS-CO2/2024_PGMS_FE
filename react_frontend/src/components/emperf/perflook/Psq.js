@@ -4,8 +4,9 @@ import { formField_psq } from "../../../assets/json/searchFormData"
 import InnerTabs from "../../../InnerTabs";
 import TableCustom from "../../../TableCustom.js";
 import ChartCustom from "../../../ChartCustom.js";
+import { CustomBarChart } from "../../../Chart.js";
 import { tepData, chartData } from "../../../assets/json/tep";
-import { func } from 'prop-types';
+import * as mainStyle from '../../../assets/css/main.css';
 
 export default function Psq() {
     const [formData, setFormData] = useState({});
@@ -16,7 +17,9 @@ export default function Psq() {
 
     return (
         <div>
-            <p>배출실적 &gt; 실적조회 &gt; 프로젝트별 조회</p>
+            <div className={mainStyle.breadcrumb}>
+                {"배출실적 > 실적조회 > 프로젝트별 조회"}
+            </div>
             <SearchForms onFormSubmit={handleFormSubmit} formFields={formField_psq} />
             <InnerTabs items={[
                 { label: '차트', key: '1', children: <ChartTab formData={formData} chartData={chartData} />, },
