@@ -10,6 +10,7 @@ import { employee } from "../assets/json/manager.js"
 import { TextField, Box, InputLabel, MenuItem, FormControl, Autocomplete } from '@mui/material';
 import WarningAmberIcon from '@mui/icons-material/WarningAmber';
 import { Select } from 'antd';
+import { Sledding } from '@mui/icons-material';
 
 export function PgAddModal({ isModalOpen, handleOk, handleCancel }) {
     const [formData, setFormData] = useState({});             // 검색 데이터
@@ -773,11 +774,6 @@ export function FmAddModal({ isModalOpen, handleOk, handleCancel }) {
     const [showResults, setShowResults] = useState(false);    // 사원 목록을 표시할지 여부
     const [selectedEmps, setSelectedEmps] = useState([]);     // 선택된 사원의 loginId list
     
-    // 각 input의 값을 상태로 관리
-    const [empId, setEmpId] = useState('');
-    const [empName, setEmpName] = useState('');
-    const [dept, setDept] = useState('');
-
     // 찾기 버튼 클릭 시 호출될 함수
     const handleSearch = () => {
         setShowResults(true);
