@@ -1,16 +1,12 @@
-<<<<<<< HEAD
 import React, { useState, useRef, useEffect } from 'react';
 import { Modal, Button, Upload, Select } from 'antd';
 import { PaperClipOutlined, CloseOutlined } from '@ant-design/icons';
-=======
-import React, { useState, useEffect } from 'react';
-import { Modal } from 'antd';
->>>>>>> 1ed6ada262bc9898327064bb656f6ef95952ba67
 import * as modalStyles from "../assets/css/pdModal.css";
 import * as rmStyles from "../assets/css/rmModal.css";
 import * as delStyle from "../assets/css/delModal.css";
 import * as sdStyles from "../assets/css/sdModal.css";
 import * as ps12Styles from "../assets/css/ps12UploadExcelModal.css";
+import { EditButton } from "../Button";
 import Table from "../Table";
 import { employee } from "../assets/json/manager.js"
 import emsData from "../assets/json/ems";
@@ -219,9 +215,9 @@ export function FamAddModal({ isModalOpen, handleOk, handleCancel }) {
     };
 
     return (
-        <Modal 
-            open={isModalOpen} 
-            onCancel={handleCancel} 
+        <Modal
+            open={isModalOpen}
+            onCancel={handleCancel}
             style={{ width: '25rem', maxWidth: '25rem', important: true }}
             footer={null}                                                   //Ant Design의 기본 footer 제거(Cancel, OK 버튼)
         >
@@ -269,7 +265,7 @@ export function FamAddModal({ isModalOpen, handleOk, handleCancel }) {
                     <input className={rmStyles.search} id="unitConvCoef" />
                 </div>
             </div>
-            
+
             <button className={rmStyles.select_button} onClick={handleSelect}>등록</button>
         </Modal>
     )
@@ -312,9 +308,9 @@ export function FamEditModal({ isModalOpen, handleOk, handleCancel, rowData }) {
     };
 
     return (
-        <Modal 
-            open={isModalOpen} 
-            onCancel={handleCancel} 
+        <Modal
+            open={isModalOpen}
+            onCancel={handleCancel}
             style={{ width: '25rem', maxWidth: '25rem', important: true }}
             footer={null}                                                   //Ant Design의 기본 footer 제거(Cancel, OK 버튼)
         >
@@ -323,15 +319,15 @@ export function FamEditModal({ isModalOpen, handleOk, handleCancel, rowData }) {
             <div className={rmStyles.search_container}>
                 <div className={rmStyles.search_item}>
                     <div className={rmStyles.search_title}>활동자료명</div>
-                    <input 
-                        className={rmStyles.search} 
+                    <input
+                        className={rmStyles.search}
                         value={formValues.actvName}
                         onChange={handleChange}
                     />
                 </div>
                 <div className={rmStyles.search_item}>
                     <div className={rmStyles.search_title}>활동자료구분</div>
-                    <Select 
+                    <Select
                         value={formValues.actvDvs}
                         onChange={(value) => setFormValues(prevValues => ({ ...prevValues, actvDvs: value }))}
                     >
@@ -342,7 +338,7 @@ export function FamEditModal({ isModalOpen, handleOk, handleCancel, rowData }) {
                 </div>
                 <div className={rmStyles.search_item}>
                     <div className={rmStyles.search_title}>배출활동유형</div>
-                    <Select 
+                    <Select
                         value={formValues.emtnActvType}
                         onChange={(value) => setFormValues(prevValues => ({ ...prevValues, emtnActvType: value }))}
                     >
@@ -353,7 +349,7 @@ export function FamEditModal({ isModalOpen, handleOk, handleCancel, rowData }) {
                 </div>
                 <div className={rmStyles.search_item}>
                     <div className={rmStyles.search_title}>산정단위</div>
-                    <Select 
+                    <Select
                         value={formValues.calUnit}
                         onChange={(value) => setFormValues(prevValues => ({ ...prevValues, calUnit: value }))}
                     >
@@ -364,7 +360,7 @@ export function FamEditModal({ isModalOpen, handleOk, handleCancel, rowData }) {
                 </div>
                 <div className={rmStyles.search_item}>
                     <div className={rmStyles.search_title}>입력단위</div>
-                    <Select 
+                    <Select
                         value={formValues.inputUnit}
                         onChange={(value) => setFormValues(prevValues => ({ ...prevValues, inputUnit: value }))}
                     >
@@ -375,14 +371,14 @@ export function FamEditModal({ isModalOpen, handleOk, handleCancel, rowData }) {
                 </div>
                 <div className={rmStyles.search_item}>
                     <div className={rmStyles.search_title}>단위환산계수</div>
-                    <input 
-                        className={rmStyles.search} 
+                    <input
+                        className={rmStyles.search}
                         value={formValues.unitConvCoef}
                         onChange={handleChange}
                     />
                 </div>
             </div>
-            
+
             <button className={rmStyles.select_button} onClick={handleSelect}>수정</button>
         </Modal>
     )
@@ -713,7 +709,7 @@ export function FmAddModal({ isModalOpen, handleOk, handleCancel }) {
     // 찾기 버튼 클릭 시 호출될 함수
     const handleSearch = () => {
         setShowResults(true);
-        
+
     };
 
     // 사원 row 클릭 시 호출될 함수
@@ -820,21 +816,21 @@ export function FmAddModal({ isModalOpen, handleOk, handleCancel }) {
             <div className={modalStyles.search_container}>
                 <div className={modalStyles.search_item}>
                     <div className={modalStyles.search_title}>설비LIB명</div>
-                    <Autocomplete 
+                    <Autocomplete
                         {...defaultProps}
                         id="blur-on-select"
                         blurOnSelect
                         onChange={(e, v) => setValue([v])}
                         renderInput={(params) => (
-                        <TextField {...params} variant="standard" sx={{width:"10rem"}}/>
+                            <TextField {...params} variant="standard" sx={{ width: "10rem" }} />
                         )}
                     />
                 </div>
                 <div className={modalStyles.input_with_btn}>
-                    <button className={modalStyles.search_button} style={{marginTop:"1rem"}} onClick={handleSearch}>조회</button>
+                    <button className={modalStyles.search_button} style={{ marginTop: "1rem" }} onClick={handleSearch}>조회</button>
                 </div>
             </div>
-            
+
             <div className={modalStyles.result_container}>
                 {showResults ? <Table data={value1} onRowClick={handleEmpClick} />
                     : <></>}
@@ -1057,7 +1053,7 @@ export function SdAddModal({ isModalOpen, handleOk, handleCancel }) {
                         <span className={sdStyles.requiredAsterisk}>*</span>
                     </div>
                     <div className={sdStyles.select_item}>
-                        <Select defaultValue="2024">
+                        <Select defaultValue={new Date().getFullYear().toString()}>
                             {selectYear.map(option => (
                                 <Select.Option key={option.value} value={option.value}>
                                     {option.label}
@@ -1065,7 +1061,7 @@ export function SdAddModal({ isModalOpen, handleOk, handleCancel }) {
                             ))}
                         </Select>
                         <div>년</div>
-                        <Select defaultValue="01">
+                        <Select defaultValue={("00" + (new Date().getMonth() + 1)).slice(-2)}>
                             {selectMonth.map(option => (
                                 <Select.Option key={option.value} value={option.value}>
                                     {option.label}
@@ -1152,6 +1148,8 @@ export function SdShowDetailsModal({ selectedSd, isModalOpen, handleOk, handleCa
         fileList: []
     });
 
+    const [isEditing, setIsEditing] = useState(false);
+
     useEffect(() => {
         if (selectedSd) {
             setFormData({
@@ -1159,8 +1157,9 @@ export function SdShowDetailsModal({ selectedSd, isModalOpen, handleOk, handleCa
                 actvMonth: selectedSd.actvMonth || ("00" + (new Date().getMonth() + 1)).slice(-2),
                 name: selectedSd.name || '',
                 note: selectedSd.note || '',
-                fileList: selectedSd.fileList || []
+                fileList: Array.isArray(selectedSd.fileList) ? selectedSd.fileList : [] // 배열인지 확인
             });
+            setFileList(Array.isArray(selectedSd.fileList) ? selectedSd.fileList : []); // 배열인지 확인
         }
     }, [selectedSd]);
 
@@ -1178,17 +1177,21 @@ export function SdShowDetailsModal({ selectedSd, isModalOpen, handleOk, handleCa
         setFileList(prevFiles => prevFiles.filter(file => file.name !== fileName));
     };
 
-    // 등록 버튼 클릭 시 호출될 함수(등록할 매출액의 data를 전달)
     const onSaveClick = () => {
-        const formData = {
-            pjtCode: document.getElementById('pjtCode').value,
-            pjtName: document.getElementById('pjtName').value,
-            year: document.getElementById('year').value,
-            month: document.getElementById('month').value,
-            saleAmt: document.getElementById('saleAmt').value,
+        const updatedFormData = {
+            ...formData,
+            fileList // 현재 상태의 파일 목록을 추가
         };
-        //handleOk(formData);  // 입력된 데이터를 handleOk 함수로 전달
-        //selectedSd = 
+        handleOk(updatedFormData, false);  // 입력된 데이터를 handleOk 함수로 전달, 두번째 인자-closeModal=false
+        setIsEditing(false); // 저장 후 편집 모드 종료
+    };
+
+    const onEditClick = () => {
+        if (isEditing) {
+            onSaveClick(); // 편집 모드일 때 저장 기능 호출
+        } else {
+            setIsEditing(true); // 비편집 모드일 때 편집 모드로 전환
+        }
     };
 
     return (
@@ -1198,7 +1201,12 @@ export function SdShowDetailsModal({ selectedSd, isModalOpen, handleOk, handleCa
             width={400}
             footer={null}             //Ant Design의 기본 footer 제거(Cancel, OK 버튼)
         >
-            <div className={modalStyles.title}>증빙서류 상세보기</div>
+            <div className={sdStyles.modal_header}>
+                <div className={modalStyles.title}>증빙서류 상세보기</div>
+                <div  className={sdStyles.edit_button}>
+                <EditButton onClick={onEditClick} isEditing={isEditing} />
+                </div>
+            </div>
 
             <div className={sdStyles.input_container}>
                 <div className={sdStyles.input_item}>
@@ -1211,6 +1219,7 @@ export function SdShowDetailsModal({ selectedSd, isModalOpen, handleOk, handleCa
                             id="actvYear"
                             value={formData.actvYear}
                             onChange={(value) => setFormData(prevData => ({ ...prevData, actvYear: value }))}
+                            disabled={!isEditing} // 편집 모드가 아닐 때 비활성화
                         >
                             {selectYear.map(option => (
                                 <Select.Option key={option.value} value={option.value}>
@@ -1223,6 +1232,7 @@ export function SdShowDetailsModal({ selectedSd, isModalOpen, handleOk, handleCa
                             id="actvMonth"
                             value={formData.actvMonth}
                             onChange={(value) => setFormData(prevData => ({ ...prevData, actvMonth: value }))}
+                            disabled={!isEditing} // 편집 모드가 아닐 때 비활성화
                         >
                             {selectMonth.map(option => (
                                 <Select.Option key={option.value} value={option.value}>
@@ -1241,6 +1251,7 @@ export function SdShowDetailsModal({ selectedSd, isModalOpen, handleOk, handleCa
                     <input className={sdStyles.search} id="name"
                         value={formData.name}
                         onChange={(e) => setFormData(prevData => ({ ...prevData, name: e.target.value }))}
+                        disabled={!isEditing} // 편집 모드가 아닐 때 비활성화
                     />
                 </div>
                 <div className={sdStyles.input_item}>
@@ -1249,6 +1260,7 @@ export function SdShowDetailsModal({ selectedSd, isModalOpen, handleOk, handleCa
                         className={sdStyles.search} id="note"
                         value={formData.note}
                         onChange={(e) => setFormData(prevData => ({ ...prevData, note: e.target.value }))}
+                        disabled={!isEditing} // 편집 모드가 아닐 때 비활성화
                     />
                 </div>
                 <div className={sdStyles.upload_item}>
@@ -1263,8 +1275,14 @@ export function SdShowDetailsModal({ selectedSd, isModalOpen, handleOk, handleCa
                                 style={{ display: 'none' }} // 숨김 처리
                                 ref={fileInputRef} // useRef로 참조
                                 onChange={handleFileChange} // 파일 선택 시 호출
+                                disabled={!isEditing} // 편집 모드가 아닐 때 비활성화
                             />
-                            <button type="button" onClick={() => fileInputRef.current.click()} className={sdStyles.upload_button}>
+                            <button
+                                type="button"
+                                onClick={() => fileInputRef.current.click()}
+                                className={sdStyles.upload_button}
+                                disabled={!isEditing} // 편집 모드가 아닐 때 비활성화
+                            >
                                 파일선택 <PaperClipOutlined />
                             </button>
                         </div>
@@ -1281,6 +1299,7 @@ export function SdShowDetailsModal({ selectedSd, isModalOpen, handleOk, handleCa
                                             type="button"
                                             className={sdStyles.remove_button}
                                             onClick={() => handleFileRemove(file.name)}
+                                            disabled={!isEditing} // 편집 모드가 아닐 때 비활성화
                                         >
                                             <CloseOutlined />
                                         </button>
@@ -1292,7 +1311,7 @@ export function SdShowDetailsModal({ selectedSd, isModalOpen, handleOk, handleCa
                 </div>
             </div>
 
-            <button className={sdStyles.select_button} onClick={handleOk}>저장</button>
+            <button className={sdStyles.select_button} onClick={handleOk}>확인</button>
         </Modal>
     )
 }

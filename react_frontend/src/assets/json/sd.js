@@ -7,37 +7,37 @@ export default [{
     "actvYear": "2024",
     "actvMonth": "02",
     "name": "증빙2",
-    "fileList": "test"
+    "fileList": ["test"]
 }, {
     "actvYear": "2024",
     "actvMonth": "03",
     "name": "증빙3",
-    "fileList": "test"
+    "fileList": ["test"]
 }, {
     "actvYear": "2024",
     "actvMonth": "04",
     "name": "증빙4",
-    "fileList": "test"
+    "fileList": ["test"]
 }, {
     "actvYear": "2024",
     "actvMonth": "05",
     "name": "증빙5",
-    "fileList": "test"
+    "fileList": ["test"]
 }, {
     "actvYear": "2024",
     "actvMonth": "06",
     "name": "증빙6",
-    "fileList": "test"
+    "fileList": ["test"]
 }, {
     "actvYear": "2024",
     "actvMonth": "07",
     "name": "증빙7",
-    "fileList": "test"
+    "fileList": ["test"]
 }, {
     "actvYear": "2024",
     "actvMonth": "08",
     "name": "증빙8",
-    "fileList": "test"
+    "fileList": ["test"]
 }];
 /*
 export default [{

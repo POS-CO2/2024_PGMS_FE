@@ -77,9 +77,12 @@ export default function Esm() {
         setIsModalOpen(prevState => ({ ...prevState, [modalType]: true }));
     };
     // modalType에 따라 결과 처리 해주기
-    const handleOk = (modalType) => (data) => {
-        setIsModalOpen(prevState => ({ ...prevState, [modalType]: false })); //모달 닫기
+    const handleOk = (modalType) => (data, closeModal=true) => {
+        if (closeModal) {
+            setIsModalOpen(prevState => ({ ...prevState, [modalType]: false })); //모달 닫기
+        }
         // 데이터 전달 로직은 각자 구현하기
+        console.log(data);
     };
     const handleCancel = (modalType) => () => {
         setIsModalOpen(prevState => ({ ...prevState, [modalType]: false }));
