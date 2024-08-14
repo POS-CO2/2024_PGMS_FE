@@ -46,6 +46,7 @@ const StyledCheckbox = styled(Checkbox)(({ theme, checked }) => ({
     },
 }));
 
+
 export default function CustomizedTables({
         data = [], 
         variant = 'default', 

@@ -16,11 +16,20 @@ export default function Cm() {
         setCodeGroup(data);
     }
 
+    const [selectedCodeGroup, setSelectedCodeGroup] = useState(null);
+
     const [inputValue, setInputValue] = useState("");
     const [showTable, setShowTable] = useState(false);
 
-    const handleRowClick = () => {
+    const handleCodeGroupRowClick = (e) => {
         setShowTable(true);
+        setSelectedCodeGroup(e?.["코드 번호"] ?? null)
+    }
+
+    const [selectedCode, setSelectedCode] = useState(null);
+
+    const handleCodeRowClick = (e) => {
+        setSelectedCode(e?.["코드 번호"] ?? null)
     }
 
     const [isModalOpen, setIsModalOpen] = useState({
@@ -76,7 +85,7 @@ export default function Cm() {
                 {"코드그룹ID"}
             </div>
             {/** 모달 추가 필요 */}
-            <TableCustom title="" data={table_cm_group} buttons={["Add", "Edit", "Delete"]} onRowClick={handleRowClick} onClicks={[handleAddClick, handleEditClick, handleDeleteClick]} modals={
+            <TableCustom title="" data={table_cm_group} buttons={["Add", "Edit", "Delete"]} selectedRows={[selectedCodeGroup]} onRowClick={(e) => handleCodeGroupRowClick(e)} onClicks={[handleAddClick, handleEditClick, handleDeleteClick]} modals={
                 [
                     {
                         "modalType" : 'CMAdd',
@@ -103,7 +112,7 @@ export default function Cm() {
             <Card className={sysStyles.card_box} sx={{width:"50%"}}>
             <div className={sysStyles.mid_title}>{"코드리스트"}</div>
             {showTable ? (
-                <TableCustom title="" data={table_cm_code} buttons={["Add", "Edit", "Delete"]} onRowClick={handleRowClick} onClicks={[handleListAddClick, handleListEditClick, handleDeleteClick]} modals={
+                <TableCustom title="" data={table_cm_code} buttons={["Add", "Edit", "Delete"]} selectedRows={[selectedCode]} onRowClick={handleCodeRowClick} onClicks={[handleListAddClick, handleListEditClick, handleDeleteClick]} modals={
                     [
                         {
                             "modalType" : 'CMListAdd',

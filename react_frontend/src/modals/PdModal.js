@@ -6,7 +6,7 @@ import * as delStyle from "../assets/css/delModal.css";
 import Table from "../Table";
 import { employee } from "../assets/json/manager.js"
 import * as sysStyles from "../assets/css/sysmng.css"
-import { TextField, Box, InputLabel, MenuItem, FormControl } from '@mui/material';
+import { TextField, Box, InputLabel, MenuItem, FormControl, Autocomplete } from '@mui/material';
 import WarningAmberIcon from '@mui/icons-material/WarningAmber';
 import { Select } from 'antd';
 
@@ -625,7 +625,7 @@ export function CmListEditModal({isModalOpen, handleOk, handleCancel}){
     )
 }
 
-export function FmAddModal({isModalOpen, handleOk, handleCancel}){
+export function FmAddModal({ isModalOpen, handleOk, handleCancel }) {
     const [showResults, setShowResults] = useState(false);    // 사원 목록을 표시할지 여부
     const [selectedEmps, setSelectedEmps] = useState([]);     // 선택된 사원의 loginId list
     
@@ -637,13 +637,7 @@ export function FmAddModal({isModalOpen, handleOk, handleCancel}){
     // 찾기 버튼 클릭 시 호출될 함수
     const handleSearch = () => {
         setShowResults(true);
-
-        // 백엔드로 데이터를 전송
-        const searchParams = {
-            empId,
-            empName,
-            dept,
-        };
+        
     };
 
     // 사원 row 클릭 시 호출될 함수
@@ -665,6 +659,80 @@ export function FmAddModal({isModalOpen, handleOk, handleCancel}){
         handleOk(selectedEmps);
     };
 
+    const sulbiLib = [
+        {
+            label: "가설사무실 전력",
+            id: 1,
+        },
+        {
+            label: "임대사무실 전력",
+            id: 2,
+        },
+        {
+            label: "현장식당 전력",
+            id: 3,
+        },
+        {
+            label: "공사용 전력",
+            id: 4,
+        },
+        {
+            label: "법인 차량",
+            id: 5,
+        },
+        {
+            label: "직원 유류비",
+            id: 6,
+        },
+        {
+            label: "직영 장비",
+            id: 7,
+        },
+        {
+            label: "난방용 보일러",
+            id: 8,
+        },
+        {
+            label: "사무실 스팀",
+            id: 9,
+        },
+        {
+            label: "현장식당 스팀",
+            id: 10,
+        },
+        {
+            label: "사무실 보일러",
+            id: 11,
+        },
+        {
+            label: "현장식당 보일러",
+            id: 12,
+        },
+        {
+            label: "사무실 연료",
+            id: 13,
+        },
+        {
+            label: "현장식당 연료",
+            id: 14,
+        },
+        {
+            label: "Test",
+            id: 15,
+        },
+    ]
+
+    const defaultProps = {
+        options: sulbiLib,
+        getOptionLabel: (option) => option.label
+    };
+
+    const flatProps = {
+        options: sulbiLib.map((option) => option.label),
+    };
+
+    const [value1, setValue] = useState([]);
+
     return (
         <Modal 
             open={isModalOpen} 
@@ -672,10 +740,28 @@ export function FmAddModal({isModalOpen, handleOk, handleCancel}){
             width={680}
             footer={null}             //Ant Design의 기본 footer 제거(Cancel, OK 버튼)
         >
-            <div className={modalStyles.title}>현장 담당자 지정</div>
+            <div className={modalStyles.title}>설비 지정</div>
+            <div className={modalStyles.search_container}>
+                <div className={modalStyles.search_item}>
+                    <div className={modalStyles.search_title}>설비LIB명</div>
+                    <Autocomplete 
+                        {...defaultProps}
+                        id="blur-on-select"
+                        blurOnSelect
+                        onChange={(e, v) => setValue([v])}
+                        renderInput={(params) => (
+                        <TextField {...params} variant="standard" sx={{width:"10rem"}}/>
+                        )}
+                    />
+                </div>
+                <div className={modalStyles.input_with_btn}>
+                    <button className={modalStyles.search_button} style={{marginTop:"1rem"}} onClick={handleSearch}>조회</button>
+                </div>
+            </div>
             
             <div className={modalStyles.result_container}>
-                <Table data={employee} variant='checkbox' onRowClick={handleEmpClick} />
+                {showResults ? <Table data={value1} onRowClick={handleEmpClick} />
+                    : <></>}
             </div>
 
             <button className={modalStyles.select_button} onClick={handleSelect}>등록</button>
@@ -828,3 +914,4 @@ export function MmAddModal({isModalOpen, handleOk, handleCancel}){
         </Modal>
     )
 }
+
