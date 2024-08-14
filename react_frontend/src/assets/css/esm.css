@@ -1,0 +1,5 @@
+.select_button_container {
+    display: flex;
+    justify-content: space-between; /* 양 끝에 배치 */
+    margin-left: 22px;
+}

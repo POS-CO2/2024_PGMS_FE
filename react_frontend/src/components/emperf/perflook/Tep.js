@@ -28,9 +28,13 @@ export default function Tep() {
 function TableTab({ formData, tepData }) {
     const tableData = tepData.filter(data => data.actvYear === Number(formData.actvYear));
 
+    const onDownloadExcelClick = () => {
+        console.log("onDownloadExcelClick");
+    };
+
     return (
         <div>
-            <TableCustom title="총량실적표" data={tableData} buttons={['DownloadExcel']} />
+            <TableCustom title="총량실적표" data={tableData} buttons={['DownloadExcel']} onClicks={[onDownloadExcelClick]} />
         </div>
     )
 }
