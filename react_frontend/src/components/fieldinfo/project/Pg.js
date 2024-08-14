@@ -52,7 +52,7 @@ export default function Pg() {
         <>
             <div className={tableStyles.menu}>현장정보 &gt; 프로젝트 &gt; 프로젝트 관리</div>
             <SearchForms onFormSubmit={handleFormSubmit} formFields={formField_pg} />
-            
+    
             {(!formData || Object.keys(formData).length === 0) ?
             <></> : ( //TODO: 백엔드에서 받아온 값으로 바꾸기(Table 컴포넌트의 data 파라미터)
                 <>

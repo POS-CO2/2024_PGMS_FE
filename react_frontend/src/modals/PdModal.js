@@ -194,6 +194,96 @@ export function FlAddModal({ isModalOpen, handleOk, handleCancel }) {
     )
 }
 
+export function FlEditModal({ isModalOpen, handleOk, handleCancel, rowData }) {
+    const [formValues, setFormValues] = useState({
+        eqLibName: '',
+        equipDvs: '',
+        equipType: '',
+        equipSpecUnit: ''
+    });
+
+    // 모달이 열릴 때 rowData로부터 폼 필드 값을 설정
+    useEffect(() => {
+        if (isModalOpen && rowData) {
+            setFormValues({
+                eqLibName: rowData.EquipName || '',
+                equipDvs: rowData.equipDvs || '',
+                equipType: rowData.equipType || '',
+                equipSpecUnit: rowData.equipSpecUnit || '',
+            });
+        }
+    }, [rowData, isModalOpen]);
+
+    const handleChange = (e) => {
+        const { id, value } = e.target;
+        setFormValues(prevValues => ({
+            ...prevValues,
+            [id]: value
+        }));
+    };
+
+    const handleSelect = () => {
+        handleOk(formValues);
+    };
+
+    return (
+        <Modal 
+            open={isModalOpen} 
+            onCancel={handleCancel} 
+            style={{ width: '25rem', maxWidth: '25rem', important: true }}
+            footer={null}                                                   //Ant Design의 기본 footer 제거(Cancel, OK 버튼)
+        >
+            <div className={rmStyles.title}>설비LIB 등록</div>
+
+            <div className={rmStyles.search_container}>
+                <div className={rmStyles.search_item}>
+                    <div className={rmStyles.search_title}>설비라이브러리명</div>
+                    <input 
+                        className={rmStyles.search} 
+                        value={formValues.eqLibName}
+                        onChange={handleChange}
+                    />
+                </div>
+                <div className={rmStyles.search_item}>
+                    <div className={rmStyles.search_title}>설비구분</div>
+                    <Select 
+                        value={formValues.equipDvs}
+                        onChange={(value) => setFormValues(prevValues => ({ ...prevValues, actvDvs: value }))}
+                    >
+                        <Select.Option key={"구분1"} value={"구분1"}>{"구분1"}</Select.Option>
+                        <Select.Option key={"구분2"} value={"구분2"}>{"구분2"}</Select.Option>
+                        <Select.Option key={"구분3"} value={"구분3"}>{"구분3"}</Select.Option>
+                    </Select>
+                </div>
+                <div className={rmStyles.search_item}>
+                    <div className={rmStyles.search_title}>설비유형</div>
+                    <Select 
+                        value={formValues.equipType}
+                        onChange={(value) => setFormValues(prevValues => ({ ...prevValues, actvDvs: value }))}
+                    >
+                        <Select.Option key={"유형1"} value={"유형1"}>{"유형1"}</Select.Option>
+                        <Select.Option key={"유형2"} value={"유형2"}>{"유형2"}</Select.Option>
+                        <Select.Option key={"유형3"} value={"유형3"}>{"유형3"}</Select.Option>
+                    </Select>
+                </div>
+                <div className={rmStyles.search_item}>
+                    <div className={rmStyles.search_title}>설비사양단위</div>
+                    <Select 
+                        value={formValues.equipSpecUnit}
+                        onChange={(value) => setFormValues(prevValues => ({ ...prevValues, actvDvs: value }))}
+                    >
+                        <Select.Option key={"단위1"} value={"단위1"}>{"단위1"}</Select.Option>
+                        <Select.Option key={"단위2"} value={"단위2"}>{"단위2"}</Select.Option>
+                        <Select.Option key={"단위3"} value={"단위3"}>{"단위3"}</Select.Option>
+                    </Select>
+                </div>
+            </div>
+            
+            <button className={rmStyles.select_button} onClick={handleSelect}>수정</button>
+        </Modal>
+    )
+}
+
 export function FamAddModal({ isModalOpen, handleOk, handleCancel }) {
     // 등록 버튼 클릭 시 호출될 함수(등록할 활동자료의 data를 전달)
     const handleSelect = () => {
