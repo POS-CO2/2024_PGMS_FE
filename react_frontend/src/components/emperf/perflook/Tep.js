@@ -3,12 +3,11 @@ import SearchForms from "../../../SearchForms";
 import { formField_tep } from "../../../assets/json/searchFormData"
 import InnerTabs from "../../../InnerTabs";
 import TableCustom from "../../../TableCustom.js";
-import { CustomBarChart } from "../../../Chart.js";
-import { tepData, chartData } from "../../../assets/json/tep";
+import ChartCustom from "../../../ChartCustom.js";
+import { tepData } from "../../../assets/json/tep";
 import { temp_data } from '../../../assets/json/chartData';
 import { Card } from '@mui/material';
 import * as mainStyle from '../../../assets/css/main.css';
-import * as tepStyle from '../../../assets/css/tep.css';
 
 export default function Tep() {
     const [formData, setFormData] = useState({});
@@ -24,22 +23,11 @@ export default function Tep() {
             </div>
             <SearchForms onFormSubmit={handleFormSubmit} formFields={formField_tep} autoSubmitOnInit={true} />
             <InnerTabs items={[
-                { label: '차트', key: '1', children: <ChartTab formData={formData} tepData={temp_data} />, },
+                { label: '차트', key: '1', children: <ChartCustom title={"총량실적차트"} data={temp_data} />, },
                 { label: '표', key: '2', children: <TableTab formData={formData} tepData={tepData} />, },
             ]} />
         </div>
     );
-}
-
-function ChartTab({ formData, tepData }) {
-    return (
-        <div>
-            <div /*className={tepStyle.chart_title}*/>{"총량실적차트"}</div>
-            <Card className={tepStyle.box} sx={{ borderRadius: "10px", backgroundColor: "rgb(23, 27, 38)" }}>
-                <CustomBarChart data={tepData} />
-            </Card>
-        </div>
-    )
 }
 
 function TableTab({ formData, tepData }) {
