@@ -4,7 +4,6 @@ import { formField_ps12_fm } from "../../assets/json/searchFormData"
 import InnerTabs from "../../InnerTabs";
 import TableCustom from "../../TableCustom.js";
 import * as mainStyle from '../../assets/css/main.css';
-
 import project from "../../assets/json/selectedPjt";
 
 export default function Ps_1_2() {
