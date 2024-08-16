@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import SearchForms from "../../../SearchForms";
-import { formField_psq } from "../../../assets/json/searchFormData"
+import { formField_psq_fm } from "../../../assets/json/searchFormData"
 import InnerTabs from "../../../InnerTabs";
 import TableCustom from "../../../TableCustom.js";
 import ChartCustom from "../../../ChartCustom.js";
@@ -20,7 +20,7 @@ export default function Psq() {
             <div className={mainStyle.breadcrumb}>
                 {"배출실적 > 실적조회 > 프로젝트별 조회"}
             </div>
-            <SearchForms onFormSubmit={handleFormSubmit} formFields={formField_psq} />
+            <SearchForms onFormSubmit={handleFormSubmit} formFields={formField_psq_fm} />
             <InnerTabs items={[
                 { label: '차트', key: '1', children: <ChartTab formData={formData} chartData={temp_data} /> },
                 { label: '표', key: '2', children: <TableTab formData={formData} psqData={tepData} />, },

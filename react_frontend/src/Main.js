@@ -6,12 +6,12 @@ import * as THREE from 'three';
 import { TextureLoader } from 'three';
 import earthTextureUrl from './assets/images/earth.jpg';
 import { GaugeContainer, GaugeValueArc, GaugeReferenceArc, useGaugeState, Gauge, gaugeClasses} from '@mui/x-charts';
-import { Card,CardContent, FormControl, Select, InputLabel, MenuItem, Chip, ButtonGroup, Button } from '@mui/material';
+import { Card,CardContent, FormControl, Select, InputLabel, MenuItem, Chip, ButtonGroup, Button, IconButton } from '@mui/material';
 import { CustomBarChart, CustomLineChart } from './Chart';
 import { temp_data } from './assets/json/chartData';
 import SsidChartRoundedIcon from '@mui/icons-material/SsidChartRounded';
 import AutoGraphIcon from '@mui/icons-material/AutoGraph';
-import { Girl } from '@mui/icons-material';
+import { ArrowBackIos, ArrowForward, ArrowForwardIos, Girl, MarginRounded } from '@mui/icons-material';
 import { color } from 'three/webgpu';
 
 function GaugePointer() {
@@ -160,8 +160,22 @@ export default function Main() {
                                 <div className={gridStyles.box2_1_1_1}>
                                     <div className={gridStyles.box2_1_1_1_1}>
                                     <Chip label="양산시 해피주택" variant="outlined" onClick={() => {}} sx={{backgroundColor:"white", fontSize:"1rem", fontWeight:"bold"}}/>
-                                    </div>    
+                                    </div>
                                     <div className={gridStyles.box2_1_1_1_2}>
+                                        <div className={gridStyles.box2_year}>2024년</div>
+                                        <div className={gridStyles.box2_monthselect}>
+                                            <IconButton aria-label='left_button'>
+                                                <ArrowBackIos fontSize="large" sx={{color:"white"}} />
+                                            </IconButton>
+                                            <div className={gridStyles.box2_month} >
+                                                7월
+                                            </div>
+                                            <IconButton aria-label='right_button'>
+                                                <ArrowForwardIos fontSize="large" sx={{color:"white"}} />
+                                            </IconButton>
+                                        </div>
+                                    </div>    
+                                    <div className={gridStyles.box2_1_1_1_3}>
                                         <ButtonGroup
                                             disableElevation
                                             variant='contained'
@@ -211,6 +225,20 @@ export default function Main() {
                                     <Chip label="고양시 고양이집" variant="outlined" onClick={() => {}} sx={{backgroundColor:"white", fontSize:"1rem", fontWeight:"bold"}}/>
                                     </div>    
                                     <div className={gridStyles.box2_1_1_1_2}>
+                                        <div className={gridStyles.box2_year}>2024년</div>
+                                        <div className={gridStyles.box2_monthselect}>
+                                            <IconButton aria-label='left_button'>
+                                                <ArrowBackIos fontSize="large" sx={{color:"white"}} />
+                                            </IconButton>
+                                            <div className={gridStyles.box2_month} >
+                                                7월
+                                            </div>
+                                            <IconButton aria-label='right_button'>
+                                                <ArrowForwardIos fontSize="large" sx={{color:"white"}} />
+                                            </IconButton>
+                                        </div>
+                                    </div>
+                                    <div className={gridStyles.box2_1_1_1_3}>
                                         <ButtonGroup
                                             disableElevation
                                             variant='contained'

@@ -1,7 +1,7 @@
 import React, {useState} from 'react';
 import Table from "./Table.js";
 import * as tableStyles from "./assets/css/newTable.css"
-import { DelModal, PgAddModal, PdAddModal, RmAddModal, FlAddModal, FlEditModal, FamAddModal, FamEditModal, FadAddModal, Ps12Modal, CmAddModal, DeleteModal, CmEditModal, CmListAddModal, CmListEditModal, FmAddModal, UmAddModal, MmAddModal } from "./modals/PdModal.js";
+import { DelModal, PgAddModal, PdAddModal, RmAddModal, FlAddModal, FlEditModal, FamAddModal, FamEditModal, FadAddModal, Ps12UploadExcelModal, CmAddModal, DeleteModal, CmEditModal, CmListAddModal, CmListEditModal, FmAddModal, UmAddModal, MmAddModal, EsmAddModal, SdAddModal, SdShowDetailsModal } from "./modals/PdModal.js";
 import { ButtonGroup } from './Button';
 
 const modalMap = {
@@ -10,7 +10,7 @@ const modalMap = {
     CMListAdd: CmListAddModal,
     CMListEdit: CmListEditModal,
     Delete: DeleteModal,
-    Ps12: Ps12Modal,
+    Ps12UploadExcel: Ps12UploadExcelModal,
     PgAdd: PgAddModal,
     PdAdd: PdAddModal,
     RmAdd: RmAddModal,
@@ -23,7 +23,9 @@ const modalMap = {
     FmAdd: FmAddModal,
     UmAdd: UmAddModal,
     MmAdd: MmAddModal,
-    Del: DelModal,
+    EsmAdd: EsmAddModal,
+    SdAdd: SdAddModal,
+    SdShowDetails: SdShowDetailsModal
 }
 
 export default function TableCustom({

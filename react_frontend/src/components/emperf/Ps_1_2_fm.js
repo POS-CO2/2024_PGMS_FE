@@ -1,10 +1,9 @@
 import React, { useState } from 'react';
 import SearchForms from "../../SearchForms";
-import { formField_ps12 } from "../../assets/json/searchFormData"
+import { formField_ps12_fm } from "../../assets/json/searchFormData"
 import InnerTabs from "../../InnerTabs";
 import TableCustom from "../../TableCustom.js";
 import * as mainStyle from '../../assets/css/main.css';
-
 import project from "../../assets/json/selectedPjt";
 
 export default function Ps_1_2() {
@@ -20,7 +19,7 @@ export default function Ps_1_2() {
                 {"배출실적 > 활동량 관리"}
             </div>
 
-            <SearchForms onFormSubmit={handleFormSubmit} formFields={formField_ps12} />
+            <SearchForms onFormSubmit={handleFormSubmit} formFields={formField_ps12_fm} />
             <InnerTabs items={[
                 { label: '사용량', key: '1', children: <Usage formData={formData} />, },
                 { label: '사용금액', key: '2', children: <AmountUsed formData={formData} />, },

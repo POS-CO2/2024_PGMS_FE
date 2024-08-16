@@ -4,6 +4,7 @@
 
 .menu{
     margin-top: 10px;
+    padding: 0.3rem 0;
 }
 
 .level_1{
@@ -16,7 +17,29 @@
     font-size: 15px;
 }
 
+.level_2.menu.can_hover:hover{
+    background-color: gray;
+    padding-left: 1rem;
+    border-top-left-radius: 10px;
+    border-bottom-left-radius: 10px;
+}
+
 .level_3{
 
     font-size: 12px;
+}
+
+.level_3.menu.can_hover:hover{
+    background-color: gray;
+    padding-left: 1rem;
+    border-top-left-radius: 10px;
+    border-bottom-left-radius: 10px;
+}
+
+.menu.active {
+    background: linear-gradient(to right, rgb(85, 146, 248), white);
+    padding-left: 1rem;
+    border-top-left-radius: 10px;
+    border-bottom-left-radius: 10px;
+    color: black;
 }

@@ -12,7 +12,7 @@ import project from "../../../assets/json/selectedPjt";
 import emsData from "../../../assets/json/ems";
 import sdData from "../../../assets/json/sd";
 import SearchForms from "../../../SearchForms";
-import { formField_esm } from "../../../assets/json/searchFormData.js";
+import { formField_esm_fm } from "../../../assets/json/searchFormData.js";
 import { SdAddModal, DelModal, SdShowDetailsModal } from "../../../modals/PdModal";
 
 const selectOptions = [
@@ -110,7 +110,7 @@ export default function Esm() {
                 {"현장정보 > 배출원 > 배출원 지정"}
             </div>
 
-            <SearchForms onFormSubmit={handleFormSubmit} formFields={formField_esm} />
+            <SearchForms onFormSubmit={handleFormSubmit} formFields={formField_esm_fm} />
 
             {/* showResults 상태가 true일 때만 결과를 표시 */}
             {showResults && (
