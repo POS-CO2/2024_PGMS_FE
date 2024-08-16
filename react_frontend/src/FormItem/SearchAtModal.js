@@ -38,7 +38,7 @@ export default function SearchAtModal({ name, label, required = false, modalType
             case "프로젝트 찾기":
                 return <SearchProjectModal isModalOpen={isModalOpen} handleOk={handleOk} handleCancel={handleCancel} />;
             case "설비LIB 찾기":
-                return <SearchLibModal isModalOpen={isModalOpen} handleOk={handleOk2} handleCancel={handleCancel} />;
+                return <SearchLibModal isModalOpen={isModalOpen} handleOk={handleOk} handleCancel={handleCancel} />;
             default:
                 return <ModalComponent title={modalType} contents="테스트" isModalOpen={isModalOpen} handleOk={handleOk} handleCancel={handleCancel} />;
         }

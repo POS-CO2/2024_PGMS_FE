@@ -10,13 +10,11 @@ import * as sdStyles from "../assets/css/sdModal.css";
 import * as ps12Styles from "../assets/css/ps12UploadExcelModal.css";
 import { EditButton } from "../Button";
 import Table from "../Table";
+import project from "../assets/json/project"
 import { employee } from "../assets/json/manager.js"
-<<<<<<< HEAD
 import { actv } from "../assets/json/selectedPjt";
-=======
 import emsData from "../assets/json/ems";
 import { selectYear, selectMonth } from "../assets/json/sd";
->>>>>>> 54efe20f94008f8bd3818dfb9137b1fa0e367a37
 import { TextField, Box, InputLabel, MenuItem, FormControl, Autocomplete } from '@mui/material';
 import WarningAmberIcon from '@mui/icons-material/WarningAmber';
 import { Sledding } from '@mui/icons-material';
