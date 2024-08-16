@@ -23,7 +23,11 @@ export default function Tep() {
             </div>
             <SearchForms onFormSubmit={handleFormSubmit} formFields={formField_tep} autoSubmitOnInit={true} />
             <InnerTabs items={[
-                { label: '차트', key: '1', children: <ChartCustom title={"총량실적차트"} data={temp_data} />, },
+                {
+                    label: '차트', key: '1', children: <Card sx={{ width: "100%", height: "100%", borderRadius: "15px" }}>
+                                                            <ChartCustom title={"총량실적차트"} data={temp_data} />
+                                                        </Card>,
+                },
                 { label: '표', key: '2', children: <TableTab formData={formData} tepData={tepData} />, },
             ]} />
         </div>
@@ -38,8 +42,8 @@ function TableTab({ formData, tepData }) {
     };
 
     return (
-        <div>
+        <Card sx={{ width: "100%", height: "100%", borderRadius: "15px" }}>
             <TableCustom title="총량실적표" data={tableData} buttons={['DownloadExcel']} onClicks={[onDownloadExcelClick]} />
-        </div>
+        </Card>
     )
 }

@@ -7,6 +7,7 @@ import ChartCustom from "../../../ChartCustom.js";
 import { tepData } from "../../../assets/json/tep";
 import { temp_data } from '../../../assets/json/chartData';
 import * as mainStyle from '../../../assets/css/main.css';
+import { Card } from '@mui/material';
 
 export default function Psq() {
     const [formData, setFormData] = useState({});
@@ -35,9 +36,9 @@ function ChartTab({ formData, chartData }) {
     }
 
     return (
-        <div>
+        <Card sx={{ width: "100%", height: "100%", borderRadius: "15px" }}>
             <ChartCustom title={"프로젝트 실적 차트"} data={chartData} />
-        </div>
+        </Card>
     )
 }
 
@@ -53,8 +54,8 @@ function TableTab({ formData, psqData }) {
     };
 
     return (
-        <div>
+        <Card sx={{ width: "100%", height: "100%", borderRadius: "15px" }}>
             <TableCustom title="프로젝트 실적 표" data={tableData} buttons={['DownloadExcel']} onClicks={[onDownloadExcelClick]} />
-        </div>
+        </Card>
     )
 }

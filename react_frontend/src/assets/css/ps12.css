@@ -1,0 +1,8 @@
+.main_contents {
+    display: flex;
+    flex-direction: row;
+    width: 98%;
+    margin-right: auto;
+    margin-left: auto;
+    gap: 1rem;
+}
