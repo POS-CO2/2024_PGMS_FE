@@ -80,7 +80,7 @@ export default function Cm() {
             </div>
             <SearchForms onFormSubmit={handleFormSubmit} formFields={formField_cm} />
             <div className={sysStyles.main_grid}>
-            <Card className={sysStyles.card_box} sx={{width:"50%", height:"100vh"}}>
+            <Card className={sysStyles.card_box} sx={{width:"50%", height:"100vh", borderRadius:"15px"}}>
             <div className={sysStyles.mid_title}>
                 {"코드그룹ID"}
             </div>
@@ -109,7 +109,7 @@ export default function Cm() {
                 ]
             }/>
             </Card>
-            <Card className={sysStyles.card_box} sx={{width:"50%"}}>
+            <Card className={sysStyles.card_box} sx={{width:"50%", borderRadius:"15px"}}>
             <div className={sysStyles.mid_title}>{"코드리스트"}</div>
             {showTable ? (
                 <TableCustom title="" data={table_cm_code} buttons={["Add", "Edit", "Delete"]} selectedRows={[selectedCode]} onRowClick={handleCodeRowClick} onClicks={[handleListAddClick, handleListEditClick, handleDeleteClick]} modals={
