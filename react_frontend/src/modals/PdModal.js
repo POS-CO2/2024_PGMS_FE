@@ -1250,7 +1250,7 @@ export function SdAddModal({ isModalOpen, handleOk, handleCancel }) {
                                 ref={fileInputRef} // useRef로 참조
                                 onChange={handleFileChange} // 파일 선택 시 호출
                             />
-                            <button type="button" onClick={onUploadClick} className={sdStyles.upload_button}>
+                            <button type="button" onClick={onUploadClick} className={ps12Styles.upload_button}>
                                 파일선택 <PaperClipOutlined />
                             </button>
                         </div>
@@ -1278,7 +1278,7 @@ export function SdAddModal({ isModalOpen, handleOk, handleCancel }) {
                 </div>
             </div>
 
-            <button className={sdStyles.select_button} onClick={handleOk}>저장</button>
+            <button className={ps12Styles.select_button} onClick={handleOk}>저장</button>
         </Modal>
     )
 }
@@ -1427,7 +1427,7 @@ export function SdShowDetailsModal({ selectedSd, isModalOpen, handleOk, handleCa
                             <button
                                 type="button"
                                 onClick={() => fileInputRef.current.click()}
-                                className={sdStyles.upload_button}
+                                className={ps12Styles.upload_button}
                                 disabled={!isEditing} // 편집 모드가 아닐 때 비활성화
                             >
                                 파일선택 <PaperClipOutlined />
@@ -1458,7 +1458,7 @@ export function SdShowDetailsModal({ selectedSd, isModalOpen, handleOk, handleCa
                 </div>
             </div>
 
-            <button className={sdStyles.select_button} onClick={handleOk}>확인</button>
+            <button className={ps12Styles.select_button} onClick={handleOk}>확인</button>
         </Modal>
     )
 }

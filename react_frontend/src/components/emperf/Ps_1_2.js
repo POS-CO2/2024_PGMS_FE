@@ -3,8 +3,9 @@ import SearchForms from "../../SearchForms";
 import { formField_ps12 } from "../../assets/json/searchFormData"
 import InnerTabs from "../../InnerTabs";
 import TableCustom from "../../TableCustom.js";
+import { Card } from '@mui/material';
 import * as mainStyle from '../../assets/css/main.css';
-
+import * as ps12Style from '../../assets/css/ps12.css';
 import project from "../../assets/json/selectedPjt";
 
 export default function Ps_1_2() {
@@ -56,7 +57,7 @@ function Usage({ formData }) {
     };
 
     return (
-        <div>
+        <Card sx={{ width: "100%", height: "100%", borderRadius: "15px" }}>
             <TableCustom
                 title="실적목록"
                 data={project}
@@ -71,7 +72,7 @@ function Usage({ formData }) {
                     }
                 ]}
             />
-        </div>
+        </Card>
     )
 }
 
@@ -105,7 +106,7 @@ function AmountUsed({ formData }) {
     };
 
     return (
-        <div>
+        <Card sx={{ width: "100%", height: "100%", borderRadius: "15px" }}>
             <TableCustom
                 title="실적목록"
                 data={formDataForTable}
@@ -120,6 +121,6 @@ function AmountUsed({ formData }) {
                     }
                 ]}
             />
-        </div>
+        </Card>
     )
 }
