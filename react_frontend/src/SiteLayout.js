@@ -300,7 +300,7 @@ export default function SiteLayout({handleLogout, menus, user}){
 
     return (
         <div id={mainStyles.root}>
-            <Navigation menus={menus} onMenuClick={handleMenuClick}/>
+            <Navigation menus={menus} onMenuClick={handleMenuClick} activeTab={activeTab}/>
             <AppContainer 
                 tabs = {tabs} 
                 handleMenuClick={handleMenuClick} 
