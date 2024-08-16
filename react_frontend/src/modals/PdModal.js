@@ -739,6 +739,9 @@ export function DeleteModal({ isModalOpen, handleOk, handleCancel }) {
 
     return (
         <Modal
+            style={{
+                top: "35%"
+            }}
             open={isModalOpen}
             onCancel={handleCancel}
             width={480}
@@ -746,7 +749,10 @@ export function DeleteModal({ isModalOpen, handleOk, handleCancel }) {
         >
             {/* 모달제목 */}
             <div>정말 삭제하시겠습니까?</div>
-            <button className={modalStyles.select_button} onClick={handleDelete}>확인</button>
+            <div style={{display:"flex"}}>
+            <button className={modalStyles.cancel_button} style={{width:"45%"}} onClick={handleDelete}>취소</button>
+            <button className={modalStyles.select_button} style={{width:"45%"}} onClick={handleDelete}>확인</button>
+            </div>
         </Modal>
     )
 }
