@@ -739,6 +739,9 @@ export function DeleteModal({ isModalOpen, handleOk, handleCancel }) {
 
     return (
         <Modal
+            style={{
+                top: "35%"
+            }}
             open={isModalOpen}
             onCancel={handleCancel}
             width={480}
@@ -746,7 +749,10 @@ export function DeleteModal({ isModalOpen, handleOk, handleCancel }) {
         >
             {/* 모달제목 */}
             <div>정말 삭제하시겠습니까?</div>
-            <button className={modalStyles.select_button} onClick={handleDelete}>확인</button>
+            <div style={{display:"flex"}}>
+            <button className={modalStyles.cancel_button} style={{width:"45%"}} onClick={handleDelete}>취소</button>
+            <button className={modalStyles.select_button} style={{width:"45%"}} onClick={handleDelete}>확인</button>
+            </div>
         </Modal>
     )
 }
@@ -844,12 +850,7 @@ export function CmListEditModal({ isModalOpen, handleOk, handleCancel }) {
 
 export function FmAddModal({ isModalOpen, handleOk, handleCancel }) {
     const [showResults, setShowResults] = useState(false);    // 사원 목록을 표시할지 여부
-    const [selectedEmps, setSelectedEmps] = useState([]);     // 선택된 사원의 loginId list
-
-    // 각 input의 값을 상태로 관리
-    const [empId, setEmpId] = useState('');
-    const [empName, setEmpName] = useState('');
-    const [dept, setDept] = useState('');
+    const [selectedSulbi, setSelectedSulbi] = useState([]);     // 선택된 사원의 loginId list
 
     // 찾기 버튼 클릭 시 호출될 함수
     const handleSearch = () => {
@@ -858,22 +859,22 @@ export function FmAddModal({ isModalOpen, handleOk, handleCancel }) {
     };
 
     // 사원 row 클릭 시 호출될 함수
-    const handleEmpClick = (emp) => {
-        setSelectedEmps((prevSelectedEmp) => {
+    const handleSulbiClick = (sulbi) => {
+        setSelectedSulbi((prevSelectedSulbi) => {
             // 선택된 사원의 loginId가 이미 배열에 존재하는지 확인
-            if (prevSelectedEmp.includes(emp.loginId)) {
+            if (prevSelectedSulbi.includes(sulbi.id)) {
                 // 존재한다면 배열에서 제거
-                return prevSelectedEmp.filter((id) => id !== emp.loginId);
+                return prevSelectedSulbi.filter((id) => id !== sulbi.id);
             } else {
                 // 존재하지 않는다면 배열에 추가
-                return [...prevSelectedEmp, emp.loginId];
+                return [...prevSelectedSulbi, sulbi.id];
             }
         });
     };
 
     // 등록 버튼 클릭 시 호출될 함수
     const handleSelect = () => {
-        handleOk(selectedEmps);
+        handleOk(selectedSulbi);
     };
 
     const sulbiLib = [
@@ -965,6 +966,7 @@ export function FmAddModal({ isModalOpen, handleOk, handleCancel }) {
                         {...defaultProps}
                         id="blur-on-select"
                         blurOnSelect
+                        disableClearable
                         onChange={(e, v) => setValue([v])}
                         renderInput={(params) => (
                             <TextField {...params} variant="standard" sx={{ width: "10rem" }} />
@@ -977,7 +979,7 @@ export function FmAddModal({ isModalOpen, handleOk, handleCancel }) {
             </div>
 
             <div className={modalStyles.result_container}>
-                {showResults ? <Table data={value1} onRowClick={handleEmpClick} />
+                {showResults ? <Table data={value1} onRowClick={handleSulbiClick} />
                     : <></>}
             </div>
 

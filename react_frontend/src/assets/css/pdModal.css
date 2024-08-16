@@ -80,11 +80,15 @@
     width: 52px;
     height: 35px;
     padding: 5px 10px;
-    background: #9284DC;
+    background: rgb(56, 117, 247);
     color: white;
     border: none;
     border-radius: 5px;
     cursor: pointer;        /* hover 시 커서 모양을 포인터(손 모양)로 변환 */
+}
+
+.search_button:hover{
+    background-color: rgb(85, 146, 248);
 }
 
 .result_container {
@@ -100,10 +104,30 @@
     width: 100%;            /* 모달 창의 전체 너비로 확장 */
     height: 41px;
     padding: 5px 10px;
-    background: #9284DC;
+    background: rgb(56, 117, 247);
     color: white;
     border: none;
     border-radius: 5px;
     cursor: pointer;
     margin: 4rem auto 0;
+}
+
+.select_button:hover{
+    background-color: rgb(85, 146, 248);
+}
+
+.cancel_button{
+    width: 100%;            /* 모달 창의 전체 너비로 확장 */
+    height: 41px;
+    padding: 5px 10px;
+    background-color: rgb(100, 100, 100);
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin: 4rem auto 0;
+}
+
+.cancel_button:hover {
+    background-color: gray;
 }

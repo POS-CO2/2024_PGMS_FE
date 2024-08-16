@@ -101,11 +101,11 @@ export default function Um() {
             </div>
             <SearchForms onFormSubmit={handleFormSubmit} formFields={formField_um}/>
             <div className={sysStyles.main_grid}>
-                <Card className={sysStyles.card_box} sx={{width:"50%", height:"100vh"}}>
+                <Card className={sysStyles.card_box} sx={{width:"50%", height:"100vh", borderRadius:"15px"}}>
                     <div className={sysStyles.mid_title}>{"사용자 목록"}</div>
                     <TableCustom title="" data={table_um_list} button="" onRowClick={(e) => handleRowClick(e)}/>
                 </Card>
-                <Card className={sysStyles.card_box} sx={{width:"50%"}}>
+                <Card className={sysStyles.card_box} sx={{width:"50%", borderRadius:"15px"}}>
                     <div className={sysStyles.mid_title}>{"사용자 상세 정보"}</div>
                     
                     {infoShow ? (
