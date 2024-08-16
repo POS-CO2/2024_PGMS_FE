@@ -99,11 +99,17 @@ export default function Fm() {
                 {showSearchResult ? (
                     <>  
                         <Card className={sysStyles.card_box} sx={{width:"100%", height:"fit-content", borderRadius:"15px"}}>
-                            <TableCustom title="조회결과" data={table_fm_res} onRowClick={handleRowClick}/>
+                            <div className={sysStyles.mid_title}> 
+                                조회결과
+                            </div>
+                            <TableCustom title="" data={table_fm_res} onRowClick={handleRowClick}/>
                         </Card>
                         {/** 버튼 변경 필요(엑셀 다운로드, 삭제, 등록) 및 등록 클릭 시 모달 추가 */}
                         <Card className={sysStyles.card_box} sx={{width:"100%", height:"fit-content", borderRadius:"15px"}}>
-                        <TableCustom title="설비목록" data={table_fm_facList} selectedRows={[selectedFac]} buttons={["DownloadExcel", "Delete", "Add"]} onClicks={[() => handleExcelUploadClick(table_fm_facList, 'exported_table'), handleDeleteClick,handleAddClick]} onRowClick={handleRowClick} excel={true} modals={
+                            <div className={sysStyles.mid_title}> 
+                                    설비목록
+                            </div>
+                        <TableCustom title="" data={table_fm_facList} selectedRows={[selectedFac]} buttons={["DownloadExcel", "Delete", "Add"]} onClicks={[() => handleExcelUploadClick(table_fm_facList, 'exported_table'), handleDeleteClick,handleAddClick]} onRowClick={handleRowClick} excel={true} modals={
                             [
                                 {
                                     "modalType" : 'FmAdd',

@@ -12,8 +12,8 @@ import { Box, Checkbox, TablePagination, TextField } from '@mui/material';
 // TableCell을 스타일링하는 컴포넌트
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
-    backgroundColor: '#F4F2FF',
-    color: '#6E6893',
+    backgroundColor: 'rgb(237,245,254)',
+    color: 'rgb(47, 107, 208)',
   },
   [`&.${tableCellClasses.body}`]: {
     fontSize: 14,
@@ -26,10 +26,10 @@ const StyledTableRow = styled(TableRow)(({ theme, selected, variant }) => ({
         border: 0,
     },
     '&:hover': {
-        backgroundColor: '#E4DCFF', // 호버 시 배경색 설정
+        backgroundColor: 'rgba(133, 187, 249, 0.4)', // 호버 시 배경색 설정
     },
     '&.Mui-selected': {
-        backgroundColor: selected && variant === 'default' ? '#B7AAFF !important' : '#FFFFFF', // 선택된 상태에서 배경색 강제 적용 (default variant만)
+        backgroundColor: selected && variant === 'default' ? 'rgba(63, 118, 247, 0.5) !important' : '#FFFFFF', // 선택된 상태에서 배경색 강제 적용 (default variant만)
     },
 }));
 
