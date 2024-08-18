@@ -93,16 +93,8 @@ export function PdAddModal({ isModalOpen, handleOk, handleCancel }) {
 
     // 사원 row 클릭 시 호출될 함수
     const handleEmpClick = (emp) => {
-        setSelectedEmps((prevSelectedEmp) => {
-            // 선택된 사원의 loginId가 이미 배열에 존재하는지 확인
-            if (prevSelectedEmp.includes(emp.loginId)) {
-                // 존재한다면 배열에서 제거
-                return prevSelectedEmp.filter((id) => id !== emp.loginId);
-            } else {
-                // 존재하지 않는다면 배열에 추가
-                return [...prevSelectedEmp, emp.loginId];
-            }
-        });
+        const newSelectedEmps = emp.map(e => e.loginId);
+        setSelectedEmps(newSelectedEmps);
     };
 
     // 등록 버튼 클릭 시 호출될 함수
@@ -611,8 +603,7 @@ export function Ps12UploadExcelModal({ isModalOpen, handleOk, handleCancel }) { 
     )
 }
 
-export function DelModal({ isModalOpen, handleOk, handleCancel }) { // '엑셀 업로드' 모달
-
+export function DelModal({ isModalOpen, handleOk, handleCancel, rowData }) { // '엑셀 업로드' 모달
     return (
         <Modal
             open={isModalOpen}
@@ -630,8 +621,8 @@ export function DelModal({ isModalOpen, handleOk, handleCancel }) { // '엑셀 �
                 정말 삭제하시겠습니까?
             </div>
             <div className={delStyle.buttonContainer}>
-                <button className={delStyle.cancelButton} onClick={handleCancel}>취소</button>
-                <button className={delStyle.okButton} onClick={handleOk}>삭제</button>
+                <button className={delStyle.cancelButton} onClick={() => {handleCancel}}>취소</button>
+                <button className={delStyle.okButton} onClick={() => {handleOk(rowData)}}>삭제</button>
             </div>
         </Modal>
     )

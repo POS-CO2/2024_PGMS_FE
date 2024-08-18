@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import * as tableStyles from "../../../assets/css/newTable.css";
 import Table from "../../../Table";
-import {TableCustomDoubleClickEdit} from "../../../TableCustom";
+import TableCustom from "../../../TableCustom";
 import project from "../../../assets/json/selectedPjt";
 import managers from "../../../assets/json/manager";
 import SearchForms from "../../../SearchForms";
@@ -63,7 +63,7 @@ export default function Pd() {
                 <>
                     <div className={tableStyles.table_title}>조회결과</div>
                     <Table data={project} />                    
-                    <TableCustomDoubleClickEdit
+                    <TableCustom
                         title='담당자목록' 
                         data={managers}                   
                         buttons={['Delete', 'Add']}
@@ -75,7 +75,8 @@ export default function Pd() {
                                 'modalType': 'Del',
                                 'isModalOpen': isModalOpen.Del,
                                 'handleOk': handleOk('Del'),
-                                'handleCancel': handleCancel('Del')
+                                'handleCancel': handleCancel('Del'),
+                                'rowData': selectedManager
                             },
                             {
                                 'modalType': 'PdAdd',
