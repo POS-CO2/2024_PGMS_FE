@@ -1,0 +1,46 @@
+.main_grid {
+    display: flex;
+    flex-direction: row;
+    width: 98%;
+    margin-right: auto;
+    margin-left: auto;
+    gap: 1rem;
+}
+
+.main_grid_fm {
+    display: flex;
+    flex-direction: column;
+    width: 98%;
+    margin-right: auto;
+    margin-left: auto;
+    gap: 1rem;
+}
+
+.btn_group {
+    justify-content: flex-end ;
+}
+
+.mid_title {
+    font-size: 1.5rem;
+    font-weight: 600;
+    padding-top: 3%;
+    padding-left: 3%;
+}
+
+.card_box {
+    display: flex;
+    flex-direction: column;
+    border-radius: 15px;
+    gap: 1rem;
+}
+
+.text_field {
+    border-radius: 15px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.text {
+    margin-bottom: 1.5rem;
+    font-size: 1.2rem;
+}

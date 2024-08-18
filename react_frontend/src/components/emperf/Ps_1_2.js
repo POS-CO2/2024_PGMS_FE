@@ -3,7 +3,9 @@ import SearchForms from "../../SearchForms";
 import { formField_ps12 } from "../../assets/json/searchFormData"
 import InnerTabs from "../../InnerTabs";
 import TableCustom from "../../TableCustom.js";
-
+import { Card } from '@mui/material';
+import * as mainStyle from '../../assets/css/main.css';
+import * as ps12Style from '../../assets/css/ps12.css';
 import project from "../../assets/json/selectedPjt";
 
 export default function Ps_1_2() {
@@ -15,7 +17,10 @@ export default function Ps_1_2() {
 
     return (
         <div>
-            <p>배출실적 &gt; 실적스코프1,2</p>
+            <div className={mainStyle.breadcrumb}>
+                {"배출실적 > 활동량 관리"}
+            </div>
+
             <SearchForms onFormSubmit={handleFormSubmit} formFields={formField_ps12} />
             <InnerTabs items={[
                 { label: '사용량', key: '1', children: <Usage formData={formData} />, },
@@ -31,32 +36,28 @@ function Usage({ formData }) {
         return <p>검색조건을 선택하세요</p>
     }
 
-    const [isModalOpen, setIsModalOpen] = useState({
-        Ps12: false,
-        PD: false
-    });
-    const showModal = (modalType) => {
-        setIsModalOpen(prevState => ({ ...prevState, [modalType]: true }));
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const showModal = () => {
+        setIsModalOpen(true);
     };
-    // modalType에 따라 결과 처리 해주기
-    const handleOk = (modalType) => (data) => {
-        setIsModalOpen(prevState => ({ ...prevState, [modalType]: false }));
+    const handleOk = (data) => {
+        // 결과 처리
+        setIsModalOpen(false);
     };
-    const handleCancel = (modalType) => () => {
-        setIsModalOpen(prevState => ({ ...prevState, [modalType]: false }));
+    const handleCancel = () => {
+        setIsModalOpen(false);
     };
 
     const onUploadExcelClick = () => {
         console.log("onUploadExcelClick");
-        showModal('Ps12');
+        showModal();
     };
     const onDownloadExcelFormClick = () => {
         console.log("onDownloadExcelFormClick");
-        showModal('PD');
     };
 
     return (
-        <div>
+        <Card sx={{ width: "100%", height: "100%", borderRadius: "15px" }}>
             <TableCustom
                 title="실적목록"
                 data={project}
@@ -64,21 +65,14 @@ function Usage({ formData }) {
                 onClicks={[onUploadExcelClick, onDownloadExcelFormClick]}
                 modals={[
                     {
-                        modalType: 'Ps12',
-                        //buttonClick: showModal('Ps12'),
-                        isModalOpen: isModalOpen.Ps12,
-                        handleOk: handleOk('Ps12'),
-                        handleCancel: handleCancel('Ps12'),
-                    }, {
-                        modalType: 'PD',
-                        //buttonClick: showModal('PD'),
-                        isModalOpen: isModalOpen.PD,
-                        handleOk: handleOk('PD'),
-                        handleCancel: handleCancel('PD'),
+                        modalType: 'Ps12UploadExcel',
+                        isModalOpen: isModalOpen,
+                        handleOk: handleOk,
+                        handleCancel: handleCancel
                     }
                 ]}
             />
-        </div>
+        </Card>
     )
 }
 
@@ -112,7 +106,7 @@ function AmountUsed({ formData }) {
     };
 
     return (
-        <div>
+        <Card sx={{ width: "100%", height: "100%", borderRadius: "15px" }}>
             <TableCustom
                 title="실적목록"
                 data={formDataForTable}
@@ -120,13 +114,13 @@ function AmountUsed({ formData }) {
                 onClicks={[onUploadExcelClick, onDownloadExcelFormClick]}
                 modals={[
                     {
-                        modalType: 'Ps12',
+                        modalType: 'Ps12UploadExcel',
                         isModalOpen: isModalOpen,
                         handleOk: handleOk,
                         handleCancel: handleCancel
                     }
                 ]}
             />
-        </div>
+        </Card>
     )
 }

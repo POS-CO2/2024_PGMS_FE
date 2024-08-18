@@ -7,7 +7,9 @@
     display:flex;
     height:100vh;
     overflow: hidden;
-    font-family: 'NanumSquareRoundExtraBold';
+    font-family: 'Pretendard-Regular';
+    font-weight: 400;
+    font-style: normal;
 }
 
 a {
@@ -18,3 +20,8 @@ a {
     cursor: pointer; /* 마우스 커서가 손가락 모양으로 변하게 설정 */
 }
 
+.breadcrumb {
+    font-size: 0.8rem;
+    color: gray;
+    margin: 0.8rem 1.5rem;
+}

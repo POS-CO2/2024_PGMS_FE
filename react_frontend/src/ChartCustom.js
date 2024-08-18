@@ -1,31 +1,68 @@
 import React from 'react';
+import { BarChart } from '@mui/x-charts';
 import * as chartStyles from "./assets/css/chart.css"
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'recharts';
 
 export default function ChartCustom({ title, data }) {
     return (
         <>
             <div className={chartStyles.chart_title}>{title}</div>
 
-            <BarChart
-                width={900}
-                height={500}
-                data={data}
-                margin={{
-                    top: 20,
-                    right: 30,
-                    left: 20,
-                    bottom: 5,
-                }}
-            >
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="name" />
-                <YAxis />
-                <Tooltip />
-                <Legend />
-                <Bar dataKey="Scope1" stackId="a" fill="#8884d8" />
-                <Bar dataKey="Scope2" stackId="a" fill="#82ca9d" />
-            </BarChart>
+            <div style={{ width: "100%", height: "30rem" }}>
+                <BarChart
+                    borderRadius={10}
+                    series={data}
+                    barLabel={(item, context) => {
+                        return context.bar.height < 60 ? null : item.value?.toString();
+                    }}
+                    xAxis={[
+                        {
+                            scaleType: 'band',
+                            data: ['Jan', 'Feb', 'Mar', "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
+                            id: 'months',
+                        },
+                    ]}
+                    leftAxis={null}
+                    colors={['rgb(53, 98, 227)', 'rgb(196, 218, 250)']}
+                    sx={{
+                        //change left yAxis label styles
+                        "& .MuiChartsAxis-left .MuiChartsAxis-tickLabel": {
+                            strokeWidth: "0.4",
+                            fill: "white",
+                            fontWeight: "bold",
+                        },
+                        // change all labels fontFamily shown on both xAxis and yAxis
+                        "& .MuiChartsAxis-tickContainer .MuiChartsAxis-tickLabel": {
+                            fill: "white",
+                        },
+                        "& .MuiChartsAxis-tickContainer .MuiChartsAxis-tick": {
+                            stroke: "white",
+                        },
+                        // change bottom label styles
+                        "& .MuiChartsAxis-bottom .MuiChartsAxis-tickLabel": {
+                            strokeWidth: "0.5",
+                            fill: "white",
+                            fontWeight: "bold",
+                        },
+                        // bottomAxis Line Styles
+                        "& .MuiChartsAxis-bottom .MuiChartsAxis-line ": {
+                            stroke: "white",
+                            strokeWidth: 0.4,
+                        },
+                        // leftAxis Line Styles
+                        "& .MuiChartsAxis-left .MuiChartsAxis-line": {
+                            stroke: "white",
+                            strokeWidth: 0.4
+                        },
+                    }}
+                    slotProps={{
+                        legend: {
+                            labelStyle: {
+                                fill: 'black',
+                            },
+                        },
+                    }}
+                />
+            </div>
         </>
     );
 }

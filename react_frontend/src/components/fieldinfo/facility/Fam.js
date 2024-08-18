@@ -1,66 +1,100 @@
 import React, { useState } from "react";
 import * as tableStyles from "../../../assets/css/newTable.css"
 import TableCustom from "../../../TableCustom";
-import {actv} from "../../../assets/json/selectedPjt";
 import SearchForms from "../../../SearchForms";
+import {actv} from "../../../assets/json/selectedPjt";
 import {formField_fam} from "../../../assets/json/searchFormData.js";
 
 export default function Fam() {
-    const [showResults, setShowResults] = useState(false);      // 조회결과와 담당자목록을 표시할지 여부
-    const [selectedActv, setSelectedActv] = useState(null);       // 선택된 설비 LIB
+    const [formData, setFormData] = useState({});               // 검색 데이터
+    const [selectedActv, setSelectedActv] = useState(null);     // 선택된 설비 LIB
+    const [selectedRow, setSelectedRow] = useState({});
+    const [isModalOpen, setIsModalOpen] = useState({
+        FamAdd: false,
+        FamEdit: false,
+        Del: false
+    });
 
-    const [isModalOpen, setIsModalOpen] = useState(false);
-    const [inputValue, setInputValue] = useState("");
-
+    //조회 버튼 클릭시 호출될 함수
     const handleFormSubmit = (data) => {
-        
+        setFormData(data);
     };
 
-    // 조회 버튼 클릭 시 호출될 함수
-    const handleSearch = () => {
-        setShowResults(true);
+    // 활동자료 row 클릭 시 호출될 함수
+    const handleActvClick = (actv) => {
+        setSelectedActv(actv?.actvDataName ?? null);
+        setSelectedRow(actv ?? {});
     };
 
-    // 활동자료 목록 row 클릭 시 호출될 함수
-    const handleActvClick = (row) => {
-        setSelectedActv(row.ActvDataName);
+    // 모달 열기
+    const showModal = (modalType, rowData) => {
+        setIsModalOpen(prevState => ({ ...prevState, [modalType]: true }));
+
+        if (modalType === 'FamEdit') {
+            setSelectedActv(rowData); // 선택된 데이터 설정
+        }
     };
 
-    const showModal = () => {
-        setIsModalOpen(true);
+    // 활동자료 등록 버튼 클릭 시 호출될 함수
+    const handleOk = (modalType) => (data) => {
+        setIsModalOpen(prevState => ({ ...prevState, [modalType]: false })); //모달 닫기
+        //setInputValue(data);
     };
 
-    // 모달 저장 버튼 눌렀을 때 호출될 함수
-    const handleOk = (data) => {
-        setIsModalOpen(false);
-        setInputValue(data);
+    // 모달 닫기
+    const handleCancel = (modalType) => () => {
+        setIsModalOpen(prevState => ({ ...prevState, [modalType]: false }));
     };
 
-    const handleCancel = () => {
-        setIsModalOpen(false);
-    }; 
+    // 버튼 클릭 시 모달 열림 설정
+    const onAddClick = () => {
+        showModal('FamAdd');
+    };
+
+    const onEditClick = (rowData) => {
+        showModal('FamEdit', rowData);
+    };
+
+    const onDeleteClick = () => {
+        showModal('Del');
+    };
 
     return (
         <>
             <div className={tableStyles.menu}>현장정보 &gt; 설비 &gt; 활동자료 관리</div>
-            
-            <SearchForms onFormSubmit={handleFormSubmit} formFields={formField_fam} onSearch={handleSearch} />
-            
-            {/* showResults 상태가 true일 때만 결과를 표시 */}
-            {showResults && (
+            <SearchForms onFormSubmit={handleFormSubmit} formFields={formField_fam} />
+
+            {(!formData || Object.keys(formData).length === 0) ?
+            <></> : ( //TODO: 백엔드에서 받아온 값으로 바꾸기(data 파라미터)
                 <>
                     <TableCustom 
                         title='활동자료목록' 
                         data={actv} 
-                        buttons={['Edit', 'Delete', 'Add']}
+                        buttons={['Delete', 'Edit', 'Add']}
+                        onClicks={[onDeleteClick, onEditClick, onAddClick]}
                         onRowClick={handleActvClick}
-                        modal={{
-                            'modalType': 'PD',
-                            'buttonClick': showModal,
-                            'isModalOpen': isModalOpen,
-                            'handleOk': handleOk,
-                            'handleCancel': handleCancel
-                        }}
+                        selectedRows={[selectedActv]}
+                        modals={[
+                            {
+                                'modalType': 'Del',
+                                'isModalOpen': isModalOpen.Del,
+                                'handleOk': handleOk('Del'),
+                                'handleCancel': handleCancel('Del')
+                            },
+                            {
+                                'modalType': 'FamEdit',
+                                'isModalOpen': isModalOpen.FamEdit,
+                                'handleOk': handleOk('FamEdit'),
+                                'handleCancel': handleCancel('FamEdit'),
+                                'rowData': selectedRow
+                            },
+                            {
+                                'modalType': 'FamAdd',
+                                'isModalOpen': isModalOpen.FamAdd,
+                                'handleOk': handleOk('FamAdd'),
+                                'handleCancel': handleCancel('FamAdd')
+                            }
+                        ]}
                     />
                 </>
             )}

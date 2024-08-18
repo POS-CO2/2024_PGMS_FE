@@ -31,7 +31,7 @@ module.exports = function(env) {
                     'sass-loader'
                 ]
             }, {
-                test: /\.(png|gif|jp?eg|svg|ico|tif?f|bmp)/i,
+                test: /\.(png|gif|jpg|svg|ico|tif?f|bmp)/i,
                 type: 'asset/resource'
             }]
         },

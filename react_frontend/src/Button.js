@@ -6,6 +6,7 @@ import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import CachedIcon from '@mui/icons-material/Cached';
 import UploadIcon from '@mui/icons-material/Upload';
 import DownloadIcon from '@mui/icons-material/Download';
+import SaveOutlinedIcon from '@mui/icons-material/SaveOutlined';
 
 const buttonMap = {
   Add: AddButton,
@@ -13,19 +14,20 @@ const buttonMap = {
   Edit: EditButton,
   UploadExcel: UploadExcelButton,
   DownloadExcelForm: DownloadExcelFormButton,
-  DownloadExcel: DownloadExcelButton
+  DownloadExcel: DownloadExcelButton,
+  ShowDetails: ShowDetailsButton
 };
 
 const CustomButton = styled(Button)(({ theme }) => ({
   fontSize: '16px',
   marginLeft: '3px',
-  backgroundColor: '#9284DC',
+  backgroundColor: 'rgb(56, 117, 247)', // #3875f7   // #9284dc 원래 색상
   color: '#fff',
   borderRadius: '8px',
   padding: '3px 12px',
   gap: '3px',                     // 아이콘과 텍스트 사이의 간격
   '&:hover': {
-    backgroundColor: '#9284DC',
+    backgroundColor: 'rgb(85, 146, 248)', // #5592f8
   },
   // 아이콘과 텍스트 사이 여백 조절
   '& .icon': {
@@ -33,7 +35,7 @@ const CustomButton = styled(Button)(({ theme }) => ({
   },
 }));
 
-function AddButton({onClick}) {
+export function AddButton({ onClick }) {
   return (
     <CustomButton variant="contained" onClick={onClick}>
       등록 <ControlPointIcon className="icon" />
@@ -41,7 +43,7 @@ function AddButton({onClick}) {
   );
 }
 
-function DeleteButton({onClick}) {
+export function DeleteButton({ onClick }) {
   return (
     <CustomButton variant="contained" onClick={onClick}>
       삭제 <DeleteForeverIcon className="icon" />
@@ -49,15 +51,18 @@ function DeleteButton({onClick}) {
   );
 }
 
-function EditButton({onClick}) {
+export function EditButton({ onClick, isEditing }) {
   return (
     <CustomButton variant="contained" onClick={onClick}>
-      수정 <CachedIcon className="icon" />
+      {isEditing
+        ? <>저장 <SaveOutlinedIcon className="icon" /></>
+        : <>수정 <CachedIcon className="icon" /></>
+      }
     </CustomButton>
   );
 }
 
-function UploadExcelButton({onClick}) {
+export function UploadExcelButton({ onClick }) {
   return (
     <CustomButton variant="contained" onClick={onClick}>
       엑셀 업로드 <UploadIcon className="icon" />
@@ -65,7 +70,7 @@ function UploadExcelButton({onClick}) {
   );
 }
 
-function DownloadExcelFormButton({onClick}) {
+export function DownloadExcelFormButton({ onClick }) {
   return (
     <CustomButton variant="contained" onClick={onClick}>
       엑셀 양식 다운로드 <DownloadIcon className="icon" />
@@ -73,7 +78,7 @@ function DownloadExcelFormButton({onClick}) {
   );
 }
 
-function DownloadExcelButton({onClick}) {
+export function DownloadExcelButton({ onClick }) {
   return (
     <CustomButton variant="contained" onClick={onClick}>
       엑셀 다운로드 <DownloadIcon className="icon" />
@@ -81,12 +86,37 @@ function DownloadExcelButton({onClick}) {
   );
 }
 
-export function ButtonGroup({ buttons=[], onClicks=[] }) {
+export function ShowDetailsButton({ onClick }) {
+  return (
+    <CustomButton variant="contained" onClick={onClick}>
+      상세보기
+    </CustomButton>
+  );
+}
+
+export function ButtonGroup({ buttons = [], onClicks = [], buttonStatus = [], isEditing = false }) {
   return (
     <div style={{ display: 'flex', gap: '8px', marginRight: '23px' }}>
       {buttons.map((button, index) => {
         const ButtonComponent = buttonMap[button];
         const onClick = onClicks[index];
+        const isEnabled = buttonStatus[index];
+
+        return ButtonComponent ? (
+          isEnabled ? (
+            <ButtonComponent key={button} onClick={onClick} isEditing={isEditing} />
+          ) : null
+        ) : null;
+      })}
+    </div>
+  );
+}
+
+export function ButtonGroupMm({ buttons = [], onClick }) {
+  return (
+    <div style={{ display: 'flex', gap: '8px', marginRight: '1rem', justifyContent: "flex-end" }}>
+      {buttons.map(button => {
+        const ButtonComponent = buttonMap[button];
         return ButtonComponent ? <ButtonComponent key={button} onClick={onClick} /> : null;
       })}
     </div>

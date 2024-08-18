@@ -1,76 +1,330 @@
-import React from 'react';
-import { useTheme } from '@mui/material/styles';
-import { LineChart, axisClasses } from '@mui/x-charts';
+import React, { useState, useRef } from 'react';
+import * as gridStyles from './assets/css/grid.css'
+import { Canvas, useFrame } from '@react-three/fiber';
+import { OrbitControls, Html } from '@react-three/drei';
+import * as THREE from 'three';
+import { TextureLoader } from 'three';
+import earthTextureUrl from './assets/images/earth.jpg';
+import { GaugeContainer, GaugeValueArc, GaugeReferenceArc, useGaugeState, Gauge, gaugeClasses} from '@mui/x-charts';
+import { Card,CardContent, FormControl, Select, InputLabel, MenuItem, Chip, ButtonGroup, Button, IconButton } from '@mui/material';
+import { CustomBarChart, CustomLineChart } from './Chart';
+import { temp_data } from './assets/json/chartData';
+import SsidChartRoundedIcon from '@mui/icons-material/SsidChartRounded';
+import AutoGraphIcon from '@mui/icons-material/AutoGraph';
+import { ArrowBackIos, ArrowForward, ArrowForwardIos, Girl, MarginRounded } from '@mui/icons-material';
+import { color } from 'three/webgpu';
 
-// Generate Sales Data
-function createData(time, amount) {
-    return { time, amount: amount ?? null };
+function GaugePointer() {
+    const { valueAngle, outerRadius, cx, cy } = useGaugeState();
+
+    if (valueAngle === null) {
+        return null;
+    }
+
+    const target = {
+      x: cx + outerRadius * Math.sin(valueAngle),
+      y: cy - outerRadius * Math.cos(valueAngle),
+    };
+    return (
+        <g>
+            <circle cx={cx} cy={cy} r={5} fill="black" />
+            <path
+                d={`M ${cx} ${cy} L ${target.x} ${target.y}`}
+                stroke="red"
+                strokeWidth={3}
+            />
+        </g>
+    );
 }
-    
-const data = [
-    createData('00:00', 0),
-    createData('03:00', 300),
-    createData('06:00', 600),
-    createData('09:00', 800),
-    createData('12:00', 1500),
-    createData('15:00', 2000),
-    createData('18:00', 2400),
-    createData('21:00', 2400),
-    createData('24:00'),
-];
 
-export default function Main() {
-    const theme = useTheme();
+function Earth() {
+    const earthRef = useRef();
+    const [hovered, setHovered] = useState(false);
+    const [hoveredCity, setHoveredCity] = useState(null);
+
+    // 도시 위치 및 이름
+    const cities = [
+        { name: 'New York', position: new THREE.Vector3(0.6, 0.5, 0.5) },
+        { name: 'London', position: new THREE.Vector3(0.5, 0.6, -0.4) },
+        { name: 'Tokyo', position: new THREE.Vector3(0.6, -0.5, 0.4) },
+    ];
+
+    useFrame(() => {
+        if (earthRef.current) {
+            const rotation = earthRef.current.rotation;
+        }
+    });
+
+    // 텍스처 로더
+    const textureLoader = new TextureLoader();
+    const earthTexture = textureLoader.load(earthTextureUrl); // 텍스처 이미지 경로
 
     return (
-            <div>
-                <React.Fragment>
-                    <div style={{ width: '100%', height: '500px', flexGrow: 1, overflow: 'hidden'}}>
-                        <LineChart
-                        dataset={data}
-                        margin={{
-                            top: 16,
-                            right: 20,
-                            left: 70,
-                            bottom: 30,
-                        }}
-                        xAxis={[
-                            {
-                            scaleType: 'point',
-                            dataKey: 'time',
-                            tickNumber: 2,
-                            tickLabelStyle: theme.typography.body2,
-                            },
-                        ]}
-                        yAxis={[
-                            {
-                            label: 'Sales ($)',
-                            labelStyle: {
-                                ...theme.typography.body1,
-                                fill: theme.palette.text.primary,
-                            },
-                            tickLabelStyle: theme.typography.body2,
-                            max: 2500,
-                            tickNumber: 3,
-                            },
-                        ]}
-                        series={[
-                            {
-                            dataKey: 'amount',
-                            showMark: false,
-                            color: theme.palette.primary.light,
-                            },
-                        ]}
-                        sx={{
-                            [`.${axisClasses.root} line`]: { stroke: theme.palette.text.secondary },
-                            [`.${axisClasses.root} text`]: { fill: theme.palette.text.secondary },
-                            [`& .${axisClasses.left} .${axisClasses.label}`]: {
-                            transform: 'translateX(-25px)',
-                            },
-                        }}
-                        />
+        <mesh ref={earthRef}>
+            {/* 지구의 텍스처 */}
+            <sphereGeometry args={[2, 32, 32]} />
+            <meshStandardMaterial map={earthTexture} />
+            {cities.map((city, index) => (
+                <mesh
+                    key={index}
+                    position={city.position.toArray()}
+                    onPointerOver={() => {
+                        setHovered(true);
+                        setHoveredCity(city);
+                    }}
+                    onPointerOut={() => {
+                        setHovered(false);
+                        setHoveredCity(null);
+                    }}
+                >
+                <sphereGeometry args={[0.05, 16, 16]} />
+                <meshStandardMaterial color="red" />
+                {hovered && hoveredCity === city && (
+                <Html position={[city.position.x, city.position.y + 0.1, city.position.z]} distanceFactor={10}>
+                    <div style={{ color: 'white', backgroundColor: 'green', padding: '2px 5px', borderRadius: '3px' }}>
+                        {city.name}
                     </div>
-                </React.Fragment>
+                </Html>
+            )}
+                </mesh>
+        ))}
+        </mesh>
+    );
+}
+
+export default function Main() {
+    const settings = {
+        width: 150,
+        height: 150,
+        value: 9,
+        valueMax: 12,
+    };
+
+    const [year, setYear] = useState(null);
+
+    const handleYear = (event) => {
+        setYear(event.target.value);
+    }
+
+    return (
+            <div className={gridStyles.grid_container}>
+                <Card className={gridStyles.box1} sx={{borderRadius:"15px", backgroundColor:"rgb(6, 10, 18)", color:"white"}}>
+                    {/* 로고  */}
+                    <div className={gridStyles.box1_logo}>
+                        <SsidChartRoundedIcon sx={{width:"2rem",height:"2rem", paddingRight:"0.5rem"}}/>PGMS
+                    </div>
+                    <div className={gridStyles.box1_comp}>
+                        <Card className={gridStyles.box1_1} sx={{borderRadius:"10px", alignItems:"center"}} >
+                            <div className={gridStyles.box1_1_head}>
+                                <div className={gridStyles.box1_1_logo}>
+                                    <AutoGraphIcon fontSize='large' sx={{color:"white"}}/>분석 및 예측
+                                </div>
+                                <FormControl sx={{ minWidth: 120, backgroundColor:"white", borderRadius:"10px" }} size="small">
+                                    <InputLabel id="demo-select-small-label">년도</InputLabel>
+                                    <Select
+                                        labelId="demo-select-small-label"
+                                        id="demo-select-small"
+                                        defaultValue={2024}
+                                        value={year}
+                                        label="년도"
+                                        onChange={handleYear}
+                                    >
+                                        <MenuItem value="">
+                                        <em>None</em>
+                                        </MenuItem>
+                                        <MenuItem value={2024}>2024</MenuItem>
+                                        <MenuItem value={2023}>2023</MenuItem>
+                                        <MenuItem value={2022}>2022</MenuItem>
+                                    </Select>
+                                    </FormControl>
+                            </div>
+                            <CustomLineChart sx={{color:"white"}}/>
+                        </Card>
+                        <Card className={gridStyles.box1_2} sx={{borderRadius:"10px", backgroundColor: "rgb(23, 27, 38)"}}>
+                            <CustomBarChart data={temp_data}/>
+                        </Card>
+                    </div>
+                </Card>
+                <div className={gridStyles.box2}>
+                    <div className={gridStyles.box2_1}>
+                        <div className={gridStyles.box2_1_1}>
+                            <Card 
+                                className={gridStyles.box2_1_1_card}
+                                sx={{
+                                borderRadius:"15px",
+                                height:"100%", 
+                                background:"linear-gradient(to right, #FFEB7B, #FFD900 )", 
+                                width:"100%",
+                                display:"flex"
+                                }}>
+                                <div className={gridStyles.box2_1_1_1}>
+                                    <div className={gridStyles.box2_1_1_1_1}>
+                                    <Chip label="양산시 해피주택" variant="outlined" onClick={() => {}} sx={{backgroundColor:"white", fontSize:"1rem", fontWeight:"bold"}}/>
+                                    </div>
+                                    <div className={gridStyles.box2_1_1_1_2}>
+                                        <div className={gridStyles.box2_year}>2024년</div>
+                                        <div className={gridStyles.box2_monthselect}>
+                                            <IconButton aria-label='left_button'>
+                                                <ArrowBackIos fontSize="large" sx={{color:"white"}} />
+                                            </IconButton>
+                                            <div className={gridStyles.box2_month} >
+                                                7월
+                                            </div>
+                                            <IconButton aria-label='right_button'>
+                                                <ArrowForwardIos fontSize="large" sx={{color:"white"}} />
+                                            </IconButton>
+                                        </div>
+                                    </div>    
+                                    <div className={gridStyles.box2_1_1_1_3}>
+                                        <ButtonGroup
+                                            disableElevation
+                                            variant='contained'
+                                            aria-label='box2 button group'
+                                        >
+                                            <Button>프로젝트 조회</Button>
+                                            <Button>증빙자료 제출</Button>
+
+                                        </ButtonGroup>
+                                    </div>
+                                </div>
+                                <div className={gridStyles.box2_1_1_2}>
+                                    <Gauge 
+                                    {...settings}
+                                    cornerRadius="50%"
+                                    sx={(theme) => ({
+                                        [`& .${gaugeClasses.valueText}`]: {
+                                        fontSize: "1.5rem",
+                                        fontWeight:"bold",
+                                        },
+                                        [`& .${gaugeClasses.valueArc}`]: {
+                                        fill: '#008CFF',
+                                        },
+                                        [`& .${gaugeClasses.referenceArc}`]: {
+                                        fill: theme.palette.text.disabled,
+                                        },
+                                    })}
+                                    text={
+                                        ({ value, valueMax }) => `${value} / ${valueMax}`
+                                    }
+                                    />
+                                </div>
+                            </Card>
+                        </div>
+                        <div className={gridStyles.box2_1_1}>
+                            <Card 
+                                className={gridStyles.box2_1_1_card}
+                                sx={{
+                                borderRadius:"15px",
+                                height:"100%", 
+                                background:"linear-gradient(to right, #66C869, #02A007)", 
+                                width:"100%",
+                                display:"flex"
+                                }}>
+                                <div className={gridStyles.box2_1_1_1}>
+                                    <div className={gridStyles.box2_1_1_1_1}>
+                                    <Chip label="고양시 고양이집" variant="outlined" onClick={() => {}} sx={{backgroundColor:"white", fontSize:"1rem", fontWeight:"bold"}}/>
+                                    </div>    
+                                    <div className={gridStyles.box2_1_1_1_2}>
+                                        <div className={gridStyles.box2_year}>2024년</div>
+                                        <div className={gridStyles.box2_monthselect}>
+                                            <IconButton aria-label='left_button'>
+                                                <ArrowBackIos fontSize="large" sx={{color:"white"}} />
+                                            </IconButton>
+                                            <div className={gridStyles.box2_month} >
+                                                7월
+                                            </div>
+                                            <IconButton aria-label='right_button'>
+                                                <ArrowForwardIos fontSize="large" sx={{color:"white"}} />
+                                            </IconButton>
+                                        </div>
+                                    </div>
+                                    <div className={gridStyles.box2_1_1_1_3}>
+                                        <ButtonGroup
+                                            disableElevation
+                                            variant='contained'
+                                            aria-label='box2 button group'
+                                        >
+                                            <Button>프로젝트 조회</Button>
+                                            <Button>증빙자료 제출</Button>
+
+                                        </ButtonGroup>
+                                    </div>
+                                </div>
+                                <div className={gridStyles.box2_1_1_2}>
+                                    <Gauge 
+                                    {...settings}
+                                    cornerRadius="50%"
+                                    sx={(theme) => ({
+                                        [`& .${gaugeClasses.valueText}`]: {
+                                        fontSize: "1.5rem",
+                                        fontWeight:"bold",
+                                        },
+                                        [`& .${gaugeClasses.valueArc}`]: {
+                                        fill: '#008CFF',
+                                        },
+                                        [`& .${gaugeClasses.referenceArc}`]: {
+                                        fill: theme.palette.text.disabled,
+                                        },
+                                    })}
+                                    text={
+                                        ({ value, valueMax }) => `${value} / ${valueMax}`
+                                    }
+                                    />
+                                </div>
+                            </Card>
+                        </div>
+                    </div>
+                    <div className={gridStyles.box2_2}>
+                        <Card sx={{borderRadius:"10px", height:"100%", backgroundColor:"black"}}>
+                        <Canvas>
+                            <ambientLight intensity={2.0} />
+                            <pointLight position={[10, 10, 10]} />
+                            <Earth />
+                            <OrbitControls />
+                        </Canvas>
+                        </Card>
+                    </div>
+                    <div className={gridStyles.box2_3}>
+                        <div className={gridStyles.box2_3_1}>
+                            <Card sx={{borderRadius:"10px", height:"100%"}}>
+                                <CardContent>                        
+                                <GaugeContainer
+                                    height={150}
+                                    startAngle={-110}
+                                    endAngle={110}
+                                    value={86}
+                                    sx={{
+                                        [`& .${gaugeClasses.valueText}`]: {
+                                            fontSize: 40,
+                                            transform: 'translate(0px, 0px)',
+                                        },
+                                    }}
+                                >
+                                <GaugeReferenceArc />
+                                <GaugeValueArc />
+                                <GaugePointer />
+                                </GaugeContainer>
+                                </CardContent> 
+                            </Card>
+                        </div>
+                        <div className={gridStyles.box2_3_2}>
+                            <Card sx={{borderRadius:"10px", height:"100%"}}>
+                                <CardContent>                        
+                                <GaugeContainer
+                                    height={150}
+                                    startAngle={-110}
+                                    endAngle={110}
+                                    value={86}
+                                >
+                                <GaugeReferenceArc />
+                                <GaugeValueArc />
+                                <GaugePointer />
+                                </GaugeContainer>
+                                </CardContent> 
+                            </Card>
+                        </div>
+                    </div>
+                </div>
             </div>
     );
 }
