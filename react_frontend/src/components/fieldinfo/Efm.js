@@ -14,6 +14,7 @@ export default function Efm() {
     const [efm, setEfm] = useState([]);
 
     const handleFormSubmit = (data) => {
+        console.log(data);
         setEfm(data);
     }
 

@@ -1,21 +1,40 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Modal } from 'antd';
 import * as pjtModalStyles from "../assets/css/pjtModal.css";
 import Table from "../Table";
 import project from "../assets/json/project.js"
+import axiosInstance from '../utils/AxiosInstance.js';
  
 export default function ModalComponent({ isModalOpen, handleOk, handleCancel }) {
   const [formData, setFormData] = useState({});                 // 검색 데이터
   const [selectedPjt, setSelectedPjt] = useState([]);     // 선택된 프로젝트
-  
+  const [project, setProject] = useState([]);
+
+    // 설비 라이브러리 불러오기 
+    useEffect(() => {
+        const fetchProject = async () => {
+            try {
+                const response = await axiosInstance.get("/pjt");
+                setProject(response.data);    
+                console.log(response.data);
+            } catch (error) {
+                console.log(error);
+            }
+            
+        };
+        fetchProject(); // 컴포넌트 마운트 될 때 데이터불러옴
+    }, [])
+
   //찾기 버튼 클릭시 호출될 함수
-  const handleFormSubmit = (data) => {
-    setFormData(data); 
+  const handleFormSubmit = () => {
+    setFormData(project); 
   };
 
   // 프로젝트 row 클릭 시 호출될 함수
   const handlePjtClick = (pjt) => {
-    setSelectedPjt([pjt.PjtCode, pjt.PjtName]);   // 클릭된 프로젝트의 코드로 상태를 설정
+    console.log(pjt);
+    console.log([pjt.pjtCode, pjt.pjtName]);
+    setSelectedPjt(pjt);   // 클릭된 프로젝트의 코드로 상태를 설정
   };
 
   // 선택 버튼 클릭 시 호출될 함수
