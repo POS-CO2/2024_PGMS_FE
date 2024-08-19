@@ -778,14 +778,17 @@ export function CmEditModal({ isModalOpen, handleOk, handleCancel }) {
     )
 }
 
-export function DeleteModal({ isModalOpen, handleOk, handleCancel }) {
-
-    const [deleteItem, setDeleteItem] = useState(false);
-
-    const handleDelete = () => {
-        setDeleteItem(true)
-        handleOk(deleteItem);
-    }
+export function DeleteModal({ isModalOpen, handleOk, handleCancel, rowData }) {
+    const handleDelete = async () => {
+        try {
+            // 서버에 DELETE 요청을 보냅니다.
+            console.log("셀릭",rowData);
+            await axiosInstance.delete(`/sys/user?id=${rowData.id}`);
+            handleOk(rowData); // 삭제 성공 시 상위 컴포넌트에 알림
+        } catch (error) {
+            console.error('Failed to delete user:', error);
+        }
+    };
 
     return (
         <Modal
@@ -800,7 +803,7 @@ export function DeleteModal({ isModalOpen, handleOk, handleCancel }) {
             {/* 모달제목 */}
             <div>정말 삭제하시겠습니까?</div>
             <div style={{display:"flex"}}>
-            <button className={modalStyles.cancel_button} style={{width:"45%"}} onClick={handleDelete}>취소</button>
+            <button className={modalStyles.cancel_button} style={{width:"45%"}} onClick={handleCancel}>취소</button>
             <button className={modalStyles.select_button} style={{width:"45%"}} onClick={handleDelete}>확인</button>
             </div>
         </Modal>
@@ -992,30 +995,66 @@ export function FmAddModal({ isModalOpen, handleOk, handleCancel }) {
 }
 
 export function UmAddModal({ isModalOpen, handleOk, handleCancel }) {
-    const [showResults, setShowResults] = useState(false);    // 사원 목록을 표시할지 여부
-    const [selectedEmps, setSelectedEmps] = useState([]);     // 선택된 사원의 loginId list
+    const [dept, setDept] = useState([]);
+    const [userName, setUserName] = useState('');      // 사용자명 상태
+    const [loginId, setLoginId] = useState('');        // 로그인 ID 상태
+    const [password, setPassword] = useState('');      // 비밀번호 상태
+    const [selectedDept, setSelectedDept] = useState(''); // 부서 선택 상태
+    const [selectedRole, setSelectedRole] = useState(''); // 권한 선택 상태
     const access = [
         {
-            value: 'None',
-            label: 'None'
+            value: 'FP',
+            label: '현장 담당자'
         },
         {
-            value: '현장담당자',
-            label: '현장담당자'
+            value: 'HP',
+            label: '본사 담당자'
         },
         {
-            value: '본사담당자',
-            label: '본사담당자'
-        },
-        {
-            value: '시스템관리자',
-            label: '시스템관리자'
+            value: 'ADMIN',
+            label: '시스템 관리자'
         },
     ]
+    useEffect(() => {
+        const fetchDeptCode = async () => {
+            try {
+                const res = await axiosInstance.get("/sys/unit?unitType=부서코드");
+                const options = res.data.map(dept => ({
+                    value: dept.code,
+                    label: dept.name,
+                }));
+                setDept(options);
+
+            } catch (error) {
+                console.error(error);
+            }
+        };
+
+        fetchDeptCode();
+
+
+    },[])
+
+
 
     // 등록 버튼 클릭 시 호출될 함수
-    const handleSelect = () => {
-        handleOk(selectedEmps);
+    const handleInsert = async () => {
+        const formData = {
+            userName,
+            loginId,
+            password,
+            deptCode: selectedDept,
+            role: selectedRole,
+        };
+
+        try {
+            // POST 요청으로 서버에 데이터 전송
+            const {data} = await axiosInstance.post('/sys/user', formData);
+            // handleOk을 호출하여 모달을 닫고 상위 컴포넌트에 알림
+            handleOk(data);
+        } catch (error) {
+            console.error('Failed to add user:', error);
+        }
     };
 
     return (
@@ -1027,41 +1066,42 @@ export function UmAddModal({ isModalOpen, handleOk, handleCancel }) {
         >
             <div className={modalStyles.title}>사용자 등록</div>
             <div className={sysStyles.card_box}>
-                <div className={sysStyles.text_field} style={{ marginTop: "2rem" }}>
+                <div className={sysStyles.text_field}>
+                    <div className={sysStyles.text} style={{marginTop:"2rem"}}>{"이름"}</div>
+                    <TextField id='userName' label="이름" value={userName} onChange={(e) => setUserName(e.target.value)} variant='outlined' sx={{ width: "20rem" }} />
+                </div>
+                <div className={sysStyles.text_field} style={{ width:"20rem" }}>
                     <div className={sysStyles.text}>
                         {"로그인 ID"}
                     </div>
-                    <TextField id='loginId' label="로그인 ID" variant='outlined' sx={{ width: "20rem" }} />
+                    <TextField id='loginId' label="로그인 ID" value={loginId} onChange={(e) => setLoginId(e.target.value)} variant='outlined' sx={{ width: "20rem" }} />
                 </div>
                 <div className={sysStyles.text_field}>
-                    <div className={sysStyles.text}>{"이름"}</div>
-                    <TextField id='userName' label="이름" variant='outlined' sx={{ width: "20rem" }} />
+                    <div className={sysStyles.text}>{"비밀번호"}</div>
+                    <TextField id='userName' label="비밀번호" value={password} onChange={(e) => setPassword(e.target.value)} variant='outlined' sx={{ width: "20rem" }} />
                 </div>
                 <div className={sysStyles.text_field}>
-                    <div className={sysStyles.text}>{"사업장"}</div>
-                    <TextField id='brnachName' label="사업장" variant='outlined' sx={{ width: "20rem" }} />
+                    <div className={sysStyles.text}>{"부서 명"}</div>
+                    <Select value={selectedDept} onChange={(value) => setSelectedDept(value)} style={{width:"20rem", height:"3.5rem", fontSize:"4rem"}}>
+                    {dept.map(option => (
+                        <Select.Option key={option.value} value={option.value}>
+                            {option.label}
+                        </Select.Option>
+                    ))}
+                    </Select>
                 </div>
                 <div className={sysStyles.text_field}>
                     <div className={sysStyles.text}>{"권한"}</div>
-                    <TextField
-                        id="outlined-select-currency-native"
-                        select
-                        label="권한"
-                        defaultValue="None"
-                        SelectProps={{
-                            native: true,
-                        }}
-                        sx={{ width: "20rem" }}
-                    >
-                        {access.map((option) => (
-                            <option key={option.value} value={option.value}>
-                                {option.label}
-                            </option>
-                        ))}
-                    </TextField>
+                    <Select value={selectedRole} onChange={(value) => setSelectedRole(value)} style={{width:"20rem", height:"3.5rem", fontSize:"4rem"}}>
+                    {access.map(option => (
+                        <Select.Option key={option.value} value={option.value}>
+                            {option.label}
+                        </Select.Option>
+                    ))}
+                    </Select>
                 </div>
             </div>
-            <button className={modalStyles.select_button} onClick={handleSelect}>등록</button>
+            <button className={modalStyles.select_button} onClick={handleInsert}>등록</button>
         </Modal>
     )
 }

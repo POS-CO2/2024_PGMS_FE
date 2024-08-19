@@ -131,12 +131,12 @@ export default function CustomizedTables({
                                 // 표에 data 채우기
                                 paginatedData.map((row, rowIndex) => (
                                     <StyledTableRow 
-                                        key={rowIndex}
+                                        key={rowIndex + (rowsPerPage * page)}
                                         selected={variant === 'checkbox' 
                                                 ? selectedRows.includes(rowIndex) 
-                                                : selectedRow === rowIndex}
+                                                : selectedRow === rowIndex + (rowsPerPage * page)}
                                         variant={variant}
-                                        onClick={() => handleRowClick(rowIndex)}
+                                        onClick={() => handleRowClick(rowIndex + (rowsPerPage * page))}
                                     >
                                         {   // checkbox가 있는 테이블이면 체크박스 셀 추가
                                             variant === 'checkbox' && (

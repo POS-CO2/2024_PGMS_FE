@@ -9,6 +9,7 @@ import * as mainStyle from '../../assets/css/main.css';
 import { Card, TextField, Button } from '@mui/material';
 import { Dropdown } from '@mui/base';
 import axiosInstance from '../../utils/AxiosInstance';
+import { Select } from 'antd';
 
 export default function Um() {
     const [formFields, setFormFields] = useState(formField_mal);
@@ -41,16 +42,22 @@ export default function Um() {
             }
         });
         setUserList(data ?? {});
-        console.log(data);
         setUserShow(true);
         setInfoShow(false);
     }
 
     const [infoShow ,setInfoShow] = useState(false);
 
-    const [selectedUser, setSelectedUser] = useState([]);
+    const [selectedUser, setSelectedUser] = useState({
+        loginId: '',
+        password: '',
+        userName: '',
+        deptCode: '',
+        role: '',
+    });
 
     const handleRowClick = (e) => {
+        console.log(e);
         setSelectedUser(e ?? {});
         if (e === undefined) {
             setInfoShow(false);
@@ -70,9 +77,17 @@ export default function Um() {
         setIsModalOpen(prevState => ({...prevState, [modalType]: true}));
     };
 
-    // 담당자 지정 등록 버튼 클릭 시 호출될 함수
     const handleOk = (modalType) => (data) => {
         setIsModalOpen(prevState => ({ ...prevState, [modalType]: false }));
+        if (modalType === 'Delete') {
+            // 사용자 삭제 후 목록 갱신
+            setUserList(prevList => prevList.filter(user => user.id !== data.id));
+            setInfoShow(false); // 상세 정보 화면 비활성화
+        }
+        else if (modalType === 'UmAdd') {
+            // 새로 추가된 사용자 목록에 추가
+            setUserList(prevList => [...prevList, data]);
+        }
     };
 
     const handleCancel = (modalType) => () => {
@@ -85,21 +100,55 @@ export default function Um() {
 
     const [editable, setEditable] = useState(true);
     
-    const handleEditClick = () => {
-        setEditable(!editable);
+    const handleEditable = () => {
+        setEditable(false); // 되게함
+    }
+    
+    const handleEditClick = async () => {
+        const formData = {
+            id: selectedUser.id,
+            loginId: selectedUser.loginId,
+            password: selectedUser.password,
+            userName: selectedUser.userName,
+            deptCode: selectedUser.deptCode,
+            role: selectedUser.role,
+        };
+        setEditable(true);
+        console.log(formData);
+        try {
+            const {data} = await axiosInstance.patch('/sys/user', formData);
+            // handleOk을 호출하여 모달을 닫고 상위 컴포넌트에 알림
+            console.log(data);
+            setUserList(prevList => prevList.map(user => 
+                user.id === selectedUser.id ? formData : user
+            ));
+            
+        } catch (error) {
+            console.error('Failed to add user:', error);
+        }
     }
 
     const handleDeleteClick = () => {
         showModal('Delete');
     }
 
+    // const handleInputChange = (e) => {
+    //     console.log(e);
+    //     setSelectedUser({
+    //         ...selectedUser,
+    //         [e.target.id]: e.target.value
+    //     });
+    // };
     const handleInputChange = (e) => {
-        console.log(e);
-        setSelectedUser({
-            ...selectedUser,
-            [e.target.id]: e.target.value
-        });
+        const { id, value } = e.target;
+        setSelectedUser(prevState => ({
+            ...prevState,
+            [id]: value
+        }));
     };
+
+    const [dept, setDept] = useState([]);
+
 
     useEffect(() => {
         (async () => {
@@ -114,7 +163,7 @@ export default function Um() {
                     value: dept.code,
                     label: dept.name,
                 }));
-
+                setDept(options);
                 const updateFormFields = formField_mal.map(field => 
                 field.name === 'deptCode' ? {...field, options } : field);
 
@@ -152,7 +201,7 @@ export default function Um() {
                     
                     {infoShow ? (
                         <>
-                            <TableCustom title='' buttons={['Delete', 'Edit']} onClicks={[handleDeleteClick, handleEditClick]} table={false} 
+                            <TableCustom title='' buttons={['Delete', 'Edit']} onClicks={[handleDeleteClick, handleEditable]} table={false} 
                             selectedRows={[selectedUser]}
                             modals={
                                 [
@@ -161,7 +210,8 @@ export default function Um() {
                                         "modalType" : 'Delete',
                                         'isModalOpen': isModalOpen.Delete,
                                         'handleOk': handleOk('Delete'),
-                                        'handleCancel': handleCancel('Delete')
+                                        'handleCancel': handleCancel('Delete'),
+                                        'rowData': selectedUser, // 추가 사항 삭제할 객체 전달
                                     },
                                 ]
                             }/>
@@ -171,24 +221,41 @@ export default function Um() {
                                     {"로그인 아이디"}
                                 </div>
                                 {!editable ? (
-                                    <TextField id='loginId' disabled={editable} variant='outlined' onChange={(e) => setSelectedUser(e.target.value)} defaultValue={selectedUser.loginId} value={selectedUser.loginId} sx={{width:"100%"}}/>
+                                    <TextField id='loginId' disabled={editable} variant='outlined' onChange={handleInputChange} defaultValue={selectedUser.loginId} value={selectedUser.loginId} sx={{width:"100%"}}/>
                                 ) : (
-                                    <TextField id='loginId' disabled={editable} variant='outlined' onChange={(e) => setSelectedUser(e.target.value)} defaultValue={selectedUser.loginId} value={selectedUser.loginId} sx={{width:"100%", backgroundColor:"rgb(223,223,223)"}}/>
+                                    <TextField id='loginId' disabled={editable} variant='outlined' onChange={handleInputChange} defaultValue={selectedUser.loginId} value={selectedUser.loginId} sx={{width:"100%", backgroundColor:"rgb(223,223,223)"}}/>
+                                )}
+                                
+                            </div>
+                            <div className={sysStyles.text_field} style={{marginTop:"2rem",width:"50%"}}>
+                                <div className={sysStyles.text}>
+                                    {"비밀번호"}
+                                </div>
+                                {!editable ? (
+                                    <TextField id='password' disabled={editable} variant='outlined' onChange={handleInputChange} defaultValue={selectedUser.password} value={selectedUser.password} sx={{width:"100%"}}/>
+                                ) : (
+                                    <TextField id='password' disabled={editable} variant='outlined' onChange={handleInputChange} defaultValue={selectedUser.password} value={selectedUser.password} sx={{width:"100%", backgroundColor:"rgb(223,223,223)"}}/>
                                 )}
                                 
                             </div>
                             <div className={sysStyles.text_field} style={{marginTop:"2rem",width:"50%"}}>
                                 <div className={sysStyles.text}>{"이름 "}</div>
                                 {!editable ? (
-                                    <TextField id='userName' disabled={editable} variant='outlined' onChange={(e) => setSelectedUser(e.target.value)} defaultValue={selectedUser.userName} value={selectedUser.userName} sx={{width:"100%"}}/>
+                                    <TextField id='userName' disabled={editable} variant='outlined' onChange={handleInputChange} defaultValue={selectedUser.userName} value={selectedUser.userName} sx={{width:"100%"}}/>
                                 ) : (
-                                    <TextField id='userName' disabled={editable} variant='outlined' onChange={(e) => setSelectedUser(e.target.value)} defaultValue={selectedUser.userName} value={selectedUser.userName} sx={{width:"100%", backgroundColor:"rgb(223,223,223)"}}/>
+                                    <TextField id='userName' disabled={editable} variant='outlined' onChange={handleInputChange} defaultValue={selectedUser.userName} value={selectedUser.userName} sx={{width:"100%", backgroundColor:"rgb(223,223,223)"}}/>
                                 )}
                             </div>
                             <div className={sysStyles.text_field} style={{marginTop:"2rem",width:"50%"}}>
                                 <div className={sysStyles.text}>{"사업장"}</div>
                                 {!editable ? (
-                                    <TextField id='branchName' disabled={editable} variant='outlined' onChange={(e) => setSelectedUser(e.target.value)} defaultValue={selectedUser.deptCode} value={selectedUser.deptCode} sx={{width:"100%"}}/>
+                                    <Select value={selectedUser.deptCode} onChange={(value) => handleInputChange({ target: { id: 'deptCode', value } })} defaultValue={selectedUser.deptCode} style={{width:"100%", height:"3.5rem", fontSize:"4rem"}}>
+                                    {dept.map(option => (
+                                        <Select.Option key={option.value} value={option.value}>
+                                            {option.label}
+                                        </Select.Option>
+                                    ))}
+                                    </Select>
                                 ) : (
                                     <TextField id='branchName' disabled={editable} variant='outlined' onChange={(e) => setSelectedUser(e.target.value)} defaultValue={selectedUser.deptCode} value={selectedUser.deptCode} sx={{width:"100%", backgroundColor:"rgb(223,223,223)"}}/>
                                 )}
@@ -197,24 +264,13 @@ export default function Um() {
                             <div className={sysStyles.text_field} style={{marginTop:"2rem",width:"50%"}}>
                                 <div className={sysStyles.text}>{"권한"}</div>
                                 {!editable ? (
-                                    <TextField
-                                        id="role"
-                                        select
-                                        disabled={editable}
-                                        defaultValue={selectedUser.role}
-                                        onChange={handleInputChange}
-                                        value={selectedUser.role || ''}
-                                        SelectProps={{
-                                            native: true,
-                                        }}
-                                        sx={{width:"100%"}}
-                                        >
-                                        {access.map((option) => (
-                                            <option key={option.value} value={option.value}>
-                                                {option.label}
-                                            </option>
-                                        ))}
-                                    </TextField>
+                                    <Select value={selectedUser.role} onChange={(value) => handleInputChange({ target: { id: 'role', value } })} defaultValue={selectedUser.role} style={{width:"100%", height:"3.5rem", fontSize:"4rem"}}>
+                                    {access.map(option => (
+                                        <Select.Option key={option.value} value={option.value}>
+                                            {option.label}
+                                        </Select.Option>
+                                    ))}
+                                    </Select>
                                 ) : (
                                     <TextField
                                         id="role"
