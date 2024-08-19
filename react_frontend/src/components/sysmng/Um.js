@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import SearchForms from '../../SearchForms';
-import { formField_um } from '../../assets/json/searchFormData';
+import { formField_mal, formField_um } from '../../assets/json/searchFormData';
 import TableCustom from '../../TableCustom';
 import { table_um_list } from '../../assets/json/selectedPjt';
 import { ButtonGroup, ButtonGroupMm } from '../../Button';
@@ -11,50 +11,53 @@ import { Dropdown } from '@mui/base';
 import axiosInstance from '../../utils/AxiosInstance';
 
 export default function Um() {
-
+    const [formFields, setFormFields] = useState(formField_mal);
     const [userList, setUserList] = useState([]);
+    const [userShow, setUserShow] = useState(true);
+    const access = [
+        {
+            value: 'FP',
+            label: "현장 담당자"
+        },
+        {
+            value: 'HP',
+            label: "본사 담당자"
+        },
+        {
+            value: 'ADMIN',
+            label: "시스템 관리자"
+        },
+    ]
 
-    const handleFormSubmit = (data) => {
-        setUserList(data);
+    const handleFormSubmit = async (e) => {
+        setUserShow(false);
+        console.log(e);
+        const {data} = await axiosInstance.get(`/sys/user`, {
+            params: {
+                loginId : e.loginId,
+                role: e.role,
+                deptCode: e.deptCode,
+                userName: e.userName,
+            }
+        });
+        setUserList(data ?? {});
+        console.log(data);
+        setUserShow(true);
+        setInfoShow(false);
     }
 
     const [infoShow ,setInfoShow] = useState(false);
 
-    const access = [
-        {
-            value: 'None',
-            label: 'None'
-        },
-        {
-            value: '현장담당자',
-            label: '현장담당자'
-        },
-        {
-            value: '본사담당자',
-            label: '본사담당자'
-        },
-        {
-            value: '시스템관리자',
-            label: '시스템관리자'
-        },
-    ]
-
-    const [selectedUser, setSelectedUser] = useState(
-        {
-            loginId: '',
-            userName: '',
-            branch: '',
-            access: 'ADMIN',
-        }
-    );
+    const [selectedUser, setSelectedUser] = useState([]);
 
     const handleRowClick = (e) => {
-        setInfoShow(true);
-        console.log(e);
-
-        setSelectedUser(
-            e
-        );
+        setSelectedUser(e ?? {});
+        if (e === undefined) {
+            setInfoShow(false);
+        }
+        else {
+            setInfoShow(true);
+        }
         
     };
 
@@ -89,12 +92,39 @@ export default function Um() {
     const handleDeleteClick = () => {
         showModal('Delete');
     }
+
+    const handleInputChange = (e) => {
+        console.log(e);
+        setSelectedUser({
+            ...selectedUser,
+            [e.target.id]: e.target.value
+        });
+    };
+
     useEffect(() => {
         (async () => {
             const {data} = await axiosInstance.get("/sys/user");
             setUserList(data);
-            console.log(data);
         })();
+
+        const fetchDeptCode = async () => {
+            try {
+                const res = await axiosInstance.get("/sys/unit?unitType=부서코드");
+                const options = res.data.map(dept => ({
+                    value: dept.code,
+                    label: dept.name,
+                }));
+
+                const updateFormFields = formField_mal.map(field => 
+                field.name === 'deptCode' ? {...field, options } : field);
+
+                setFormFields(updateFormFields);
+            } catch (error) {
+                console.error(error);
+            }
+        };
+
+        fetchDeptCode();
     },[]);
 
     return (
@@ -102,27 +132,31 @@ export default function Um() {
             <div className={mainStyle.breadcrumb}>
                 {"시스템관리 > 사용자 관리"}
             </div>
-            <SearchForms onFormSubmit={handleFormSubmit} formFields={formField_um}/>
+            <SearchForms onFormSubmit={handleFormSubmit} formFields={formFields}/>
             <div className={sysStyles.main_grid}>
                 <Card className={sysStyles.card_box} sx={{width:"50%", height:"100vh", borderRadius:"15px"}}>
                     <div className={sysStyles.mid_title}>{"사용자 목록"}</div>
-                    <TableCustom title="" data={userList} button="" onRowClick={(e) => handleRowClick(e)}/>
+                    {userShow && <TableCustom title="" data={userList} buttons={['Add']} onClicks={[handleAddClick]} onRowClick={(e) => handleRowClick(e)} modals={
+                        [
+                            {
+                                "modalType" : 'UmAdd',
+                                'isModalOpen': isModalOpen.UmAdd,
+                                'handleOk': handleOk('UmAdd'),
+                                'handleCancel': handleCancel('UmAdd')
+                            },
+                        ]
+                    }/>}
                 </Card>
                 <Card className={sysStyles.card_box} sx={{width:"50%", borderRadius:"15px"}}>
                     <div className={sysStyles.mid_title}>{"사용자 상세 정보"}</div>
                     
                     {infoShow ? (
                         <>
-                            <TableCustom title='' buttons={['Add', 'Delete', 'Edit']} onClicks={[handleAddClick, handleDeleteClick, handleEditClick]} table={false} 
+                            <TableCustom title='' buttons={['Delete', 'Edit']} onClicks={[handleDeleteClick, handleEditClick]} table={false} 
                             selectedRows={[selectedUser]}
                             modals={
                                 [
-                                    {
-                                        "modalType" : 'UmAdd',
-                                        'isModalOpen': isModalOpen.UmAdd,
-                                        'handleOk': handleOk('UmAdd'),
-                                        'handleCancel': handleCancel('UmAdd')
-                                    },
+                                    
                                     {
                                         "modalType" : 'Delete',
                                         'isModalOpen': isModalOpen.Delete,
@@ -164,36 +198,38 @@ export default function Um() {
                                 <div className={sysStyles.text}>{"권한"}</div>
                                 {!editable ? (
                                     <TextField
-                                        id="outlined-select-currency-native"
+                                        id="role"
                                         select
                                         disabled={editable}
                                         defaultValue={selectedUser.role}
-                                        value={selectedUser.role}
+                                        onChange={handleInputChange}
+                                        value={selectedUser.role || ''}
                                         SelectProps={{
                                             native: true,
                                         }}
                                         sx={{width:"100%"}}
                                         >
                                         {access.map((option) => (
-                                            <option key={option.value} value={option.value} onChange={(e) => setSelectedUser(e.target.value)} >
+                                            <option key={option.value} value={option.value}>
                                                 {option.label}
                                             </option>
                                         ))}
                                     </TextField>
                                 ) : (
                                     <TextField
-                                        id="outlined-select-currency-native"
+                                        id="role"
                                         select
                                         disabled={editable}
                                         defaultValue={selectedUser.role}
-                                        value={selectedUser.role}
+                                        value={selectedUser.role || ''}
+                                        onChange={handleInputChange}
                                         SelectProps={{
                                             native: true,
                                         }}
                                         sx={{width:"100%", backgroundColor:"rgb(223,223,223)"}}
                                         >
                                         {access.map((option) => (
-                                            <option key={option.value} value={option.value} onChange={(e) => setSelectedUser(e.target.value)} >
+                                            <option key={option.value} value={option.value}>
                                                 {option.label}
                                             </option>
                                         ))}

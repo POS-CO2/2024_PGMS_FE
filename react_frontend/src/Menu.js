@@ -11,9 +11,6 @@ export default function Menu({menu, onMenuClick, activeTab}){
     const getLocalStorageActiveTab = () => {
         return localStorage.getItem('activeTab') || "/";
     }
-     console.log(activeTab);
-     console.log(getLocalStorageActiveTab());
-     console.log(menu.url);
 
     useEffect(() => {
         if ((activeTab === menu.url || getLocalStorageActiveTab() === menu.url) && !isOpen && menu.menu.length !== 0) {
