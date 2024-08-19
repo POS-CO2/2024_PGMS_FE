@@ -21,13 +21,21 @@ const buttonMap = {
 const CustomButton = styled(Button)(({ theme }) => ({
   fontSize: '16px',
   marginLeft: '3px',
+<<<<<<< HEAD
   backgroundColor: 'rgb(56, 117, 247)', // #9284dc 원래 색상
+=======
+  backgroundColor: 'rgb(56, 117, 247)', // #3875f7   // #9284dc 원래 색상
+>>>>>>> main
   color: '#fff',
   borderRadius: '8px',
   padding: '3px 12px',
   gap: '3px',                     // 아이콘과 텍스트 사이의 간격
   '&:hover': {
+<<<<<<< HEAD
     backgroundColor: 'rgb(85, 146, 248)',
+=======
+    backgroundColor: 'rgb(85, 146, 248)', // #5592f8
+>>>>>>> main
   },
   // 아이콘과 텍스트 사이 여백 조절
   '& .icon': {

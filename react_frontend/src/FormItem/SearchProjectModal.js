@@ -8,6 +8,7 @@ import axiosInstance from '../utils/AxiosInstance.js';
 export default function ModalComponent({ isModalOpen, handleOk, handleCancel }) {
   const [formData, setFormData] = useState({});                 // 검색 데이터
   const [selectedPjt, setSelectedPjt] = useState([]);     // 선택된 프로젝트
+<<<<<<< HEAD
   const [project, setProject] = useState([]);
 
     // 설비 라이브러리 불러오기 
@@ -28,6 +29,12 @@ export default function ModalComponent({ isModalOpen, handleOk, handleCancel }) 
   //찾기 버튼 클릭시 호출될 함수
   const handleFormSubmit = () => {
     setFormData(project); 
+=======
+  
+  // 찾기 버튼 클릭시 호출될 함수
+  const handleFormSubmit = (data) => {
+    setFormData(data); 
+>>>>>>> main
   };
 
   // 프로젝트 row 클릭 시 호출될 함수

@@ -76,7 +76,7 @@ export default function Esm() {
         setIsModalOpen(prevState => ({ ...prevState, [modalType]: true }));
     };
     // modalType에 따라 결과 처리 해주기
-    const handleOk = (modalType) => (data, closeModal=true) => {
+    const handleOk = (modalType) => (data, closeModal = true) => {
         if (closeModal) {
             setIsModalOpen(prevState => ({ ...prevState, [modalType]: false })); //모달 닫기
         }
@@ -115,11 +115,15 @@ export default function Esm() {
             {/* showResults 상태가 true일 때만 결과를 표시 */}
             {showResults && (
                 <>
-                    <div className={tableStyles.table_title}>조회결과</div>
-                    <Table data={project} onRowClick={handlePjtClick} />
+                    <div className={esmStyles.main_grid}>
+                        <Card sx={{ width: "100%", height: "auto", borderRadius: "15px", marginBottom: "1rem" }}>
+                            <div className={tableStyles.table_title}>조회결과</div>
+                            <Table data={project} onRowClick={handlePjtClick} />
+                        </Card>
+                    </div>
 
                     <div className={sysStyles.main_grid}>
-                        <Card className={sysStyles.card_box} sx={{ width: "50%", height: "100vh" }}>
+                        <Card className={sysStyles.card_box} sx={{ width: "50%", height: "100vh", borderRadius: "15px" }}>
                             <div className={sysStyles.mid_title}>
                                 {"배출원목록"}
                             </div>
@@ -146,7 +150,7 @@ export default function Esm() {
                             />
                         </Card>
 
-                        <Card className={sysStyles.card_box} sx={{ width: "50%" }}>
+                        <Card className={sysStyles.card_box} sx={{ width: "50%", borderRadius: "15px" }}>
                             <div className={sysStyles.mid_title}>
                                 {"증빙자료 목록"}
                             </div>

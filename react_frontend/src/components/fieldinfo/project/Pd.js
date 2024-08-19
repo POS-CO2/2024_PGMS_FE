@@ -1,7 +1,8 @@
 import React, { useState } from "react";
+import Swal from 'sweetalert2'
 import * as tableStyles from "../../../assets/css/newTable.css";
 import Table from "../../../Table";
-import {TableCustomDoubleClickEdit} from "../../../TableCustom";
+import TableCustom from "../../../TableCustom";
 import project from "../../../assets/json/selectedPjt";
 import managers from "../../../assets/json/manager";
 import SearchForms from "../../../SearchForms";
@@ -37,6 +38,21 @@ export default function Pd() {
     const handleOk = (modalType) => (data) => {
         setIsModalOpen(prevState => ({ ...prevState, [modalType]: false })); //모달 닫기
         //setInputValue(data);
+        // modalType에 따른 SweetAlert2 설정
+        let swalOptions = {
+            title: 'Success!',
+            confirmButtonText: 'Cool'
+        };
+
+        if (modalType === 'PdAdd') {
+            swalOptions.text = '담당자가 성공적으로 추가되었습니다.';
+            swalOptions.icon = 'success';
+        } else if (modalType === 'Del') {
+            swalOptions.text = '담당자가 성공적으로 삭제되었습니다.';
+            swalOptions.icon = 'success';
+        } 
+
+        Swal.fire(swalOptions);
     };
 
     // 모달 닫기
@@ -63,7 +79,7 @@ export default function Pd() {
                 <>
                     <div className={tableStyles.table_title}>조회결과</div>
                     <Table data={project} />                    
-                    <TableCustomDoubleClickEdit
+                    <TableCustom
                         title='담당자목록' 
                         data={managers}                   
                         buttons={['Delete', 'Add']}
@@ -75,7 +91,8 @@ export default function Pd() {
                                 'modalType': 'Del',
                                 'isModalOpen': isModalOpen.Del,
                                 'handleOk': handleOk('Del'),
-                                'handleCancel': handleCancel('Del')
+                                'handleCancel': handleCancel('Del'),
+                                'rowData': selectedManager
                             },
                             {
                                 'modalType': 'PdAdd',
