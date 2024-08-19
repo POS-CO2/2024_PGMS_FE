@@ -11,10 +11,13 @@ export default function Menu({menu, onMenuClick, activeTab}){
     const getLocalStorageActiveTab = () => {
         return localStorage.getItem('activeTab') || "/";
     }
+     console.log(activeTab);
+     console.log(getLocalStorageActiveTab());
+     console.log(menu.url);
 
     useEffect(() => {
         if ((activeTab === menu.url || getLocalStorageActiveTab() === menu.url) && !isOpen && menu.menu.length !== 0) {
-            setIsOpen(true);
+            setIsOpen(false);
         }
     }, [activeTab, menu.url]);
 
@@ -32,12 +35,12 @@ export default function Menu({menu, onMenuClick, activeTab}){
             } ${
                 menu.menu.length == 0 ? menuStyles.can_hover : ""
             } ${
-                activeTab === menu.url || getLocalStorageActiveTab() === menu.url ? menuStyles.active : ""
+                (activeTab === menu.url || getLocalStorageActiveTab() === menu.url)  && menu.url != null ? menuStyles.active : ""
             }
             `
         }>
             {
-                menu.url ? <NavLink to={menu.url} onClick={() => {onMenuClick(menu)}}>{menu.name}</NavLink> : <span onClick={() => onMenuClick(menu)}>{menu.name}</span>
+                menu.url ? <NavLink to={menu.url} onClick={() => {onMenuClick(menu)}}>{menu.name}</NavLink> : <span>{menu.name}</span>
             } 
             {
                 menu.menu.length != 0 && !isOpen 

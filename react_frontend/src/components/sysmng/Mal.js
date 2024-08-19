@@ -14,10 +14,11 @@ export default function Mal() {
     const [user, setUser] = useState([]);
     const [log, setLog] = useState([]);
     const [selectedUser, setSelectedUser] = useState([]);
+    const [showUser, setShowUser] = useState(true);
 
     const handleFormSubmit = async (e) => {
-        console.log(e.userName);
-        const {data} = await axiosInstance.get(`/sys/log`,{
+        setShowUser(false);
+        const {data} = await axiosInstance.get(`/sys/user`,{
             params:{
                 loginId : e.loginId,
                 role: e.role,
@@ -25,7 +26,9 @@ export default function Mal() {
                 userName: e.userName,
             }
         })
-        console.log(data);
+        setUser(data);
+        setShowUser(true);
+        setShowLog(false);
         
     }
 
@@ -57,6 +60,9 @@ export default function Mal() {
         })();
     }, [])
 
+    useEffect(() => {
+    }, [user])
+
     return (
         <>
             <div className={mainStyle.breadcrumb}>
@@ -64,13 +70,22 @@ export default function Mal() {
             </div>
             <SearchForms onFormSubmit={handleFormSubmit} formFields={formField_mal} />
             <div className={sysStyles.main_grid}>
-                <Card className={sysStyles.card_box} sx={{width:"50%", height:"100vh"}}>
-                    <div className={sysStyles.mid_title}>
-                        {"사용자 목록"}
-                    </div>
-                    <TableCustom title="" data={user} button="" onRowClick={handleRowClick}/>
-                </Card>
-                <Card className={sysStyles.card_box} sx={{width:"50%"}}>
+                {showUser ? (
+                    <Card className={sysStyles.card_box} sx={{width:"50%", height:"100vh", borderRadius:"15px"}}>
+                        <div className={sysStyles.mid_title}>
+                            {"사용자 목록"}
+                        </div>
+                        <TableCustom title="" data={user} button="" onRowClick={handleRowClick}/>
+                    </Card>
+                ) : (
+                    <Card className={sysStyles.card_box} sx={{width:"50%", height:"100vh", borderRadius:"15px"}}>
+                        <div className={sysStyles.mid_title}>
+                            {"사용자 목록"}
+                        </div>
+                    </Card>
+                )}
+                
+                <Card className={sysStyles.card_box} sx={{width:"50%", borderRadius:"15px"}}>
                     <div className={sysStyles.mid_title}>{"메뉴 접속 로그"}</div>
                     {showLog ? (
                         <TableCustom title="" data={log} button="" />

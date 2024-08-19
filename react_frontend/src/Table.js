@@ -56,7 +56,7 @@ export default function CustomizedTables({
         handleBlur = () => { },
         editingCell = {}
     }) {
-    const [selectedRow, setSelectedRow] = useState(null);       // default variant의 선택 상태
+    const [selectedRow, setSelectedRow] = useState({});       // default variant의 선택 상태
     const [selectedRows, setSelectedRows] = useState([]); 
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(10);             // default page row length
