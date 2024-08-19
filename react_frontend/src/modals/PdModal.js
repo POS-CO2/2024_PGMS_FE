@@ -74,30 +74,31 @@ export function PgAddModal({ isModalOpen, handleOk, handleCancel }) {
 }
 
 export function PdAddModal({ isModalOpen, handleOk, handleCancel }) {
-    const [showResults, setShowResults] = useState(false);    // 사원 목록을 표시할지 여부
+    const [formData, setformData] = useState({});
     const [selectedEmps, setSelectedEmps] = useState([]);     // 선택된 사원의 loginId list
-
+    
     // 각 input의 값을 상태로 관리
     const [empId, setEmpId] = useState('');
     const [empName, setEmpName] = useState('');
-    const [dept, setDept] = useState('');
 
+    // input 필드 변경 시 호출될 함수
+    const handleInputChange = (e, setter) => {
+        setter(e.target.value);
+    };
+    
     // 찾기 버튼 클릭 시 호출될 함수
-    const handleSearch = () => {
-        setShowResults(true);
-
-        // 백엔드로 데이터를 전송
-        const searchParams = {
-            empId,
-            empName,
-            dept,
-        };
+    const handleSearch = async() => {
+        try {
+            const response = await axiosInstance.get(`/pjt/not-manager?loginId=${empId}&userName=${empName}`);
+            setformData(response.data);
+        } catch (error) {
+            console.log(error);
+        }
     };
 
     // 사원 row 클릭 시 호출될 함수
     const handleEmpClick = (emp) => {
-        const newSelectedEmps = emp.map(e => e.loginId);
-        setSelectedEmps(newSelectedEmps);
+        setSelectedEmps(emp);
     };
 
     // 등록 버튼 클릭 시 호출될 함수
@@ -116,24 +117,21 @@ export function PdAddModal({ isModalOpen, handleOk, handleCancel }) {
             <div className={modalStyles.search_container}>
                 <div className={modalStyles.search_item}>
                     <div className={modalStyles.search_title}>사번</div>
-                    <input className={modalStyles.search} />
+                    <input className={modalStyles.search} onChange={(e) => handleInputChange(e, setEmpId)} />
                 </div>
                 <div className={modalStyles.search_item}>
                     <div className={modalStyles.search_title}>이름</div>
-                    <input className={modalStyles.search} />
-                </div>
-                <div className={modalStyles.search_item}>
-                    <div className={modalStyles.search_title}>부서</div>
                     <div className={modalStyles.input_with_btn}>
-                        <input className={modalStyles.search} />
+                        <input className={modalStyles.search} onChange={(e) => handleInputChange(e, setEmpName)} />
                         <button className={modalStyles.search_button} onClick={handleSearch}>조회</button>
                     </div>
                 </div>
             </div>
 
             <div className={modalStyles.result_container}>
-                {showResults ? <Table data={employee} variant='checkbox' onRowClick={handleEmpClick} />
-                    : <></>}
+                {(!formData || Object.keys(formData).length === 0) ? 
+                <></> : <Table data={formData} variant='checkbox' onRowClick={handleEmpClick} />
+                }
             </div>
 
             <button className={modalStyles.select_button} onClick={handleSelect}>등록</button>
