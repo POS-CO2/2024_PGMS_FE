@@ -26,7 +26,8 @@ export default function SearchAtModal({ name, label, required = false, modalType
         setIsModalOpen(false);
         const selectedData = data;
         form.setFieldsValue({ [name]: selectedData  });
-        setInputValue(selectedData[0] + '/' + selectedData[1]);
+        const inputValue = Array.isArray(data) ? data.join('/') : data;
+        setInputValue(inputValue);
     };
     const handleCancel = () => {
         setIsModalOpen(false);

@@ -338,8 +338,16 @@ export const lib = [
         "equipType": 1,
         "equipSpecUnit": "ℓ"
     },
-]
+];
 
+export const selectedLib = [
+    {
+        "EquipName": "가설사무실 전력",
+        "equipDvs": 4,
+        "equipType": 9,
+        "equipSpecUnit": "kWh"
+    },
+];
 
 export const actv = [
     {
