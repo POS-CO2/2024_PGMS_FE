@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import SearchForms from '../../SearchForms';
 import * as tableStyles from '../../assets/css/table.css'
 import { formField_cm } from '../../assets/json/searchFormData';
@@ -7,6 +7,7 @@ import { table_cm_group, table_cm_code } from '../../assets/json/selectedPjt';
 import * as sysStyles from '../../assets/css/sysmng.css';
 import * as mainStyle from '../../assets/css/main.css';
 import { Card } from '@mui/material';
+import axiosInstance from '../../utils/AxiosInstance';
 
 
 export default function Cm() {
@@ -16,20 +17,28 @@ export default function Cm() {
         setCodeGroup(data);
     }
 
-    const [selectedCodeGroup, setSelectedCodeGroup] = useState(null);
+    const [selectedCodeGroup, setSelectedCodeGroup] = useState([]);
 
     const [inputValue, setInputValue] = useState("");
     const [showTable, setShowTable] = useState(false);
+    const [code, setCode] = useState([]);
 
-    const handleCodeGroupRowClick = (e) => {
+    const handleCodeGroupRowClick = async (e) => {
         setShowTable(true);
-        setSelectedCodeGroup(e?.["코드 번호"] ?? null)
+        setSelectedCodeGroup([e])
+        
+        const {data} = await axiosInstance.get(`/sys/code?codeGrpNo=${e.codeGrpNo}`);
+        console.log(data);
+        setCode(data);
+
+        // setSelectedCodeGroup(e?.["코드 번호"] ?? null)
     }
 
-    const [selectedCode, setSelectedCode] = useState(null);
+    const [selectedCode, setSelectedCode] = useState([]);
 
     const handleCodeRowClick = (e) => {
-        setSelectedCode(e?.["코드 번호"] ?? null)
+        
+        // setSelectedCode(e?.["코드 번호"] ?? null)
     }
 
     const [isModalOpen, setIsModalOpen] = useState({
@@ -73,6 +82,14 @@ export default function Cm() {
         showModal('CMListEdit');
     }
 
+    useEffect(() => {
+        (async () => {
+            const {data} = await axiosInstance.get("/sys/codegroup");
+            console.log(data);
+            setCodeGroup(data);
+        })();
+    },[]);
+
     return (
         <>
             <div className={mainStyle.breadcrumb}>
@@ -85,7 +102,7 @@ export default function Cm() {
                 {"코드그룹ID"}
             </div>
             {/** 모달 추가 필요 */}
-            <TableCustom title="" data={table_cm_group} buttons={["Add", "Edit", "Delete"]} selectedRows={[selectedCodeGroup]} onRowClick={(e) => handleCodeGroupRowClick(e)} onClicks={[handleAddClick, handleEditClick, handleDeleteClick]} modals={
+            <TableCustom title="" data={codeGroup} buttons={["Add", "Edit", "Delete"]} selectedRows={[selectedCodeGroup]} onRowClick={(e) => handleCodeGroupRowClick(e)} onClicks={[handleAddClick, handleEditClick, handleDeleteClick]} modals={
                 [
                     {
                         "modalType" : 'CMAdd',
@@ -112,7 +129,7 @@ export default function Cm() {
             <Card className={sysStyles.card_box} sx={{width:"50%", borderRadius:"15px"}}>
             <div className={sysStyles.mid_title}>{"코드리스트"}</div>
             {showTable ? (
-                <TableCustom title="" data={table_cm_code} buttons={["Add", "Edit", "Delete"]} selectedRows={[selectedCode]} onRowClick={handleCodeRowClick} onClicks={[handleListAddClick, handleListEditClick, handleDeleteClick]} modals={
+                <TableCustom title="" data={code} buttons={["Add", "Edit", "Delete"]} selectedRows={[selectedCode]} onRowClick={handleCodeRowClick} onClicks={[handleListAddClick, handleListEditClick, handleDeleteClick]} modals={
                     [
                         {
                             "modalType" : 'CMListAdd',
