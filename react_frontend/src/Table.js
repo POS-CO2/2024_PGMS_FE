@@ -97,6 +97,8 @@ export default function CustomizedTables({
         // 데이터가 비어 있을 경우 처리
         return <p>No data available</p>;
     }
+    
+    const paginatedData = data.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
 
     return (
         <Box sx={{ 
@@ -127,7 +129,7 @@ export default function CustomizedTables({
                     <TableBody>
                             {
                                 // 표에 data 채우기
-                                data.map((row, rowIndex) => (
+                                paginatedData.map((row, rowIndex) => (
                                     <StyledTableRow 
                                         key={rowIndex}
                                         selected={variant === 'checkbox' 

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import SearchForms from '../../../SearchForms';
 import { formField_fm } from '../../../assets/json/searchFormData';
 import { table_fm_facList, table_fm_res } from '../../../assets/json/selectedPjt';
@@ -7,20 +7,31 @@ import { AllButton } from '../../../Button';
 import * as sysStyles from '../../../assets/css/sysmng.css';
 import * as mainStyle from '../../../assets/css/main.css';
 import { Card } from '@mui/material';
+import axiosInstance from '../../../utils/AxiosInstance';
 
 export default function Fm() {
 
     const [fac, setFac] = useState([]);
+    const [selectedPjt, setSelectedPjt] = useState([]);
 
-    const handleFormSubmit = (data) => {
+    const handleFormSubmit = async (param) => {
+    
+        setSelectedPjt([param.searchProject]);
+
+        const {data} = await axiosInstance.get(`/equip?pjtId=${param.searchProject.id}`);
+        console.log(data);
+        
         setFac(data);
+        
     };
+
 
     const [showSearchResult, setShowSearchResult] = useState(false);
 
     const handleSearchClick = () => {
         setShowSearchResult(true);
     };
+
 
     const [showFacList, setShowFacList] = useState(false);
 
@@ -41,9 +52,12 @@ export default function Fm() {
         setIsModalOpen(prevState => ({...prevState, [modalType]: true}));
     };
 
-    // 담당자 지정 등록 버튼 클릭 시 호출될 함수
     const handleOk = (modalType) => (data) => {
         setIsModalOpen(prevState => ({ ...prevState, [modalType]: false }));
+        if (modalType === 'FmAdd') {
+            setSelectedPjt(data); // 선택된 프로젝트 데이터를 상태로 저장
+            console.log("Selected Project:", data);
+        }
     };
 
     const handleCancel = (modalType) => () => {
@@ -102,14 +116,14 @@ export default function Fm() {
                             <div className={sysStyles.mid_title}> 
                                 조회결과
                             </div>
-                            <TableCustom title="" data={table_fm_res} onRowClick={handleRowClick}/>
+                            <TableCustom title="" data={selectedPjt} onRowClick={handleRowClick}/>
                         </Card>
                         {/** 버튼 변경 필요(엑셀 다운로드, 삭제, 등록) 및 등록 클릭 시 모달 추가 */}
                         <Card className={sysStyles.card_box} sx={{width:"100%", height:"fit-content", borderRadius:"15px"}}>
                             <div className={sysStyles.mid_title}> 
                                     설비목록
                             </div>
-                        <TableCustom title="" data={table_fm_facList} selectedRows={[selectedFac]} buttons={["DownloadExcel", "Delete", "Add"]} onClicks={[() => handleExcelUploadClick(table_fm_facList, 'exported_table'), handleDeleteClick,handleAddClick]} onRowClick={handleRowClick} excel={true} modals={
+                        <TableCustom title="" data={fac} selectedRows={[selectedFac]} buttons={["DownloadExcel", "Delete", "Add"]} onClicks={[() => handleExcelUploadClick(table_fm_facList, 'exported_table'), handleDeleteClick,handleAddClick]} onRowClick={handleRowClick} excel={true} modals={
                             [
                                 {
                                     "modalType" : 'FmAdd',

@@ -26,8 +26,7 @@ export default function SearchAtModal({ name, label, required = false, modalType
         setIsModalOpen(false);
         const selectedData = data;
         form.setFieldsValue({ [name]: selectedData  });
-        const inputValue = Array.isArray(data) ? data.join('/') : data;
-        setInputValue(inputValue);
+        setInputValue(selectedData.pjtCode + '/' + selectedData.pjtName); // SearchProjectModal.js 에서 [pjt.pjtCode, pjt.pjtName]을 pjt로 넘겨주어 변경
     };
     const handleCancel = () => {
         setIsModalOpen(false);

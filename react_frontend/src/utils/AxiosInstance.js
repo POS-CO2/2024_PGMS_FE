@@ -31,8 +31,11 @@ axiosInstance.interceptors.response.use(
     },
     error => {
         // 응답 에러 처리 (예: 토큰 만료 시 로그아웃)
-        if (error.response && error.response.status === 401) {
+        if (error.response.status === 401) {
             localStorage.removeItem('token');
+            window.location.href = '/';
+        }
+        if (error.response.status == 500){
             window.location.href = '/';
         }
         return Promise.reject(error);
@@ -40,3 +43,4 @@ axiosInstance.interceptors.response.use(
 );
 
 export default axiosInstance;
+
