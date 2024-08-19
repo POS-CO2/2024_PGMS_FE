@@ -32,9 +32,7 @@ export default function ModalComponent({ isModalOpen, handleOk, handleCancel }) 
 
   // 프로젝트 row 클릭 시 호출될 함수
   const handlePjtClick = (pjt) => {
-    console.log(pjt);
-    console.log([pjt.pjtCode, pjt.pjtName]);
-    setSelectedPjt(pjt);   // 클릭된 프로젝트의 코드로 상태를 설정
+    setSelectedPjt(pjt ?? {});   // 클릭된 프로젝트의 코드로 상태를 설정
   };
 
   // 선택 버튼 클릭 시 호출될 함수
