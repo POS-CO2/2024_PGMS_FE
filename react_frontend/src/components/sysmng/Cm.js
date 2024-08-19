@@ -14,7 +14,7 @@ export default function Cm() {
     const [codeGroup, setCodeGroup] = useState([]);
 
     const handleFormSubmit = (data) => {
-        setCodeGroup(data);
+        setCodeGroup(data ?? {});
     }
 
     const [selectedCodeGroup, setSelectedCodeGroup] = useState([]);
@@ -28,7 +28,7 @@ export default function Cm() {
         setSelectedCodeGroup([e])
         
         const {data} = await axiosInstance.get(`/sys/code?codeGrpNo=${e.codeGrpNo}`);
-        setCode(data);
+        setCode(data ?? {});
 
         // setSelectedCodeGroup(e?.["코드 번호"] ?? null)
     }
@@ -37,7 +37,7 @@ export default function Cm() {
 
     const handleCodeRowClick = (e) => {
         
-        // setSelectedCode(e?.["코드 번호"] ?? null)
+        setSelectedCode(e)
     }
 
     const [isModalOpen, setIsModalOpen] = useState({
@@ -84,7 +84,7 @@ export default function Cm() {
     useEffect(() => {
         (async () => {
             const {data} = await axiosInstance.get("/sys/codegroup");
-            setCodeGroup(data);
+            setCodeGroup(data ?? {});
         })();
     },[]);
 

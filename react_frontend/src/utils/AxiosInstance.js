@@ -36,7 +36,7 @@ axiosInstance.interceptors.response.use(
             window.location.href = '/';
         }
         if (error.response.status == 500){
-            window.location.href = '/';
+            alert("서버에러 발생 관리자 문의 요망");
         }
         return Promise.reject(error);
     }
