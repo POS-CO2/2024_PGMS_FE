@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import SearchForms from '../../SearchForms';
 import { formField_um } from '../../assets/json/searchFormData';
 import TableCustom from '../../TableCustom';
@@ -8,6 +8,7 @@ import * as sysStyles from '../../assets/css/sysmng.css';
 import * as mainStyle from '../../assets/css/main.css';
 import { Card, TextField, Button } from '@mui/material';
 import { Dropdown } from '@mui/base';
+import axiosInstance from '../../utils/AxiosInstance';
 
 export default function Um() {
 
@@ -49,15 +50,10 @@ export default function Um() {
 
     const handleRowClick = (e) => {
         setInfoShow(true);
-        const newUserInfo = {
-            loginId: e['로그인 아이디'],
-            userName: e['이름'],
-            branch: e['사업장'],
-            access: 'ADMIN'
-        }
+        console.log(e);
 
         setSelectedUser(
-            newUserInfo
+            e
         );
         
     };
@@ -93,6 +89,13 @@ export default function Um() {
     const handleDeleteClick = () => {
         showModal('Delete');
     }
+    useEffect(() => {
+        (async () => {
+            const {data} = await axiosInstance.get("/sys/user");
+            setUserList(data);
+            console.log(data);
+        })();
+    },[]);
 
     return (
         <>
@@ -103,7 +106,7 @@ export default function Um() {
             <div className={sysStyles.main_grid}>
                 <Card className={sysStyles.card_box} sx={{width:"50%", height:"100vh", borderRadius:"15px"}}>
                     <div className={sysStyles.mid_title}>{"사용자 목록"}</div>
-                    <TableCustom title="" data={table_um_list} button="" onRowClick={(e) => handleRowClick(e)}/>
+                    <TableCustom title="" data={userList} button="" onRowClick={(e) => handleRowClick(e)}/>
                 </Card>
                 <Card className={sysStyles.card_box} sx={{width:"50%", borderRadius:"15px"}}>
                     <div className={sysStyles.mid_title}>{"사용자 상세 정보"}</div>
@@ -151,9 +154,9 @@ export default function Um() {
                             <div className={sysStyles.text_field} style={{marginTop:"2rem",width:"50%"}}>
                                 <div className={sysStyles.text}>{"사업장"}</div>
                                 {!editable ? (
-                                    <TextField id='branchName' disabled={editable} variant='outlined' onChange={(e) => setSelectedUser(e.target.value)} defaultValue={selectedUser.branch} value={selectedUser.branch} sx={{width:"100%"}}/>
+                                    <TextField id='branchName' disabled={editable} variant='outlined' onChange={(e) => setSelectedUser(e.target.value)} defaultValue={selectedUser.deptCode} value={selectedUser.deptCode} sx={{width:"100%"}}/>
                                 ) : (
-                                    <TextField id='branchName' disabled={editable} variant='outlined' onChange={(e) => setSelectedUser(e.target.value)} defaultValue={selectedUser.branch} value={selectedUser.branch} sx={{width:"100%", backgroundColor:"rgb(223,223,223)"}}/>
+                                    <TextField id='branchName' disabled={editable} variant='outlined' onChange={(e) => setSelectedUser(e.target.value)} defaultValue={selectedUser.deptCode} value={selectedUser.deptCode} sx={{width:"100%", backgroundColor:"rgb(223,223,223)"}}/>
                                 )}
                                 
                             </div>
@@ -164,8 +167,8 @@ export default function Um() {
                                         id="outlined-select-currency-native"
                                         select
                                         disabled={editable}
-                                        defaultValue="ADMIN"
-                                        value={"ADMIN"}
+                                        defaultValue={selectedUser.role}
+                                        value={selectedUser.role}
                                         SelectProps={{
                                             native: true,
                                         }}
@@ -182,8 +185,8 @@ export default function Um() {
                                         id="outlined-select-currency-native"
                                         select
                                         disabled={editable}
-                                        defaultValue="None"
-                                        value={"ADMIN"}
+                                        defaultValue={selectedUser.role}
+                                        value={selectedUser.role}
                                         SelectProps={{
                                             native: true,
                                         }}

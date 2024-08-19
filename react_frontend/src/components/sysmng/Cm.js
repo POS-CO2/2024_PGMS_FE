@@ -28,7 +28,6 @@ export default function Cm() {
         setSelectedCodeGroup([e])
         
         const {data} = await axiosInstance.get(`/sys/code?codeGrpNo=${e.codeGrpNo}`);
-        console.log(data);
         setCode(data);
 
         // setSelectedCodeGroup(e?.["코드 번호"] ?? null)
@@ -85,7 +84,6 @@ export default function Cm() {
     useEffect(() => {
         (async () => {
             const {data} = await axiosInstance.get("/sys/codegroup");
-            console.log(data);
             setCodeGroup(data);
         })();
     },[]);
