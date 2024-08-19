@@ -5,6 +5,7 @@ import  * as headerStyles from './assets/css/header.css';
 import AppContainer from './AppContainer';
 import { Outlet, useLocation, useNavigate } from 'react-router';
 import Tabbar from './Tabbar';
+import axiosInstance from './utils/AxiosInstance';
 
 
 // const menus =
@@ -185,6 +186,7 @@ export default function SiteLayout({handleLogout, menus, user}){
     });
 
     const [fav, setFav] = useState(true);
+    const [loading, setLoading] = useState(false);
 
     const navigate = useNavigate();
     const tabBarRef = useRef(null);
@@ -194,8 +196,11 @@ export default function SiteLayout({handleLogout, menus, user}){
 
     // 메뉴 클릭 시 해당 url 로 이동 하는 코드.
     // 탭도 생성함
-    const handleMenuClick = (item) => {
-        console.log(item);
+    const handleMenuClick = async (item) => {
+        // console.log(item);
+        setLoading(true);
+        const response = await axiosInstance.post(`/sys/log/click?menuId=${item.id}`)
+        // console.log(response);
         const existingTab = tabs.find(tab => tab.url === item.url );
         // 중복 탭 여부 검사(이미 열려있는지)
         if (item.menu.length === 0){
@@ -208,6 +213,7 @@ export default function SiteLayout({handleLogout, menus, user}){
             localStorage.setItem('activeTab', item.url);
             navigate(item.url);
         }
+        setLoading(false);
     };
 
     // 탭 클릭시 해당 url 로 이동하는 코드
@@ -294,9 +300,30 @@ export default function SiteLayout({handleLogout, menus, user}){
         console.log(fav);
         setFav(!fav);
     }
-
-    
-    
+    if (loading) {
+        return (
+        <div id={mainStyles.root}>
+            <Navigation menus={menus} onMenuClick={handleMenuClick} activeTab={activeTab}/>
+            <AppContainer 
+                tabs = {tabs} 
+                handleMenuClick={handleMenuClick} 
+                activeTab={activeTab} 
+                handelTabClick={handelTabClick} 
+                handleTabClose={handleTabClose} 
+                dragStart={dragStart} 
+                dragEnter={dragEnter} 
+                drop={drop}
+                handleFavClick={handleFavClick}
+                fav={fav}
+                handleLogout={handleLogout}
+                user={user}
+                menus={menus}
+            >
+                {/* skeleton */}
+            </AppContainer>
+        </div>
+        );
+    }
 
     return (
         <div id={mainStyles.root}>

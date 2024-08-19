@@ -15,11 +15,11 @@ export default function Fm() {
     const [selectedPjt, setSelectedPjt] = useState([]);
 
     const handleFormSubmit = async (param) => {
-    
+        console.log(param);
+        
         setSelectedPjt([param.searchProject]);
-
+        console.log([param.searchProject]);
         const {data} = await axiosInstance.get(`/equip?pjtId=${param.searchProject.id}`);
-        console.log(data);
         
         setFac(data);
         
