@@ -10,12 +10,15 @@ import * as sdStyles from "../assets/css/sdModal.css";
 import * as ps12Styles from "../assets/css/ps12UploadExcelModal.css";
 import { EditButton } from "../Button";
 import Table from "../Table";
+import project from "../assets/json/project"
 import { employee } from "../assets/json/manager.js"
+import { actv } from "../assets/json/selectedPjt";
 import emsData from "../assets/json/ems";
 import { selectYear, selectMonth } from "../assets/json/sd";
 import { TextField, Box, InputLabel, MenuItem, FormControl, Autocomplete } from '@mui/material';
 import WarningAmberIcon from '@mui/icons-material/WarningAmber';
 import { Sledding } from '@mui/icons-material';
+import axiosInstance from '../utils/AxiosInstance.js';
 
 export function PgAddModal({ isModalOpen, handleOk, handleCancel }) {
     const [formData, setFormData] = useState({});             // 검색 데이터
@@ -93,16 +96,8 @@ export function PdAddModal({ isModalOpen, handleOk, handleCancel }) {
 
     // 사원 row 클릭 시 호출될 함수
     const handleEmpClick = (emp) => {
-        setSelectedEmps((prevSelectedEmp) => {
-            // 선택된 사원의 loginId가 이미 배열에 존재하는지 확인
-            if (prevSelectedEmp.includes(emp.loginId)) {
-                // 존재한다면 배열에서 제거
-                return prevSelectedEmp.filter((id) => id !== emp.loginId);
-            } else {
-                // 존재하지 않는다면 배열에 추가
-                return [...prevSelectedEmp, emp.loginId];
-            }
-        });
+        const newSelectedEmps = emp.map(e => e.loginId);
+        setSelectedEmps(newSelectedEmps);
     };
 
     // 등록 버튼 클릭 시 호출될 함수
@@ -529,6 +524,62 @@ export function FamEditModal({ isModalOpen, handleOk, handleCancel, rowData }) {
     )
 }
 
+export function FadAddModal({ isModalOpen, handleOk, handleCancel }) {
+    const [formData, setFormData] = useState({});             // 검색 데이터
+    const [selectedActves, setselectedActves] = useState([]);     // 선택된 프로젝트
+    
+    // 찾기 버튼 클릭시 호출될 함수
+    const handleFormSubmit = (data) => {
+        setFormData(data); 
+    };
+  
+    // 활동자료 row 클릭 시 호출될 함수
+    const handleActvClick = (actves) => {
+        setselectedActves(actves.map(actv => actv.actvDataName));
+    };
+  
+    // 선택 버튼 클릭 시 호출될 함수
+    const handleSelect = () => {
+        handleOk(selectedActves);
+    };
+  
+    return (
+      <Modal 
+        open={isModalOpen} 
+        width={800}
+        onCancel={handleCancel} 
+        footer={null}             //Ant Design의 기본 footer 제거(Cancel, OK 버튼)
+      >
+        <div className={pjtModalStyles.title}>활동자료 지정</div>
+        <p className={pjtModalStyles.comment}>* 활동자료명이나 활동자료구분 둘 중에 하나만 입력해도 검색이 가능합니다.</p>
+        <div className={pjtModalStyles.search_container}>
+            <div className={pjtModalStyles.search_item}>
+                <div className={pjtModalStyles.search_title}>활동자료명</div>
+                <input className={pjtModalStyles.search_code}/>
+            </div>
+            <div className={pjtModalStyles.search_item}>
+                <div className={pjtModalStyles.search_title}>활동자료구분</div>
+                <div className={modalStyles.input_with_btn}>
+                    <Select style={{ width: '250px' }}>
+                        <Select.Option key={"단위1"} value={"단위1"}>{"단위1"}</Select.Option>
+                        <Select.Option key={"단위2"} value={"단위2"}>{"단위2"}</Select.Option>
+                        <Select.Option key={"단위3"} value={"단위3"}>{"단위3"}</Select.Option>
+                    </Select>
+                    <button className={pjtModalStyles.search_button} onClick={handleFormSubmit}>찾기</button>
+                </div>
+            </div>
+        </div>
+  
+        <div className={pjtModalStyles.result_container}>
+            {(!formData || Object.keys(formData).length === 0) ?
+                <></> : ( <Table data={actv} variant='checkbox' onRowClick={handleActvClick} /> )}
+        </div>
+  
+        <button className={pjtModalStyles.select_button} onClick={handleSelect}>등록</button>
+      </Modal>
+    )
+}
+
 export function Ps12UploadExcelModal({ isModalOpen, handleOk, handleCancel }) { // '엑셀 업로드' 모달
     const fileInputRef = useRef(null);
     const [fileList, setFileList] = useState([]);
@@ -611,8 +662,7 @@ export function Ps12UploadExcelModal({ isModalOpen, handleOk, handleCancel }) { 
     )
 }
 
-export function DelModal({ isModalOpen, handleOk, handleCancel }) { // '엑셀 업로드' 모달
-
+export function DelModal({ isModalOpen, handleOk, handleCancel, rowData }) { // '엑셀 업로드' 모달
     return (
         <Modal
             open={isModalOpen}
@@ -630,8 +680,8 @@ export function DelModal({ isModalOpen, handleOk, handleCancel }) { // '엑셀 �
                 정말 삭제하시겠습니까?
             </div>
             <div className={delStyle.buttonContainer}>
-                <button className={delStyle.cancelButton} onClick={handleCancel}>취소</button>
-                <button className={delStyle.okButton} onClick={handleOk}>삭제</button>
+                <button className={delStyle.cancelButton} onClick={() => {handleCancel}}>취소</button>
+                <button className={delStyle.okButton} onClick={() => {handleOk(rowData)}}>삭제</button>
             </div>
         </Modal>
     )
@@ -849,8 +899,23 @@ export function CmListEditModal({ isModalOpen, handleOk, handleCancel }) {
 }
 
 export function FmAddModal({ isModalOpen, handleOk, handleCancel }) {
-    const [showResults, setShowResults] = useState(false);    // 사원 목록을 표시할지 여부
-    const [selectedSulbi, setSelectedSulbi] = useState([]);     // 선택된 사원의 loginId list
+    const [showResults, setShowResults] = useState(false);    // 목록을 표시할지 여부
+    const [selectedSulbi, setSelectedSulbi] = useState([]);     // 선택된 Id list
+    const [sulbiLib, setSulbiLib] = useState([]);
+
+    // 설비 라이브러리 불러오기 
+    useEffect(() => {
+        const fetchSulbiLib = async () => {
+            try {
+                const {data}= await axiosInstance.get("/equip/lib");
+                setSulbiLib(data);    
+            } catch (error) {
+                console.log(error);
+            }
+            
+        };
+        fetchSulbiLib(); // 컴포넌트 마운트 될 때 데이터불러옴
+    }, [])
 
     // 찾기 버튼 클릭 시 호출될 함수
     const handleSearch = () => {
@@ -858,10 +923,10 @@ export function FmAddModal({ isModalOpen, handleOk, handleCancel }) {
 
     };
 
-    // 사원 row 클릭 시 호출될 함수
+    // row 클릭 시 호출될 함수
     const handleSulbiClick = (sulbi) => {
         setSelectedSulbi((prevSelectedSulbi) => {
-            // 선택된 사원의 loginId가 이미 배열에 존재하는지 확인
+            // 선택된 Id가 이미 배열에 존재하는지 확인
             if (prevSelectedSulbi.includes(sulbi.id)) {
                 // 존재한다면 배열에서 제거
                 return prevSelectedSulbi.filter((id) => id !== sulbi.id);
@@ -877,72 +942,10 @@ export function FmAddModal({ isModalOpen, handleOk, handleCancel }) {
         handleOk(selectedSulbi);
     };
 
-    const sulbiLib = [
-        {
-            label: "가설사무실 전력",
-            id: 1,
-        },
-        {
-            label: "임대사무실 전력",
-            id: 2,
-        },
-        {
-            label: "현장식당 전력",
-            id: 3,
-        },
-        {
-            label: "공사용 전력",
-            id: 4,
-        },
-        {
-            label: "법인 차량",
-            id: 5,
-        },
-        {
-            label: "직원 유류비",
-            id: 6,
-        },
-        {
-            label: "직영 장비",
-            id: 7,
-        },
-        {
-            label: "난방용 보일러",
-            id: 8,
-        },
-        {
-            label: "사무실 스팀",
-            id: 9,
-        },
-        {
-            label: "현장식당 스팀",
-            id: 10,
-        },
-        {
-            label: "사무실 보일러",
-            id: 11,
-        },
-        {
-            label: "현장식당 보일러",
-            id: 12,
-        },
-        {
-            label: "사무실 연료",
-            id: 13,
-        },
-        {
-            label: "현장식당 연료",
-            id: 14,
-        },
-        {
-            label: "Test",
-            id: 15,
-        },
-    ]
 
     const defaultProps = {
         options: sulbiLib,
-        getOptionLabel: (option) => option.label
+        getOptionLabel: (option) => option.equipLibName
     };
 
     const flatProps = {

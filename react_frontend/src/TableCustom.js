@@ -1,7 +1,7 @@
 import React, {useState} from 'react';
 import Table from "./Table.js";
 import * as tableStyles from "./assets/css/newTable.css"
-import { DelModal, PgAddModal, PdAddModal, RmAddModal, FlAddModal, FlEditModal, FamAddModal, FamEditModal, Ps12UploadExcelModal, CmAddModal, DeleteModal, CmEditModal, CmListAddModal, CmListEditModal, FmAddModal, UmAddModal, MmAddModal, EsmAddModal, SdAddModal, SdShowDetailsModal } from "./modals/PdModal.js";
+import { DelModal, PgAddModal, PdAddModal, RmAddModal, FlAddModal, FlEditModal, FamAddModal, FamEditModal, FadAddModal, Ps12UploadExcelModal, CmAddModal, DeleteModal, CmEditModal, CmListAddModal, CmListEditModal, FmAddModal, UmAddModal, MmAddModal, EsmAddModal, SdAddModal, SdShowDetailsModal } from "./modals/PdModal.js";
 import { ButtonGroup } from './Button';
 
 const modalMap = {
@@ -18,6 +18,7 @@ const modalMap = {
     FlEdit: FlEditModal,
     FamAdd: FamAddModal,
     FamEdit: FamEditModal,
+    FadAdd: FadAddModal,
     Del: DelModal,
     FmAdd: FmAddModal,
     UmAdd: UmAddModal,
@@ -39,6 +40,7 @@ export default function TableCustom({
     selectedRows = [],       // 테이블에서 선택된 row 리스트
 }) {
     // 버튼 활성화 상태 결정
+    
     const buttonStatus = buttons.map((button) => {
         if (button === 'Edit' || button === 'Delete') {
             if (selectedRows.includes(null) || selectedRows.includes(undefined)) {  // 선택한 row가 없으면 삭제 버튼의 onRowClick 이벤트 비활성화(variant='default')
