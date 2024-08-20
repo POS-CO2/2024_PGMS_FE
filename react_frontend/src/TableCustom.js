@@ -162,6 +162,7 @@ export function TableCustomDoubleClickEdit({
                             handleOk={modal.handleOk || (() => {})}
                             handleCancel={modal.handleCancel || (() => {})}
                             onRowClick={onRowClick}
+                            rowData={modal.rowData}
                         />
                     ) : null;
                 })}

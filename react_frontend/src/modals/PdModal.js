@@ -165,17 +165,76 @@ export function PdAddModal({ isModalOpen, handleOk, handleCancel }) {
     )
 }
 
-export function RmAddModal({ isModalOpen, handleOk, handleCancel }) {
+export function RmAddModal({ isModalOpen, handleOk, handleCancel, rowData }) {
     // 등록 버튼 클릭 시 호출될 함수(등록할 매출액의 data를 전달)
     const handleSelect = () => {
+        // 입력 필드의 값 가져오기
+        const year = document.getElementById('year').value;
+        const month = document.getElementById('month').value;
+        const salesAmt = document.getElementById('salesAmt').value;
+        
+        // 에러 필드 및 메시지 초기화
+        const yearField = document.getElementById('year');
+        const monthField = document.getElementById('month');
+        const salesAmtField = document.getElementById('salesAmt');
+
+        // 에러 메시지 요소
+        const yearError = document.getElementById('year-error');
+        const monthError = document.getElementById('month-error');
+        const salesAmtError = document.getElementById('salesAmt-error');
+
+        yearField.classList.remove(rmStyles.error);
+        monthField.classList.remove(rmStyles.error);
+        salesAmtField.classList.remove(rmStyles.error);
+
+        yearError.textContent = '';
+        monthError.textContent = '';
+        salesAmtError.textContent = '';
+
+        // 별표 제거
+        document.getElementById('year-star').textContent = '';
+        document.getElementById('month-star').textContent = '';
+        document.getElementById('salesAmt-star').textContent = '';
+
+        let hasError = false;
+
+        // 유효성 검사
+        if (!year) {
+            yearField.classList.add(rmStyles.error); // 오류 클래스 추가
+            yearError.textContent = `'년' is required`; // 오류 메시지 설정
+            document.getElementById('year-star').textContent = '*'; // 빨간색 별표 추가
+            hasError = true;
+        }
+        if (!month) {
+            monthField.classList.add(rmStyles.error); // 오류 클래스 추가
+            monthError.textContent = `'월' is required`; // 오류 메시지 설정
+            document.getElementById('month-star').textContent = '*'; // 빨간색 별표 추가
+            hasError = true;
+        }
+        if (!salesAmt) {
+            salesAmtField.classList.add(rmStyles.error); // 오류 클래스 추가
+            salesAmtError.textContent = `'매출액' is required`; // 오류 메시지 설정
+            document.getElementById('salesAmt-star').textContent = '*'; // 빨간색 별표 추가
+            hasError = true;
+        }
+
+        if (hasError) {
+            return;
+        }
+
         const formData = {
-            pjtCode: document.getElementById('pjtCode').value,
-            pjtName: document.getElementById('pjtName').value,
-            year: document.getElementById('year').value,
-            month: document.getElementById('month').value,
-            saleAmt: document.getElementById('saleAmt').value,
+            year,
+            month,
+            salesAmt,
         };
-        handleOk(formData);  // 입력된 데이터를 handleOk 함수로 전달
+
+        // 부모 컴포넌트에 데이터 전달
+        handleOk(formData);
+
+        // 입력창 초기화
+        yearField.value = '';
+        monthField.value = '';
+        salesAmtField.value = '';
     };
 
     return (
@@ -190,23 +249,54 @@ export function RmAddModal({ isModalOpen, handleOk, handleCancel }) {
             <div className={rmStyles.search_container}>
                 <div className={rmStyles.search_item}>
                     <div className={rmStyles.search_title}>프로젝트코드</div>
-                    <input className={rmStyles.search} id="pjtCode" />
+                    <input 
+                        id="pjtCode"
+                        className={rmStyles.search} 
+                        value={rowData.pjtCode} 
+                        readOnly
+                    />
                 </div>
                 <div className={rmStyles.search_item}>
                     <div className={rmStyles.search_title}>프로젝트명</div>
-                    <input className={rmStyles.search} id="pjtName" />
+                    <input 
+                        id="pjtName" 
+                        className={rmStyles.search} 
+                        value={rowData.pjtName} 
+                        readOnly
+                    />
                 </div>
                 <div className={rmStyles.search_item}>
-                    <div className={rmStyles.search_title}>년</div>
-                    <input className={rmStyles.search} id="year" />
+                    <div className={rmStyles.search_title}>
+                        년<span id="year-star" className={rmStyles.error_star}></span>
+                    </div>
+                    <input 
+                        id="year"
+                        className={rmStyles.search} 
+                        required
+                    />
+                    <div id="year-error" className={rmStyles.error_message}></div>
                 </div>
                 <div className={rmStyles.search_item}>
-                    <div className={rmStyles.search_title}>월</div>
-                    <input className={rmStyles.search} id="month" />
+                <div className={rmStyles.search_title}>
+                        월<span id="month-star" className={rmStyles.error_star}></span>
+                    </div>
+                    <input 
+                        id="month" 
+                        className={rmStyles.search} 
+                        required
+                    />
+                    <div id="month-error" className={rmStyles.error_message}></div>
                 </div>
                 <div className={rmStyles.search_item}>
-                    <div className={rmStyles.search_title}>매출액</div>
-                    <input className={rmStyles.search} id="saleAmt" />
+                <div className={rmStyles.search_title}>
+                        매출액<span id="salesAmt-star" className={rmStyles.error_star}></span>
+                    </div>
+                    <input 
+                        id="salesAmt" 
+                        className={rmStyles.search} 
+                        required
+                    />
+                    <div id="salesAmt-error" className={rmStyles.error_message}></div>
                 </div>
             </div>
 
