@@ -10,6 +10,8 @@ const modalMap = {
     CMListAdd: CmListAddModal,
     CMListEdit: CmListEditModal,
     Delete: DeleteModal,
+    DeleteA: DeleteModal, // 한페이지에 모달이 두개 있을 경우...
+    DeleteB: DeleteModal,
     Ps12UploadExcel: Ps12UploadExcelModal,
     PgAdd: PgAddModal,
     PdAdd: PdAddModal,
@@ -69,6 +71,7 @@ export default function TableCustom({
                             handleCancel={modal.handleCancel || (() => {})}
                             onRowClick={onRowClick}
                             rowData={modal.rowData}
+                            url={modal.url || ""}
                         />
                     ) : null;
                 })}

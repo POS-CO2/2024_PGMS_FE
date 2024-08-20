@@ -57,7 +57,7 @@ export default function CustomizedTables({
         handleBlur = () => { },
         editingCell = {}
     }) {
-    const [selectedRow, setSelectedRow] = useState(null);       // default variant의 선택 상태
+    const [selectedRow, setSelectedRow] = useState({});       // default variant의 선택 상태
     const [selectedRows, setSelectedRows] = useState([]); 
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(10);             // default page row length
@@ -134,12 +134,12 @@ export default function CustomizedTables({
                                 // 표에 data 채우기
                                 paginatedData.map((row, rowIndex) => (
                                     <StyledTableRow 
-                                        key={rowIndex}
+                                        key={rowIndex + (rowsPerPage * page)}
                                         selected={variant === 'checkbox' 
                                                 ? selectedRows.includes(rowIndex) 
-                                                : selectedRow === rowIndex}
+                                                : selectedRow === rowIndex + (rowsPerPage * page)}
                                         variant={variant}
-                                        onClick={() => handleRowClick(rowIndex)}
+                                        onClick={() => handleRowClick(rowIndex + (rowsPerPage * page))}
                                     >
                                         {   // checkbox가 있는 테이블이면 체크박스 셀 추가
                                             variant === 'checkbox' && (

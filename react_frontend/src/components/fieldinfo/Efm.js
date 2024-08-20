@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import SearchForms from '../../SearchForms';
 import { formField_efm } from '../../assets/json/searchFormData';
 import { table_efm_list, table_fm_res } from '../../assets/json/selectedPjt';
@@ -7,51 +7,78 @@ import { AllButton } from '../../Button';
 import * as sysStyles from '../../assets/css/sysmng.css';
 import * as mainStyle from '../../assets/css/main.css';
 import { Card, FormControl, InputLabel, MenuItem, Select } from '@mui/material';
+import axiosInstance from '../../utils/AxiosInstance';
 
 
 export default function Efm() {
 
     const [efm, setEfm] = useState([]);
-
-    const handleFormSubmit = (data) => {
-        console.log(data);
-        setEfm(data);
+    const [showEfm, setShowEfm] = useState(true);
+    const [selectedEfm, setSelectedEfm] = useState([]);
+    const [filteredEfm, setFilteredEfm] = useState([]);
+    
+    const handleFormSubmit = async (e) => {
+        setShowEfm(false);
+        const {data} = await axiosInstance.get('/equip/actv', {
+            params:{
+                actvDataName: e.actvDataName
+            }
+        });
+        setEfm(data ?? {});
+        setShowEfm(true);
+        setShowSearchResult(false);
     }
 
-    const [showSearchResult, setShowSearchResult] = useState(showSearchResult ? true : false);
+    const [showSearchResult, setShowSearchResult] = useState(false);
 
-    const handleSearchClick = () => {
-        setShowSearchResult(!showSearchResult);
-        console.log(showSearchResult);
-    }
-
-    const handleRowClick = () => {
-
-    }
+    const handleRowClick = async (e) => {
+        if (e === undefined){
+            setShowSearchResult(false);
+        }
+        else{
+            setShowSearchResult(true);
+            const {data} = await axiosInstance.get(`/equip/coef?actvDataId=${e.id}`)
+            setSelectedEfm(data ?? {});
+            const firstSetFilteredEfm = data.filter((e) => e.applyYear === 2024);
+            setFilteredEfm(firstSetFilteredEfm);
+        }
+        
+    }   
+    
 
     const [year, setYear] = useState(2024);
-
-    const handleYearChange = (year) => {
-        setYear(year.target.value)
+    const handleYearChange = async (year) => {
+        setYear(year.target.value);
+        const selectedYear = year.target.value
+        const yearSelectedEfm = selectedEfm.filter((e) => e.applyYear === selectedYear);
+        setFilteredEfm(yearSelectedEfm);
     }
+
+    useEffect(() => {
+        (async () => {
+            const {data} = await axiosInstance.get(`/equip/actv`);
+            setEfm(data ?? {});
+        })();
+    },[])
 
     return (
         <>
             <div className={mainStyle.breadcrumb}>
                 {"현장정보 > 설비 > 배출계수관리"}
             </div>
-            <SearchForms onFormSubmit={handleFormSubmit} formFields={formField_efm} onSearch={handleSearchClick}/>
-            <div className={sysStyles.main_grid_fm} >
+            <SearchForms onFormSubmit={handleFormSubmit} formFields={formField_efm}/>
+            <div className={sysStyles.main_grid} >
+                <Card className={sysStyles.card_box} sx={{width:"50%", height:"fit-content", borderRadius:"15px"}}>
+                    <div className={sysStyles.mid_title}>
+                        {"활동자료"}
+                    </div>
+                    <TableCustom title="" data={efm} onRowClick={handleRowClick}/>
+                </Card>
                 {showSearchResult ? (
                     <>
-                        <Card className={sysStyles.card_box} sx={{width:"100%", height:"fit-content", borderRadius:"15px"}}>
-                            <div className={sysStyles.mid_title}>
-                                {"활동자료"}
-                            </div>
-                            <TableCustom title="" data={table_fm_res} onRowClick={handleRowClick}/>
-                        </Card>
                         
-                        <Card className={sysStyles.card_box} sx={{width:"100%", height:"fit-content", borderRadius:"15px"}}>
+                        
+                        <Card className={sysStyles.card_box} sx={{width:"50%", height:"fit-content", borderRadius:"15px"}}>
                             <div className={sysStyles.mid_title}>
                                 {"배출계수목록"}
                             </div>
@@ -63,7 +90,7 @@ export default function Efm() {
                                 value={year}
                                 label="year"
                                 onChange={handleYearChange}
-                                sx={{width:"12%", height:"2rem"}}
+                                sx={{width:"20%", height:"2rem"}}
                             >
                                 <MenuItem value={2024}>2024</MenuItem>
                                 <MenuItem value={2023}>2023</MenuItem>
@@ -71,7 +98,7 @@ export default function Efm() {
                                 <MenuItem value={2021}>2021</MenuItem>
                             </Select>
                             </FormControl>
-                            <TableCustom title="" data={table_efm_list} button="AllButton" onRowClick={handleRowClick} />
+                            <TableCustom title="" data={filteredEfm} button="AllButton" />
                         </Card>
                     </>
                 ) : (

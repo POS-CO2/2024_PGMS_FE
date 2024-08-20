@@ -17,7 +17,7 @@ export default function Navigation({ menus, onMenuClick, activeTab }){
         <>
             {(!fold) ? (
                 <div className={navStyles.navigation_container}>
-                    <div onClick={handleFoldClick}>
+                    <div>
                     <Title/>
                     </div>
                     <MenuList menus={menus} onMenuClick={onMenuClick} activeTab={activeTab}/>

@@ -126,7 +126,10 @@ export const formField_sd = [
 ];
 
 export const formField_cm = [
-    { type: 'InputText', name: 'codeGroupId', label: '코드그룹ID'},
+    { type: 'InputText', name: 'codeGrpNo', label: '코드그룹ID'},
+    { type: 'InputText', name: 'codeGrpName', label: '코드그룹 이름'},
+    { type: 'InputText', name: 'codeGrpNameEn', label: '코드그룹 영문이름'},
+    { type: 'InputText', name: 'note', label: '노트'},
 ]
 
 export const formField_um = [
@@ -141,8 +144,13 @@ export const formField_um = [
 
 export const formField_mal = [
     { type: 'InputText', name: 'userName', label: "사용자명"},
-    { type: 'InputText', name: 'userID', label: "사용자 아이디"},
-    { type: 'SelectCalendar', name: 'calendar', label: "조회기간"},
+    { type: 'InputText', name: 'loginId', label: "사용자 아이디"},
+    { type: 'DropDown', name: 'deptCode', label: "부서 명", options: []},
+    { type: 'DropDown', name: 'role', label: '권한', required: false, options: [
+        {value: 'FP', label: '현장 담당자'},
+        {value: 'HP', label: '본사 담당자'},
+        {value: 'ADMIN', label: '시스템 관리자'},
+    ]},
 ]
 
 export const formField_fm = [

@@ -15,11 +15,11 @@ export default function Fm() {
     const [selectedPjt, setSelectedPjt] = useState([]);
 
     const handleFormSubmit = async (param) => {
-    
+        console.log(param);
+        
         setSelectedPjt([param.searchProject]);
-
+        console.log([param.searchProject]);
         const {data} = await axiosInstance.get(`/equip?pjtId=${param.searchProject.id}`);
-        console.log(data);
         
         setFac(data);
         
@@ -40,7 +40,7 @@ export default function Fm() {
     const handleRowClick = (e) => {
         setShowFacList(false);
         console.log(e);
-        setSelectedFac(e?.["설비명"] ?? null)
+        setSelectedFac(e)
     };
 
     const [isModalOpen, setIsModalOpen] = useState({
@@ -55,11 +55,12 @@ export default function Fm() {
     const handleOk = (modalType) => (data) => {
         setIsModalOpen(prevState => ({ ...prevState, [modalType]: false }));
         if (modalType === 'FmAdd') {
-            setSelectedPjt(data); // 선택된 프로젝트 데이터를 상태로 저장
-            console.log("Selected Project:", data);
+            setFac(prevList => [...prevList, data]); // 선택된 프로젝트 데이터를 상태로 저장
+        }
+        else if (modalType === 'Delete') {
+            setFac(prevList => prevList.filter(fac => fac.id !== data.id));
         }
     };
-
     const handleCancel = (modalType) => () => {
         setIsModalOpen(prevState => ({ ...prevState, [modalType]: false }));
     }; 
@@ -116,26 +117,29 @@ export default function Fm() {
                             <div className={sysStyles.mid_title}> 
                                 조회결과
                             </div>
-                            <TableCustom title="" data={selectedPjt} onRowClick={handleRowClick}/>
+                            <TableCustom title="" data={selectedPjt} onRowClick={() => {}}/>
                         </Card>
                         {/** 버튼 변경 필요(엑셀 다운로드, 삭제, 등록) 및 등록 클릭 시 모달 추가 */}
                         <Card className={sysStyles.card_box} sx={{width:"100%", height:"fit-content", borderRadius:"15px"}}>
                             <div className={sysStyles.mid_title}> 
                                     설비목록
                             </div>
-                        <TableCustom title="" data={fac} selectedRows={[selectedFac]} buttons={["DownloadExcel", "Delete", "Add"]} onClicks={[() => handleExcelUploadClick(table_fm_facList, 'exported_table'), handleDeleteClick,handleAddClick]} onRowClick={handleRowClick} excel={true} modals={
+                        <TableCustom title="" data={fac} selectedRows={[selectedFac]} buttons={["DownloadExcel", "Delete", "Add"]} onClicks={[() => handleExcelUploadClick(table_fm_facList, 'exported_table'), handleDeleteClick, handleAddClick]} onRowClick={handleRowClick} excel={true} modals={
                             [
-                                {
-                                    "modalType" : 'FmAdd',
-                                    'isModalOpen': isModalOpen.FmAdd,
-                                    'handleOk': handleOk('FmAdd'),
-                                    'handleCancel': handleCancel('FmAdd')
-                                },
                                 {
                                     "modalType" : 'Delete',
                                     'isModalOpen': isModalOpen.Delete,
                                     'handleOk': handleOk('Delete'),
-                                    'handleCancel': handleCancel('Delete')
+                                    'handleCancel': handleCancel('Delete'),
+                                    'rowData': selectedFac, 
+                                    'url': '/equip',
+                                },
+                                {
+                                    "modalType" : 'FmAdd',
+                                    'isModalOpen': isModalOpen.FmAdd,
+                                    'handleOk': handleOk('FmAdd'),
+                                    'handleCancel': handleCancel('FmAdd'),
+                                    'rowData': selectedPjt,
                                 },
                             ]
                         }/>
