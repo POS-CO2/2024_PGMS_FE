@@ -26,6 +26,8 @@ export default function Cm() {
         setCodeGroup(data ?? {});
         setShowCodeGroup(true);
         setShowCode(false);
+        setSelectedCode(null);
+        setSelectedCodeGroup(null);
     }
     const [selectedCodeGroup, setSelectedCodeGroup] = useState(null);
 
@@ -51,7 +53,7 @@ export default function Cm() {
     const [selectedCode, setSelectedCode] = useState(null);
 
     const handleCodeRowClick = (e) => {
-        
+        console.log(e);
         setSelectedCode(e);
     }
 
