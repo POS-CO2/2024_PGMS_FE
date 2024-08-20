@@ -6,7 +6,7 @@ import { table_um_list } from '../../assets/json/selectedPjt';
 import { ButtonGroup, ButtonGroupMm } from '../../Button';
 import * as sysStyles from '../../assets/css/sysmng.css';
 import * as mainStyle from '../../assets/css/main.css';
-import { Card, TextField, Button } from '@mui/material';
+import { Card, TextField, Button, Hidden } from '@mui/material';
 import { Dropdown } from '@mui/base';
 import axiosInstance from '../../utils/AxiosInstance';
 import { Select } from 'antd';
@@ -15,6 +15,7 @@ export default function Um() {
     const [formFields, setFormFields] = useState(formField_mal);
     const [userList, setUserList] = useState([]);
     const [userShow, setUserShow] = useState(true);
+    const [password, setPassword] = useState(null);
     const access = [
         {
             value: 'FP',
@@ -57,12 +58,14 @@ export default function Um() {
     });
 
     const handleRowClick = (e) => {
+        
         console.log(e);
         setSelectedUser(e ?? {});
         if (e === undefined) {
             setInfoShow(false);
         }
         else {
+            
             setInfoShow(true);
         }
         
@@ -102,26 +105,28 @@ export default function Um() {
     
     const handleEditable = () => {
         setEditable(false); // 되게함
+        
     }
     
     const handleEditClick = async () => {
+        const selectedDept = dept.find(option => option.label === selectedUser.deptCode) || {};
         const formData = {
             id: selectedUser.id,
             userName: selectedUser.userName,
             loginId: selectedUser.loginId,
-            password: selectedUser.password,
-            deptCode: selectedUser.deptCode,
+            password,
+            deptCode: selectedDept.value || selectedUser.deptCode,
             role: selectedUser.role,
         };
         setEditable(true);
-        console.log(selectedUser);
         try {
             const {data} = await axiosInstance.patch('/sys/user', formData);
             // handleOk을 호출하여 모달을 닫고 상위 컴포넌트에 알림
-            console.log(data);
             setUserList(prevList => prevList.map(user => 
-                user.id === selectedUser.id ? formData : user
+                user.id === data.id ? data : user
             ));
+            setSelectedUser(data);
+            setPassword(null);
             
         } catch (error) {
             console.error('Failed to add user:', error);
@@ -141,15 +146,7 @@ export default function Um() {
         }));
     };
 
-    const handleDeptChange = (value) => {
-        setSelectedUser(prevState => ({
-            ...prevState,
-            deptCode: value,
-        }))
-    }
-
     const [dept, setDept] = useState([]);
-
 
     useEffect(() => {
         (async () => {
@@ -213,7 +210,7 @@ export default function Um() {
                                         'handleOk': handleOk('Delete'),
                                         'handleCancel': handleCancel('Delete'),
                                         'rowData': selectedUser, // 추가 사항 삭제할 객체 전달
-                                        'url': '/sys/user',
+                                        'url': '/sys/user', // 삭제 전달할 api 주소
                                     },
                                 ]
                             }/>
@@ -234,9 +231,9 @@ export default function Um() {
                                     {"비밀번호"}
                                 </div>
                                 {!editable ? (
-                                    <TextField id='password' disabled={editable} variant='outlined' onChange={handleInputChange} defaultValue={selectedUser.password} value={selectedUser.password} sx={{width:"100%"}}/>
+                                    <TextField id='password' disabled={editable} variant='outlined' onChange={(e) => setPassword(e.target.value)} value={password} sx={{width:"100%"}}/>
                                 ) : (
-                                    <TextField id='password' disabled={editable} variant='outlined' onChange={handleInputChange} defaultValue={selectedUser.password} value={selectedUser.password} sx={{width:"100%", backgroundColor:"rgb(223,223,223)"}}/>
+                                    <TextField id='password' disabled={editable} variant='outlined' onChange={handleInputChange} value={''} placeholder='비밀번호 입력 시 비밀번호가 변경됩니다.' sx={{width:"100%", backgroundColor:"rgb(223,223,223)"}}/>
                                 )}
                                 
                             </div>
@@ -251,7 +248,7 @@ export default function Um() {
                             <div className={sysStyles.text_field} style={{marginTop:"2rem",width:"50%"}}>
                                 <div className={sysStyles.text}>{"사업장"}</div>
                                 {!editable ? (
-                                    <Select value={selectedUser.deptCode} onChange={handleDeptChange} defaultValue={selectedUser.deptCode} style={{width:"100%", height:"3.5rem", fontSize:"4rem"}}>
+                                    <Select value={selectedUser.deptCode} onChange={(value) => handleInputChange({ target: { id: 'deptCode', value} })} defaultValue={selectedUser.deptCode} style={{width:"100%", height:"3.5rem", fontSize:"4rem"}}>
                                     {dept.map(option => (
                                         <Select.Option key={option.value} value={option.value}>
                                             {option.label}
@@ -259,7 +256,7 @@ export default function Um() {
                                     ))}
                                     </Select>
                                 ) : (
-                                    <TextField id='branchName' disabled={editable} variant='outlined' onChange={(e) => setSelectedUser(e.target.value)} defaultValue={selectedUser.deptCode} value={selectedUser.deptCode} sx={{width:"100%", backgroundColor:"rgb(223,223,223)"}}/>
+                                    <TextField id='deptCode' disabled={editable} variant='outlined' onChange={handleInputChange} defaultValue={selectedUser.deptCode} value={selectedUser.deptCode} sx={{width:"100%", backgroundColor:"rgb(223,223,223)"}}/>
                                 )}
                                 
                             </div>
