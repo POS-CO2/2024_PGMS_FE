@@ -31,6 +31,7 @@ const modalMap = {
 }
 
 export default function TableCustom({
+    key = [],
     title = "Default Title",
     variant = 'default',
     data = [],
@@ -76,7 +77,7 @@ export default function TableCustom({
                 })}
             </div>
             {table ? (
-            <Table data={data} variant={variant} onRowClick={onRowClick}/>
+            <Table key={JSON.stringify(data)} data={data} variant={variant} onRowClick={onRowClick}/>
             ) : (<></>)}
             
         </>
