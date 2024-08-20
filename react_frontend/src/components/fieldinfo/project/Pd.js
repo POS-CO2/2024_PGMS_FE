@@ -24,13 +24,14 @@ export default function Pd() {
         setFormData([param.searchProject]);
         const {data} = await axiosInstance.get(`/pjt/manager?pjtId=${param.searchProject.id}`);
         
+        console.log("data:", data);
         // 필요한 필드만 추출하여 managers에 설정
         const filteredManagers = data.map(manager => ({
             id: manager.id,
             사번: manager.userLoginId,
             이름: manager.userName,
             부서: manager.userDeptCode,
-            권한: manager.role
+            권한: manager.userRole
         }));
 
         setManagers(filteredManagers);
@@ -127,7 +128,10 @@ export default function Pd() {
             <></> : ( //TODO: 백엔드에서 받아온 값으로 바꾸기(data 파라미터)
                 <>
                     <div className={tableStyles.table_title}>조회결과</div>
-                    <Table data={formData} />                    
+                    <Table 
+                        data={formData}
+                        key={JSON.stringify(formData)} // formData 변경 시 key 변경
+                    />                    
                     <TableCustom
                         title='담당자목록' 
                         data={managers}                   

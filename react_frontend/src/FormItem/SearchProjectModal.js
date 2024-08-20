@@ -44,6 +44,14 @@ export default function ModalComponent({ isModalOpen, handleOk, handleCancel }) 
     setProject(filteredProjects);
   };
 
+  // 엔터 키 입력 시 handleFormSubmit 호출
+  const handleKeyDown = (e) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();  // 폼의 기본 제출 동작 방지
+      handleFormSubmit();
+    }
+  };
+
   // 프로젝트 row 클릭 시 호출될 함수
   const handlePjtClick = (pjt) => {
     setSelectedPjt(pjt ?? {});   // 클릭된 프로젝트의 코드로 상태를 설정
@@ -70,6 +78,7 @@ export default function ModalComponent({ isModalOpen, handleOk, handleCancel }) 
             name="projectCode"
             className={pjtModalStyles.search_code} 
             onChange={handleInputChange}
+            onKeyDown={handleKeyDown}
           />
         </div>
         <div className={pjtModalStyles.search_item}>
@@ -79,6 +88,7 @@ export default function ModalComponent({ isModalOpen, handleOk, handleCancel }) 
               name="projectName"
               className={pjtModalStyles.search_name} 
               onChange={handleInputChange}
+              onKeyDown={handleKeyDown}
             />
             <button className={pjtModalStyles.search_button} onClick={handleFormSubmit}>찾기</button>
           </div>

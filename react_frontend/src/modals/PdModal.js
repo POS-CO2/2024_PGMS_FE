@@ -96,6 +96,14 @@ export function PdAddModal({ isModalOpen, handleOk, handleCancel }) {
         }
     };
 
+    // 엔터 키 입력 시 handleFormSubmit 호출
+    const handleKeyDown = (e) => {
+        if (e.key === 'Enter') {
+        e.preventDefault();  // 폼의 기본 제출 동작 방지
+        handleSearch();
+        }
+    };
+
     // 사원 row 클릭 시 호출될 함수
     const handleEmpClick = (emp) => {
         setSelectedEmps(emp);
@@ -117,12 +125,20 @@ export function PdAddModal({ isModalOpen, handleOk, handleCancel }) {
             <div className={modalStyles.search_container}>
                 <div className={modalStyles.search_item}>
                     <div className={modalStyles.search_title}>사번</div>
-                    <input className={modalStyles.search} onChange={(e) => handleInputChange(e, setEmpId)} />
+                    <input 
+                        className={modalStyles.search} 
+                        onChange={(e) => handleInputChange(e, setEmpId)}
+                        onKeyDown={handleKeyDown}
+                    />
                 </div>
                 <div className={modalStyles.search_item}>
                     <div className={modalStyles.search_title}>이름</div>
                     <div className={modalStyles.input_with_btn}>
-                        <input className={modalStyles.search} onChange={(e) => handleInputChange(e, setEmpName)} />
+                        <input 
+                            className={modalStyles.search} 
+                            onChange={(e) => handleInputChange(e, setEmpName)} 
+                            onKeyDown={handleKeyDown}
+                        />
                         <button className={modalStyles.search_button} onClick={handleSearch}>조회</button>
                     </div>
                 </div>
