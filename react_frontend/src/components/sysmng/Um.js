@@ -49,9 +49,9 @@ export default function Um() {
     const [infoShow ,setInfoShow] = useState(false);
 
     const [selectedUser, setSelectedUser] = useState({
+        userName: '',
         loginId: '',
         password: '',
-        userName: '',
         deptCode: '',
         role: '',
     });
@@ -107,14 +107,14 @@ export default function Um() {
     const handleEditClick = async () => {
         const formData = {
             id: selectedUser.id,
+            userName: selectedUser.userName,
             loginId: selectedUser.loginId,
             password: selectedUser.password,
-            userName: selectedUser.userName,
             deptCode: selectedUser.deptCode,
             role: selectedUser.role,
         };
         setEditable(true);
-        console.log(formData);
+        console.log(selectedUser);
         try {
             const {data} = await axiosInstance.patch('/sys/user', formData);
             // handleOk을 호출하여 모달을 닫고 상위 컴포넌트에 알림
@@ -132,13 +132,7 @@ export default function Um() {
         showModal('Delete');
     }
 
-    // const handleInputChange = (e) => {
-    //     console.log(e);
-    //     setSelectedUser({
-    //         ...selectedUser,
-    //         [e.target.id]: e.target.value
-    //     });
-    // };
+    
     const handleInputChange = (e) => {
         const { id, value } = e.target;
         setSelectedUser(prevState => ({
@@ -146,6 +140,13 @@ export default function Um() {
             [id]: value
         }));
     };
+
+    const handleDeptChange = (value) => {
+        setSelectedUser(prevState => ({
+            ...prevState,
+            deptCode: value,
+        }))
+    }
 
     const [dept, setDept] = useState([]);
 
@@ -249,7 +250,7 @@ export default function Um() {
                             <div className={sysStyles.text_field} style={{marginTop:"2rem",width:"50%"}}>
                                 <div className={sysStyles.text}>{"사업장"}</div>
                                 {!editable ? (
-                                    <Select value={selectedUser.deptCode} onChange={(value) => handleInputChange({ target: { id: 'deptCode', value } })} defaultValue={selectedUser.deptCode} style={{width:"100%", height:"3.5rem", fontSize:"4rem"}}>
+                                    <Select value={selectedUser.deptCode} onChange={handleDeptChange} defaultValue={selectedUser.deptCode} style={{width:"100%", height:"3.5rem", fontSize:"4rem"}}>
                                     {dept.map(option => (
                                         <Select.Option key={option.value} value={option.value}>
                                             {option.label}
