@@ -98,8 +98,14 @@ export default function CustomizedTables({
         // 데이터가 비어 있을 경우 처리
         return <p>No data available</p>;
     }
+
+    // `id` 컬럼을 제외한 데이터 필터링
+    const filteredData = data.map(row => {
+        const { id, ...rest } = row; // `id` 컬럼 제외
+        return rest;
+    });
     
-    const paginatedData = data.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
+    const paginatedData = filteredData.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
 
     return (
         <Box sx={{ 
@@ -117,14 +123,10 @@ export default function CustomizedTables({
                 <Table sx={{ minWidth: 600 }} stickyHeader aria-label="customized table">
                     <TableHead>
                         <TableRow>
-                            {
-                                // checkbox가 있는 테이블이면 체크박스 셀 추가
-                                variant === 'checkbox' && <StyledTableCell></StyledTableCell> } 
-                            {
-                                // 컬럼 제목 설정
-                                Object.keys(data[0])?.map(col => (<StyledTableCell key={col}>{col}</StyledTableCell>
-                                ))    
-                            }
+                        {variant === 'checkbox' && <StyledTableCell></StyledTableCell>}
+                        {Object.keys(data[0] || {}).filter(col => col !== 'id').map(col => (
+                            <StyledTableCell key={col}>{col}</StyledTableCell>
+                        ))}
                         </TableRow>
                     </TableHead>
                     <TableBody>
