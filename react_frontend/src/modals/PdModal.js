@@ -690,8 +690,26 @@ export function DelModal({ isModalOpen, handleOk, handleCancel, rowData }) { // 
 
 export function CmAddModal({ isModalOpen, handleOk, handleCancel }) {
     // 등록 버튼 클릭 시 호출될 함수
-    const handleSelect = () => {
-        handleOk();
+    const [codeGrpNo, setCodeGrpNo] = useState('');
+    const [codeGrpName, setCodeGrpName] = useState('');
+    const [codeGrpNameEn, setCodeGrpNameEn] = useState('');
+    const [note, setNote] = useState('');
+
+    const handleSelect = async() => {
+        const formData = {
+            codeGrpNo,
+            codeGrpName,
+            codeGrpNameEn,
+            note,
+        };
+        try {
+            // POST 요청으로 서버에 데이터 전송
+            const {data} = await axiosInstance.post('/sys/codegroup', formData);
+            // handleOk을 호출하여 모달을 닫고 상위 컴포넌트에 알림
+            handleOk(data);
+        } catch (error) {
+            console.error('Failed to add user:', error);
+        }
     };
 
     return (
@@ -702,21 +720,25 @@ export function CmAddModal({ isModalOpen, handleOk, handleCancel }) {
             footer={null}             //Ant Design의 기본 footer 제거(Cancel, OK 버튼)
         >
             {/* 모달제목 */}
-            <div className={modalStyles.title}>코드 그룹</div>
+            <div className={modalStyles.title}>코드 그룹 추가</div>
             <div className={sysStyles.card_box}>
                 <div className={sysStyles.text_field} style={{ marginTop: "2rem" }}>
                     <div className={sysStyles.text}>
-                        {"코드 번호"}
+                        {"코드 그룹 ID"}
                     </div>
-                    <TextField id='codeNumber' label="코드 번호" variant='outlined' sx={{ width: "20rem" }} />
+                    <TextField id='codeGrpNo' value={codeGrpNo} onChange={(e) => setCodeGrpNo(e.target.value)} label="코드 그룹 번호" variant='outlined' sx={{ width: "20rem" }} />
                 </div>
                 <div className={sysStyles.text_field}>
                     <div className={sysStyles.text}>{"코드 그룹 명"}</div>
-                    <TextField id='codeGroupName' label="코드 그룹 명" variant='outlined' sx={{ width: "20rem" }} />
+                    <TextField id='codeGrpName' value={codeGrpName} onChange={(e) => setCodeGrpName(e.target.value)} label="코드 그룹 명" variant='outlined' sx={{ width: "20rem" }} />
                 </div>
                 <div className={sysStyles.text_field}>
                     <div className={sysStyles.text}>{"영문 명"}</div>
-                    <TextField id='codeGroupNameEng' label="영문 명" variant='outlined' sx={{ width: "20rem" }} />
+                    <TextField id='codeGrpNameEn' value={codeGrpNameEn} onChange={(e) => setCodeGrpNameEn(e.target.value)} label="영문 명" variant='outlined' sx={{ width: "20rem" }} />
+                </div>
+                <div className={sysStyles.text_field}>
+                    <div className={sysStyles.text}>{"노트"}</div>
+                    <TextField id='note' value={note} onChange={(e) => setNote(e.target.value)} label="노트" variant='outlined' sx={{ width: "20rem" }} />
                 </div>
             </div>
             <button className={modalStyles.select_button} onClick={handleSelect}>등록</button>
@@ -724,12 +746,32 @@ export function CmAddModal({ isModalOpen, handleOk, handleCancel }) {
     )
 }
 
-export function CmEditModal({ isModalOpen, handleOk, handleCancel }) {
-    const [selectedEmps, setSelectedEmps] = useState([]);     // 선택된 사원의 loginId list
-
+export function CmEditModal({ isModalOpen, handleOk, handleCancel, rowData }) {
+    // 예외처리
+    if (!rowData){
+        return <></>;
+    }
+    const [codeGrpNo, setCodeGrpNo] = useState(rowData.codeGrpNo);
+    const [codeGrpName, setCodeGrpName] = useState(rowData.codeGrpName);
+    const [codeGrpNameEn, setCodeGrpNameEn] = useState(rowData.codeGrpNameEn);
+    const [note, setNote] = useState(rowData.note);
     // 등록 버튼 클릭 시 호출될 함수
-    const handleSelect = () => {
-        handleOk(selectedEmps);
+    const handleSelect = async() => {
+        const formData = {
+            id: rowData.id,
+            codeGrpNo,
+            codeGrpName,
+            codeGrpNameEn,
+            note,
+        };
+        console.log("formData",formData);
+        try {
+            const {data} = await axiosInstance.patch('/sys/codegroup', formData);
+            // handleOk을 호출하여 모달을 닫고 상위 컴포넌트에 알림
+            handleOk(data);
+        } catch (error) {
+            console.error('Failed to add user:', error);
+        }
     };
 
     return (
@@ -740,46 +782,34 @@ export function CmEditModal({ isModalOpen, handleOk, handleCancel }) {
             footer={null}             //Ant Design의 기본 footer 제거(Cancel, OK 버튼)
         >
             {/* 모달제목 */}
-            <div className={modalStyles.title}>코드 그룹</div>
+            <div className={modalStyles.title}>코드 그룹 수정</div>
             <div className={sysStyles.card_box}>
                 <div className={sysStyles.text_field} style={{ marginTop: "2rem" }}>
                     <div className={sysStyles.text}>
-                        {"코드 번호"}
+                        {"코드 그룹 ID"}
                     </div>
-                    <TextField id='codeNumber' label="코드 번호" variant='outlined' sx={{ width: "20rem" }} />
+                    <TextField id='codeGrpNo' value={codeGrpNo} onChange={(e) => setCodeGrpNo(e.target.value)} label="코드 그룹 번호" variant='outlined' sx={{ width: "20rem" }} />
                 </div>
                 <div className={sysStyles.text_field}>
                     <div className={sysStyles.text}>{"코드 그룹 명"}</div>
-                    <TextField id='codeGroupName' label="코드 그룹 명" variant='outlined' sx={{ width: "20rem" }} />
+                    <TextField id='codeGrpName' value={codeGrpName} onChange={(e) => setCodeGrpName(e.target.value)} label="코드 그룹 명" variant='outlined' sx={{ width: "20rem" }} />
                 </div>
                 <div className={sysStyles.text_field}>
                     <div className={sysStyles.text}>{"영문 명"}</div>
-                    <TextField id='codeGroupNameEng' label="영문 명" variant='outlined' sx={{ width: "20rem" }} />
-                    {/* <div className={sysStyles.text}>{"접근 권한"}</div>
-                    <Box sx={{ minWidth: "20rem" }}>
-                    <FormControl fullWidth>
-                        <InputLabel id="demo-simple-select-label">권한</InputLabel>
-                        <Select
-                        labelId="demo-simple-select-label"
-                        id="demo-simple-select"
-                        value={access}
-                        label="권한"
-                        onChange={handleAccess}
-                        >
-                        <MenuItem value={'현장담당자'}>현장담당자</MenuItem>
-                        <MenuItem value={'본사담당자'}>본사담당자</MenuItem>
-                        <MenuItem value={'관리자'}>관리자</MenuItem>
-                        </Select>
-                    </FormControl>
-                    </Box> */}
+                    <TextField id='codeGrpNameEn' value={codeGrpNameEn} onChange={(e) => setCodeGrpNameEn(e.target.value)} label="영문 명" variant='outlined' sx={{ width: "20rem" }} />
+                </div>
+                <div className={sysStyles.text_field}>
+                    <div className={sysStyles.text}>{"노트"}</div>
+                    <TextField id='note' value={note} onChange={(e) => setNote(e.target.value)} label="노트" variant='outlined' sx={{ width: "20rem" }} />
                 </div>
             </div>
-            <button className={modalStyles.select_button} onClick={handleSelect}>등록</button>
+            <button className={modalStyles.select_button} onClick={handleSelect}>수정</button>
         </Modal>
     )
 }
 
 export function DeleteModal({ isModalOpen, handleOk, handleCancel, rowData, url }) {
+    console.log("왜널?",rowData);
     const handleDelete = async () => {
         try {
             // 서버에 DELETE 요청을 보냅니다.
@@ -812,10 +842,30 @@ export function DeleteModal({ isModalOpen, handleOk, handleCancel, rowData, url 
     )
 }
 
-export function CmListAddModal({ isModalOpen, handleOk, handleCancel }) {
-    // 등록 버튼 클릭 시 호출될 함수
-    const handleSelect = () => {
-        handleOk();
+export function CmListAddModal({ isModalOpen, handleOk, handleCancel, rowData }) {
+    const [code, setCode] = useState('');
+    const [codeName, setCodeName] = useState('');
+    const [attr1, setAttr1] = useState('');
+    const [attr2, setAttr2] = useState('');
+    const [note, setNote] = useState('');
+    const handleSelect = async() => {
+        const formData = {
+            codeGrpNo: rowData.codeGrpNo,
+            codeGrpName: rowData.codeGrpName,
+            code,
+            codeName,
+            attr1,
+            attr2,
+            note,
+        };
+        try {
+            // POST 요청으로 서버에 데이터 전송
+            const {data} = await axiosInstance.post('/sys/code', formData);
+            // handleOk을 호출하여 모달을 닫고 상위 컴포넌트에 알림
+            handleOk(data);
+        } catch (error) {
+            console.error('Failed to add user:', error);
+        }
     };
 
     return (
@@ -826,21 +876,37 @@ export function CmListAddModal({ isModalOpen, handleOk, handleCancel }) {
             footer={null}             //Ant Design의 기본 footer 제거(Cancel, OK 버튼)
         >
             {/* 모달제목 */}
-            <div className={modalStyles.title}>코드 리스트</div>
+            <div className={modalStyles.title}>코드 리스트 추가</div>
             <div className={sysStyles.card_box}>
                 <div className={sysStyles.text_field} style={{ marginTop: "2rem" }}>
                     <div className={sysStyles.text}>
-                        {"코드 번호"}
+                        {"코드 그룹 ID"}
                     </div>
-                    <TextField id='codeNumber' label="코드 번호" variant='outlined' sx={{ width: "20rem" }} />
+                    <TextField id='codeGrpNo' value={rowData.codeGrpNo} disabled label="코드 그룹 번호" variant='outlined' sx={{ width: "20rem" }} />
+                </div>
+                <div className={sysStyles.text_field}>
+                    <div className={sysStyles.text}>{"코드 그룹 이름"}</div>
+                    <TextField id='codeName' value={rowData.codeGrpName} disabled label="코드 그룹 이름" variant='outlined' sx={{ width: "20rem" }} />
+                </div>
+                <div className={sysStyles.text_field}>
+                    <div className={sysStyles.text}>{"코드"}</div>
+                    <TextField id='code' value={code} onChange={(e) => setCode(e.target.value)} label="코드" variant='outlined' sx={{ width: "20rem" }} />
                 </div>
                 <div className={sysStyles.text_field}>
                     <div className={sysStyles.text}>{"코드 명"}</div>
-                    <TextField id='codeName' label="코드 명" variant='outlined' sx={{ width: "20rem" }} />
+                    <TextField id='codeName' value={codeName} onChange={(e) => setCodeName(e.target.value)} label="코드 명" variant='outlined' sx={{ width: "20rem" }} />
                 </div>
                 <div className={sysStyles.text_field}>
-                    <div className={sysStyles.text}>{"영문 명"}</div>
-                    <TextField id='codeNameEng' label="영문 명" variant='outlined' sx={{ width: "20rem" }} />
+                    <div className={sysStyles.text}>{"속성1"}</div>
+                    <TextField id='attr1' value={attr1} onChange={(e) => setAttr1(e.target.value)} label="속성1" variant='outlined' sx={{ width: "20rem" }} />
+                </div>
+                <div className={sysStyles.text_field}>
+                    <div className={sysStyles.text}>{"속성2"}</div>
+                    <TextField id='attr2' value={attr2} onChange={(e) => setAttr2(e.target.value)} label="속성2" variant='outlined' sx={{ width: "20rem" }} />
+                </div>
+                <div className={sysStyles.text_field}>
+                    <div className={sysStyles.text}>{"노트"}</div>
+                    <TextField id='note' value={note} onChange={(e) => setNote(e.target.value)} label="노트" variant='outlined' sx={{ width: "20rem" }} />
                 </div>
             </div>
             <button className={modalStyles.select_button} onClick={handleSelect}>등록</button>
@@ -848,14 +914,36 @@ export function CmListAddModal({ isModalOpen, handleOk, handleCancel }) {
     )
 }
 
-export function CmListEditModal({ isModalOpen, handleOk, handleCancel }) {
-    const [selectedEmps, setSelectedEmps] = useState([]);     // 선택된 사원의 loginId list
+export function CmListEditModal({ isModalOpen, handleOk, handleCancel, rowData }) {
+    if (!rowData){
+        return <></>;
+    }
 
-    // 등록 버튼 클릭 시 호출될 함수
-    const handleSelect = () => {
-        handleOk(selectedEmps);
+    const [code, setCode] = useState(rowData.code);
+    const [codeName, setCodeName] = useState(rowData.codeName);
+    const [attr1, setAttr1] = useState(rowData.attr1);
+    const [attr2, setAttr2] = useState(rowData.attr2);
+    const [note, setNote] = useState(rowData.note);
+    const handleSelect = async() => {
+        const formData = {
+            id: rowData.id,
+            codeGrpNo: rowData.codeGrpNo,
+            codeGrpName: rowData.codeGrpName,
+            code,
+            codeName,
+            attr1,
+            attr2,
+            note,
+        };
+        try {
+            // POST 요청으로 서버에 데이터 전송
+            const {data} = await axiosInstance.patch('/sys/code', formData);
+            // handleOk을 호출하여 모달을 닫고 상위 컴포넌트에 알림
+            handleOk(data);
+        } catch (error) {
+            console.error('Failed to add user:', error);
+        }
     };
-
     return (
         <Modal
             open={isModalOpen}
@@ -868,37 +956,36 @@ export function CmListEditModal({ isModalOpen, handleOk, handleCancel }) {
             <div className={sysStyles.card_box}>
                 <div className={sysStyles.text_field} style={{ marginTop: "2rem" }}>
                     <div className={sysStyles.text}>
-                        {"코드 번호"}
+                        {"코드 그룹 ID"}
                     </div>
-                    <TextField id='codeNumber' label="코드 번호" variant='outlined' sx={{ width: "20rem" }} />
+                    <TextField id='codeGrpNo' value={rowData.codeGrpNo} disabled label="코드 그룹 번호" variant='outlined' sx={{ width: "20rem" }} />
+                </div>
+                <div className={sysStyles.text_field}>
+                    <div className={sysStyles.text}>{"코드 그룹 이름"}</div>
+                    <TextField id='codeName' value={rowData.codeGrpName} disabled label="코드 그룹 이름" variant='outlined' sx={{ width: "20rem" }} />
+                </div>
+                <div className={sysStyles.text_field}>
+                    <div className={sysStyles.text}>{"코드"}</div>
+                    <TextField id='code' value={code} onChange={(e) => setCode(e.target.value)} label="코드" variant='outlined' sx={{ width: "20rem" }} />
                 </div>
                 <div className={sysStyles.text_field}>
                     <div className={sysStyles.text}>{"코드 명"}</div>
-                    <TextField id='codeName' label="코드 명" variant='outlined' sx={{ width: "20rem" }} />
+                    <TextField id='codeName' value={codeName} onChange={(e) => setCodeName(e.target.value)} label="코드 명" variant='outlined' sx={{ width: "20rem" }} />
                 </div>
                 <div className={sysStyles.text_field}>
-                    <div className={sysStyles.text}>{"영문 명"}</div>
-                    <TextField id='codeNameEng' label="영문 명" variant='outlined' sx={{ width: "20rem" }} />
-                    {/* <div className={sysStyles.text}>{"접근 권한"}</div>
-                    <Box sx={{ minWidth: "20rem" }}>
-                    <FormControl fullWidth>
-                        <InputLabel id="demo-simple-select-label">권한</InputLabel>
-                        <Select
-                        labelId="demo-simple-select-label"
-                        id="demo-simple-select"
-                        value={access}
-                        label="권한"
-                        onChange={handleAccess}
-                        >
-                        <MenuItem value={'현장담당자'}>현장담당자</MenuItem>
-                        <MenuItem value={'본사담당자'}>본사담당자</MenuItem>
-                        <MenuItem value={'관리자'}>관리자</MenuItem>
-                        </Select>
-                    </FormControl>
-                    </Box> */}
+                    <div className={sysStyles.text}>{"속성1"}</div>
+                    <TextField id='attr1' value={attr1} onChange={(e) => setAttr1(e.target.value)} label="속성1" variant='outlined' sx={{ width: "20rem" }} />
+                </div>
+                <div className={sysStyles.text_field}>
+                    <div className={sysStyles.text}>{"속성2"}</div>
+                    <TextField id='attr2' value={attr2} onChange={(e) => setAttr2(e.target.value)} label="속성2" variant='outlined' sx={{ width: "20rem" }} />
+                </div>
+                <div className={sysStyles.text_field}>
+                    <div className={sysStyles.text}>{"노트"}</div>
+                    <TextField id='note' value={note} onChange={(e) => setNote(e.target.value)} label="노트" variant='outlined' sx={{ width: "20rem" }} />
                 </div>
             </div>
-            <button className={modalStyles.select_button} onClick={handleSelect}>등록</button>
+            <button className={modalStyles.select_button} onClick={handleSelect}>수정</button>
         </Modal>
     )
 }

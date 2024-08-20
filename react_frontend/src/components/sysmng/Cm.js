@@ -12,38 +12,54 @@ import axiosInstance from '../../utils/AxiosInstance';
 
 export default function Cm() {
     const [codeGroup, setCodeGroup] = useState([]);
-
-    const handleFormSubmit = (data) => {
+    const [showCodeGroup, setShowCodeGroup] = useState(true);
+    const handleFormSubmit = async (e) => {
+        setShowCodeGroup(false);
+        const {data} = await axiosInstance.get(`/sys/codegroup`, {
+            params: {
+                codeGrpNo : e.codeGrpNo,
+                codeGrpName: e.codeGrpName,
+                codeGrpNameEn: e.codeGrpNameEn,
+                note: e.note,
+            }
+        });
         setCodeGroup(data ?? {});
+        setShowCodeGroup(true);
+        setShowCode(false);
     }
-
-    const [selectedCodeGroup, setSelectedCodeGroup] = useState([]);
+    const [selectedCodeGroup, setSelectedCodeGroup] = useState(null);
 
     const [inputValue, setInputValue] = useState("");
-    const [showTable, setShowTable] = useState(false);
+    const [showCode, setShowCode] = useState(false);
     const [code, setCode] = useState([]);
 
+    console.log(selectedCodeGroup);
     const handleCodeGroupRowClick = async (e) => {
-        setShowTable(true);
-        setSelectedCodeGroup([e])
+        if (e === undefined || e === null){
+            setShowCode(false);
+            setSelectedCodeGroup(e);
+        }
+        else {
+            setShowCode(true);
+            setSelectedCodeGroup(e);
         
-        const {data} = await axiosInstance.get(`/sys/code?codeGrpNo=${e.codeGrpNo}`);
-        setCode(data ?? {});
-
-        // setSelectedCodeGroup(e?.["코드 번호"] ?? null)
+            const {data} = await axiosInstance.get(`/sys/code?codeGrpNo=${e.codeGrpNo}`);
+            setCode(data);
+        }
     }
 
-    const [selectedCode, setSelectedCode] = useState([]);
+    const [selectedCode, setSelectedCode] = useState(null);
 
     const handleCodeRowClick = (e) => {
         
-        setSelectedCode(e)
+        setSelectedCode(e);
     }
 
     const [isModalOpen, setIsModalOpen] = useState({
         CMAdd: false,
         CMEdit: false,
-        Delete: false,
+        DeleteA: false,
+        DeleteB: false,
         CMListAdd: false,
         CMListEdit: false,
     });
@@ -55,8 +71,39 @@ export default function Cm() {
     // 담당자 지정 등록 버튼 클릭 시 호출될 함수
     const handleOk = (modalType) => (data) => {
         setIsModalOpen(prevState => ({ ...prevState, [modalType]: false }));
+        if (modalType === 'CMAdd') {
+            // 새로 추가된 사용자 목록에 추가
+            setCodeGroup(prevList => [...prevList, data]);
+        }
+        else if (modalType === 'CMListAdd') {
+            // 새로 추가된 사용자 목록에 추가
+            setCode(prevList => [...prevList, data]);
+        }
+        else if (modalType === 'CMEdit') {
+            setCodeGroup(prevList =>
+                prevList.map(item =>
+                    item.codeGrpNo === data.codeGrpNo ? { ...item, ...data } : item
+                )
+            );
+        }
+        else if (modalType === 'CMListEdit') {
+            setCode(prevList =>
+                prevList.map(item =>
+                    item.id === data.id ? { ...item, ...data } : item
+                )
+            );
+        }
+        else if (modalType === 'DeleteA') {
+            // 사용자 삭제 후 목록 갱신
+            setCodeGroup(prevList => prevList.filter(codeGrp => codeGrp.id !== data.id));
+            setInfoShow(false); // 상세 정보 화면 비활성화
+        }
+        else if (modalType === 'DeleteB') {
+            // 사용자 삭제 후 목록 갱신
+            setCode(prevList => prevList.filter(code => code.id !== data.id));
+            setInfoShow(false); // 상세 정보 화면 비활성화
+        }
     };
-
     const handleCancel = (modalType) => () => {
         setIsModalOpen(prevState => ({ ...prevState, [modalType]: false }));
     }; 
@@ -69,8 +116,12 @@ export default function Cm() {
         showModal('CMEdit');
     }
 
-    const handleDeleteClick = () => {
-        showModal('Delete');
+    const handleDeleteAClick = () => {
+        showModal('DeleteA');
+    }
+
+    const handleDeleteBClick = () => {
+        showModal('DeleteB');
     }
 
     const handleListAddClick = () => {
@@ -100,7 +151,7 @@ export default function Cm() {
                 {"코드그룹ID"}
             </div>
             {/** 모달 추가 필요 */}
-            <TableCustom title="" data={codeGroup} buttons={["Add", "Edit", "Delete"]} selectedRows={[selectedCodeGroup]} onRowClick={(e) => handleCodeGroupRowClick(e)} onClicks={[handleAddClick, handleEditClick, handleDeleteClick]} modals={
+            <TableCustom title="" data={codeGroup} buttons={["Add", "Edit", "Delete"]} selectedRows={[selectedCodeGroup]} onRowClick={(e) => handleCodeGroupRowClick(e)} onClicks={[handleAddClick, handleEditClick, handleDeleteAClick]} modals={
                 [
                     {
                         "modalType" : 'CMAdd',
@@ -112,13 +163,16 @@ export default function Cm() {
                         "modalType" : 'CMEdit',
                         'isModalOpen': isModalOpen.CMEdit,
                         'handleOk': handleOk('CMEdit'),
-                        'handleCancel': handleCancel('CMEdit')
+                        'handleCancel': handleCancel('CMEdit'),
+                        'rowData': selectedCodeGroup,
                     },
                     {
-                        "modalType" : 'Delete',
-                        'isModalOpen': isModalOpen.Delete,
-                        'handleOk': handleOk('Delete'),
-                        'handleCancel': handleCancel('Delete')
+                        "modalType" : 'DeleteA',
+                        'isModalOpen': isModalOpen.DeleteA,
+                        'handleOk': handleOk('DeleteA'),
+                        'handleCancel': handleCancel('DeleteA'),
+                        'rowData': selectedCodeGroup,
+                        'url': '/sys/codegroup',
                     },
 
                 ]
@@ -126,26 +180,30 @@ export default function Cm() {
             </Card>
             <Card className={sysStyles.card_box} sx={{width:"50%", borderRadius:"15px"}}>
             <div className={sysStyles.mid_title}>{"코드리스트"}</div>
-            {showTable ? (
-                <TableCustom title="" data={code} buttons={["Add", "Edit", "Delete"]} selectedRows={[selectedCode]} onRowClick={handleCodeRowClick} onClicks={[handleListAddClick, handleListEditClick, handleDeleteClick]} modals={
+            {showCode ? (
+                <TableCustom title="" data={code} buttons={["Add", "Edit", "Delete"]} selectedRows={[selectedCode]} onRowClick={handleCodeRowClick} onClicks={[handleListAddClick, handleListEditClick, handleDeleteBClick]} modals={
                     [
                         {
                             "modalType" : 'CMListAdd',
                             'isModalOpen': isModalOpen.CMListAdd,
                             'handleOk': handleOk('CMListAdd'),
-                            'handleCancel': handleCancel('CMListAdd')
+                            'handleCancel': handleCancel('CMListAdd'),
+                            'rowData': selectedCodeGroup,
                         },
                         {
                             "modalType" : 'CMListEdit',
                             'isModalOpen': isModalOpen.CMListEdit,
                             'handleOk': handleOk('CMListEdit'),
-                            'handleCancel': handleCancel('CMListEdit')
+                            'handleCancel': handleCancel('CMListEdit'),
+                            'rowData': selectedCode,
                         },
                         {
-                            "modalType" : 'Delete',
-                            'isModalOpen': isModalOpen.Delete,
-                            'handleOk': handleOk('Delete'),
-                            'handleCancel': handleCancel('Delete')
+                            "modalType" : 'DeleteB',
+                            'isModalOpen': isModalOpen.DeleteB,
+                            'handleOk': handleOk('DeleteB'),
+                            'handleCancel': handleCancel('DeleteB'),
+                            'rowData': selectedCode,
+                            'url': '/sys/code'
                         },
     
                     ]

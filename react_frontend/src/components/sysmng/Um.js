@@ -246,7 +246,7 @@ export default function Um() {
                                 )}
                             </div>
                             <div className={sysStyles.text_field} style={{marginTop:"2rem",width:"50%"}}>
-                                <div className={sysStyles.text}>{"사업장"}</div>
+                                <div className={sysStyles.text}>{"부서 명"}</div>
                                 {!editable ? (
                                     <Select value={selectedUser.deptCode} onChange={(value) => handleInputChange({ target: { id: 'deptCode', value} })} defaultValue={selectedUser.deptCode} style={{width:"100%", height:"3.5rem", fontSize:"4rem"}}>
                                     {dept.map(option => (

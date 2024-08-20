@@ -126,7 +126,10 @@ export const formField_sd = [
 ];
 
 export const formField_cm = [
-    { type: 'InputText', name: 'codeGroupId', label: '코드그룹ID'},
+    { type: 'InputText', name: 'codeGrpNo', label: '코드그룹ID'},
+    { type: 'InputText', name: 'codeGrpName', label: '코드그룹 이름'},
+    { type: 'InputText', name: 'codeGrpNameEn', label: '코드그룹 영문이름'},
+    { type: 'InputText', name: 'note', label: '노트'},
 ]
 
 export const formField_um = [
