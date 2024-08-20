@@ -19,6 +19,7 @@ import { TextField, Box, InputLabel, MenuItem, FormControl, Autocomplete } from 
 import WarningAmberIcon from '@mui/icons-material/WarningAmber';
 import { Sledding } from '@mui/icons-material';
 import axiosInstance from '../utils/AxiosInstance.js';
+import { Center } from '@react-three/drei';
 
 export function PgAddModal({ isModalOpen, handleOk, handleCancel }) {
     const [formData, setFormData] = useState({});             // 검색 데이터
@@ -778,12 +779,13 @@ export function CmEditModal({ isModalOpen, handleOk, handleCancel }) {
     )
 }
 
-export function DeleteModal({ isModalOpen, handleOk, handleCancel, rowData }) {
+export function DeleteModal({ isModalOpen, handleOk, handleCancel, rowData, url }) {
     const handleDelete = async () => {
         try {
             // 서버에 DELETE 요청을 보냅니다.
             console.log("셀릭",rowData);
-            await axiosInstance.delete(`/sys/user?id=${rowData.id}`);
+            console.log(url);
+            await axiosInstance.delete(`${url}?id=${rowData.id}`);
             handleOk(rowData); // 삭제 성공 시 상위 컴포넌트에 알림
         } catch (error) {
             console.error('Failed to delete user:', error);
@@ -901,11 +903,11 @@ export function CmListEditModal({ isModalOpen, handleOk, handleCancel }) {
     )
 }
 
-export function FmAddModal({ isModalOpen, handleOk, handleCancel }) {
+export function FmAddModal({ isModalOpen, handleOk, handleCancel, rowData }) {
     const [showResults, setShowResults] = useState(false);    // 목록을 표시할지 여부
     const [selectedSulbi, setSelectedSulbi] = useState([]);     // 선택된 Id list
     const [sulbiLib, setSulbiLib] = useState([]);
-
+    const [equipName, setEquipName] = useState([]);
     // 설비 라이브러리 불러오기 
     useEffect(() => {
         const fetchSulbiLib = async () => {
@@ -921,10 +923,10 @@ export function FmAddModal({ isModalOpen, handleOk, handleCancel }) {
     }, [])
 
     // 찾기 버튼 클릭 시 호출될 함수
-    const handleSearch = () => {
+    const handleSearch = (e) => {
         setShowResults(true);
-
     };
+
 
     // row 클릭 시 호출될 함수
     const handleSulbiClick = (sulbi) => {
@@ -939,10 +941,24 @@ export function FmAddModal({ isModalOpen, handleOk, handleCancel }) {
             }
         });
     };
-
     // 등록 버튼 클릭 시 호출될 함수
-    const handleSelect = () => {
-        handleOk(selectedSulbi);
+    const handleSelect = async () => {
+        const formData = {
+            pjtId: rowData[0].id,
+            equipLibId: value1[0].id, // selectedSulbi[0] <- 여러개일땐 
+            equipName,
+        };
+
+        try {
+            // POST 요청으로 서버에 데이터 전송
+            console.log(formData);
+            const {data} = await axiosInstance.post('/equip', formData);
+            // handleOk을 호출하여 모달을 닫고 상위 컴포넌트에 알림
+            console.log(data);
+            handleOk(data);
+        } catch (error) {
+            console.error('Failed to add user:', error);
+        }
     };
 
 
@@ -956,7 +972,7 @@ export function FmAddModal({ isModalOpen, handleOk, handleCancel }) {
     };
 
     const [value1, setValue] = useState([]);
-
+    console.log(value1);
     return (
         <Modal
             open={isModalOpen}
@@ -985,9 +1001,17 @@ export function FmAddModal({ isModalOpen, handleOk, handleCancel }) {
             </div>
 
             <div className={modalStyles.result_container}>
-                {showResults ? <Table data={value1} onRowClick={handleSulbiClick} />
-                    : <></>}
+                {showResults && 
+                <>
+                    <Table data={value1} onRowClick={handleSulbiClick} />
+                    <div className={sysStyles.text_field}>
+                        <div className={sysStyles.text} style={{marginTop:"3rem", marginLeft:"5rem", fontWeight:"bold"}}>{"설비 명"}</div>
+                        <TextField id='equipName' label="설비 명" value={equipName} onChange={(e) => setEquipName(e.target.value)} variant='outlined' sx={{ width: "30rem", margin:"0 auto", display:"flex", justifyContent:"center", alignContent:"center" }} />
+                    </div>
+                </>
+                }
             </div>
+
 
             <button className={modalStyles.select_button} onClick={handleSelect}>등록</button>
         </Modal>

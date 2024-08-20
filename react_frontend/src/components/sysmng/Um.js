@@ -213,6 +213,7 @@ export default function Um() {
                                         'handleOk': handleOk('Delete'),
                                         'handleCancel': handleCancel('Delete'),
                                         'rowData': selectedUser, // 추가 사항 삭제할 객체 전달
+                                        'url': '/sys/user',
                                     },
                                 ]
                             }/>
