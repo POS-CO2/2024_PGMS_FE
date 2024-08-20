@@ -37,7 +37,7 @@ export default function Pd() {
     // 조회 버튼 클릭시 호출될 함수
     const handleFormSubmit = async (param) => {
         setFormData([param.searchProject]);
-        const response = await axiosInstance.get(`/pjt/manager?pjtId=${param.searchProject.id}`);
+        const response = await axiosInstance.get(`/pjt/manager?pjtId=${formData[0].id}`);
 
         // data가 빈 배열인지 확인
         if (response.data.length === 0) {

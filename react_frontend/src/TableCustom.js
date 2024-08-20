@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, { useState, useEffect } from 'react';
 import Table from "./Table.js";
 import * as tableStyles from "./assets/css/newTable.css"
 import { DelModal, PgAddModal, PdAddModal, RmAddModal, FlAddModal, FlEditModal, FamAddModal, FamEditModal, FadAddModal, Ps12UploadExcelModal, CmAddModal, DeleteModal, CmEditModal, CmListAddModal, CmListEditModal, FmAddModal, UmAddModal, MmAddModal, EsmAddModal, SdAddModal, SdShowDetailsModal } from "./modals/PdModal.js";
@@ -29,7 +29,6 @@ const modalMap = {
 }
 
 export default function TableCustom({
-    key = [],
     title = "Default Title",
     variant = 'default',
     data = [],
@@ -95,6 +94,11 @@ export function TableCustomDoubleClickEdit({
     const [isEditing, setIsEditing] = useState(false); // 'Edit' 모드 상태 관리
     const [editableData, setEditableData] = useState(data); // 수정된 데이터 저장
     const [editingCell, setEditingCell] = useState({ row: null, col: null }); // 현재 편집 중인 셀
+
+    // data가 나중에 전달되거나 변경될 때 editableData도 자동으로 업데이트
+    useEffect(() => {
+        setEditableData(data);
+    }, [data]);
 
     // 버튼 활성화 상태 결정
     const buttonStatus = buttons.map((button) => {
@@ -169,6 +173,7 @@ export function TableCustomDoubleClickEdit({
             </div>
             {table ? (
             <Table 
+                key={JSON.stringify(data)}
                 data={editableData} 
                 variant={variant} 
                 onRowClick={onRowClick} 

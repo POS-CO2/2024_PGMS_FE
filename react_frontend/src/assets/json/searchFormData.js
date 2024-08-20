@@ -186,6 +186,21 @@ export const formField_pg = [
     { type: 'SelectCalendar', name: 'calendar', label: '조회기간' }
 ]
 
+const currentYear = new Date().getFullYear();
+const startYear = currentYear - 10; // 현재 연도 기준 10년 전까지 (2020년까지)
+const yearsOptions = [];
+for (let year = currentYear; year >= startYear; year--) {
+    yearsOptions.push({
+        value: year.toString(),
+        label: year
+    });
+}
+
+export const formField_rm = [
+    { type: 'SearchAtModal', name: 'searchProject', label: '프로젝트코드/명', required: true, modalType: '프로젝트 찾기' },
+    { type: 'DropDown', name: 'year', label: '조회년도', options: yearsOptions }
+]
+
 export const formField_fl = [
     { type: 'InputText', name: 'EquipName', label: '설비LIB명'},
     { type: 'DropDown', name: 'EqupDvs', label: '설비구분', options: [

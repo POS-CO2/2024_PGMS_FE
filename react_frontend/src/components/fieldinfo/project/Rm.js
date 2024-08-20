@@ -5,7 +5,7 @@ import * as mainStyles from "../../../assets/css/main.css"
 import Table from "../../../Table";
 import {TableCustomDoubleClickEdit} from "../../../TableCustom";
 import SearchForms from "../../../SearchForms";
-import {formField_ps12} from "../../../assets/json/searchFormData.js";
+import {formField_rm} from "../../../assets/json/searchFormData.js";
 import axiosInstance from '../../../utils/AxiosInstance';
 
 export default function Rm() {
@@ -36,10 +36,11 @@ export default function Rm() {
     // 조회 버튼 클릭시 호출될 함수
     const handleFormSubmit = async (param) => {
         setFormData([param.searchProject]);
-        const {data} = await axiosInstance.get(`/pjt/manager?pjtId=${param.searchProject.id}`);
+        const y = parseInt(param.year, 10);
+        const response = await axiosInstance.get(`/pjt/sales?pjtId=${param.searchProject.id}&year=${y}`);
 
         // data가 빈 배열인지 확인
-        if (data.length === 0) {
+        if (response.data.length === 0) {
             // 빈 데이터인 경우, 기본 형태의 객체를 생성
             const placeholderSA = {
                 id: '',
@@ -50,7 +51,7 @@ export default function Rm() {
             setSalesAmts([placeholderSA]);
         } else {
             // 필요한 필드만 추출하여 managers에 설정
-            const filteredSAs = data.map(sales => ({
+            const filteredSAs = response.data.map(sales => ({
                 id: sales.id,
                 년: sales.year,
                 월: sales.mth,
@@ -83,7 +84,7 @@ export default function Rm() {
         if (modalType === 'RmAdd') {
             try {
                 const requestBody = {
-                    pjtId: formData[0].id,
+                    pjtId: formData.id,
                     year: parseInt(data.year, 10), // 문자열을 정수로 변환
                     mth: parseInt(data.month, 10), // 문자열을 정수로 변환
                     salesAmt: parseFloat(data.salesAmt) // 문자열을 실수로 변환
@@ -162,7 +163,7 @@ export default function Rm() {
     return (
         <>
             <div className={mainStyles.breadcrumb}>현장정보 &gt; 프로젝트 &gt; 매출액 관리</div>
-            <SearchForms onFormSubmit={handleFormSubmit} formFields={[formField_ps12[0]]} />
+            <SearchForms onFormSubmit={handleFormSubmit} formFields={formField_rm} />
             
             {(!formData || Object.keys(formData).length === 0) ?
             <></> : (
