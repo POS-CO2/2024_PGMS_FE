@@ -3,10 +3,8 @@ import Swal from 'sweetalert2'
 import * as tableStyles from "../../../assets/css/newTable.css";
 import Table from "../../../Table";
 import TableCustom from "../../../TableCustom";
-import project from "../../../assets/json/selectedPjt";
-//import managers from "../../../assets/json/manager";
 import SearchForms from "../../../SearchForms";
-import {formField_ps12} from "../../../assets/json/searchFormData.js";
+import {formField_ps12} from "../../../assets/json/searchFormData";
 import axiosInstance from '../../../utils/AxiosInstance';
 
 export default function Pd() {
@@ -19,14 +17,22 @@ export default function Pd() {
     });
 
     // selectedManager가 변경될 때마다 실행될 useEffect
-    useEffect(() => {
-    }, [selectedManager]);
+    useEffect(() => {}, [selectedManager]);
 
     //조회 버튼 클릭시 호출될 함수
     const handleFormSubmit = async (param) => {
         setFormData([param.searchProject]);
         const {data} = await axiosInstance.get(`/pjt/manager?pjtId=${param.searchProject.id}`);
-        setManagers(data);
+        
+        // 필요한 필드만 추출하여 managers에 설정
+        const filteredManagers = data.map(manager => ({
+            id: manager.id,
+            사번: manager.userId,
+            이름: manager.userName,
+            부서: manager.userDeptCode
+        }));
+
+        setManagers(filteredManagers);
     };
     
     // 담당자 row 클릭 시 호출될 함수
@@ -52,30 +58,38 @@ export default function Pd() {
 
         if (modalType === 'PdAdd') {
             try {
-                const requestBody = [
-                    {
-                        pjtId: formData[0].id,
-                        userId: data[0].id
-                    }
-                ];
+                // data 배열을 순회하며 requestBody 배열 생성
+                const requestBody = data.map(user => ({
+                    pjtId: formData[0].id,
+                    userId: user.id
+                }));
+
                 const response = await axiosInstance.post("/pjt/manager", requestBody);
 
-                swalOptions.text = '담당자가 성공적으로 추가되었습니다.';
+                swalOptions.text = '담당자가 성공적으로 지정되었습니다.';
                 swalOptions.icon = 'success';
+
+                // 기존 managers에 새로 추가된 담당자를 병합
+                setManagers(prevManagers => [...prevManagers, ...data]);
             } catch (error) {
                 console.log(error);
-                //TODO: sweet alert 알림
+                swalOptions.text = '담당자 지정에 실패하였습니다.';
+                swalOptions.icon = 'fail';
             }
         } else if (modalType === 'Del') {
             try {
-                console.log("selectedManager:", selectedManager);
                 const response = await axiosInstance.delete(`/pjt/manager?id=${selectedManager}`);
 
                 swalOptions.text = '담당자가 성공적으로 삭제되었습니다.';
                 swalOptions.icon = 'success';
+
+                // 선택된 담당자를 managers 리스트에서 제거
+                setManagers(prevManagers => prevManagers.filter(manager => manager.id !== data));
+
             } catch (error) {
                 console.log(error);
-                //TODO: sweet alert 알림
+                swalOptions.text = '담당자 삭제에 실패하였습니다.';
+                swalOptions.icon = 'success';
             }
         } 
 
@@ -113,6 +127,17 @@ export default function Pd() {
                         onClicks={[onDeleteClick, onAddClick]}
                         onRowClick={handleManagerClick}
                         selectedRows={[selectedManager]}
+                        renderRow={(manager) => {
+                            // 화면에 표시할 때는 id를 제외하고 표시
+                            const { id, ...visibleData } = manager;
+                            return (
+                                <tr key={id} onClick={() => handleManagerClick(manager)}>
+                                    {Object.values(visibleData).map((value, index) => (
+                                        <td key={index}>{value}</td>
+                                    ))}
+                                </tr>
+                            );
+                        }}
                         modals={[
                             {
                                 'modalType': 'Del',
