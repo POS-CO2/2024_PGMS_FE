@@ -11,7 +11,6 @@ import * as ps12Styles from "../assets/css/ps12UploadExcelModal.css";
 import { EditButton } from "../Button";
 import Table from "../Table";
 import project from "../assets/json/project"
-import { employee } from "../assets/json/manager.js"
 import { actv } from "../assets/json/selectedPjt";
 import emsData from "../assets/json/ems";
 import { selectYear, selectMonth } from "../assets/json/sd";
@@ -90,7 +89,17 @@ export function PdAddModal({ isModalOpen, handleOk, handleCancel }) {
     const handleSearch = async() => {
         try {
             const response = await axiosInstance.get(`/pjt/not-manager?loginId=${empId}&userName=${empName}`);
-            setformData(response.data);
+
+            // 필요한 필드만 추출하여 managers에 설정
+            const filteredResponse = response.data.map(emp => ({
+                id: emp.id,
+                사번: emp.loginId,
+                이름: emp.userName,
+                부서: emp.deptCode,
+                권한: emp.role
+            }));
+
+            setformData(filteredResponse);
         } catch (error) {
             console.log(error);
         }
@@ -111,6 +120,7 @@ export function PdAddModal({ isModalOpen, handleOk, handleCancel }) {
 
     // 등록 버튼 클릭 시 호출될 함수
     const handleSelect = () => {
+        setformData({});
         handleOk(selectedEmps);
     };
 

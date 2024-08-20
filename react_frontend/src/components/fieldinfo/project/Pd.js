@@ -19,22 +19,50 @@ export default function Pd() {
     // selectedManager가 변경될 때마다 실행될 useEffect
     useEffect(() => {}, [selectedManager]);
 
+    // managers 상태가 변경될 때 실행될 useEffect
+    useEffect(() => {
+        if (managers.length === 0) {
+            const placeholderManager = {
+                id: '',
+                사번: '',
+                이름: '',
+                부서: '',
+                권한: ''
+            };
+            setManagers([placeholderManager]);
+        }
+    }, [managers]);
+
     //조회 버튼 클릭시 호출될 함수
     const handleFormSubmit = async (param) => {
         setFormData([param.searchProject]);
         const {data} = await axiosInstance.get(`/pjt/manager?pjtId=${param.searchProject.id}`);
-        
-        console.log("data:", data);
-        // 필요한 필드만 추출하여 managers에 설정
-        const filteredManagers = data.map(manager => ({
-            id: manager.id,
-            사번: manager.userLoginId,
-            이름: manager.userName,
-            부서: manager.userDeptCode,
-            권한: manager.userRole
-        }));
 
-        setManagers(filteredManagers);
+        // data가 빈 배열인지 확인
+        if (data.length === 0) {
+            // 빈 데이터인 경우, 기본 형태의 객체를 생성
+            const placeholderManager = {
+                id: '',
+                사번: '',
+                이름: '',
+                부서: '',
+                권한: ''
+            };
+
+            // 배열의 필드를 유지하면서 빈 값으로 채운 배열 생성
+            setManagers([placeholderManager]);
+        } else {
+            // 필요한 필드만 추출하여 managers에 설정
+            const filteredManagers = data.map(manager => ({
+                id: manager.id,
+                사번: manager.userLoginId,
+                이름: manager.userName,
+                부서: manager.userDeptCode,
+                권한: manager.userRole
+            }));
+
+            setManagers(filteredManagers);
+        }
     };
     
     // 담당자 row 클릭 시 호출될 함수
@@ -67,19 +95,25 @@ export default function Pd() {
                 }));
 
                 const response = await axiosInstance.post("/pjt/manager", requestBody);
-
                 swalOptions.text = '담당자가 성공적으로 지정되었습니다.';
                 swalOptions.icon = 'success';
-
-                const filteredData = data.map(manager => ({
-                    사번: manager.loginId,
+                console.log(response.data);
+                const filteredData = response.data.map(manager => ({
+                    id: manager.id,
+                    사번: manager.userId,
                     이름: manager.userName,
-                    부서: manager.deptCode,
-                    권한: manager.role
+                    부서: manager.userDeptCode,
+                    권한: manager.userRole
                 }));
 
-                // 기존 managers에 새로 추가된 담당자를 병합
-                setManagers(prevManagers => [...prevManagers, ...filteredData]);
+                // 기존 managers에서 placeholderManager 제거하고 새 데이터를 병합
+                setManagers(prevManagers => {
+                    // placeholderManager 제거
+                    const cleanedManagers = prevManagers.filter(manager => manager.id !== '');
+
+                    // 새로 추가된 담당자를 병합
+                    return [...cleanedManagers, ...filteredData];
+                });
             } catch (error) {
                 console.log(error);
                 swalOptions.text = '담당자 지정에 실패하였습니다.';
@@ -94,6 +128,8 @@ export default function Pd() {
 
                 // 선택된 담당자를 managers 리스트에서 제거
                 setManagers(prevManagers => prevManagers.filter(manager => manager.id !== data));
+
+                setSelectedManager(null);
 
             } catch (error) {
                 console.log(error);
