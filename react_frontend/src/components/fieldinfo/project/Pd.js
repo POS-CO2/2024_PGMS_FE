@@ -27,9 +27,10 @@ export default function Pd() {
         // 필요한 필드만 추출하여 managers에 설정
         const filteredManagers = data.map(manager => ({
             id: manager.id,
-            사번: manager.userId,
+            사번: manager.userLoginId,
             이름: manager.userName,
-            부서: manager.userDeptCode
+            부서: manager.userDeptCode,
+            권한: manager.role
         }));
 
         setManagers(filteredManagers);
@@ -69,8 +70,15 @@ export default function Pd() {
                 swalOptions.text = '담당자가 성공적으로 지정되었습니다.';
                 swalOptions.icon = 'success';
 
+                const filteredData = data.map(manager => ({
+                    사번: manager.loginId,
+                    이름: manager.userName,
+                    부서: manager.deptCode,
+                    권한: manager.role
+                }));
+
                 // 기존 managers에 새로 추가된 담당자를 병합
-                setManagers(prevManagers => [...prevManagers, ...data]);
+                setManagers(prevManagers => [...prevManagers, ...filteredData]);
             } catch (error) {
                 console.log(error);
                 swalOptions.text = '담당자 지정에 실패하였습니다.';
