@@ -132,3 +132,7 @@
     color: red;
     margin-left: 0.25rem;
 }
+
+.empty_message {
+    color: #FFF;
+}

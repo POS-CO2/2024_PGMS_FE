@@ -5,7 +5,7 @@ import Table from "../Table";
 import project from "../assets/json/project.js"
 import axiosInstance from '../utils/AxiosInstance.js';
  
-export default function ModalComponent({ isModalOpen, handleOk, handleCancel }) {
+export default function ModalComponent({ isModalOpen, handleOk, handleCancel, pgms = 'y' }) {
   const [formData, setFormData] = useState({});           // 검색 데이터
   const [selectedPjt, setSelectedPjt] = useState([]);     // 선택된 프로젝트
   const [allProjects, setAllProjects] = useState([]);     // 전체 프로젝트
@@ -14,7 +14,7 @@ export default function ModalComponent({ isModalOpen, handleOk, handleCancel }) 
   useEffect(() => {
       const fetchProject = async () => {
           try {
-              const response = await axiosInstance.get("/pjt?pgmsYn=y");
+              const response = await axiosInstance.get(`/pjt?pgmsYn=${pgms}`);
               setAllProjects(response.data);
               setProject(response.data);
           } catch (error) {
