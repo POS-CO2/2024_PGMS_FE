@@ -198,7 +198,7 @@ for (let year = currentYear; year >= startYear; year--) {
 
 export const formField_rm = [
     { type: 'SearchAtModal', name: 'searchProject', label: '프로젝트코드/명', required: true, modalType: '프로젝트 찾기' },
-    { type: 'DropDown', name: 'year', label: '조회년도', options: yearsOptions }
+    { type: 'DropDown', name: 'searchYear', label: '조회년도', required: true, options: yearsOptions, defaultSelected: true }
 ]
 
 export const formField_fl = [

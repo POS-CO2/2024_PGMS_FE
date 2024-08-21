@@ -246,60 +246,63 @@ export function RmAddModal({ isModalOpen, handleOk, handleCancel, rowData }) {
         >
             <div className={rmStyles.title}>매출액 등록</div>
 
-            <div className={rmStyles.search_container}>
-                <div className={rmStyles.search_item}>
-                    <div className={rmStyles.search_title}>프로젝트코드</div>
-                    <input 
-                        id="pjtCode"
-                        className={rmStyles.search} 
-                        value={rowData.pjtCode} 
-                        readOnly
-                    />
-                </div>
-                <div className={rmStyles.search_item}>
-                    <div className={rmStyles.search_title}>프로젝트명</div>
-                    <input 
-                        id="pjtName" 
-                        className={rmStyles.search} 
-                        value={rowData.pjtName} 
-                        readOnly
-                    />
-                </div>
-                <div className={rmStyles.search_item}>
-                    <div className={rmStyles.search_title}>
-                        년<span id="year-star" className={rmStyles.error_star}></span>
+            <div className={rmStyles.container}>
+                <div className={rmStyles.read_only}>
+                    <div className={rmStyles.search_item}>
+                        <div className={rmStyles.search_title}>프로젝트코드</div>
+                        <input 
+                            id="pjtCode"
+                            className={rmStyles.search} 
+                            value={rowData.pjtCode} 
+                            readOnly
+                        />
                     </div>
-                    <input 
-                        id="year"
-                        className={rmStyles.search} 
-                        required
-                    />
-                    <div id="year-error" className={rmStyles.error_message}></div>
-                </div>
-                <div className={rmStyles.search_item}>
-                <div className={rmStyles.search_title}>
-                        월<span id="month-star" className={rmStyles.error_star}></span>
+                    <div className={rmStyles.search_item}>
+                        <div className={rmStyles.search_title}>프로젝트명</div>
+                        <input 
+                            id="pjtName" 
+                            className={rmStyles.search} 
+                            value={rowData.pjtName} 
+                            readOnly
+                        />
                     </div>
-                    <input 
-                        id="month" 
-                        className={rmStyles.search} 
-                        required
-                    />
-                    <div id="month-error" className={rmStyles.error_message}></div>
                 </div>
-                <div className={rmStyles.search_item}>
-                <div className={rmStyles.search_title}>
-                        매출액<span id="salesAmt-star" className={rmStyles.error_star}></span>
+                <div className={rmStyles.search_container}>
+                    <div className={rmStyles.search_item}>
+                        <div className={rmStyles.search_title}>
+                            년<span id="year-star" className={rmStyles.error_star}></span>
+                        </div>
+                        <input 
+                            id="year"
+                            className={rmStyles.search} 
+                        />
+                        <div id="year-error" className={rmStyles.error_message}>&nbsp;</div>
                     </div>
-                    <input 
-                        id="salesAmt" 
-                        className={rmStyles.search} 
-                        required
-                    />
-                    <div id="salesAmt-error" className={rmStyles.error_message}></div>
+                    <div className={rmStyles.search_item}>
+                        <div className={rmStyles.search_title}>
+                            월<span id="month-star" className={rmStyles.error_star}></span>
+                        </div>
+                        <input 
+                            id="month" 
+                            className={rmStyles.search} 
+                            required
+                        />
+                        <div id="month-error" className={rmStyles.error_message}>&nbsp;</div>
+                    </div>
+                    <div className={rmStyles.search_item}>
+                        <div className={rmStyles.search_title}>
+                            매출액<span id="salesAmt-star" className={rmStyles.error_star}></span>
+                        </div>
+                        <input 
+                            id="salesAmt" 
+                            className={rmStyles.search} 
+                            required
+                        />
+                        <div id="salesAmt-error" className={rmStyles.error_message}>&nbsp;</div>
+                    </div>
                 </div>
             </div>
-
+            
             <button className={rmStyles.select_button} onClick={handleSelect}>등록</button>
         </Modal>
     )

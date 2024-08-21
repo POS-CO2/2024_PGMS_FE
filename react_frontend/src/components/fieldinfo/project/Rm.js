@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import Swal from 'sweetalert2'
+import { Card } from '@mui/material';
 import * as tableStyles from "../../../assets/css/newTable.css"
 import * as mainStyles from "../../../assets/css/main.css"
 import Table from "../../../Table";
@@ -9,8 +10,8 @@ import {formField_rm} from "../../../assets/json/searchFormData.js";
 import axiosInstance from '../../../utils/AxiosInstance';
 
 export default function Rm() {
-    const [formData, setFormData] = useState({});         // 검색 데이터(프로젝트 조회 결과)
-    const [salesAmts, setSalesAmts] = useState([]);         // 조회 결과(매출액 목록 리스트)
+    const [formData, setFormData] = useState([]);         // 검색 데이터(프로젝트 조회 결과)
+    const [salesAmts, setSalesAmts] = useState([]);       // 조회 결과(매출액 목록 리스트)
     const [selectedSA, setSelectedSA] = useState(null);   // 선택된 매출액(pk column only)
     const [isModalOpen, setIsModalOpen] = useState({
         RmAdd: false,
@@ -34,10 +35,9 @@ export default function Rm() {
     }, [salesAmts]);
 
     // 조회 버튼 클릭시 호출될 함수
-    const handleFormSubmit = async (param) => {
-        setFormData([param.searchProject]);
-        const y = parseInt(param.year, 10);
-        const response = await axiosInstance.get(`/pjt/sales?pjtId=${param.searchProject.id}&year=${y}`);
+    const handleFormSubmit = async (data) => {
+        setFormData([data.searchProject]);
+        const response = await axiosInstance.get(`/pjt/sales?pjtId=${data.searchProject.id}&year=${data.searchYear}`);
 
         // data가 빈 배열인지 확인
         if (response.data.length === 0) {
@@ -74,6 +74,7 @@ export default function Rm() {
 
     // 매출액 등록 버튼 클릭 시 호출될 함수
     const handleOk = (modalType) => async (data) => {
+
         setIsModalOpen(prevState => ({ ...prevState, [modalType]: false })); //모달 닫기
 
         // modalType에 따른 SweetAlert2 설정
@@ -84,10 +85,10 @@ export default function Rm() {
         if (modalType === 'RmAdd') {
             try {
                 const requestBody = {
-                    pjtId: formData.id,
-                    year: parseInt(data.year, 10), // 문자열을 정수로 변환
-                    mth: parseInt(data.month, 10), // 문자열을 정수로 변환
-                    salesAmt: parseFloat(data.salesAmt) // 문자열을 실수로 변환
+                    pjtId: formData[0].id,
+                    year: data.year,
+                    mth: data.month,
+                    salesAmt: data.salesAmt
                 };
                 
                 const response = await axiosInstance.post("/pjt/sales", requestBody);
@@ -114,7 +115,7 @@ export default function Rm() {
                 swalOptions.text = '매출액이 성공적으로 등록되었습니다.';
                 swalOptions.icon = 'success';
             } catch (error) {
-                console.log("aa:", error);
+                //console.log("aa:", error);
 
                 swalOptions.title = '실패!',
                 swalOptions.text = '매출액 등록에 실패하였습니다.';
@@ -124,12 +125,12 @@ export default function Rm() {
                 //     swalOptions.text = `이미 ${error.config.data}에 등록된 매출액이 존재합니다.`;
                 // }
             }
-        } else if (modalType === 'Del') {
+        } else if (modalType === 'Edit') {
             try {
                 const response = await axiosInstance.delete(`/pjt/sales?id=${selectedSA}`);
 
                 // 선택된 담당자를 managers 리스트에서 제거
-                setSalesAmts(prevSAs => prevSAs.filter(salesAmt => salesAmt.id !== data));
+                setSalesAmts(prevSAs => prevSAs.filter(salesAmt => salesAmt.id !== selectedSA));
                 setSelectedSA(null);
 
                 swalOptions.title = '성공!',
@@ -161,13 +162,13 @@ export default function Rm() {
     };
 
     return (
-        <>
+        <div>
             <div className={mainStyles.breadcrumb}>현장정보 &gt; 프로젝트 &gt; 매출액 관리</div>
             <SearchForms onFormSubmit={handleFormSubmit} formFields={formField_rm} />
             
             {(!formData || Object.keys(formData).length === 0) ?
             <></> : (
-                <>
+                <Card sx={{ width: "100%", height: "100%", borderRadius: "15px"}}>
                     <div className={tableStyles.table_title}>조회결과</div>
                     <Table 
                         data={formData}
@@ -180,6 +181,7 @@ export default function Rm() {
                         onClicks={[onDeleteClick, () => {}, onAddClick]}
                         onRowClick={handleSAClick}
                         selectedRows={[selectedSA]}
+                        rowData={{'pjtId': formData[0].id}}
                         modals={[
                             {
                                 'modalType': 'Del',
@@ -196,8 +198,8 @@ export default function Rm() {
                             },
                         ]}
                     />
-                </>
+                </Card>
             )}
-        </>
+        </div>
     );
 }

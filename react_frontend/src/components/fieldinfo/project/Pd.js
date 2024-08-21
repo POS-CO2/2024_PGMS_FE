@@ -9,7 +9,7 @@ import {formField_ps12} from "../../../assets/json/searchFormData";
 import axiosInstance from '../../../utils/AxiosInstance';
 
 export default function Pd() {
-    const [formData, setFormData] = useState({});                       // 검색 데이터(프로젝트 조회 결과)
+    const [formData, setFormData] = useState([]);                       // 검색 데이터(프로젝트 조회 결과)
     const [managers, setManagers] = useState([]);                       // 조회 결과(담당자 목록 리스트)
     const [selectedManager, setSelectedManager] = useState(null);       // 선택된 담당자(PK column only)
     const [isModalOpen, setIsModalOpen] = useState({
@@ -35,9 +35,9 @@ export default function Pd() {
     }, [managers]);
 
     // 조회 버튼 클릭시 호출될 함수
-    const handleFormSubmit = async (param) => {
-        setFormData([param.searchProject]);
-        const response = await axiosInstance.get(`/pjt/manager?pjtId=${formData[0].id}`);
+    const handleFormSubmit = async (data) => {
+        setFormData([data.searchProject]);
+        const response = await axiosInstance.get(`/pjt/manager?pjtId=${data.searchProject.id}`);
 
         // data가 빈 배열인지 확인
         if (response.data.length === 0) {
@@ -127,7 +127,7 @@ export default function Pd() {
                 const response = await axiosInstance.delete(`/pjt/manager?id=${selectedManager}`);
 
                 // 선택된 담당자를 managers 리스트에서 제거
-                setManagers(prevManagers => prevManagers.filter(manager => manager.id !== data));
+                setManagers(prevManagers => prevManagers.filter(manager => manager.id !== selectedManager));
                 setSelectedManager(null);
 
                 swalOptions.title = '성공!',

@@ -17,12 +17,12 @@
     border-bottom: 2px solid #4D5861;     /* 선의 두께와 색상 설정 */
 }
 
-.search_container {
+.container {
     display: flex;              /* Flexbox 레이아웃을 활성화(자식 요소들을 일정한 방향으로 정렬) */
     flex-direction: column;     /* 수직 정렬 */
     align-items: center;
-    gap: 10px;
     margin: 30px 0;
+    gap: 20px;
 
     /* 테두리 스타일 */
     border: 1.3px solid #D9D9D9;
@@ -31,10 +31,25 @@
     padding: 16px 16px;
 }
 
+.read_only {
+    display: flex;              /* Flexbox 레이아웃을 활성화(자식 요소들을 일정한 방향으로 정렬) */
+    flex-direction: column;     /* 수직 정렬 */
+    align-items: center;
+    gap: 20px;
+    width: 100%;
+}
+
+.search_container {
+    display: flex;              /* Flexbox 레이아웃을 활성화(자식 요소들을 일정한 방향으로 정렬) */
+    flex-direction: column;     /* 수직 정렬 */
+    align-items: center;
+    gap: 5px;
+    width: 100%;
+}
+
 .search_item {
     display: flex;
     flex-direction: column;
-    gap: 5px;
     width: 100%;
 }
 
@@ -42,6 +57,7 @@
     font-weight: bolder;
     font-size: 16px;
     line-height: 10px;
+    margin-bottom: 10px;
 }
 
 .search {
