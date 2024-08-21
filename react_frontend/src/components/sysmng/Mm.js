@@ -348,7 +348,8 @@ export default function Mm({menus}) {
             label: '시스템관리자'
         },
     ]
-
+    console.log(menus);
+    console.log(items);
     return (
         <>
             <div className={mainStyle.breadcrumb}>
