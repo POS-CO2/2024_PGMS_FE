@@ -125,7 +125,7 @@ export default function Rm() {
                 //     swalOptions.text = `이미 ${error.config.data}에 등록된 매출액이 존재합니다.`;
                 // }
             }
-        } else if (modalType === 'Edit') {
+        } else if (modalType === 'Del') {
             try {
                 const response = await axiosInstance.delete(`/pjt/sales?id=${selectedSA}`);
 
