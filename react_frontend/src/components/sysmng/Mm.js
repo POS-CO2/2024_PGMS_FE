@@ -171,6 +171,7 @@ const convertMenusToTreeItems = (menus) => {
             const id = parentId ? `${parentId}.${index + 1}` : `${index + 1}`;
             const treeItem = {
                 id,
+                originId: node.id,
                 label: node.name,
                 children: traverse(node.menu, id),
             };
@@ -270,7 +271,6 @@ export default function Mm({menus}) {
     };
 
     const items = convertMenusToTreeItems(menus);
-    
     // 수정해야함
     const [showtable, setShowTable] = useState(false);
 
@@ -283,9 +283,11 @@ export default function Mm({menus}) {
 
             const newMenuInfo = {
                 id: item,
+                originId: clickedItem.originId,
                 name: clickedItem.label, // 메뉴 이름
                 parentDir: parrentDir ? parrentDir.label : '상위 폴더 없음', // 상위 폴더 이름
-                access: 'ADMIN' // 접근 권한 (필요 시 다른 값을 설정)
+                access: 'ADMIN', // 접근 권한 (필요 시 다른 값을 설정)
+                url: clickedItem.url,
             };
             setSelectedMenu(newMenuInfo); // 상태 업데이트
         }
@@ -293,9 +295,11 @@ export default function Mm({menus}) {
 
     const [selectedMenu, setSelectedMenu] = useState({
         item: '',
+        originId: '',
         name: '',
         parentDir: '',
         access: '',
+        url: '',
     });
 
     // 모달 구현부
@@ -348,8 +352,26 @@ export default function Mm({menus}) {
             label: '시스템관리자'
         },
     ]
-    console.log(menus);
-    console.log(items);
+    
+    let res = [];
+    function parseMenu(menuArray, bd = null, md = null) {
+        menuArray.forEach(item => {
+            if (item.level === 1) {
+                parseMenu(item.menu, item.name, null);
+            } else if (item.level === 2) {
+                if (item.menu && item.menu.length > 0) {
+                parseMenu(item.menu, bd, item.name);
+                } else {
+                res.push({ id: item.id, level: item.level, url: item.url, name: item.name, accessUser: item.accessUser, bd, md: item.name, sd: null });
+                }
+            } else if (item.level === 3) {
+                res.push({ id: item.id, level: item.level, url: item.url, name: item.name, accessUser: item.accessUser, bd, md, sd: item.name });
+            }
+        });
+    }
+    menus.forEach(menu => parseMenu(menu.menu, menu.name, null));
+
+    console.log(selectedMenu);
     return (
         <>
             <div className={mainStyle.breadcrumb}>
@@ -438,14 +460,14 @@ export default function Mm({menus}) {
                     </Card> 
                     <Card className={sysStyles.card_box} sx={{width:"38%", borderRadius:"15px"}}>
                         <div className={sysStyles.mid_title}>{"권한 부여 현황"}</div>
-                        <TableCustom title='' data={table_mm} />
+                        <TableCustom title='' data={res} />
                         {/* <DataGrid rows = {} columns={} /> */}
                     </Card>
                     </>
                 ) : (
                     <Card className={sysStyles.card_box} sx={{width:"38%", borderRadius:"15px"}}>
                         <div className={sysStyles.mid_title}>{"권한 부여 현황"}</div>
-                        <TableCustom title='' data={table_mm} />
+                        <TableCustom title='' data={res} />
                     </Card>
                 )}
                 
