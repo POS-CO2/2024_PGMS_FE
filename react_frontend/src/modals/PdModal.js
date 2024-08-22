@@ -1442,7 +1442,6 @@ export function MmAddModal({ isModalOpen, handleOk, handleCancel, rowData }) {
             accessUser: selectedRole,
             menuOrder: orderMenu
         };
-        console.log(formData);
         
         try {
             // POST 요청으로 서버에 데이터 전송
@@ -1469,9 +1468,6 @@ export function MmAddModal({ isModalOpen, handleOk, handleCancel, rowData }) {
 
         fetchUpperDir();
     },[])
-    console.log("어퍼",upperDir);
-    console.log(selectedRole);
-    console.log(selectedUpperDir);
     return (
         <Modal
             open={isModalOpen}

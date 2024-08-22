@@ -33,7 +33,6 @@ export default function Um() {
 
     const handleFormSubmit = async (e) => {
         setUserShow(false);
-        console.log(e);
         const {data} = await axiosInstance.get(`/sys/user`, {
             params: {
                 loginId : e.loginId,
@@ -59,7 +58,6 @@ export default function Um() {
 
     const handleRowClick = (e) => {
         
-        console.log(e);
         setSelectedUser(e ?? {});
         if (e === undefined) {
             setInfoShow(false);

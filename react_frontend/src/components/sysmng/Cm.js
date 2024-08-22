@@ -53,7 +53,6 @@ export default function Cm() {
     const [selectedCode, setSelectedCode] = useState(null);
 
     const handleCodeRowClick = (e) => {
-        console.log(e);
         setSelectedCode(e);
     }
 

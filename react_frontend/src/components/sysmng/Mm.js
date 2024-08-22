@@ -296,7 +296,6 @@ export default function Mm({menus}) {
         if (clickedItem) {
             // 상위 폴더 찾기
             const parrentDir = findParentFolder(item, items);
-            console.log("clickedItem",clickedItem);
             const newMenuInfo = {
                 id: item,
                 originId: clickedItem.originId,
@@ -364,7 +363,6 @@ export default function Mm({menus}) {
             accessUser: selectedMenu.accessUser,
             menuOrder: selectedMenu.menuOrder
         }
-        console.log("formData",formData);
         try {
             const {data} = await axiosInstance.patch('/sys/menu', formData);
             // handleOk을 호출하여 모달을 닫고 상위 컴포넌트에 알림
@@ -379,8 +377,6 @@ export default function Mm({menus}) {
 
     };
 
-    console.log("selectedMenu",selectedMenu);
-    console.log("selectedupperdir", selectedUpperDir);
 
     const access = [
         {
@@ -422,7 +418,6 @@ export default function Mm({menus}) {
     };
 
     menus.forEach(menu => parseMenu(menu.menu, menu.name, null));
-    console.log(menus);
     return (
         <>
             <div className={mainStyle.breadcrumb}>
