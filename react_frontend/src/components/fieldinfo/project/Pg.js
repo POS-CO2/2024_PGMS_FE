@@ -6,10 +6,11 @@ import TableCustom from "../../../TableCustom";
 import SearchForms from "../../../SearchForms"
 import {formField_pg} from "../../../assets/json/searchFormData.js"
 import axiosInstance from '../../../utils/AxiosInstance';
+import dayjs from 'dayjs';
 
 export default function Pg() {
     const [formFields, setFormFields] = useState(formField_pg);
-    const [projects, setProjects] = useState({});           // 검색 데이터(프로젝트 목록)
+    const [projects, setProjects] = useState([]);           // 검색 데이터(프로젝트 목록)
     const [selectedPjt, setSelectedPjt] = useState(null);   // 선택된 프로젝트(PK column only)
     const [isModalOpen, setIsModalOpen] = useState({
         PgAdd: false,
@@ -28,7 +29,23 @@ export default function Pg() {
         const fetchProject = async () => {
             try {
                 const response = await axiosInstance.get(`/pjt?pgmsYn=y`);
-                setProjects(response.data);
+
+                const filteredPjts = response.data.map(project => ({
+                    id: project.id,
+                    프로젝트코드: project.pjtCode,
+                    프로젝트명: project.pjtName,
+                    프로젝트유형: project.pjtType,
+                    지역: project.regCode,
+                    프로젝트시작년: project.ctrtFrYear,
+                    프로젝트시작월: project.ctrtFrMth,
+                    프로젝트종료년: project.ctrtToYear,
+                    프로젝트종료월: project.ctrtToMth,
+                    본부: project.divCode,
+                    '연면적(m²)': project.bldArea,
+                    프로젝트진행상태: project.pjtProgStus
+                }));
+
+                setProjects(filteredPjts);
             } catch (error) {
                 console.log(error);
             }
@@ -37,14 +54,17 @@ export default function Pg() {
         const fetchDropDown = async () => {
             try {
                 // 여러 개의 비동기 작업을 병렬로 실행하기 위해 await Promise.all 사용
-                const [optionsPS, optionsReg] = await Promise.all([
+                const [optionsDiv, optionsPS, optionsReg] = await Promise.all([
+                    fetchOptions('본부코드'),
                     fetchOptions('프로젝트진행상태'),
                     fetchOptions('지역코드')
                 ]);
     
                 // formField_pg를 업데이트
                 const updateFormFields = formField_pg.map(field => {
-                    if (field.name === 'PjtProgStus') {
+                    if (field.name === 'divCode') {
+                        return { ...field, options: optionsDiv };
+                    } else if (field.name === 'pjtProgStus') {
                         return { ...field, options: optionsPS };
                     } else if (field.name === 'reg') {
                         return { ...field, options: optionsReg };
@@ -80,7 +100,7 @@ export default function Pg() {
                 프로젝트종료년: '',
                 프로젝트종료월: '',
                 본부: '',
-                연면적: '',
+                '연면적(m²)': '',
                 프로젝트진행상태: ''
             };
             setProjects([placeholderPjt]);
@@ -90,6 +110,10 @@ export default function Pg() {
     // 조회 버튼 클릭시 호출될 함수
     const handleFormSubmit = async (data) => {
         console.log("data", data);
+        // data.calendar가 정의되어 있지 않거나 값이 없는 경우를 처리하기 위해 설정
+        const startDate = data.calendar?.[0]?.$d;
+        const endDate = data.calendar?.[1]?.$d;
+
         const params = {
             pjtCode : data.pjtCode,
             pjtName : data.pjtName,
@@ -98,8 +122,8 @@ export default function Pg() {
             divCode : data.divCode,
             pjtProgStus : data.pjtProgStus,
             regCode: data.reg,
-            startDate : data.startDate,
-            endDate : data.endDate,
+            startDate: startDate ? dayjs(startDate).format('YYYY-MM') : undefined,
+            endDate : endDate ? dayjs(endDate).format('YYYY-MM') : undefined,
             pgmsYn: 'y'
         };
 
@@ -119,7 +143,7 @@ export default function Pg() {
                 프로젝트종료년: '',
                 프로젝트종료월: '',
                 본부: '',
-                연면적: '',
+                '연면적(m²)': '',
                 프로젝트진행상태: ''
             };
             setProjects([placeholderPjt]);
@@ -182,7 +206,7 @@ export default function Pg() {
                     프로젝트종료년: project.ctrtToYear,
                     프로젝트종료월: project.ctrtToMth,
                     본부: project.divCode,
-                    연면적: project.bldArea,
+                    '연면적(m²)': project.bldArea,
                     프로젝트진행상태: project.pjtProgStus
                 }));
 
