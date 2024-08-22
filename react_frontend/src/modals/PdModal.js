@@ -10,7 +10,6 @@ import * as sdStyles from "../assets/css/sdModal.css";
 import * as ps12Styles from "../assets/css/ps12UploadExcelModal.css";
 import { EditButton } from "../Button";
 import Table from "../Table";
-import project from "../assets/json/project"
 import { actv } from "../assets/json/selectedPjt";
 import emsData from "../assets/json/ems";
 import { selectYear, selectMonth } from "../assets/json/sd";
@@ -23,20 +22,60 @@ import { Center } from '@react-three/drei';
 export function PgAddModal({ isModalOpen, handleOk, handleCancel }) {
     const [formData, setFormData] = useState({});             // 검색 데이터
     const [selectedPjts, setSelectedPjts] = useState([]);     // 선택된 프로젝트
-    
+    const [allProjects, setAllProjects] = useState([]);       // 전체 프로젝트
+    const [project, setProject] = useState([]);
+
+    useEffect(() => {
+        const fetchProject = async () => {
+            try {
+                const response = await axiosInstance.get(`/pjt?pgmsYn=n`);
+                setAllProjects(response.data);
+                setProject(response.data);
+            } catch (error) {
+                console.log(error);
+            }
+            
+        };
+        fetchProject(); // 컴포넌트 마운트 될 때 데이터불러옴
+    }, [])
+
+    // input 필드 변경 시 호출될 함수
+    const handleInputChange = (e) => {
+        const { name, value } = e.target;
+        setFormData({
+        ...formData,
+        [name]: value,
+        });
+    };
+
     //찾기 버튼 클릭시 호출될 함수
-    const handleFormSubmit = (data) => {
-        setFormData(data); 
+    const handleFormSubmit = () => {
+        console.log("aa");
+        const filteredProjects = allProjects.filter(pjt => {
+        const matchesCode = formData.projectCode ? pjt.pjtCode.includes(formData.projectCode) : true;
+        const matchesName = formData.projectName ? pjt.pjtName.includes(formData.projectName) : true;
+        return matchesCode && matchesName;
+        });
+        setProject(filteredProjects);
     };
-  
+
+    // 엔터 키 입력 시 handleFormSubmit 호출
+    const handleKeyDown = (e) => {
+        if (e.key === 'Enter') {
+        e.preventDefault();  // 폼의 기본 제출 동작 방지
+        handleFormSubmit();
+        }
+    };
+
     // 프로젝트 row 클릭 시 호출될 함수
-    const handlePjtClick = (pjts) => {
-        setSelectedPjts(pjts.map(item => item.PjtCode));   // 클릭된 프로젝트의 코드로 상태를 설정
+    const handlePjtClick = (pjt) => {
+        setSelectedPjts(pjt);
     };
-  
+
     // 선택 버튼 클릭 시 호출될 함수
     const handleSelect = () => {
-        handleOk(selectedPjts);                            // 선택된 프로젝트 데이터를 handleOk로 전달
+        setFormData({});
+        handleOk(selectedPjts);
     };
   
     return (
@@ -51,21 +90,29 @@ export function PgAddModal({ isModalOpen, handleOk, handleCancel }) {
         <div className={pjtModalStyles.search_container}>
           <div className={pjtModalStyles.search_item}>
             <div className={pjtModalStyles.search_title}>프로젝트코드</div>
-            <input className={pjtModalStyles.search_code}/>
+            <input 
+                name="projectCode"
+                className={pjtModalStyles.search_code} 
+                onChange={handleInputChange}
+                onKeyDown={handleKeyDown}
+            />
           </div>
           <div className={pjtModalStyles.search_item}>
             <div className={pjtModalStyles.search_title}>프로젝트명</div>
             <div className={pjtModalStyles.search_container}>
-              <input className={pjtModalStyles.search_name}/>
+                <input 
+                name="projectName"
+                className={pjtModalStyles.search_name} 
+                onChange={handleInputChange}
+                onKeyDown={handleKeyDown}
+                />
               <button className={pjtModalStyles.search_button} onClick={handleFormSubmit}>찾기</button>
             </div>
           </div>
         </div>
   
         <div className={pjtModalStyles.result_container}>
-  
-        {(!formData || Object.keys(formData).length === 0) ?
-              <></> : ( <Table data={project} variant='checkbox' onRowClick={handlePjtClick} /> )}
+            <Table data={project} variant='checkbox' onRowClick={handlePjtClick} />
         </div>
   
         <button className={pjtModalStyles.select_button} onClick={handleSelect}>등록</button>
@@ -74,7 +121,7 @@ export function PgAddModal({ isModalOpen, handleOk, handleCancel }) {
 }
 
 export function PdAddModal({ isModalOpen, handleOk, handleCancel }) {
-    const [formData, setformData] = useState({});
+    const [formData, setFormData] = useState({});
     const [selectedEmps, setSelectedEmps] = useState([]);     // 선택된 사원의 loginId list
     
     // 각 input의 값을 상태로 관리
@@ -100,7 +147,7 @@ export function PdAddModal({ isModalOpen, handleOk, handleCancel }) {
                 권한: emp.role
             }));
 
-            setformData(filteredResponse);
+            setFormData(filteredResponse);
         } catch (error) {
             console.log(error);
         }
@@ -121,7 +168,7 @@ export function PdAddModal({ isModalOpen, handleOk, handleCancel }) {
 
     // 등록 버튼 클릭 시 호출될 함수
     const handleSelect = () => {
-        setformData({});
+        setFormData({});
         handleOk(selectedEmps);
     };
 
@@ -206,17 +253,31 @@ export function RmAddModal({ isModalOpen, handleOk, handleCancel, rowData }) {
             document.getElementById('year-star').textContent = '*'; // 빨간색 별표 추가
             hasError = true;
         }
+        else {
+            yearError.textContent = `empty`; // 오류 메시지 설정
+            yearError.classList.add(rmStyles.empty_message);
+        }
+
         if (!month) {
             monthField.classList.add(rmStyles.error); // 오류 클래스 추가
             monthError.textContent = `'월' is required`; // 오류 메시지 설정
             document.getElementById('month-star').textContent = '*'; // 빨간색 별표 추가
             hasError = true;
         }
+        else {
+            monthError.textContent = `empty`; // 오류 메시지 설정
+            monthError.classList.add(rmStyles.empty_message);
+        }
+
         if (!salesAmt) {
             salesAmtField.classList.add(rmStyles.error); // 오류 클래스 추가
             salesAmtError.textContent = `'매출액' is required`; // 오류 메시지 설정
             document.getElementById('salesAmt-star').textContent = '*'; // 빨간색 별표 추가
             hasError = true;
+        }
+        else {
+            salesAmtField.textContent = `empty`; // 오류 메시지 설정
+            salesAmtField.classList.add(rmStyles.empty_message);
         }
 
         if (hasError) {
