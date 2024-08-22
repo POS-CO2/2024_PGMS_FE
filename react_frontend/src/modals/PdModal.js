@@ -29,8 +29,24 @@ export function PgAddModal({ isModalOpen, handleOk, handleCancel }) {
         const fetchProject = async () => {
             try {
                 const response = await axiosInstance.get(`/pjt?pgmsYn=n`);
-                setAllProjects(response.data);
-                setProject(response.data);
+
+                const filteredPjts = response.data.map(project => ({
+                    id: project.id,
+                    프로젝트코드: project.pjtCode,
+                    프로젝트명: project.pjtName,
+                    프로젝트유형: project.pjtType,
+                    지역: project.regCode,
+                    프로젝트시작년: project.ctrtFrYear,
+                    프로젝트시작월: project.ctrtFrMth,
+                    프로젝트종료년: project.ctrtToYear,
+                    프로젝트종료월: project.ctrtToMth,
+                    본부: project.divCode,
+                    '연면적(m²)': project.bldArea,
+                    프로젝트진행상태: project.pjtProgStus
+                }));
+
+                setAllProjects(filteredPjts);
+                setProject(filteredPjts);
             } catch (error) {
                 console.log(error);
             }
@@ -50,10 +66,9 @@ export function PgAddModal({ isModalOpen, handleOk, handleCancel }) {
 
     //찾기 버튼 클릭시 호출될 함수
     const handleFormSubmit = () => {
-        console.log("aa");
         const filteredProjects = allProjects.filter(pjt => {
-        const matchesCode = formData.projectCode ? pjt.pjtCode.includes(formData.projectCode) : true;
-        const matchesName = formData.projectName ? pjt.pjtName.includes(formData.projectName) : true;
+        const matchesCode = formData.projectCode ? pjt.프로젝트코드?.includes(formData.projectCode) : true;
+        const matchesName = formData.projectName ? pjt.프로젝트명?.includes(formData.projectName) : true;
         return matchesCode && matchesName;
         });
         setProject(filteredProjects);
@@ -144,7 +159,6 @@ export function PdAddModal({ isModalOpen, handleOk, handleCancel }) {
                 사번: emp.loginId,
                 이름: emp.userName,
                 부서: emp.deptCode,
-                권한: emp.role
             }));
 
             setFormData(filteredResponse);
