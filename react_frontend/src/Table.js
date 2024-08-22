@@ -15,9 +15,16 @@ const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
     backgroundColor: 'rgb(237,245,254)',
     color: 'rgb(47, 107, 208)',
+    fontSize: '0.75rem',
+    whiteSpace: 'nowrap', // 텍스트를 한 줄로 유지
+    overflow: 'hidden', // 넘치는 내용을 숨기기
+    textOverflow: 'ellipsis', // 넘치는 텍스트를 ...로 표시
   },
   [`&.${tableCellClasses.body}`]: {
-    fontSize: 14,
+    fontSize: '0.75rem',
+    whiteSpace: 'nowrap', // 텍스트를 한 줄로 유지
+    overflow: 'hidden', // 넘치는 내용을 숨기기
+    textOverflow: 'ellipsis', // 넘치는 텍스트를 ...로 표시
   },
 }));
 
