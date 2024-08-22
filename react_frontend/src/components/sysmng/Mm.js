@@ -30,6 +30,8 @@ import { Button, Card, TextField } from '@mui/material';
 import TableCustom from '../../TableCustom';
 import { table_mm } from '../../assets/json/selectedPjt';
 import * as mainStyle from '../../assets/css/main.css';
+import { Select } from 'antd';
+import axiosInstance from '../../utils/AxiosInstance';
 
 function DotIcon() {
     return (
@@ -276,6 +278,7 @@ export default function Mm({menus}) {
 
     const clickMenuHandler = (e, item) => {
         setShowTable(true);
+        setEditable(true);
         const clickedItem = findMenuItemById(item, items); // items는 전체 메뉴 트리입니다.
         if (clickedItem) {
             // 상위 폴더 찾기
@@ -330,15 +333,16 @@ export default function Mm({menus}) {
     }
 
     const [editable, setEditable] = useState(true);
+    const [upperDir, setUpperDir] = useState([]);
     const handleEditClick = () => {
         setEditable(!editable);
-    }
+        (async () => {
+            const {data} = await axiosInstance.get(`/sys/menu/cand?id=${selectedMenu.originId}`);
+            setUpperDir(data);
+        })();
+    };
 
     const access = [
-        {
-            value: 'None',
-            label: 'None'
-        },
         {
             value: '현장담당자',
             label: '현장담당자'
@@ -371,7 +375,8 @@ export default function Mm({menus}) {
     }
     menus.forEach(menu => parseMenu(menu.menu, menu.name, null));
 
-    console.log(selectedMenu);
+
+    const [selectedUpperDir, setSelectedUpperDir] = useState(null);
     return (
         <>
             <div className={mainStyle.breadcrumb}>
@@ -388,7 +393,8 @@ export default function Mm({menus}) {
                         "modalType" : 'MmAdd',
                         'isModalOpen': isModalOpen.MmAdd,
                         'handleOk': handleOk('MmAdd'),
-                        'handleCancel': handleCancel('MmAdd')
+                        'handleCancel': handleCancel('MmAdd'),
+                        'rowData': selectedMenu,
                     },
                     {
                         "modalType" : 'Delete',
@@ -424,33 +430,46 @@ export default function Mm({menus}) {
                         <div className={sysStyles.text_field}>
                             <div className={sysStyles.text}>{"상위 폴더"}</div>
                             {!editable ? (
-                                <TextField id='parentDir' disabled={editable} variant='outlined' onChange={(e) => setSelectedMenu(e.target.value)} value={selectedMenu.parentDir} sx={{width:"20rem"}}/>
+                                <Select value={selectedUpperDir} onChange={(value) => setSelectedUpperDir(value)} style={{width:"20rem", height:"3.5rem", fontSize:"4rem"}}>
+                                {upperDir.map(option => (
+                                    <Select.Option key={option.id} value={option.id}>
+                                        {option.name}
+                                    </Select.Option>
+                                ))}
+                                </Select>
                             ) : (
                             <TextField id='parentDir' disabled={editable} variant='outlined' onChange={(e) => setSelectedMenu(e.target.value)} value={selectedMenu.parentDir} sx={{width:"20rem", backgroundColor:"rgb(223,223,223)"}}/>
                             )}
                             
                         </div>
                         <div className={sysStyles.text_field}>
+                            <div className={sysStyles.text}>{"Url 주소"}</div>
+                            {!editable ? (
+                                <TextField id='address' disabled={editable} variant='outlined' onChange={(e) => setSelectedMenu(e.target.value)} value={selectedMenu.parentDir} sx={{width:"20rem"}}/>
+                            ) : (
+                            <TextField id='address' disabled={editable} variant='outlined' onChange={(e) => setSelectedMenu(e.target.value)} value={selectedMenu.parentDir} sx={{width:"20rem", backgroundColor:"rgb(223,223,223)"}}/>
+                            )}
+                            
+                        </div>
+                        <div className={sysStyles.text_field}>
+                            <div className={sysStyles.text}>{"메뉴 순서"}</div>
+                            {!editable ? (
+                                <TextField id='menuOrder' disabled={editable} variant='outlined' onChange={(e) => setSelectedMenu(e.target.value)} value={selectedMenu.parentDir} sx={{width:"20rem"}}/>
+                            ) : (
+                            <TextField id='menuOrder' disabled={editable} variant='outlined' onChange={(e) => setSelectedMenu(e.target.value)} value={selectedMenu.parentDir} sx={{width:"20rem", backgroundColor:"rgb(223,223,223)"}}/>
+                            )}
+                            
+                        </div>
+                        <div className={sysStyles.text_field}>
                             <div className={sysStyles.text}>{"접근 권한"}</div>
                             {!editable ? (
-                                <TextField
-                                id="outlined-select-currency-native"
-                                select
-                                label="접근 권한"
-                                defaultValue="현장담당자"
-                                SelectProps={{
-                                    native: true,
-                                }}
-                                sx={{width:"20rem"}}
-                                >
-                                {access.map((option) => (
-                                    <option key={option.value} value={option.value}
-                                    onChange={(e) => setSelectedMenu(e.target.value)}>
+                                <Select placeholder={"접근 권한"} value={selectedMenu.role} onChange={(value) => setSelectedMenu(e.target.value)} style={{width:"20rem", height:"3.5rem", fontSize:"4rem"}}>
+                                {access.map(option => (
+                                    <Select.Option key={option.value} value={option.value}>
                                         {option.label}
-                                    </option>
+                                    </Select.Option>
                                 ))}
-                                
-                                </TextField>
+                                </Select>
                             ):(
                                 <TextField id='access' disabled={editable} variant='outlined' onChange={(e) => setSelectedMenu(e.target.value)} value={selectedMenu.access} sx={{width:"20rem", backgroundColor:"rgb(223,223,223)"}}/>
                             )}

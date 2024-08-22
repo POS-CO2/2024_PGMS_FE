@@ -1334,33 +1334,66 @@ export function UmAddModal({ isModalOpen, handleOk, handleCancel }) {
     )
 }
 
-export function MmAddModal({ isModalOpen, handleOk, handleCancel }) {
-    const [showResults, setShowResults] = useState(false);    // 사원 목록을 표시할지 여부
-    const [selectedEmps, setSelectedEmps] = useState([]);     // 선택된 사원의 loginId list
+export function MmAddModal({ isModalOpen, handleOk, handleCancel, rowData }) {
+    const [selectedRole, setSelectedRole] = useState('');
     const access = [
         {
-            value: 'None',
-            label: 'None'
+            value: 'FP',
+            label: '현장 담당자'
         },
         {
-            value: '현장담당자',
-            label: '현장담당자'
+            value: 'HP',
+            label: '본사 담당자'
         },
         {
-            value: '본사담당자',
-            label: '본사담당자'
-        },
-        {
-            value: '시스템관리자',
-            label: '시스템관리자'
+            value: 'ADMIN',
+            label: '시스템 관리자'
         },
     ]
-
+    const [menuName, setMenuName] = useState('');
+    const [url, setUrl] = useState('');
+    const [orderMenu, setOrderMenu] = useState('');
+    
+    
     // 등록 버튼 클릭 시 호출될 함수
-    const handleSelect = () => {
-        handleOk(selectedEmps);
+    const handleSelect = async () => {
+        const formData = {
+            menuName,
+            rootId: selectedUpperDir,
+            address: url,
+            accessUser: selectedRole,
+            menuOrder: orderMenu
+        };
+        console.log(formData);
+        
+        try {
+            // POST 요청으로 서버에 데이터 전송
+            const {data} = await axiosInstance.post('/sys/menu', formData);
+            // handleOk을 호출하여 모달을 닫고 상위 컴포넌트에 알림
+            handleOk(data);
+        } catch (error) {
+            console.error('Failed to add menu:', error);
+        }
     };
+    
+    const [upperDir, setUpperDir] = useState([]);
+    const [selectedUpperDir, setSelectedUpperDir] = useState('');
 
+    useEffect(() => {
+        const fetchUpperDir = async () => {
+            try {
+                const {data} = await axiosInstance.get(`/sys/menu/cand?id=0`)
+                setUpperDir(data);
+            } catch (error) {
+                console.error(error);
+            }
+        };
+
+        fetchUpperDir();
+    },[])
+    console.log("어퍼",upperDir);
+    console.log(selectedRole);
+    console.log(selectedUpperDir);
     return (
         <Modal
             open={isModalOpen}
@@ -1374,30 +1407,35 @@ export function MmAddModal({ isModalOpen, handleOk, handleCancel }) {
                     <div className={sysStyles.text}>
                         {"메뉴 이름"}
                     </div>
-                    <TextField id='menuName' label="메뉴 이름" variant='outlined' sx={{ width: "20rem" }} />
+                    <TextField id='menuName' value={menuName} onChange={(e) => setMenuName(e.target.value)} label="메뉴 이름" variant='outlined' sx={{ width: "20rem" }} />
                 </div>
                 <div className={sysStyles.text_field}>
                     <div className={sysStyles.text}>{"상위 폴더"}</div>
-                    <TextField id='parentDir' label="상위 폴더" variant='outlined' sx={{ width: "20rem" }} />
+                    <Select value={selectedUpperDir} onChange={(e) => {setSelectedUpperDir(e); console.log(e);}} style={{width:"20rem", height:"3.5rem", fontSize:"4rem"}}>
+                    {upperDir.map(option => (
+                        <Select.Option key={option.id} value={option.id}>
+                            {option.name}
+                        </Select.Option>
+                    ))}
+                    </Select>
+                </div>
+                <div className={sysStyles.text_field}>
+                    <div className={sysStyles.text}>{"Url 주소"}</div>
+                    <TextField id='address' value={url} onChange={(e) => setUrl(e.target.value)} label="Url 주소" variant='outlined' sx={{ width: "20rem" }} />
+                </div>
+                <div className={sysStyles.text_field}>
+                    <div className={sysStyles.text}>{"메뉴 순서"}</div>
+                    <TextField id='menuOrder' value={orderMenu} onChange={(e) => setOrderMenu(e.target.value)} label="메뉴 순서" variant='outlined' sx={{ width: "20rem" }} />
                 </div>
                 <div className={sysStyles.text_field}>
                     <div className={sysStyles.text}>{"접근 권한"}</div>
-                    <TextField
-                        id="outlined-select-currency-native"
-                        select
-                        label="접근 권한"
-                        defaultValue="현장담당자"
-                        SelectProps={{
-                            native: true,
-                        }}
-                        sx={{ width: "20rem" }}
-                    >
-                        {access.map((option) => (
-                            <option key={option.value} value={option.value}>
-                                {option.label}
-                            </option>
-                        ))}
-                    </TextField>
+                    <Select placeholder={"접근 권한"} value={selectedRole} onChange={(value) => setSelectedRole(value)} style={{width:"20rem", height:"3.5rem", fontSize:"4rem"}}>
+                    {access.map(option => (
+                        <Select.Option key={option.value} value={option.value}>
+                            {option.label}
+                        </Select.Option>
+                    ))}
+                    </Select>
                 </div>
             </div>
             <button className={modalStyles.select_button} onClick={handleSelect}>등록</button>

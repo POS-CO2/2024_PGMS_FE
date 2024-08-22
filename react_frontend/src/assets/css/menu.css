@@ -1,5 +1,7 @@
 .menu_container{
     margin-left: 14px;
+    flex-grow: 1;
+    overflow-y: auto;
 }
 
 .menu{
