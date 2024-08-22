@@ -152,31 +152,8 @@ export const formField_pg = [
     { type: 'InputText', name: 'managerId', label: '담당자사번'},
     { type: 'InputText', name: 'managerName', label: '담당자명'},
     { type: 'InputText', name: 'DivName', label: '본부명'},
-    { type: 'DropDown', name: 'PjtProgStus', label: '프로젝트진행상태', options: [
-        {value: '1', label: 1},
-        {value: '2', label: 2},
-        {value: '3', label: 9},
-    ]},
-    { type: 'DropDown', name: 'reg', label: '지역', options: [
-        {value: '1', label: '서울'},
-        {value: '2', label: '강원도'},
-        {value: '3', label: '대전'},
-        {value: '4', label: '충남'},
-        {value: '5', label: '충북'},
-        {value: '6', label: '인천'},
-        {value: '7', label: '경기도'},
-        {value: '8', label: '광주'},
-        {value: '9', label: '전남'},
-        {value: '10', label: '전남 광양시'},
-        {value: '11', label: '전북'},
-        {value: '12', label: '부산'},
-        {value: '13', label: '울산'},
-        {value: '14', label: '제주'},
-        {value: '15', label: '대구'},
-        {value: '16', label: '경남'},
-        {value: '17', label: '경북 포항시'},
-        {value: '18', label: '세종시'},
-    ]},
+    { type: 'DropDown', name: 'PjtProgStus', label: '프로젝트진행상태', options: []},
+    { type: 'DropDown', name: 'reg', label: '지역', options: []},
     { type: 'SelectCalendar', name: 'calendar', label: '조회기간' }
 ]
 
