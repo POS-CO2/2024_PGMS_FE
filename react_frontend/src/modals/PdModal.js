@@ -987,14 +987,17 @@ export function CmEditModal({ isModalOpen, handleOk, handleCancel, rowData }) {
 }
 
 export function DeleteModal({ isModalOpen, handleOk, handleCancel, rowData, url }) {
-    console.log("왜널?",rowData);
     const handleDelete = async () => {
         try {
             // 서버에 DELETE 요청을 보냅니다.
-            console.log("셀릭",rowData);
-            console.log(url);
-            await axiosInstance.delete(`${url}?id=${rowData.id}`);
-            handleOk(rowData); // 삭제 성공 시 상위 컴포넌트에 알림
+            if (url == "/sys/menu"){
+                await axiosInstance.delete(`${url}?id=${rowData.originId}`);
+                handleOk(rowData);
+            }
+            else{
+                await axiosInstance.delete(`${url}?id=${rowData.id}`);
+                handleOk(rowData); // 삭제 성공 시 상위 컴포넌트에 알림
+            }
         } catch (error) {
             console.error('Failed to delete user:', error);
         }

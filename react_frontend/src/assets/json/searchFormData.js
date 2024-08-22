@@ -154,7 +154,7 @@ export const formField_mal = [
 ]
 
 export const formField_fm = [
-    { type: 'SearchAtModal', name: 'searchProject', label: '프로젝트명/코드', modalType: '프로젝트 찾기' },
+    { type: 'SearchAtModal', name: 'searchProject', label: '프로젝트명/코드', required: true, modalType: '프로젝트 찾기' },
 ]
 
 export const formField_efm = [

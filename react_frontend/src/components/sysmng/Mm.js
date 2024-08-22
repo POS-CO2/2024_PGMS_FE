@@ -174,7 +174,9 @@ const convertMenusToTreeItems = (menus) => {
             const treeItem = {
                 id,
                 originId: node.id,
+                menuOrder: node.menuOrder,
                 label: node.name,
+                accessUser: node.accessUser, 
                 children: traverse(node.menu, id),
             };
             if (node.url) {
@@ -276,6 +278,17 @@ export default function Mm({menus}) {
     // 수정해야함
     const [showtable, setShowTable] = useState(false);
 
+    const [selectedMenu, setSelectedMenu] = useState({
+        item: '',
+        originId: '',
+        name: '',
+        parentDir: '',
+        parentDirId: '',
+        menuOrder: '',
+        accessUser: '',
+        url: '',
+    });
+
     const clickMenuHandler = (e, item) => {
         setShowTable(true);
         setEditable(true);
@@ -283,34 +296,26 @@ export default function Mm({menus}) {
         if (clickedItem) {
             // 상위 폴더 찾기
             const parrentDir = findParentFolder(item, items);
-
+            console.log("clickedItem",clickedItem);
             const newMenuInfo = {
                 id: item,
                 originId: clickedItem.originId,
                 name: clickedItem.label, // 메뉴 이름
                 parentDir: parrentDir ? parrentDir.label : '상위 폴더 없음', // 상위 폴더 이름
-                access: 'ADMIN', // 접근 권한 (필요 시 다른 값을 설정)
+                parentDirId: parrentDir ? parrentDir.originId : 0,
+                menuOrder: clickedItem.menuOrder,
+                accessUser: clickedItem.accessUser, // 접근 권한 (필요 시 다른 값을 설정)
                 url: clickedItem.url,
             };
             setSelectedMenu(newMenuInfo); // 상태 업데이트
         }
     };
 
-    const [selectedMenu, setSelectedMenu] = useState({
-        item: '',
-        originId: '',
-        name: '',
-        parentDir: '',
-        access: '',
-        url: '',
-    });
-
     // 모달 구현부
     const [isModalOpen, setIsModalOpen] = useState({
         MmAdd: false,
         Delete: false
     });
-
     const showModal = (modalType) => {
         setIsModalOpen(prevState => ({...prevState, [modalType]: true}));
     };
@@ -331,28 +336,63 @@ export default function Mm({menus}) {
     const handleDeleteClick = () => {
         showModal('Delete');
     }
-
-    const [editable, setEditable] = useState(true);
-    const [upperDir, setUpperDir] = useState([]);
     const handleEditClick = () => {
-        setEditable(!editable);
+        setEditable(false);
         (async () => {
             const {data} = await axiosInstance.get(`/sys/menu/cand?id=${selectedMenu.originId}`);
             setUpperDir(data);
         })();
+    }
+    
+    const [editable, setEditable] = useState(true);
+    const [upperDir, setUpperDir] = useState([]);
+
+    const [menuName, setMenuName] = useState('');
+    const [url, setUrl] = useState('');
+    const [accessUser, setAccessUser] = useState('');
+    const [menuOrder, setMenuOrder] = useState('');
+    const [selectedUpperDir, setSelectedUpperDir] = useState(null);
+    const handleSaveClick = async () => {
+        setEditable(!editable);
+        
+
+        const formData = {
+            id: selectedMenu.originId,
+            menuName: selectedMenu.name,
+            rootId: selectedMenu.parentDirId === undefined ? 1 : selectedMenu.parentDirId,
+            address: selectedMenu.url,
+            accessUser: selectedMenu.accessUser,
+            menuOrder: selectedMenu.menuOrder
+        }
+        console.log("formData",formData);
+        try {
+            const {data} = await axiosInstance.patch('/sys/menu', formData);
+            // handleOk을 호출하여 모달을 닫고 상위 컴포넌트에 알림
+            // setUserList(prevList => prevList.map(user => 
+            //     user.id === data.id ? data : user
+            // ));
+            setSelectedMenu(data);
+            
+        } catch (error) {
+            console.error(error);
+        }
+
     };
+
+    console.log("selectedMenu",selectedMenu);
+    console.log("selectedupperdir", selectedUpperDir);
 
     const access = [
         {
-            value: '현장담당자',
+            value: 'FP',
             label: '현장담당자'
         },
         {
-            value: '본사담당자',
+            value: 'HP',
             label: '본사담당자'
         },
         {
-            value: '시스템관리자',
+            value: 'ADMIN',
             label: '시스템관리자'
         },
     ]
@@ -373,14 +413,20 @@ export default function Mm({menus}) {
             }
         });
     }
+
+    const handleInputChange = (field, value) => {
+        setSelectedMenu(prevState => ({
+            ...prevState,
+            [field]: value
+        }));
+    };
+
     menus.forEach(menu => parseMenu(menu.menu, menu.name, null));
-
-
-    const [selectedUpperDir, setSelectedUpperDir] = useState(null);
+    console.log(menus);
     return (
         <>
             <div className={mainStyle.breadcrumb}>
-                {"홈 > 시스템관리 > 메뉴 관리"}
+                {"시스템관리 > 메뉴 관리"}
             </div>
             <div className={sysStyles.main_grid}>
                 <Card sx={{width:"24%", borderRadius:"15px"}}>
@@ -400,12 +446,14 @@ export default function Mm({menus}) {
                         "modalType" : 'Delete',
                         'isModalOpen': isModalOpen.Delete,
                         'handleOk': handleOk('Delete'),
-                        'handleCancel': handleCancel('Delete')
+                        'handleCancel': handleCancel('Delete'),
+                        'rowData': selectedMenu,
+                        'url': '/sys/menu',
                     },
                 ]}/>
                 <RichTreeView
                 items={items}
-                sx={{ height: 'fit-content', flexGrow: 1, maxWidth: 400, overflowY: 'auto', width:"300px"}}
+                sx={{ height: 'fit-content', flexGrow: 1, maxWidth: 400, overflowY: 'auto', width:"100%"}}
                 slots={{ item: CustomTreeItem }}
                 onItemClick={(e, item) => {clickMenuHandler(e, item);}}
                 />
@@ -421,16 +469,16 @@ export default function Mm({menus}) {
                                 {"메뉴 이름"}
                             </div>
                             {!editable ? (
-                                <TextField id='menuName' disabled={editable} onChange={(e) => setSelectedMenu(e.target.value)} defaultValue={selectedMenu.name} value={selectedMenu.name} variant='outlined' sx={{width:"20rem"}}/>
+                                <TextField id='menuName' disabled={editable} onChange={(e) => handleInputChange('name', e.target.value)} value={selectedMenu.name} variant='outlined' sx={{width:"20rem"}}/>
                             ) : (
-                                <TextField id='menuName' disabled={editable} onChange={(e) => setSelectedMenu(e.target.value)} defaultValue={selectedMenu.name} value={selectedMenu.name} variant='outlined' sx={{width:"20rem", backgroundColor:"rgb(223,223,223)"}}/>
+                                <TextField id='menuName' disabled={editable} onChange={handleInputChange} value={selectedMenu.name} variant='outlined' sx={{width:"20rem", backgroundColor:"rgb(223,223,223)"}}/>
                             )}
                             
                         </div>
                         <div className={sysStyles.text_field}>
                             <div className={sysStyles.text}>{"상위 폴더"}</div>
                             {!editable ? (
-                                <Select value={selectedUpperDir} onChange={(value) => setSelectedUpperDir(value)} style={{width:"20rem", height:"3.5rem", fontSize:"4rem"}}>
+                                <Select value={selectedMenu.parentDir} onChange={(e) => handleInputChange('parentDirId', e)} style={{width:"20rem", height:"3.5rem", fontSize:"4rem"}}>
                                 {upperDir.map(option => (
                                     <Select.Option key={option.id} value={option.id}>
                                         {option.name}
@@ -438,32 +486,32 @@ export default function Mm({menus}) {
                                 ))}
                                 </Select>
                             ) : (
-                            <TextField id='parentDir' disabled={editable} variant='outlined' onChange={(e) => setSelectedMenu(e.target.value)} value={selectedMenu.parentDir} sx={{width:"20rem", backgroundColor:"rgb(223,223,223)"}}/>
+                            <TextField id='parentDir' disabled={editable} variant='outlined' value={selectedMenu.parentDir} sx={{width:"20rem", backgroundColor:"rgb(223,223,223)"}}/>
                             )}
                             
                         </div>
                         <div className={sysStyles.text_field}>
                             <div className={sysStyles.text}>{"Url 주소"}</div>
                             {!editable ? (
-                                <TextField id='address' disabled={editable} variant='outlined' onChange={(e) => setSelectedMenu(e.target.value)} value={selectedMenu.parentDir} sx={{width:"20rem"}}/>
+                                <TextField id='address' defaultValue={selectedMenu.url} disabled={editable} variant='outlined' onChange={(e) => handleInputChange('url', e.target.value)} value={selectedMenu.url} sx={{width:"20rem"}}/>
                             ) : (
-                            <TextField id='address' disabled={editable} variant='outlined' onChange={(e) => setSelectedMenu(e.target.value)} value={selectedMenu.parentDir} sx={{width:"20rem", backgroundColor:"rgb(223,223,223)"}}/>
+                            <TextField id='address' disabled={editable} variant='outlined' value={selectedMenu.url} sx={{width:"20rem", backgroundColor:"rgb(223,223,223)"}}/>
                             )}
                             
                         </div>
                         <div className={sysStyles.text_field}>
                             <div className={sysStyles.text}>{"메뉴 순서"}</div>
                             {!editable ? (
-                                <TextField id='menuOrder' disabled={editable} variant='outlined' onChange={(e) => setSelectedMenu(e.target.value)} value={selectedMenu.parentDir} sx={{width:"20rem"}}/>
+                                <TextField id='menuOrder' defaultValue={selectedMenu.menuOrder} disabled={editable} variant='outlined' onChange={(e) => handleInputChange('menuOrder', e.target.value)} value={selectedMenu.menuOrder} sx={{width:"20rem"}}/>
                             ) : (
-                            <TextField id='menuOrder' disabled={editable} variant='outlined' onChange={(e) => setSelectedMenu(e.target.value)} value={selectedMenu.parentDir} sx={{width:"20rem", backgroundColor:"rgb(223,223,223)"}}/>
+                            <TextField id='menuOrder' value={selectedMenu.menuOrder} disabled={editable} variant='outlined' sx={{width:"20rem", backgroundColor:"rgb(223,223,223)"}}/>
                             )}
                             
                         </div>
                         <div className={sysStyles.text_field}>
                             <div className={sysStyles.text}>{"접근 권한"}</div>
                             {!editable ? (
-                                <Select placeholder={"접근 권한"} value={selectedMenu.role} onChange={(value) => setSelectedMenu(e.target.value)} style={{width:"20rem", height:"3.5rem", fontSize:"4rem"}}>
+                                <Select placeholder={"접근 권한"} defaultValue={selectedMenu.accessUser} value={selectedMenu.accessUser} onChange={(value) => handleInputChange('accessUser', value)} style={{width:"20rem", height:"3.5rem", fontSize:"4rem"}}>
                                 {access.map(option => (
                                     <Select.Option key={option.value} value={option.value}>
                                         {option.label}
@@ -471,11 +519,11 @@ export default function Mm({menus}) {
                                 ))}
                                 </Select>
                             ):(
-                                <TextField id='access' disabled={editable} variant='outlined' onChange={(e) => setSelectedMenu(e.target.value)} value={selectedMenu.access} sx={{width:"20rem", backgroundColor:"rgb(223,223,223)"}}/>
+                                <TextField id='access' disabled={editable} variant='outlined' value={selectedMenu.accessUser} sx={{width:"20rem", backgroundColor:"rgb(223,223,223)"}}/>
                             )}
                             
                         </div>
-                        {!editable && <Button variant='contained' onClick={handleEditClick} sx={{width:"20rem", margin:"5rem auto"}}>저장</Button>}
+                        {!editable && <Button variant='contained' onClick={handleSaveClick} sx={{width:"20rem", margin:"5rem auto"}}>저장</Button>}
                     </Card> 
                     <Card className={sysStyles.card_box} sx={{width:"38%", borderRadius:"15px"}}>
                         <div className={sysStyles.mid_title}>{"권한 부여 현황"}</div>
