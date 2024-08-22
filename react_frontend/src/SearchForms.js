@@ -35,7 +35,7 @@ const formItemComponents = {
     SearchAtModal
 };
 
-export default function SearchForms({ onFormSubmit, formFields, onSearch, autoSubmitOnInit=false }) {
+export default function SearchForms({ onFormSubmit, formFields, onSearch, autoSubmitOnInit=false, onProjectSelect=null }) {
     const [form] = Form.useForm();
     const [isInitialSubmit, setIsInitialSubmit] = useState(autoSubmitOnInit); // 첫 렌더링 여부를 추적하는 상태
 
@@ -77,6 +77,10 @@ export default function SearchForms({ onFormSubmit, formFields, onSearch, autoSu
                         options={field.options}
                         form={form}
                         defaultSelected={field.defaultSelected}
+
+                        disabled={field.disabled} // disabled 상태 전달
+                        placeholder={field.placeholder} // placeholder 전달
+                        onProjectSelect={onProjectSelect} // 프로젝트 선택 시 대상년도 설정
                     />
                 )
             })}
