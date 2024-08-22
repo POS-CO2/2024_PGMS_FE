@@ -2,6 +2,11 @@
     margin-left: 14px;
     flex-grow: 1;
     overflow-y: auto;
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+.menu_container::-webkit-scrollbar{
+    display: none;
 }
 
 .menu{

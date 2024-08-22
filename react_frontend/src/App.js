@@ -71,6 +71,7 @@ export default function App() {
     if (loading) {
         return <div>Loading...</div>; // 로딩 상태일 때 표시할 화면
     }
+    console.log(menu);
     return (
         <Router>
             <Routes>

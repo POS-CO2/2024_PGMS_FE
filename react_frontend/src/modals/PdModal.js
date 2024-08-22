@@ -1024,11 +1024,13 @@ export function DeleteModal({ isModalOpen, handleOk, handleCancel, rowData, url 
             }}
             open={isModalOpen}
             onCancel={handleCancel}
-            width={480}
+            width={380}
             footer={null}             //Ant Design의 기본 footer 제거(Cancel, OK 버튼)
         >
             {/* 모달제목 */}
-            <div>정말 삭제하시겠습니까?</div>
+            <div style={{display:"flex", marginTop:"3%", marginLeft:"5%", gap:"1rem", fontSize:"1.3rem", fontWeight:"bold"}}>
+                <WarningAmberIcon fontSize="large" sx={{color:"red"}}/>
+                정말 삭제하시겠습니까?</div>
             <div style={{display:"flex"}}>
             <button className={modalStyles.cancel_button} style={{width:"45%"}} onClick={handleCancel}>취소</button>
             <button className={modalStyles.select_button} style={{width:"45%"}} onClick={handleDelete}>확인</button>
