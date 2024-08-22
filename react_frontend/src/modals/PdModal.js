@@ -50,7 +50,6 @@ export function PgAddModal({ isModalOpen, handleOk, handleCancel }) {
 
     //찾기 버튼 클릭시 호출될 함수
     const handleFormSubmit = () => {
-        console.log("aa");
         const filteredProjects = allProjects.filter(pjt => {
         const matchesCode = formData.projectCode ? pjt.pjtCode.includes(formData.projectCode) : true;
         const matchesName = formData.projectName ? pjt.pjtName.includes(formData.projectName) : true;

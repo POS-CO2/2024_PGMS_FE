@@ -57,7 +57,6 @@ export default function Rm() {
                 월: sales.mth,
                 매출액: sales.salesAmt
             }));
-
             setSalesAmts(filteredSAs);
         }
     };
