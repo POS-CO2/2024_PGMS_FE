@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import Swal from 'sweetalert2'
 import { Card } from '@mui/material';
-import * as tableStyles from "../../../assets/css/newTable.css"
 import * as mainStyles from "../../../assets/css/main.css"
 import TableCustom from "../../../TableCustom";
 import SearchForms from "../../../SearchForms"
@@ -26,6 +25,15 @@ export default function Pg() {
     };
     
     useEffect(() => {
+        const fetchProject = async () => {
+            try {
+                const response = await axiosInstance.get(`/pjt?pgmsYn=y`);
+                setProjects(response.data);
+            } catch (error) {
+                console.log(error);
+            }
+        };
+
         const fetchDropDown = async () => {
             try {
                 // 여러 개의 비동기 작업을 병렬로 실행하기 위해 await Promise.all 사용
@@ -52,6 +60,7 @@ export default function Pg() {
         };
     
         fetchDropDown();
+        fetchProject();
     }, []);
 
     // selectedPjt 변경될 때마다 실행될 useEffect
@@ -80,6 +89,7 @@ export default function Pg() {
 
     // 조회 버튼 클릭시 호출될 함수
     const handleFormSubmit = async (data) => {
+        console.log("data", data);
         const params = {
             pjtCode : data.pjtCode,
             pjtName : data.pjtName,
@@ -87,6 +97,7 @@ export default function Pg() {
             userName : data.userName,
             divCode : data.divCode,
             pjtProgStus : data.pjtProgStus,
+            regCode: data.reg,
             startDate : data.startDate,
             endDate : data.endDate,
             pgmsYn: 'y'

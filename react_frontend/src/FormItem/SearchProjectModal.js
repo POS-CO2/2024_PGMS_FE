@@ -2,10 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { Modal } from 'antd';
 import * as pjtModalStyles from "../assets/css/pjtModal.css";
 import Table from "../Table";
-import project from "../assets/json/project.js"
 import axiosInstance from '../utils/AxiosInstance.js';
  
-export default function ModalComponent({ isModalOpen, handleOk, handleCancel, pgms = 'y' }) {
+export default function ModalComponent({ isModalOpen, handleOk, handleCancel}) {
   const [formData, setFormData] = useState({});           // 검색 데이터
   const [selectedPjt, setSelectedPjt] = useState([]);     // 선택된 프로젝트
   const [allProjects, setAllProjects] = useState([]);     // 전체 프로젝트
@@ -14,7 +13,7 @@ export default function ModalComponent({ isModalOpen, handleOk, handleCancel, pg
   useEffect(() => {
       const fetchProject = async () => {
           try {
-              const response = await axiosInstance.get(`/pjt?pgmsYn=${pgms}`);
+              const response = await axiosInstance.get(`/pjt?pgmsYn=y`);
               setAllProjects(response.data);
               setProject(response.data);
           } catch (error) {
