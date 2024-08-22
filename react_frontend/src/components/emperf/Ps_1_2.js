@@ -12,7 +12,9 @@ export default function Ps_1_2() {
     const [formFields, setFormFields] = useState(formField_ps12);
     const [formData, setFormData] = useState(); // 검색 데이터
     const [perfs, setPerfs] = useState([]);
+    const [actvYearDisabled, setActvYearDisabled] = useState(true);  // 드롭다운 비활성화 상태 관리
 
+    // 배출활동유형 드롭다운 옵션 설정
     const [emtnActvType, setEmtnActvType] = useState([]);
     useEffect(() => {
         const fetchEmtnActvTypeCode = async () => {
@@ -35,6 +37,30 @@ export default function Ps_1_2() {
 
         fetchEmtnActvTypeCode();
     },[]);
+
+    // 프로젝트 선택 후 대상년도 드롭다운 옵션 설정
+    const onProjectSelect = (selectedData) => {
+        const ctrtFrYear = selectedData.ctrtFrYear;
+        if (ctrtFrYear) {
+            const currentYear = new Date().getFullYear();
+            const yearOptions = [];
+
+            // 계약년도부터 현재년도까지의 옵션 생성
+            for (let year = currentYear; year > ctrtFrYear; year--) {
+                yearOptions.push({ value: year.toString(), label: year.toString() });
+            }
+
+            // actvYear 필드를 업데이트하여 새로운 옵션 반영
+            const updatedFields = formFields.map(field => 
+                field.name === 'actvYear' ? { ...field, options: yearOptions } : field
+            );
+
+            setFormFields(updatedFields);
+
+            // 옵션 데이터가 있으면 드롭다운을 활성화
+            setActvYearDisabled(yearOptions.length === 0);
+        }
+    };
 
     // 조회 버튼 클릭시 호출될 함수
     const handleFormSubmit = async (data) => {
@@ -73,7 +99,7 @@ export default function Ps_1_2() {
             // 배열의 필드를 유지하면서 빈 값으로 채운 배열 생성
             setPerfs([placeholderPerf]);
         } else {
-            // 필요한 필드만 추출하여 managers에 설정
+            // 필요한 필드만 추출하여 설정
             const filteredPerfs = response.data.map(perf => {
                 // 기본적인 구조를 설정
                 const perfData = {
@@ -112,7 +138,10 @@ export default function Ps_1_2() {
                 {"배출실적 > 활동량 관리"}
             </div>
 
-            <SearchForms onFormSubmit={handleFormSubmit} formFields={formFields} />
+            <SearchForms onFormSubmit={handleFormSubmit} 
+            //formFields={formFields} 
+            formFields={formFields.map(field => field.name === 'actvYear' ? {...field, disabled: actvYearDisabled, placeholder: actvYearDisabled ? '프로젝트를 선택하세요.' : '' } : field)} // actvYear 필드의 disabled 상태 반영
+            onProjectSelect={onProjectSelect} />
 
             {(!formData || Object.keys(formData).length === 0) ?
                 <></> : (
