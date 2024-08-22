@@ -121,7 +121,7 @@ export default function Fm() {
                             <div className={sysStyles.mid_title}> 
                                 조회결과
                             </div>
-                            <TableCustom title="" data={selectedPjt} onRowClick={() => {}}/>
+                            <TableCustom title="" data={selectedPjt} onRowClick={() => {}} pagination={false}/>
                         </Card>
                         {/** 버튼 변경 필요(엑셀 다운로드, 삭제, 등록) 및 등록 클릭 시 모달 추가 */}
                         <Card className={sysStyles.card_box} sx={{width:"100%", height:"fit-content", borderRadius:"15px"}}>
