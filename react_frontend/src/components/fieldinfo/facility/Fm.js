@@ -13,15 +13,19 @@ export default function Fm() {
 
     const [fac, setFac] = useState([]);
     const [selectedPjt, setSelectedPjt] = useState([]);
-
+    const [temp, setTemp] = useState(false);
     const handleFormSubmit = async (param) => {
         console.log(param);
         
         setSelectedPjt([param.searchProject]);
+        
         console.log([param.searchProject]);
         const {data} = await axiosInstance.get(`/equip?pjtId=${param.searchProject.id}`);
         
         setFac(data);
+        if(param && Object.keys(param).length !== 0){
+            setShowSearchResult(true);
+        }
         
     };
 
@@ -29,7 +33,7 @@ export default function Fm() {
     const [showSearchResult, setShowSearchResult] = useState(false);
 
     const handleSearchClick = () => {
-        setShowSearchResult(true);
+        
     };
 
 
