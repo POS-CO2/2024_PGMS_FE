@@ -26,7 +26,7 @@ export default function SearchAtModal({ name, label, required = false, modalType
         setIsModalOpen(false);
         const selectedData = data;
         form.setFieldsValue({ [name]: selectedData  });
-        setInputValue(selectedData.pjtCode + '/' + selectedData.pjtName); // SearchProjectModal.js 에서 [pjt.pjtCode, pjt.pjtName]을 pjt로 넘겨주어 변경
+        setInputValue(selectedData.프로젝트코드 + '/' + selectedData.프로젝트명); // SearchProjectModal.js 에서 [pjt.pjtCode, pjt.pjtName]을 pjt로 넘겨주어 변경
 
         if (onProjectSelect) {  // onProjectSelect 콜백이 존재하는 경우 호출
             onProjectSelect(selectedData);

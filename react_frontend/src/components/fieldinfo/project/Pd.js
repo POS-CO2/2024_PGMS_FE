@@ -28,7 +28,6 @@ export default function Pd() {
                 사번: '',
                 이름: '',
                 부서: '',
-                권한: ''
             };
             setManagers([placeholderManager]);
         }
@@ -47,7 +46,6 @@ export default function Pd() {
                 사번: '',
                 이름: '',
                 부서: '',
-                권한: ''
             };
 
             // 배열의 필드를 유지하면서 빈 값으로 채운 배열 생성
@@ -59,7 +57,6 @@ export default function Pd() {
                 사번: manager.userLoginId,
                 이름: manager.userName,
                 부서: manager.userDeptCode,
-                권한: manager.userRole
             }));
 
             setManagers(filteredManagers);
