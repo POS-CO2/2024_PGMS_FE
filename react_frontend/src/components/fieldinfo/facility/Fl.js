@@ -286,7 +286,7 @@ export default function Fl() {
                         'isModalOpen': isModalOpen.FlAdd,
                         'handleOk': handleOk('FlAdd'),
                         'handleCancel': handleCancel('FlAdd'),
-                        'rowData': formFields
+                        'dropDown': formFields
                     }
                 ]}
             />

@@ -413,7 +413,7 @@ const theme = createTheme({
     },
   });
 
-export function FlAddModal({ isModalOpen, handleOk, handleCancel, rowData }) {
+export function FlAddModal({ isModalOpen, handleOk, handleCancel, dropDown }) {
     const [eqLibName, setEqLibName] = useState('');
     const [selectedEqDvs, setSelectedEqDvs] = useState('');
     const [selectedEqType, setSelectedEqType] = useState('');
@@ -421,7 +421,7 @@ export function FlAddModal({ isModalOpen, handleOk, handleCancel, rowData }) {
 
     // 옵션을 가져오는 함수
     const getOptions = (fieldName) => {
-        const field = rowData.find(field => field.name === fieldName);
+        const field = dropDown.find(field => field.name === fieldName);
         return field ? field.options : [];
     };
 
