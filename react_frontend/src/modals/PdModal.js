@@ -1492,6 +1492,8 @@ export function MmAddModal({ isModalOpen, handleOk, handleCancel, rowData }) {
     
     const [upperDir, setUpperDir] = useState([]);
     const [selectedUpperDir, setSelectedUpperDir] = useState('');
+    const [orderMenuList, setOrderMenuList] = useState([]);
+    const [selectedOrderMenu, setSelectedOrderMenu] = useState([]);
 
     useEffect(() => {
         const fetchUpperDir = async () => {
@@ -1505,6 +1507,19 @@ export function MmAddModal({ isModalOpen, handleOk, handleCancel, rowData }) {
 
         fetchUpperDir();
     },[])
+
+    useEffect(() => {
+        if (selectedUpperDir){
+            (async () => {
+                const {data} = await axiosInstance.get(`/sys/menu/menu-order?id=${selectedUpperDir}&isInsert=true`)
+                setOrderMenuList(data);
+            })();
+        }
+        else {
+            setOrderMenuList([]);
+        }
+    })
+
     return (
         <Modal
             open={isModalOpen}
@@ -1522,7 +1537,7 @@ export function MmAddModal({ isModalOpen, handleOk, handleCancel, rowData }) {
                 </div>
                 <div className={sysStyles.text_field}>
                     <div className={sysStyles.text}>{"상위 폴더"}</div>
-                    <Select value={selectedUpperDir} onChange={(e) => {setSelectedUpperDir(e); console.log(e);}} style={{width:"20rem", height:"2.5rem", fontSize:"4rem"}}>
+                    <Select value={selectedUpperDir} onChange={(e) => {setSelectedUpperDir(e)}} style={{width:"20rem", height:"2.5rem", fontSize:"4rem"}}>
                     {upperDir.map(option => (
                         <Select.Option key={option.id} value={option.id}>
                             {option.name}
@@ -1536,7 +1551,13 @@ export function MmAddModal({ isModalOpen, handleOk, handleCancel, rowData }) {
                 </div>
                 <div className={sysStyles.text_field}>
                     <div className={sysStyles.text}>{"메뉴 순서"}</div>
-                    <TextField size='small' id='menuOrder' value={orderMenu} onChange={(e) => setOrderMenu(e.target.value)} label="메뉴 순서" variant='outlined' sx={{ width: "20rem" }} />
+                    <Select placeholder={"메뉴 순서"} value={orderMenu} onChange={(value) => setOrderMenu(value)} style={{width:"20rem", height:"2.5rem", fontSize:"4rem"}}>
+                    {orderMenuList.map(option => (
+                        <Select.Option key={option} value={option}>
+                            {option}
+                        </Select.Option>
+                    ))}
+                    </Select>
                 </div>
                 <div className={sysStyles.text_field}>
                     <div className={sysStyles.text}>{"접근 권한"}</div>

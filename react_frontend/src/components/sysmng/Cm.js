@@ -145,12 +145,8 @@ export default function Cm() {
             </div>
             <SearchForms onFormSubmit={handleFormSubmit} formFields={formField_cm} />
             <div className={sysStyles.main_grid}>
-            <Card className={sysStyles.card_box} sx={{width:"50%", height:"100vh", borderRadius:"15px"}}>
-            <div className={sysStyles.mid_title}>
-                {"코드그룹ID"}
-            </div>
-            {/** 모달 추가 필요 */}
-            <TableCustom title="" data={codeGroup} buttons={["Add", "Edit", "Delete"]} selectedRows={[selectedCodeGroup]} onRowClick={(e) => handleCodeGroupRowClick(e)} onClicks={[handleAddClick, handleEditClick, handleDeleteAClick]} modals={
+            <Card className={sysStyles.card_box} sx={{width:"50%", height:"75vh", borderRadius:"15px"}}>
+            <TableCustom title="코드그룹ID" data={codeGroup} buttons={["Add", "Edit", "Delete"]} selectedRows={[selectedCodeGroup]} onRowClick={(e) => handleCodeGroupRowClick(e)} onClicks={[handleAddClick, handleEditClick, handleDeleteAClick]} modals={
                 [
                     {
                         "modalType" : 'CMAdd',
@@ -178,10 +174,10 @@ export default function Cm() {
                 ]
             }/>
             </Card>
-            <Card className={sysStyles.card_box} sx={{width:"50%", borderRadius:"15px"}}>
-            <div className={sysStyles.mid_title}>{"코드리스트"}</div>
+            <Card className={sysStyles.card_box} sx={{width:"50%", height:"75vh", borderRadius:"15px"}}>
+            
             {showCode ? (
-                <TableCustom title="" data={code} buttons={["Add", "Edit", "Delete"]} selectedRows={[selectedCode]} onRowClick={handleCodeRowClick} onClicks={[handleListAddClick, handleListEditClick, handleDeleteBClick]} modals={
+                <TableCustom title="코드리스트" data={code} buttons={["Add", "Edit", "Delete"]} selectedRows={[selectedCode]} onRowClick={handleCodeRowClick} onClicks={[handleListAddClick, handleListEditClick, handleDeleteBClick]} modals={
                     [
                         {
                             "modalType" : 'CMListAdd',
@@ -210,7 +206,7 @@ export default function Cm() {
                     ]
                 }/>
             ) : (
-                <></>
+                <div className={sysStyles.mid_title}>{"코드리스트"}</div>
             )}
             </Card>
             </div>
