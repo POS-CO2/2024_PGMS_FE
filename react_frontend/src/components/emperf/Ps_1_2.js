@@ -11,7 +11,9 @@ import axiosInstance from '../../utils/AxiosInstance';
 export default function Ps_1_2() {
     const [formFields, setFormFields] = useState(formField_ps12);
     const [formData, setFormData] = useState(); // 검색 데이터
-    const [perfs, setPerfs] = useState([]);
+    //const [perfs, setPerfs] = useState([]);
+    const [usagePerfs, setUsagePerfs] = useState([]);
+    const [amountUsedPerfs, setAmountUsedPerfs] = useState([]);
     const [actvYearDisabled, setActvYearDisabled] = useState(true);  // 드롭다운 비활성화 상태 관리
 
     // 배출활동유형 드롭다운 옵션 설정
@@ -62,6 +64,33 @@ export default function Ps_1_2() {
         }
     };
 
+    const createPerfData = (perf, key) => {
+        // 기본 구조 설정
+        const perfData = {
+            id: perf.emissionId,
+            설비명: perf.equipName,
+            배출활동유형: perf.emtnActvType,
+            활동자료: perf.actvDataName,
+            단위: perf.inputUnitCode,
+        };
+
+        // quantityList를 순회하며 월별 데이터를 추가
+        perf.quantityList.forEach(item => {
+            if (item && item.actvMth) {
+                perfData[`${item.actvMth}월`] = item[key];
+            }
+        });
+        // 모든 월(1월부터 12월까지)의 데이터가 없을 경우 기본값으로 채워줌
+        for (let month = 1; month <= 12; month++) {
+            const monthKey = `${month}월`;
+            if (!perfData.hasOwnProperty(monthKey)) {
+                perfData[monthKey] = 0.0; // 데이터가 없는 경우 기본값 0.0 설정
+            }
+        }
+
+        return perfData;
+    };
+
     // 조회 버튼 클릭시 호출될 함수
     const handleFormSubmit = async (data) => {
         setFormData(data);
@@ -97,38 +126,15 @@ export default function Ps_1_2() {
             };
 
             // 배열의 필드를 유지하면서 빈 값으로 채운 배열 생성
-            setPerfs([placeholderPerf]);
+            setUsagePerfs([placeholderPerf]);
+            setAmountUsedPerfs([placeholderPerf]);
         } else {
             // 필요한 필드만 추출하여 설정
-            const filteredPerfs = response.data.map(perf => {
-                // 기본적인 구조를 설정
-                const perfData = {
-                    id: perf.emissionId,
-                    설비명: perf.equipName,
-                    배출활동유형: perf.emtnActvType,
-                    활동자료: perf.actvDataName,
-                    단위: perf.inputUnitCode,
-                };
-
-                // quantityList를 순회하며 월별 데이터를 추가
-                perf.quantityList.forEach(item => {
-                    if (item && item.actvMth) {
-                        perfData[`${item.actvMth}월`] = item.actvQty;
-                    }
-                });
-
-                // 모든 월(1월부터 12월까지)의 데이터가 없을 경우 기본값으로 채워줌
-                for (let month = 1; month <= 12; month++) {
-                    const monthKey = `${month}월`;
-                    if (!perfData.hasOwnProperty(monthKey)) {
-                        perfData[monthKey] = 0.0;  // 데이터가 없는 경우 기본값 0.0 설정
-                    }
-                }
-
-                return perfData;
-            });
-
-            setPerfs(filteredPerfs);
+            const usageFilteredPerfs = response.data.map(perf => createPerfData(perf, 'actvQty'));
+            const amountUsedFilteredPerfs = response.data.map(perf => createPerfData(perf, 'fee'));
+            
+            setUsagePerfs(usageFilteredPerfs);
+            setAmountUsedPerfs(amountUsedFilteredPerfs);
         }
     };
 
@@ -146,8 +152,8 @@ export default function Ps_1_2() {
             {(!formData || Object.keys(formData).length === 0) ?
                 <></> : (
                     <InnerTabs items={[
-                        { label: '사용량', key: '1', children: <Usage data={perfs} />, },
-                        { label: '사용금액', key: '2', children: <AmountUsed data={perfs} />, },
+                        { label: '사용량', key: '1', children: <Usage data={usagePerfs} />, },
+                        { label: '사용금액', key: '2', children: <AmountUsed data={amountUsedPerfs} />, },
                     ]} />
                 )}
         </div>
