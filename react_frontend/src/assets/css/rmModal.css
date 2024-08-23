@@ -89,7 +89,7 @@
     width: 100%;
     height: 35px;
     padding: 5px 10px;
-    background: #9284DC;
+    background: rgb(85, 146, 248);
     color: white;
     border: none;
     border-radius: 5px;
@@ -109,7 +109,7 @@
     width: 100%;            /* 모달 창의 전체 너비로 확장 */
     height: 41px;
     padding: 5px 10px;
-    background: #9284DC;
+    background: rgb(85, 146, 248);
     color: white;
     border: none;
     border-radius: 5px;

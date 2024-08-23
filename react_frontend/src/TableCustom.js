@@ -72,6 +72,7 @@ export default function TableCustom({
                             handleCancel={modal.handleCancel || (() => {})}
                             onRowClick={onRowClick}
                             rowData={modal.rowData}
+                            dropDown={modal.dropDown || []}
                             url={modal.url || ""}
                         />
                     ) : null;
