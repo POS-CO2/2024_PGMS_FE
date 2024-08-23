@@ -91,26 +91,20 @@ export default function Mal() {
             <SearchForms onFormSubmit={handleFormSubmit} formFields={formFields} />
             <div className={sysStyles.main_grid}>
                 {showUser ? (
-                    <Card className={sysStyles.card_box} sx={{width:"50%", height:"100vh", borderRadius:"15px"}}>
-                        <div className={sysStyles.mid_title}>
-                            {"사용자 목록"}
-                        </div>
-                        <TableCustom title="" data={user} button="" onRowClick={handleRowClick}/>
+                    <Card className={sysStyles.card_box} sx={{width:"50%", height:"75vh", borderRadius:"15px"}}>
+                        <TableCustom title="사용자 목록" data={user} button="" onRowClick={handleRowClick}/>
                     </Card>
                 ) : (
-                    <Card className={sysStyles.card_box} sx={{width:"50%", height:"100vh", borderRadius:"15px"}}>
-                        <div className={sysStyles.mid_title}>
-                            {"사용자 목록"}
-                        </div>
+                    <Card className={sysStyles.card_box} sx={{width:"50%", height:"75vh", borderRadius:"15px"}}>
+                        <TableCustom title="사용자 목록" data={user} button="" onRowClick={handleRowClick}/>
                     </Card>
                 )}
                 
-                <Card className={sysStyles.card_box} sx={{width:"50%", borderRadius:"15px"}}>
-                    <div className={sysStyles.mid_title}>{"메뉴 접속 로그"}</div>
+                <Card className={sysStyles.card_box} sx={{width:"50%", height:"75vh", borderRadius:"15px"}}>
                     {showLog ? (
-                        <TableCustom title="" data={log} button="" />
+                        <TableCustom title="메뉴 접속 로그" data={log} button="" />
                     ) : (
-                        <></>
+                        <div className={sysStyles.mid_title}>{"메뉴 접속 로그"}</div>
                     )}
                 </Card>
             </div>

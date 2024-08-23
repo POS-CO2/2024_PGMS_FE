@@ -56,6 +56,14 @@ export default function App() {
         localStorage.removeItem("activeTab");
     };
 
+    const handleMenuSet = () => {
+        (async () => {
+            const {data} = await axiosInstance.get('/sys/menu');
+            localStorage.setItem('menu', JSON.stringify(data));
+            setMenu(JSON.parse(localStorage.getItem("menu")));
+        })();
+    };
+
     useEffect(() => {
         const jwt = localStorage.getItem("token");
         const roleMenu = localStorage.getItem("menu");
@@ -94,7 +102,7 @@ export default function App() {
                         <Route path='/sd' element={<Sd />} />
                         <Route path='/cm' element={<Cm />} />
                         <Route path='/um' element={<Um />} />
-                        <Route path='/mm' element={<Mm menus={menu} />} />
+                        <Route path='/mm' element={<Mm menus={menu} handleMenuSet={handleMenuSet} />} />
                         <Route path='/mal' element={<Mal />} />
                         <Route path='*' element={<Error404 />} />
                     </Route>
