@@ -189,8 +189,8 @@ export const formField_fl = [
 ]
 
 export const formField_fam = [
-    { type: 'InputText', name: 'ActvDataName', label: '활동자료명'},
-    { type: 'DropDown', name: 'ActvDataDvs', label: '활동자료구분', options: [
+    { type: 'InputText', name: 'actvDataName', label: '활동자료명'},
+    { type: 'DropDown', name: 'actvDataDvs', label: '활동자료구분', options: [
         {value: '1', label: '제철용 PCI탄'},
         {value: '2', label: '석유코크(고체)'},
         {value: '3', label: '폐기물 소각열'},
