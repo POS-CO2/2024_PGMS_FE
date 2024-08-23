@@ -62,7 +62,8 @@ export default function CustomizedTables({
         handleDoubleClick = () => { },
         handleInputChange = () => { }, 
         handleBlur = () => { },
-        editingCell = {}
+        editingCell = {},
+        pagination
     }) {
     const [selectedRow, setSelectedRow] = useState({});       // default variant의 선택 상태
     const [selectedRows, setSelectedRows] = useState([]); 
@@ -113,14 +114,13 @@ export default function CustomizedTables({
     });
     
     const paginatedData = filteredData.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
-
     return (
         <Box sx={{ 
             width: '100%', 
             overflowX: 'auto',
             padding: '0 20px',
             boxSizing: 'border-box',
-            margin: '0 auto 2rem'
+            margin: '0 auto 2rem',
         }}>
             <TableContainer component={Paper} sx={{ 
                     width: 'calc(100% - 10px)',
@@ -186,6 +186,7 @@ export default function CustomizedTables({
                         </TableBody>
                 </Table>
             </TableContainer>
+            {pagination && (data.length >= 10) ? ( // 10개 이상이면 자동으로 pagination 활성화, (pagination이 true일때만.)
             <TablePagination 
                 rowsPerPageOptions={[10, 25, 100]} // page row length custom
                 component="div"
@@ -195,6 +196,10 @@ export default function CustomizedTables({
                 onPageChange={handleChangePage}
                 onRowsPerPageChange={handleChangeRowsPerPage}
             />
+            ) : (
+                <></>
+            )
+            }
         </Box>
     );
 }

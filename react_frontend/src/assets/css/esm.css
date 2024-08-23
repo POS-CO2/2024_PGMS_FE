@@ -1,7 +1,7 @@
 .main_grid {
     display: flex;
     flex-direction: row;
-    width: 98%;
+    width: 97%;
     margin-right: auto;
     margin-left: auto;
     gap: 1rem;
