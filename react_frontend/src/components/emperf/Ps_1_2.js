@@ -11,7 +11,6 @@ import axiosInstance from '../../utils/AxiosInstance';
 export default function Ps_1_2() {
     const [formFields, setFormFields] = useState(formField_ps12);
     const [formData, setFormData] = useState(); // 검색 데이터
-    //const [perfs, setPerfs] = useState([]);
     const [usagePerfs, setUsagePerfs] = useState([]);
     const [amountUsedPerfs, setAmountUsedPerfs] = useState([]);
     const [actvYearDisabled, setActvYearDisabled] = useState(true);  // 드롭다운 비활성화 상태 관리
@@ -41,7 +40,7 @@ export default function Ps_1_2() {
     },[]);
 
     // 프로젝트 선택 후 대상년도 드롭다운 옵션 설정
-    const onProjectSelect = (selectedData) => {
+    const onProjectSelect = (selectedData, form) => {
         const ctrtFrYear = selectedData.프로젝트시작년;
         if (ctrtFrYear) {
             const currentYear = new Date().getFullYear();
@@ -61,6 +60,9 @@ export default function Ps_1_2() {
 
             // 옵션 데이터가 있으면 드롭다운을 활성화
             setActvYearDisabled(yearOptions.length === 0);
+
+            // actvYear 필드 리셋
+            form.resetFields(['actvYear']);
         }
     };
 
