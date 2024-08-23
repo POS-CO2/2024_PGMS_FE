@@ -43,7 +43,6 @@ export default function Fm() {
 
     const handleRowClick = (e) => {
         setShowFacList(false);
-        console.log(e);
         setSelectedFac(e)
     };
 
@@ -136,6 +135,7 @@ export default function Fm() {
                                     'handleOk': handleOk('Delete'),
                                     'handleCancel': handleCancel('Delete'),
                                     'rowData': selectedFac, 
+                                    'rowDataName': "equipName",
                                     'url': '/equip',
                                 },
                                 {

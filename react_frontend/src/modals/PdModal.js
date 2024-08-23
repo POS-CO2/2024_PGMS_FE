@@ -18,6 +18,7 @@ import WarningAmberIcon from '@mui/icons-material/WarningAmber';
 import { Sledding } from '@mui/icons-material';
 import axiosInstance from '../utils/AxiosInstance.js';
 import { Center } from '@react-three/drei';
+import Swal from 'sweetalert2'
 
 export function PgAddModal({ isModalOpen, handleOk, handleCancel }) {
     const [formData, setFormData] = useState({});             // 검색 데이터
@@ -1000,22 +1001,45 @@ export function CmEditModal({ isModalOpen, handleOk, handleCancel, rowData }) {
     )
 }
 
-export function DeleteModal({ isModalOpen, handleOk, handleCancel, rowData, url }) {
+export function DeleteModal({ isModalOpen, handleOk, handleCancel, rowData, rowDataName, url }) {
+
+    if(rowData === null){
+        return <></>;
+    }
+    const [rowName, setRowName] = useState(rowData[rowDataName]);
+    console.log(rowName);
+    console.log(rowData);
+    console.log(rowDataName);
+    console.log(rowData[rowDataName]);
     const handleDelete = async () => {
+        let swalOptions = {
+            confirmButtonText: '확인'
+        };
         try {
             // 서버에 DELETE 요청을 보냅니다.
             if (url == "/sys/menu"){
                 await axiosInstance.delete(`${url}?id=${rowData.originId}`);
+                swalOptions.title = '성공!',
+                swalOptions.text = `${rowName}가 성공적으로 삭제되었습니다.`;
+                swalOptions.icon = 'success';
                 handleOk(rowData);
             }
             else{
                 await axiosInstance.delete(`${url}?id=${rowData.id}`);
+                swalOptions.title = '성공!',
+                swalOptions.text = `${rowName}가 성공적으로 삭제되었습니다.`;
+                swalOptions.icon = 'success';
                 handleOk(rowData); // 삭제 성공 시 상위 컴포넌트에 알림
             }
         } catch (error) {
             console.error('Failed to delete user:', error);
+            swalOptions.title = '실패!',
+            swalOptions.text = `${rowName} 삭제에 실패하였습니다.`;
+            swalOptions.icon = 'success';
         }
+        Swal.fire(swalOptions);
     };
+    
 
     return (
         <Modal

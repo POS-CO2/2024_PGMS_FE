@@ -443,6 +443,7 @@ export default function Mm({menus}) {
                         'handleOk': handleOk('Delete'),
                         'handleCancel': handleCancel('Delete'),
                         'rowData': selectedMenu,
+                        'rowDataName': "name",
                         'url': '/sys/menu',
                     },
                 ]}/>

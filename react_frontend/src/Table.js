@@ -121,7 +121,6 @@ export default function CustomizedTables({
             padding: '0 20px',
             boxSizing: 'border-box',
             margin: '0 auto 2rem',
-            height: "100%"
         }}>
             <TableContainer component={Paper} sx={{ 
                     width: 'calc(100% - 10px)',

@@ -112,7 +112,7 @@ export const formField_sd = [
 ];
 
 export const formField_cm = [
-    { type: 'InputText', name: 'codeGroupId', label: '코드그룹ID'},
+    { type: 'InputText', name: 'codeGrpNo', label: '코드그룹ID'},
 ]
 
 export const formField_um = [

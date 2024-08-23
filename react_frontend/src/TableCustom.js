@@ -73,6 +73,7 @@ export default function TableCustom({
                             handleCancel={modal.handleCancel || (() => {})}
                             onRowClick={onRowClick}
                             rowData={modal.rowData}
+                            rowDataName={modal.rowDataName}
                             url={modal.url || ""}
                         />
                     ) : null;
