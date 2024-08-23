@@ -14,6 +14,7 @@ export default function Tep() {
 
     const handleFormSubmit = (data) => {
         setFormData(data);
+        console.log(data);
     };
 
     return (
@@ -21,7 +22,7 @@ export default function Tep() {
             <div className={mainStyle.breadcrumb}>
                 {"배출실적 > 실적조회 > 총량실적 조회"}
             </div>
-            <SearchForms onFormSubmit={handleFormSubmit} formFields={formField_tep} autoSubmitOnInit={true} />
+            <SearchForms onFormSubmit={handleFormSubmit} formFields={formField_tep} /*autoSubmitOnInit={true}*/ />
             <InnerTabs items={[
                 {
                     label: '차트', key: '1', children: <Card sx={{ width: "100%", height: "100%", borderRadius: "15px" }}>
