@@ -248,7 +248,7 @@ const CustomTreeItem = React.forwardRef(function CustomTreeItem(props, ref) {
 });
 
 
-export default function Mm({menus}) {
+export default function Mm({menus, handleMenuSet}) {
     const findParentFolder = (id, menus) => {
         if (id.length === 1) {
             if(id === 0) {return null}
@@ -322,6 +322,7 @@ export default function Mm({menus}) {
     // 담당자 지정 등록 버튼 클릭 시 호출될 함수
     const handleOk = (modalType) => (data) => {
         setIsModalOpen(prevState => ({ ...prevState, [modalType]: false }));
+        handleMenuSet();
     };
 
     const handleCancel = (modalType) => () => {
@@ -338,7 +339,7 @@ export default function Mm({menus}) {
     const handleEditClick = () => {
         setEditable(false);
         (async () => {
-            const {data} = await axiosInstance.get(`/sys/menu/cand?id=${selectedMenu.originId}`);
+            const {data} = await axiosInstance.get(`/sys/menu/cand?id=${selectedMenu.originId !== undefined ? (selectedMenu.originId) : 1}`);
             setUpperDir(data);
         })();
 
@@ -361,7 +362,7 @@ export default function Mm({menus}) {
     const [menuOrderList, setMenuOrderList] = useState([]);
     const [selectedMenuOrder, setSelectedMenuOrder] = useState([]);
     const handleSaveClick = async () => {
-        setEditable(!editable);
+        setEditable(true);
         
 
         const formData = {
@@ -378,11 +379,12 @@ export default function Mm({menus}) {
             // setUserList(prevList => prevList.map(user => 
             //     user.id === data.id ? data : user
             // ));
-            setSelectedMenu(data);
+            // setSelectedMenu(data);
             
         } catch (error) {
             console.error(error);
         }
+        handleMenuSet();
 
     };
 
@@ -422,8 +424,16 @@ export default function Mm({menus}) {
         return item ? item : null; // 해당하는 항목이 없으면 `null`을 반환
     };
 
+    const handleInputChangeText = (field, value) => {
+        setSelectedMenu(prevState => ({
+            ...prevState,
+            [field]: value
+        }));
+    };
+
     const handleInputChange = (field, value) => {
         const par = findNameById(value, upperDir)
+        // console.log(par);
         const parName = par.name;
         setSelectedUpperDir(par);
         setSelectedMenu(prevState => ({
@@ -497,7 +507,7 @@ export default function Mm({menus}) {
                                 {"메뉴 이름"}
                             </div>
                             {!editable ? (
-                                <TextField size='small' id='menuName' disabled={editable} onChange={(e) => handleInputChange('name', e.target.value)} value={selectedMenu.name} variant='outlined' sx={{marginTop:"0.5rem",width:"20rem"}}/>
+                                <TextField size='small' id='menuName' disabled={editable} onChange={(e) => handleInputChangeText('name', e.target.value)} value={selectedMenu.name} variant='outlined' sx={{marginTop:"0.5rem",width:"20rem"}}/>
                             ) : (
                                 <TextField size='small' id='menuName' disabled={editable} onChange={handleInputChange} value={selectedMenu.name} variant='outlined' sx={{marginTop:"0.5rem",width:"20rem", backgroundColor:"rgb(223,223,223)"}}/>
                             )}
@@ -521,7 +531,7 @@ export default function Mm({menus}) {
                         <div className={sysStyles.text_field}>
                             <div className={sysStyles.text}>{"Url 주소"}</div>
                             {!editable ? (
-                                <TextField size='small' id='address' defaultValue={selectedMenu.url} disabled={editable} variant='outlined' onChange={(e) => handleInputChange('url', e.target.value)} value={selectedMenu.url} sx={{marginTop:"0.5rem",width:"20rem"}}/>
+                                <TextField size='small' id='address' defaultValue={selectedMenu.url} disabled={editable} variant='outlined' onChange={(e) => handleInputChangeText('url', e.target.value)} value={selectedMenu.url} sx={{marginTop:"0.5rem",width:"20rem"}}/>
                             ) : (
                             <TextField size='small' id='address' disabled={editable} variant='outlined' value={selectedMenu.url} sx={{marginTop:"0.5rem",width:"20rem", backgroundColor:"rgb(223,223,223)"}}/>
                             )}
@@ -531,7 +541,7 @@ export default function Mm({menus}) {
                             <div className={sysStyles.text}>{"메뉴 순서"}</div>
                             {!editable ? (
                                 // <TextField size='small' id='menuOrder' defaultValue={selectedMenu.menuOrder} disabled={editable} variant='outlined' onChange={(e) => handleInputChange('menuOrder', e.target.value)} value={selectedMenu.menuOrder} sx={{marginTop:"0.5rem",width:"20rem"}}/>
-                                <Select value={selectedMenu.menuOrder} onChange={(e) => handleInputChange('menuOrder', e)} style={{marginTop:"0.5rem",width:"20rem", height:"2.5rem", fontSize:"4rem"}}>
+                                <Select value={selectedMenu.menuOrder} onChange={(e) => handleInputChangeText('menuOrder', e)} style={{marginTop:"0.5rem",width:"20rem", height:"2.5rem", fontSize:"4rem"}}>
                                 {menuOrderList.map(option => (
                                     <Select.Option key={option} value={option}>
                                         {option}
@@ -546,7 +556,7 @@ export default function Mm({menus}) {
                         <div className={sysStyles.text_field}>
                             <div className={sysStyles.text}>{"접근 권한"}</div>
                             {!editable ? (
-                                <Select placeholder={"접근 권한"} defaultValue={selectedMenu.accessUser} value={selectedMenu.accessUser} onChange={(value) => handleInputChange('accessUser', value)} style={{marginTop:"0.5rem",width:"20rem", height:"2.5rem", fontSize:"4rem"}}>
+                                <Select placeholder={"접근 권한"} defaultValue={selectedMenu.accessUser} value={selectedMenu.accessUser} onChange={(value) => handleInputChangeText('accessUser', value)} style={{marginTop:"0.5rem",width:"20rem", height:"2.5rem", fontSize:"4rem"}}>
                                 {access.map(option => (
                                     <Select.Option key={option.value} value={option.value}>
                                         {option.label}
