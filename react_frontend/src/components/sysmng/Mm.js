@@ -32,6 +32,7 @@ import { table_mm } from '../../assets/json/selectedPjt';
 import * as mainStyle from '../../assets/css/main.css';
 import { Select } from 'antd';
 import axiosInstance from '../../utils/AxiosInstance';
+import Swal from 'sweetalert2';
 
 function DotIcon() {
     return (
@@ -363,7 +364,9 @@ export default function Mm({menus, handleMenuSet}) {
     const [selectedMenuOrder, setSelectedMenuOrder] = useState([]);
     const handleSaveClick = async () => {
         setEditable(true);
-        
+        let swalOptions = {
+            confirmButtonText: '확인'
+        };
 
         const formData = {
             id: selectedMenu.originId,
@@ -375,17 +378,17 @@ export default function Mm({menus, handleMenuSet}) {
         }
         try {
             const {data} = await axiosInstance.patch('/sys/menu', formData);
-            // handleOk을 호출하여 모달을 닫고 상위 컴포넌트에 알림
-            // setUserList(prevList => prevList.map(user => 
-            //     user.id === data.id ? data : user
-            // ));
-            // setSelectedMenu(data);
-            
+            swalOptions.title = '성공!',
+            swalOptions.text = `${formData.menuName}이 성공적으로 수정되었습니다.`;
+            swalOptions.icon = 'success';
         } catch (error) {
             console.error(error);
+            swalOptions.title = '실패!',
+            swalOptions.text = `${formData.menuName} 등록에 실패하였습니다.`;
+            swalOptions.icon = 'error';
         }
         handleMenuSet();
-
+        Swal.fire(swalOptions);
     };
 
     const access = [

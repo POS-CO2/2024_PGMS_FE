@@ -45,7 +45,6 @@ export default function Fm() {
         setShowFacList(false);
         setSelectedFac(e ?? {});
     };
-    console.log(selectedFac);
 
     const [isModalOpen, setIsModalOpen] = useState({
         FmAdd: false,

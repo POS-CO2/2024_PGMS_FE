@@ -100,7 +100,6 @@ export default function Cm() {
         else if (modalType === 'DeleteB') {
             // 사용자 삭제 후 목록 갱신
             setCode(prevList => prevList.filter(code => code.id !== data.id));
-            setShowCode(false); // 상세 정보 화면 비활성화
         }
     };
     const handleCancel = (modalType) => () => {

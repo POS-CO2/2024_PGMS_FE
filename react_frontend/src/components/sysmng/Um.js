@@ -10,6 +10,8 @@ import { Card, TextField, Button, Hidden } from '@mui/material';
 import { Dropdown } from '@mui/base';
 import axiosInstance from '../../utils/AxiosInstance';
 import { Select } from 'antd';
+import Swal from 'sweetalert2';
+
 
 export default function Um() {
     const [formFields, setFormFields] = useState(formField_mal);
@@ -108,6 +110,9 @@ export default function Um() {
     
     const handleEditClick = async () => {
         const selectedDept = dept.find(option => option.label === selectedUser.deptCode) || {};
+        let swalOptions = {
+            confirmButtonText: '확인'
+        };
         const formData = {
             id: selectedUser.id,
             userName: selectedUser.userName,
@@ -125,10 +130,17 @@ export default function Um() {
             ));
             setSelectedUser(data);
             setPassword(null);
-            
+            swalOptions.title = '성공!',
+            swalOptions.text = `${formData.userName}이 성공적으로 수정되었습니다.`;
+            swalOptions.icon = 'success';
         } catch (error) {
             console.error('Failed to add user:', error);
+            swalOptions.title = '실패!',
+            swalOptions.text = `${formData.userName} 등록에 실패하였습니다.`;
+            swalOptions.icon = 'error';
+
         }
+        Swal.fire(swalOptions);
     }
 
     const handleDeleteClick = () => {
