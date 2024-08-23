@@ -1,8 +1,11 @@
 footer {
-    position: absolute;
+    /* position: absolute;
     bottom: 0px;
     left: 0px;
-    right: 0px;
+    right: 0px; */
+    margin-top: auto;
+    align-items:center;
+    justify-content: center;
     width: 200px;
     height: 50px;
     border-top: 2px white solid;

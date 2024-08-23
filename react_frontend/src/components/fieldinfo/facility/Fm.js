@@ -13,15 +13,19 @@ export default function Fm() {
 
     const [fac, setFac] = useState([]);
     const [selectedPjt, setSelectedPjt] = useState([]);
-
+    const [temp, setTemp] = useState(false);
     const handleFormSubmit = async (param) => {
         console.log(param);
         
         setSelectedPjt([param.searchProject]);
+        
         console.log([param.searchProject]);
         const {data} = await axiosInstance.get(`/equip?pjtId=${param.searchProject.id}`);
         
         setFac(data);
+        if(param && Object.keys(param).length !== 0){
+            setShowSearchResult(true);
+        }
         
     };
 
@@ -29,7 +33,7 @@ export default function Fm() {
     const [showSearchResult, setShowSearchResult] = useState(false);
 
     const handleSearchClick = () => {
-        setShowSearchResult(true);
+        
     };
 
 
@@ -39,8 +43,7 @@ export default function Fm() {
 
     const handleRowClick = (e) => {
         setShowFacList(false);
-        console.log(e);
-        setSelectedFac(e)
+        setSelectedFac(e ?? {});
     };
 
     const [isModalOpen, setIsModalOpen] = useState({
@@ -117,7 +120,7 @@ export default function Fm() {
                             <div className={sysStyles.mid_title}> 
                                 조회결과
                             </div>
-                            <TableCustom title="" data={selectedPjt} onRowClick={() => {}}/>
+                            <TableCustom title="" data={selectedPjt} onRowClick={() => {}} pagination={false}/>
                         </Card>
                         {/** 버튼 변경 필요(엑셀 다운로드, 삭제, 등록) 및 등록 클릭 시 모달 추가 */}
                         <Card className={sysStyles.card_box} sx={{width:"100%", height:"fit-content", borderRadius:"15px"}}>
@@ -132,6 +135,7 @@ export default function Fm() {
                                     'handleOk': handleOk('Delete'),
                                     'handleCancel': handleCancel('Delete'),
                                     'rowData': selectedFac, 
+                                    'rowDataName': "equipName",
                                     'url': '/equip',
                                 },
                                 {

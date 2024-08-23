@@ -31,11 +31,9 @@ export default function Cm() {
     }
     const [selectedCodeGroup, setSelectedCodeGroup] = useState(null);
 
-    const [inputValue, setInputValue] = useState("");
     const [showCode, setShowCode] = useState(false);
     const [code, setCode] = useState([]);
 
-    console.log(selectedCodeGroup);
     const handleCodeGroupRowClick = async (e) => {
         if (e === undefined || e === null){
             setShowCode(false);
@@ -53,7 +51,6 @@ export default function Cm() {
     const [selectedCode, setSelectedCode] = useState(null);
 
     const handleCodeRowClick = (e) => {
-        console.log(e);
         setSelectedCode(e);
     }
 
@@ -98,12 +95,12 @@ export default function Cm() {
         else if (modalType === 'DeleteA') {
             // 사용자 삭제 후 목록 갱신
             setCodeGroup(prevList => prevList.filter(codeGrp => codeGrp.id !== data.id));
-            setInfoShow(false); // 상세 정보 화면 비활성화
+            setShowCode(false); // 상세 정보 화면 비활성화
         }
         else if (modalType === 'DeleteB') {
             // 사용자 삭제 후 목록 갱신
             setCode(prevList => prevList.filter(code => code.id !== data.id));
-            setInfoShow(false); // 상세 정보 화면 비활성화
+            setShowCode(false); // 상세 정보 화면 비활성화
         }
     };
     const handleCancel = (modalType) => () => {
@@ -174,6 +171,7 @@ export default function Cm() {
                         'handleOk': handleOk('DeleteA'),
                         'handleCancel': handleCancel('DeleteA'),
                         'rowData': selectedCodeGroup,
+                        'rowDataName': "codeGrpName",
                         'url': '/sys/codegroup',
                     },
 
@@ -205,6 +203,7 @@ export default function Cm() {
                             'handleOk': handleOk('DeleteB'),
                             'handleCancel': handleCancel('DeleteB'),
                             'rowData': selectedCode,
+                            'rowDataName': 'codeName',
                             'url': '/sys/code'
                         },
     
