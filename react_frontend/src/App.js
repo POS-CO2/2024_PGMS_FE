@@ -24,6 +24,7 @@ import Mal from './components/sysmng/Mal';
 import Pmg from './components/emperf/Pmg';
 import Login from './components/login/Login';
 import Error404 from './Error404';
+import axiosInstance from './utils/AxiosInstance';
 
 export default function App() {
     const [token, setToken] = useState(null);

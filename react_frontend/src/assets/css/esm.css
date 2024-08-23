@@ -1,0 +1,14 @@
+.main_grid {
+    display: flex;
+    flex-direction: row;
+    width: 98%;
+    margin-right: auto;
+    margin-left: auto;
+    gap: 1rem;
+}
+
+.select_button_container {
+    display: flex;
+    justify-content: space-between; /* 양 끝에 배치 */
+    margin-left: 22px;
+}

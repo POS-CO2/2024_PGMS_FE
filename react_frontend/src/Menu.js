@@ -1,13 +1,22 @@
-import React,{useState} from "react";
+import React,{useState, useEffect} from "react";
 import * as menuStyles from "./assets/css/menu.css";
 import MenuList from "./MenuList";
 import {NavLink} from "react-router-dom";
-export default function Menu({menu, onMenuClick}){
+export default function Menu({menu, onMenuClick, activeTab}){
     const [isOpen,setIsOpen] = useState(false);
     const toggleOpen = ()=>{
         setIsOpen(prev=>!prev);
     };
 
+    const getLocalStorageActiveTab = () => {
+        return localStorage.getItem('activeTab') || "/";
+    }
+
+    useEffect(() => {
+        if ((activeTab === menu.url || getLocalStorageActiveTab() === menu.url) && !isOpen && menu.menu.length !== 0) {
+            setIsOpen(false);
+        }
+    }, [activeTab, menu.url]);
 
     return(
         <div className={
@@ -20,11 +29,15 @@ export default function Menu({menu, onMenuClick}){
                 menuStyles.level_3
             } ${
                 menuStyles.menu
+            } ${
+                menu.menu.length == 0 ? menuStyles.can_hover : ""
+            } ${
+                (activeTab === menu.url || getLocalStorageActiveTab() === menu.url)  && menu.url != null ? menuStyles.active : ""
             }
             `
         }>
             {
-                menu.url ? <NavLink to={menu.url} onClick={() => onMenuClick(menu)}>{menu.name}</NavLink> : <span onClick={() => onMenuClick(menu)}>{menu.name}</span>
+                menu.url ? <NavLink to={menu.url} onClick={() => {onMenuClick(menu)}}>{menu.name}</NavLink> : <span>{menu.name}</span>
             } 
             {
                 menu.menu.length != 0 && !isOpen 
@@ -51,7 +64,7 @@ export default function Menu({menu, onMenuClick}){
                 && 
                 isOpen
                 &&
-                <MenuList menus={menu.menu} onMenuClick={onMenuClick}/>
+                <MenuList menus={menu.menu} onMenuClick={onMenuClick} activeTab={activeTab}/>
 
 
             }

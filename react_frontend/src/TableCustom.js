@@ -1,8 +1,10 @@
-import React, {useState} from 'react';
+import React, { useState, useEffect } from 'react';
+import Swal from 'sweetalert2'
 import Table from "./Table.js";
 import * as tableStyles from "./assets/css/newTable.css"
-import { DelModal, PgAddModal, PdAddModal, RmAddModal, FlAddModal, FlEditModal, FamAddModal, FamEditModal, Ps12Modal, CmAddModal, DeleteModal, CmEditModal, CmListAddModal, CmListEditModal, FmAddModal, UmAddModal, MmAddModal } from "./modals/PdModal.js";
+import { DelModal, PgAddModal, PdAddModal, RmAddModal, FlAddModal, FlEditModal, FamAddModal, FamEditModal, FadAddModal, Ps12UploadExcelModal, CmAddModal, DeleteModal, CmEditModal, CmListAddModal, CmListEditModal, FmAddModal, UmAddModal, MmAddModal, EsmAddModal, SdAddModal, SdShowDetailsModal } from "./modals/PdModal.js";
 import { ButtonGroup } from './Button';
+import axiosInstance from './utils/AxiosInstance';
 
 const modalMap = {
     CMAdd: CmAddModal,
@@ -10,7 +12,9 @@ const modalMap = {
     CMListAdd: CmListAddModal,
     CMListEdit: CmListEditModal,
     Delete: DeleteModal,
-    Ps12: Ps12Modal,
+    DeleteA: DeleteModal, // 한페이지에 모달이 두개 있을 경우...
+    DeleteB: DeleteModal,
+    Ps12UploadExcel: Ps12UploadExcelModal,
     PgAdd: PgAddModal,
     PdAdd: PdAddModal,
     RmAdd: RmAddModal,
@@ -18,11 +22,14 @@ const modalMap = {
     FlEdit: FlEditModal,
     FamAdd: FamAddModal,
     FamEdit: FamEditModal,
+    FadAdd: FadAddModal,
     Del: DelModal,
     FmAdd: FmAddModal,
     UmAdd: UmAddModal,
     MmAdd: MmAddModal,
-    Del: DelModal,
+    EsmAdd: EsmAddModal,
+    SdAdd: SdAddModal,
+    SdShowDetails: SdShowDetailsModal
 }
 
 export default function TableCustom({
@@ -37,6 +44,7 @@ export default function TableCustom({
     selectedRows = [],       // 테이블에서 선택된 row 리스트
 }) {
     // 버튼 활성화 상태 결정
+    
     const buttonStatus = buttons.map((button) => {
         if (button === 'Edit' || button === 'Delete') {
             if (selectedRows.includes(null) || selectedRows.includes(undefined)) {  // 선택한 row가 없으면 삭제 버튼의 onRowClick 이벤트 비활성화(variant='default')
@@ -58,18 +66,19 @@ export default function TableCustom({
                     const ModalComponent = modalMap[modal.modalType];
                     return ModalComponent ? (
                         <ModalComponent
-                            key={ModalComponent} // warning 삭제
+                            key={modal.modalType} // warning 삭제
                             isModalOpen={modal.isModalOpen}
                             handleOk={modal.handleOk || (() => {})}
                             handleCancel={modal.handleCancel || (() => {})}
                             onRowClick={onRowClick}
                             rowData={modal.rowData}
+                            url={modal.url || ""}
                         />
                     ) : null;
                 })}
             </div>
             {table ? (
-            <Table data={data} variant={variant} onRowClick={onRowClick}/>
+            <Table key={JSON.stringify(data)} data={data} variant={variant} onRowClick={onRowClick}/>
             ) : (<></>)}
             
         </>
@@ -84,12 +93,19 @@ export function TableCustomDoubleClickEdit({
     onClicks = [],
     onRowClick = () => { },  // 기본값으로 빈 함수 설정
     selectedRows = [],       // 테이블에서 선택된 row 리스트
+    rowData = {},
     modals = [],
-    table = true,
+    table = true
 }) {
     const [isEditing, setIsEditing] = useState(false); // 'Edit' 모드 상태 관리
     const [editableData, setEditableData] = useState(data); // 수정된 데이터 저장
     const [editingCell, setEditingCell] = useState({ row: null, col: null }); // 현재 편집 중인 셀
+    const [editedRows, setEditedRows] = useState([]); // 수정된 행의 인덱스 추적
+
+    // data가 나중에 전달되거나 변경될 때 editableData도 자동으로 업데이트
+    useEffect(() => {
+        setEditableData(data);
+    }, [data]);
 
     // 버튼 활성화 상태 결정
     const buttonStatus = buttons.map((button) => {
@@ -104,10 +120,42 @@ export function TableCustomDoubleClickEdit({
     });
 
     // Edit 버튼 클릭 핸들러
-    const handleEditButtonClick = () => {
+    const handleEditButtonClick = async () => {
+        let swalOptions = {
+            confirmButtonText: '확인'
+        };
+
         if (isEditing) {    // 저장 버튼 클릭 시
-            // TODO: 데이터 저장 로직 구현하기
+            const updatedRows = editedRows.map(index => editableData[index]);
+
+            try {
+                const requestBody = updatedRows.map(row => ({
+                    id: row.id,
+                    pjtId: rowData.pjtId,
+                    year: row['년'],
+                    mth: row['월'],
+                    salesAmt: row['매출액']
+                }));
+
+                console.log("requestBody", requestBody);
+                
+                const response = await axiosInstance.patch("/pjt/sales", requestBody);
+
+                swalOptions.title = '성공!',
+                swalOptions.text = '매출액이 성공적으로 수정되었습니다.';
+                swalOptions.icon = 'success';
+            } catch (error) {
+                swalOptions.title = '실패!',
+                swalOptions.text = '매출액 수정에 실패하였습니다.';
+                swalOptions.icon = 'error';
+
+                // if(error.response.status === 400) {
+                //     swalOptions.text = `이미 ${error.config.data}에 등록된 매출액이 존재합니다.`;
+                // }
+            }
             setIsEditing(false);
+            setEditedRows([]);
+            Swal.fire(swalOptions);
         } else {
             setIsEditing(true);
         }
@@ -128,10 +176,16 @@ export function TableCustomDoubleClickEdit({
         const newData = [...editableData];  // editableData 복사
         newData[rowIndex] = {
             ...newData[rowIndex],            // 해당 행 복사
-            [Object.keys(newData[rowIndex])[colIndex]]: e.target.value // 특정 셀의 데이터만 업데이트
+            [Object.keys(newData[rowIndex])[colIndex+1]]: e.target.value // 특정 셀의 데이터만 업데이트(id 컬럼으로 인해 colIndex+1)
         };
+
+        // 수정된 행의 인덱스를 추가
+        if (!editedRows.includes(rowIndex)) {
+            setEditedRows([...editedRows, rowIndex]);
+        }
+
         setEditableData(newData);  // 상태 업데이트
-    };
+    }
 
     //다른 셀을 클릭하거나 테이블 외부를 클릭했을 때, 이전에 편집 중이던 셀의 편집 모드를 종료
     const handleBlur = () => {
@@ -153,16 +207,19 @@ export function TableCustomDoubleClickEdit({
                     const ModalComponent = modalMap[modal.modalType];
                     return ModalComponent ? (
                         <ModalComponent
+                            key={modal.modalType}
                             isModalOpen={modal.isModalOpen}
                             handleOk={modal.handleOk || (() => {})}
                             handleCancel={modal.handleCancel || (() => {})}
                             onRowClick={onRowClick}
+                            rowData={modal.rowData}
                         />
                     ) : null;
                 })}
             </div>
             {table ? (
             <Table 
+                key={JSON.stringify(data)}
                 data={editableData} 
                 variant={variant} 
                 onRowClick={onRowClick} 

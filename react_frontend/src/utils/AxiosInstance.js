@@ -31,12 +31,16 @@ axiosInstance.interceptors.response.use(
     },
     error => {
         // 응답 에러 처리 (예: 토큰 만료 시 로그아웃)
-        if (error.response && error.response.status === 401) {
+        if (error.response.status === 401) {
             localStorage.removeItem('token');
             window.location.href = '/';
+        }
+        if (error.response.status == 500){
+            alert("서버에러 발생 관리자 문의 요망");
         }
         return Promise.reject(error);
     }
 );
 
 export default axiosInstance;
+

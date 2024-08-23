@@ -1,21 +1,76 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Modal } from 'antd';
 import * as pjtModalStyles from "../assets/css/pjtModal.css";
 import Table from "../Table";
-import project from "../assets/json/project.js"
+import axiosInstance from '../utils/AxiosInstance.js';
  
-export default function ModalComponent({ isModalOpen, handleOk, handleCancel }) {
-  const [formData, setFormData] = useState({});                 // 검색 데이터
+export default function ModalComponent({ isModalOpen, handleOk, handleCancel}) {
+  const [formData, setFormData] = useState({});           // 검색 데이터
   const [selectedPjt, setSelectedPjt] = useState([]);     // 선택된 프로젝트
-  
+  const [allProjects, setAllProjects] = useState([]);     // 전체 프로젝트
+  const [project, setProject] = useState([]);
+
+  useEffect(() => {
+      const fetchProject = async () => {
+          try {
+              const response = await axiosInstance.get(`/pjt?pgmsYn=y`);
+
+              const filteredPjts = response.data.map(project => ({
+                id: project.id,
+                프로젝트코드: project.pjtCode,
+                프로젝트명: project.pjtName,
+                프로젝트유형: project.pjtType,
+                지역: project.regCode,
+                프로젝트시작년: project.ctrtFrYear,
+                프로젝트시작월: project.ctrtFrMth,
+                프로젝트종료년: project.ctrtToYear,
+                프로젝트종료월: project.ctrtToMth,
+                본부: project.divCode,
+                '연면적(m²)': project.bldArea,
+                프로젝트진행상태: project.pjtProgStus
+              }));
+
+              setAllProjects(filteredPjts);
+              setProject(filteredPjts);
+          } catch (error) {
+              console.log(error);
+          }
+          
+      };
+      fetchProject(); // 컴포넌트 마운트 될 때 데이터불러옴
+  }, [])
+
+  // input 필드 변경 시 호출될 함수
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData({
+      ...formData,
+      [name]: value,
+    });
+  };
+
   //찾기 버튼 클릭시 호출될 함수
-  const handleFormSubmit = (data) => {
-    setFormData(data); 
+  const handleFormSubmit = () => {
+    const filteredProjects = allProjects.filter(pjt => {
+      const matchesCode = formData.projectCode ? pjt.프로젝트코드?.includes(formData.projectCode) : true;
+      const matchesName = formData.projectName ? pjt.프로젝트명?.includes(formData.projectName) : true;
+      return matchesCode && matchesName;
+    });
+    
+    setProject(filteredProjects);
+  };
+
+  // 엔터 키 입력 시 handleFormSubmit 호출
+  const handleKeyDown = (e) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();  // 폼의 기본 제출 동작 방지
+      handleFormSubmit();
+    }
   };
 
   // 프로젝트 row 클릭 시 호출될 함수
   const handlePjtClick = (pjt) => {
-    setSelectedPjt([pjt.PjtCode, pjt.PjtName]);   // 클릭된 프로젝트의 코드로 상태를 설정
+    setSelectedPjt(pjt ?? {});   // 클릭된 프로젝트의 코드로 상태를 설정
   };
 
   // 선택 버튼 클릭 시 호출될 함수
@@ -35,21 +90,29 @@ export default function ModalComponent({ isModalOpen, handleOk, handleCancel }) 
       <div className={pjtModalStyles.search_container}>
         <div className={pjtModalStyles.search_item}>
           <div className={pjtModalStyles.search_title}>프로젝트코드</div>
-          <input className={pjtModalStyles.search_code}/>
+          <input 
+            name="projectCode"
+            className={pjtModalStyles.search_code} 
+            onChange={handleInputChange}
+            onKeyDown={handleKeyDown}
+          />
         </div>
         <div className={pjtModalStyles.search_item}>
           <div className={pjtModalStyles.search_title}>프로젝트명</div>
           <div className={pjtModalStyles.search_container}>
-            <input className={pjtModalStyles.search_name}/>
+            <input 
+              name="projectName"
+              className={pjtModalStyles.search_name} 
+              onChange={handleInputChange}
+              onKeyDown={handleKeyDown}
+            />
             <button className={pjtModalStyles.search_button} onClick={handleFormSubmit}>찾기</button>
           </div>
         </div>
       </div>
 
       <div className={pjtModalStyles.result_container}>
-
-      {(!formData || Object.keys(formData).length === 0) ?
-            <></> : ( <Table data={project} onRowClick={handlePjtClick} /> )}
+        <Table data={project} onRowClick={handlePjtClick} />
       </div>
 
       <button className={pjtModalStyles.select_button} onClick={handleSelect}>선택</button>

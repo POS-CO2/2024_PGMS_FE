@@ -1,21 +1,28 @@
 .form_item {
-    width: 280px;
+    width: auto;
+}
+
+.select_dropdown {
+    min-width: 6rem; /* 최소 너비 설정 */
 }
 
 .input_button_container {
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 0.5rem;
 }
 
 .input_field {
-    width: 70%;
+    flex: 1; /* Allow input to grow and shrink as needed */
+    min-width: 14rem;
     color: #000000 !important; 
     font-size: 12px;
     font-weight: bold;
 }
 .modal_button {
-    width: 30%;
+    flex-shrink: 0; /* Prevent the button from shrinking */
+    padding-left: 0.2rem;
+    padding-right: 0.2rem;
 }
 
 .search_btn {

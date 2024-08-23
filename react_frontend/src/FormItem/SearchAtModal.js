@@ -8,25 +8,29 @@ import SearchLibModal from "./SearchLibModal";
 /**
  * 프로젝트 찾기(searchProject), 설비LIB 찾기(searchLib)
  */
-export default function SearchAtModal({ name, label, required = false, modalType = "검색", form }) {
+export default function SearchAtModal({ name, label, required = false, modalType = "검색", form, onProjectSelect }) {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [inputValue, setInputValue] = useState("");
 
     const showModal = () => {
         setIsModalOpen(true);
     };
-    const handleOk = (option) => {
+    const handleOkForDropDown = (option) => {
         setIsModalOpen(false);
         const selectedOption = option.value; // 값 가져오기
         const selectedLabel = option.label; // 라벨 가져오기
         form.setFieldsValue({ [name]: selectedOption  }); // 선택된 label을 폼 필드에 설정
         setInputValue(selectedLabel);
     };
-    const handleOk2 = (data) => {
+    const handleOk = (data) => {
         setIsModalOpen(false);
         const selectedData = data;
         form.setFieldsValue({ [name]: selectedData  });
-        setInputValue(selectedData[0] + '/' + selectedData[1]);
+        setInputValue(selectedData.프로젝트코드 + '/' + selectedData.프로젝트명); // SearchProjectModal.js 에서 [pjt.pjtCode, pjt.pjtName]을 pjt로 넘겨주어 변경
+
+        if (onProjectSelect) {  // onProjectSelect 콜백이 존재하는 경우 호출
+            onProjectSelect(selectedData);
+        }
     };
     const handleCancel = () => {
         setIsModalOpen(false);
@@ -35,7 +39,7 @@ export default function SearchAtModal({ name, label, required = false, modalType
     const renderModal = () => {
         switch (modalType) {
             case "프로젝트 찾기":
-                return <SearchProjectModal isModalOpen={isModalOpen} handleOk={handleOk2} handleCancel={handleCancel} />;
+                return <SearchProjectModal isModalOpen={isModalOpen} handleOk={handleOk} handleCancel={handleCancel} />;
             case "설비LIB 찾기":
                 return <SearchLibModal isModalOpen={isModalOpen} handleOk={handleOk} handleCancel={handleCancel} />;
             default:

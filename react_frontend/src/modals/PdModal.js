@@ -1,33 +1,96 @@
-import React, { useState, useEffect } from 'react';
-import { Modal } from 'antd';
+import React, { useState, useRef, useEffect } from 'react';
+import { Modal, Button, Upload, Select } from 'antd';
+import { PaperClipOutlined, CloseOutlined } from '@ant-design/icons';
 import * as modalStyles from "../assets/css/pdModal.css";
 import * as rmStyles from "../assets/css/rmModal.css";
 import * as delStyle from "../assets/css/delModal.css";
 import * as pjtModalStyles from "../assets/css/pjtModal.css";
 import * as sysStyles from "../assets/css/sysmng.css"
+import * as sdStyles from "../assets/css/sdModal.css";
+import * as ps12Styles from "../assets/css/ps12UploadExcelModal.css";
+import { EditButton } from "../Button";
 import Table from "../Table";
-import { employee } from "../assets/json/manager.js"
+import { actv } from "../assets/json/selectedPjt";
+import emsData from "../assets/json/ems";
+import { selectYear, selectMonth } from "../assets/json/sd";
 import { TextField, Box, InputLabel, MenuItem, FormControl, Autocomplete } from '@mui/material';
 import WarningAmberIcon from '@mui/icons-material/WarningAmber';
-import { Select } from 'antd';
+import { Sledding } from '@mui/icons-material';
+import axiosInstance from '../utils/AxiosInstance.js';
+import { Center } from '@react-three/drei';
 
 export function PgAddModal({ isModalOpen, handleOk, handleCancel }) {
     const [formData, setFormData] = useState({});             // 검색 데이터
     const [selectedPjts, setSelectedPjts] = useState([]);     // 선택된 프로젝트
-    
+    const [allProjects, setAllProjects] = useState([]);       // 전체 프로젝트
+    const [project, setProject] = useState([]);
+
+    useEffect(() => {
+        const fetchProject = async () => {
+            try {
+                const response = await axiosInstance.get(`/pjt?pgmsYn=n`);
+
+                const filteredPjts = response.data.map(project => ({
+                    id: project.id,
+                    프로젝트코드: project.pjtCode,
+                    프로젝트명: project.pjtName,
+                    프로젝트유형: project.pjtType,
+                    지역: project.regCode,
+                    프로젝트시작년: project.ctrtFrYear,
+                    프로젝트시작월: project.ctrtFrMth,
+                    프로젝트종료년: project.ctrtToYear,
+                    프로젝트종료월: project.ctrtToMth,
+                    본부: project.divCode,
+                    '연면적(m²)': project.bldArea,
+                    프로젝트진행상태: project.pjtProgStus
+                }));
+
+                setAllProjects(filteredPjts);
+                setProject(filteredPjts);
+            } catch (error) {
+                console.log(error);
+            }
+            
+        };
+        fetchProject(); // 컴포넌트 마운트 될 때 데이터불러옴
+    }, [])
+
+    // input 필드 변경 시 호출될 함수
+    const handleInputChange = (e) => {
+        const { name, value } = e.target;
+        setFormData({
+        ...formData,
+        [name]: value,
+        });
+    };
+
     //찾기 버튼 클릭시 호출될 함수
-    const handleFormSubmit = (data) => {
-        setFormData(data); 
+    const handleFormSubmit = () => {
+        const filteredProjects = allProjects.filter(pjt => {
+        const matchesCode = formData.projectCode ? pjt.프로젝트코드?.includes(formData.projectCode) : true;
+        const matchesName = formData.projectName ? pjt.프로젝트명?.includes(formData.projectName) : true;
+        return matchesCode && matchesName;
+        });
+        setProject(filteredProjects);
     };
-  
+
+    // 엔터 키 입력 시 handleFormSubmit 호출
+    const handleKeyDown = (e) => {
+        if (e.key === 'Enter') {
+        e.preventDefault();  // 폼의 기본 제출 동작 방지
+        handleFormSubmit();
+        }
+    };
+
     // 프로젝트 row 클릭 시 호출될 함수
-    const handlePjtClick = (pjts) => {
-        setSelectedPjts(pjts.map(item => item.PjtCode));   // 클릭된 프로젝트의 코드로 상태를 설정
+    const handlePjtClick = (pjt) => {
+        setSelectedPjts(pjt);
     };
-  
+
     // 선택 버튼 클릭 시 호출될 함수
     const handleSelect = () => {
-        handleOk(selectedPjts);                            // 선택된 프로젝트 데이터를 handleOk로 전달
+        setFormData({});
+        handleOk(selectedPjts);
     };
   
     return (
@@ -42,21 +105,29 @@ export function PgAddModal({ isModalOpen, handleOk, handleCancel }) {
         <div className={pjtModalStyles.search_container}>
           <div className={pjtModalStyles.search_item}>
             <div className={pjtModalStyles.search_title}>프로젝트코드</div>
-            <input className={pjtModalStyles.search_code}/>
+            <input 
+                name="projectCode"
+                className={pjtModalStyles.search_code} 
+                onChange={handleInputChange}
+                onKeyDown={handleKeyDown}
+            />
           </div>
           <div className={pjtModalStyles.search_item}>
             <div className={pjtModalStyles.search_title}>프로젝트명</div>
             <div className={pjtModalStyles.search_container}>
-              <input className={pjtModalStyles.search_name}/>
+                <input 
+                name="projectName"
+                className={pjtModalStyles.search_name} 
+                onChange={handleInputChange}
+                onKeyDown={handleKeyDown}
+                />
               <button className={pjtModalStyles.search_button} onClick={handleFormSubmit}>찾기</button>
             </div>
           </div>
         </div>
   
         <div className={pjtModalStyles.result_container}>
-  
-        {(!formData || Object.keys(formData).length === 0) ?
-              <></> : ( <Table data={project} variant='checkbox' onRowClick={handlePjtClick} /> )}
+            <Table data={project} variant='checkbox' onRowClick={handlePjtClick} />
         </div>
   
         <button className={pjtModalStyles.select_button} onClick={handleSelect}>등록</button>
@@ -65,49 +136,60 @@ export function PgAddModal({ isModalOpen, handleOk, handleCancel }) {
 }
 
 export function PdAddModal({ isModalOpen, handleOk, handleCancel }) {
-    const [showResults, setShowResults] = useState(false);    // 사원 목록을 표시할지 여부
+    const [formData, setFormData] = useState({});
     const [selectedEmps, setSelectedEmps] = useState([]);     // 선택된 사원의 loginId list
     
     // 각 input의 값을 상태로 관리
     const [empId, setEmpId] = useState('');
     const [empName, setEmpName] = useState('');
-    const [dept, setDept] = useState('');
 
+    // input 필드 변경 시 호출될 함수
+    const handleInputChange = (e, setter) => {
+        setter(e.target.value);
+    };
+    
     // 찾기 버튼 클릭 시 호출될 함수
-    const handleSearch = () => {
-        setShowResults(true);
+    const handleSearch = async() => {
+        try {
+            const response = await axiosInstance.get(`/pjt/not-manager?loginId=${empId}&userName=${empName}`);
 
-        // 백엔드로 데이터를 전송
-        const searchParams = {
-            empId,
-            empName,
-            dept,
-        };
+            // 필요한 필드만 추출하여 managers에 설정
+            const filteredResponse = response.data.map(emp => ({
+                id: emp.id,
+                사번: emp.loginId,
+                이름: emp.userName,
+                부서: emp.deptCode,
+            }));
+
+            setFormData(filteredResponse);
+        } catch (error) {
+            console.log(error);
+        }
+    };
+
+    // 엔터 키 입력 시 handleFormSubmit 호출
+    const handleKeyDown = (e) => {
+        if (e.key === 'Enter') {
+        e.preventDefault();  // 폼의 기본 제출 동작 방지
+        handleSearch();
+        }
     };
 
     // 사원 row 클릭 시 호출될 함수
     const handleEmpClick = (emp) => {
-        setSelectedEmps((prevSelectedEmp) => {
-            // 선택된 사원의 loginId가 이미 배열에 존재하는지 확인
-            if (prevSelectedEmp.includes(emp.loginId)) {
-                // 존재한다면 배열에서 제거
-                return prevSelectedEmp.filter((id) => id !== emp.loginId);
-            } else {
-                // 존재하지 않는다면 배열에 추가
-                return [...prevSelectedEmp, emp.loginId];
-            }
-        });
+        setSelectedEmps(emp);
     };
 
     // 등록 버튼 클릭 시 호출될 함수
     const handleSelect = () => {
+        setFormData({});
         handleOk(selectedEmps);
     };
 
     return (
-        <Modal 
-            open={isModalOpen} 
-            onCancel={handleCancel} 
+        <Modal
+            open={isModalOpen}
+            onCancel={handleCancel}
             width={680}
             footer={null}             //Ant Design의 기본 footer 제거(Cancel, OK 버튼)
         >
@@ -115,24 +197,29 @@ export function PdAddModal({ isModalOpen, handleOk, handleCancel }) {
             <div className={modalStyles.search_container}>
                 <div className={modalStyles.search_item}>
                     <div className={modalStyles.search_title}>사번</div>
-                    <input className={modalStyles.search}/>
+                    <input 
+                        className={modalStyles.search} 
+                        onChange={(e) => handleInputChange(e, setEmpId)}
+                        onKeyDown={handleKeyDown}
+                    />
                 </div>
                 <div className={modalStyles.search_item}>
                     <div className={modalStyles.search_title}>이름</div>
-                    <input className={modalStyles.search}/>
-                </div>
-                <div className={modalStyles.search_item}>
-                    <div className={modalStyles.search_title}>부서</div>
                     <div className={modalStyles.input_with_btn}>
-                        <input className={modalStyles.search}/>
+                        <input 
+                            className={modalStyles.search} 
+                            onChange={(e) => handleInputChange(e, setEmpName)} 
+                            onKeyDown={handleKeyDown}
+                        />
                         <button className={modalStyles.search_button} onClick={handleSearch}>조회</button>
                     </div>
                 </div>
             </div>
-            
+
             <div className={modalStyles.result_container}>
-                {showResults ? <Table data={employee} variant='checkbox' onRowClick={handleEmpClick} />
-                    : <></>}
+                {(!formData || Object.keys(formData).length === 0) ? 
+                <></> : <Table data={formData} variant='checkbox' onRowClick={handleEmpClick} />
+                }
             </div>
 
             <button className={modalStyles.select_button} onClick={handleSelect}>등록</button>
@@ -140,48 +227,155 @@ export function PdAddModal({ isModalOpen, handleOk, handleCancel }) {
     )
 }
 
-export function RmAddModal({ isModalOpen, handleOk, handleCancel }) {
+export function RmAddModal({ isModalOpen, handleOk, handleCancel, rowData }) {
     // 등록 버튼 클릭 시 호출될 함수(등록할 매출액의 data를 전달)
     const handleSelect = () => {
+        // 입력 필드의 값 가져오기
+        const year = document.getElementById('year').value;
+        const month = document.getElementById('month').value;
+        const salesAmt = document.getElementById('salesAmt').value;
+        
+        // 에러 필드 및 메시지 초기화
+        const yearField = document.getElementById('year');
+        const monthField = document.getElementById('month');
+        const salesAmtField = document.getElementById('salesAmt');
+
+        // 에러 메시지 요소
+        const yearError = document.getElementById('year-error');
+        const monthError = document.getElementById('month-error');
+        const salesAmtError = document.getElementById('salesAmt-error');
+
+        yearField.classList.remove(rmStyles.error);
+        monthField.classList.remove(rmStyles.error);
+        salesAmtField.classList.remove(rmStyles.error);
+
+        yearError.textContent = '';
+        monthError.textContent = '';
+        salesAmtError.textContent = '';
+
+        // 별표 제거
+        document.getElementById('year-star').textContent = '';
+        document.getElementById('month-star').textContent = '';
+        document.getElementById('salesAmt-star').textContent = '';
+
+        let hasError = false;
+
+        // 유효성 검사
+        if (!year) {
+            yearField.classList.add(rmStyles.error); // 오류 클래스 추가
+            yearError.textContent = `'년' is required`; // 오류 메시지 설정
+            document.getElementById('year-star').textContent = '*'; // 빨간색 별표 추가
+            hasError = true;
+        }
+        else {
+            yearError.textContent = `empty`; // 오류 메시지 설정
+            yearError.classList.add(rmStyles.empty_message);
+        }
+
+        if (!month) {
+            monthField.classList.add(rmStyles.error); // 오류 클래스 추가
+            monthError.textContent = `'월' is required`; // 오류 메시지 설정
+            document.getElementById('month-star').textContent = '*'; // 빨간색 별표 추가
+            hasError = true;
+        }
+        else {
+            monthError.textContent = `empty`; // 오류 메시지 설정
+            monthError.classList.add(rmStyles.empty_message);
+        }
+
+        if (!salesAmt) {
+            salesAmtField.classList.add(rmStyles.error); // 오류 클래스 추가
+            salesAmtError.textContent = `'매출액' is required`; // 오류 메시지 설정
+            document.getElementById('salesAmt-star').textContent = '*'; // 빨간색 별표 추가
+            hasError = true;
+        }
+        else {
+            salesAmtField.textContent = `empty`; // 오류 메시지 설정
+            salesAmtField.classList.add(rmStyles.empty_message);
+        }
+
+        if (hasError) {
+            return;
+        }
+
         const formData = {
-            pjtCode: document.getElementById('pjtCode').value,
-            pjtName: document.getElementById('pjtName').value,
-            year: document.getElementById('year').value,
-            month: document.getElementById('month').value,
-            saleAmt: document.getElementById('saleAmt').value,
+            year,
+            month,
+            salesAmt,
         };
-        handleOk(formData);  // 입력된 데이터를 handleOk 함수로 전달
+
+        // 부모 컴포넌트에 데이터 전달
+        handleOk(formData);
+
+        // 입력창 초기화
+        yearField.value = '';
+        monthField.value = '';
+        salesAmtField.value = '';
     };
 
     return (
-        <Modal 
-            open={isModalOpen} 
-            onCancel={handleCancel} 
+        <Modal
+            open={isModalOpen}
+            onCancel={handleCancel}
             style={{ width: '25rem', maxWidth: '25rem', important: true }}
             footer={null}                                                   //Ant Design의 기본 footer 제거(Cancel, OK 버튼)
         >
             <div className={rmStyles.title}>매출액 등록</div>
 
-            <div className={rmStyles.search_container}>
-                <div className={rmStyles.search_item}>
-                    <div className={rmStyles.search_title}>프로젝트코드</div>
-                    <input className={rmStyles.search} id="pjtCode" />
+            <div className={rmStyles.container}>
+                <div className={rmStyles.read_only}>
+                    <div className={rmStyles.search_item}>
+                        <div className={rmStyles.search_title}>프로젝트코드</div>
+                        <input 
+                            id="pjtCode"
+                            className={rmStyles.search} 
+                            value={rowData.pjtCode} 
+                            readOnly
+                        />
+                    </div>
+                    <div className={rmStyles.search_item}>
+                        <div className={rmStyles.search_title}>프로젝트명</div>
+                        <input 
+                            id="pjtName" 
+                            className={rmStyles.search} 
+                            value={rowData.pjtName} 
+                            readOnly
+                        />
+                    </div>
                 </div>
-                <div className={rmStyles.search_item}>
-                    <div className={rmStyles.search_title}>프로젝트명</div>
-                    <input className={rmStyles.search} id="pjtName" />
-                </div>
-                <div className={rmStyles.search_item}>
-                    <div className={rmStyles.search_title}>년</div>
-                    <input className={rmStyles.search} id="year" />
-                </div>
-                <div className={rmStyles.search_item}>
-                    <div className={rmStyles.search_title}>월</div>
-                    <input className={rmStyles.search} id="month" />
-                </div>
-                <div className={rmStyles.search_item}>
-                    <div className={rmStyles.search_title}>매출액</div>
-                    <input className={rmStyles.search} id="saleAmt" />
+                <div className={rmStyles.search_container}>
+                    <div className={rmStyles.search_item}>
+                        <div className={rmStyles.search_title}>
+                            년<span id="year-star" className={rmStyles.error_star}></span>
+                        </div>
+                        <input 
+                            id="year"
+                            className={rmStyles.search} 
+                        />
+                        <div id="year-error" className={rmStyles.error_message}>&nbsp;</div>
+                    </div>
+                    <div className={rmStyles.search_item}>
+                        <div className={rmStyles.search_title}>
+                            월<span id="month-star" className={rmStyles.error_star}></span>
+                        </div>
+                        <input 
+                            id="month" 
+                            className={rmStyles.search} 
+                            required
+                        />
+                        <div id="month-error" className={rmStyles.error_message}>&nbsp;</div>
+                    </div>
+                    <div className={rmStyles.search_item}>
+                        <div className={rmStyles.search_title}>
+                            매출액<span id="salesAmt-star" className={rmStyles.error_star}></span>
+                        </div>
+                        <input 
+                            id="salesAmt" 
+                            className={rmStyles.search} 
+                            required
+                        />
+                        <div id="salesAmt-error" className={rmStyles.error_message}>&nbsp;</div>
+                    </div>
                 </div>
             </div>
             
@@ -204,9 +398,9 @@ export function FlAddModal({ isModalOpen, handleOk, handleCancel }) {
     };
 
     return (
-        <Modal 
-            open={isModalOpen} 
-            onCancel={handleCancel} 
+        <Modal
+            open={isModalOpen}
+            onCancel={handleCancel}
             style={{ width: '25rem', maxWidth: '25rem', important: true }}
             footer={null}                                                   //Ant Design의 기본 footer 제거(Cancel, OK 버튼)
         >
@@ -242,7 +436,7 @@ export function FlAddModal({ isModalOpen, handleOk, handleCancel }) {
                     </Select>
                 </div>
             </div>
-            
+
             <button className={rmStyles.select_button} onClick={handleSelect}>등록</button>
         </Modal>
     )
@@ -354,9 +548,9 @@ export function FamAddModal({ isModalOpen, handleOk, handleCancel }) {
     };
 
     return (
-        <Modal 
-            open={isModalOpen} 
-            onCancel={handleCancel} 
+        <Modal
+            open={isModalOpen}
+            onCancel={handleCancel}
             style={{ width: '25rem', maxWidth: '25rem', important: true }}
             footer={null}                                                   //Ant Design의 기본 footer 제거(Cancel, OK 버튼)
         >
@@ -404,7 +598,7 @@ export function FamAddModal({ isModalOpen, handleOk, handleCancel }) {
                     <input className={rmStyles.search} id="unitConvCoef" />
                 </div>
             </div>
-            
+
             <button className={rmStyles.select_button} onClick={handleSelect}>등록</button>
         </Modal>
     )
@@ -447,9 +641,9 @@ export function FamEditModal({ isModalOpen, handleOk, handleCancel, rowData }) {
     };
 
     return (
-        <Modal 
-            open={isModalOpen} 
-            onCancel={handleCancel} 
+        <Modal
+            open={isModalOpen}
+            onCancel={handleCancel}
             style={{ width: '25rem', maxWidth: '25rem', important: true }}
             footer={null}                                                   //Ant Design의 기본 footer 제거(Cancel, OK 버튼)
         >
@@ -458,15 +652,15 @@ export function FamEditModal({ isModalOpen, handleOk, handleCancel, rowData }) {
             <div className={rmStyles.search_container}>
                 <div className={rmStyles.search_item}>
                     <div className={rmStyles.search_title}>활동자료명</div>
-                    <input 
-                        className={rmStyles.search} 
+                    <input
+                        className={rmStyles.search}
                         value={formValues.actvName}
                         onChange={handleChange}
                     />
                 </div>
                 <div className={rmStyles.search_item}>
                     <div className={rmStyles.search_title}>활동자료구분</div>
-                    <Select 
+                    <Select
                         value={formValues.actvDvs}
                         onChange={(value) => setFormValues(prevValues => ({ ...prevValues, actvDvs: value }))}
                     >
@@ -477,7 +671,7 @@ export function FamEditModal({ isModalOpen, handleOk, handleCancel, rowData }) {
                 </div>
                 <div className={rmStyles.search_item}>
                     <div className={rmStyles.search_title}>배출활동유형</div>
-                    <Select 
+                    <Select
                         value={formValues.emtnActvType}
                         onChange={(value) => setFormValues(prevValues => ({ ...prevValues, emtnActvType: value }))}
                     >
@@ -488,7 +682,7 @@ export function FamEditModal({ isModalOpen, handleOk, handleCancel, rowData }) {
                 </div>
                 <div className={rmStyles.search_item}>
                     <div className={rmStyles.search_title}>산정단위</div>
-                    <Select 
+                    <Select
                         value={formValues.calUnit}
                         onChange={(value) => setFormValues(prevValues => ({ ...prevValues, calUnit: value }))}
                     >
@@ -499,7 +693,7 @@ export function FamEditModal({ isModalOpen, handleOk, handleCancel, rowData }) {
                 </div>
                 <div className={rmStyles.search_item}>
                     <div className={rmStyles.search_title}>입력단위</div>
-                    <Select 
+                    <Select
                         value={formValues.inputUnit}
                         onChange={(value) => setFormValues(prevValues => ({ ...prevValues, inputUnit: value }))}
                     >
@@ -510,46 +704,168 @@ export function FamEditModal({ isModalOpen, handleOk, handleCancel, rowData }) {
                 </div>
                 <div className={rmStyles.search_item}>
                     <div className={rmStyles.search_title}>단위환산계수</div>
-                    <input 
-                        className={rmStyles.search} 
+                    <input
+                        className={rmStyles.search}
                         value={formValues.unitConvCoef}
                         onChange={handleChange}
                     />
                 </div>
             </div>
-            
+
             <button className={rmStyles.select_button} onClick={handleSelect}>수정</button>
         </Modal>
     )
 }
 
-export function Ps12Modal({ isModalOpen, handleOk, handleCancel }) { // '엑셀 업로드' 모달
+export function FadAddModal({ isModalOpen, handleOk, handleCancel }) {
+    const [formData, setFormData] = useState({});             // 검색 데이터
+    const [selectedActves, setselectedActves] = useState([]);     // 선택된 프로젝트
+    
+    // 찾기 버튼 클릭시 호출될 함수
+    const handleFormSubmit = (data) => {
+        setFormData(data); 
+    };
+  
+    // 활동자료 row 클릭 시 호출될 함수
+    const handleActvClick = (actves) => {
+        setselectedActves(actves.map(actv => actv.actvDataName));
+    };
+  
+    // 선택 버튼 클릭 시 호출될 함수
+    const handleSelect = () => {
+        handleOk(selectedActves);
+    };
+  
+    return (
+      <Modal 
+        open={isModalOpen} 
+        width={800}
+        onCancel={handleCancel} 
+        footer={null}             //Ant Design의 기본 footer 제거(Cancel, OK 버튼)
+      >
+        <div className={pjtModalStyles.title}>활동자료 지정</div>
+        <p className={pjtModalStyles.comment}>* 활동자료명이나 활동자료구분 둘 중에 하나만 입력해도 검색이 가능합니다.</p>
+        <div className={pjtModalStyles.search_container}>
+            <div className={pjtModalStyles.search_item}>
+                <div className={pjtModalStyles.search_title}>활동자료명</div>
+                <input className={pjtModalStyles.search_code}/>
+            </div>
+            <div className={pjtModalStyles.search_item}>
+                <div className={pjtModalStyles.search_title}>활동자료구분</div>
+                <div className={modalStyles.input_with_btn}>
+                    <Select style={{ width: '250px' }}>
+                        <Select.Option key={"단위1"} value={"단위1"}>{"단위1"}</Select.Option>
+                        <Select.Option key={"단위2"} value={"단위2"}>{"단위2"}</Select.Option>
+                        <Select.Option key={"단위3"} value={"단위3"}>{"단위3"}</Select.Option>
+                    </Select>
+                    <button className={pjtModalStyles.search_button} onClick={handleFormSubmit}>찾기</button>
+                </div>
+            </div>
+        </div>
+  
+        <div className={pjtModalStyles.result_container}>
+            {(!formData || Object.keys(formData).length === 0) ?
+                <></> : ( <Table data={actv} variant='checkbox' onRowClick={handleActvClick} /> )}
+        </div>
+  
+        <button className={pjtModalStyles.select_button} onClick={handleSelect}>등록</button>
+      </Modal>
+    )
+}
+
+export function Ps12UploadExcelModal({ isModalOpen, handleOk, handleCancel }) { // '엑셀 업로드' 모달
+    const fileInputRef = useRef(null);
+    const [fileList, setFileList] = useState([]);
+
+    const onUploadClick = () => {
+        if (fileInputRef.current) {
+            fileInputRef.current.click();
+        }
+    };
+
+    const handleFileChange = (event) => {
+        const newFiles = Array.from(event.target.files);
+        setFileList(prevFiles => {
+            const existingFileNames = new Set(prevFiles.map(file => file.name));
+            const filteredNewFiles = newFiles.filter(file => !existingFileNames.has(file.name));
+            return [...prevFiles, ...filteredNewFiles];
+        });
+        // Clear the input value to handle the same file being selected again
+        event.target.value = null;
+    };
+
+    const handleFileRemove = (fileName) => {
+        setFileList(prevFiles => prevFiles.filter(file => file.name !== fileName));
+    };
 
     return (
-        <Modal 
-            open={isModalOpen} 
-            onCancel={handleCancel} 
-            width={680}
+        <Modal
+            open={isModalOpen}
+            onCancel={handleCancel}
+            width={450}
             footer={null}             //Ant Design의 기본 footer 제거(Cancel, OK 버튼)
         >
             <div className={modalStyles.title}>엑셀 업로드</div>
-            
 
-            <button className={modalStyles.select_button} >등록</button>
+            <div className={ps12Styles.header_container}>
+                <div className={ps12Styles.input_title}>
+                    첨부파일
+                    <span className={ps12Styles.requiredAsterisk}>*</span>
+                </div>
+                <div>
+                    <input
+                        type="file"
+                        id="file"
+                        name="file"
+                        multiple
+                        accept=".xlt,.xls,.xlsx"
+                        style={{ display: 'none' }} // 숨김 처리
+                        ref={fileInputRef} // useRef로 참조
+                        onChange={handleFileChange} // 파일 선택 시 호출
+                    />
+                    <button type="button" onClick={onUploadClick} className={ps12Styles.upload_button}>
+                        파일선택 <PaperClipOutlined />
+                    </button>
+                </div>
+            </div>
+
+            <div className={ps12Styles.file_list_container}>
+                <div className={ps12Styles.file_list}>
+                    {fileList.length === 0 ? (
+                        <></>
+                    ) : (
+                        fileList.map((file, index) => (
+                            <div key={index} className={ps12Styles.file_item}>
+                                {file.name}
+                                <button
+                                    type="button"
+                                    className={ps12Styles.remove_button}
+                                    onClick={() => handleFileRemove(file.name)}
+                                >
+                                    <CloseOutlined />
+                                </button>
+                            </div>
+                        ))
+                    )}
+                </div>
+            </div>
+
+            <button className={ps12Styles.select_button} onClick={handleOk}>등록</button>
         </Modal>
     )
 }
 
-export function DelModal({ isModalOpen, handleOk, handleCancel }) { // '엑셀 업로드' 모달
-
+export function DelModal({ isModalOpen, handleOk, handleCancel, rowData }) { // '엑셀 업로드' 모달
     return (
-        <Modal 
-            open={isModalOpen} 
-            onCancel={handleCancel} 
+        <Modal
+            open={isModalOpen}
+            onCancel={handleCancel}
             centered                     // 모달이 기본적으로 가운데 오도록 설정
-            style={{ width: '20rem', 
-                maxWidth: '20rem', 
-                important: true }}
+            style={{
+                width: '20rem',
+                maxWidth: '20rem',
+                important: true
+            }}
             footer={null}
         >
             <div className={delStyle.container}>
@@ -557,42 +873,64 @@ export function DelModal({ isModalOpen, handleOk, handleCancel }) { // '엑셀 �
                 정말 삭제하시겠습니까?
             </div>
             <div className={delStyle.buttonContainer}>
-                <button className={delStyle.cancelButton} onClick={handleCancel}>취소</button>
-                <button className={delStyle.okButton} onClick={handleOk}>삭제</button>
+                <button className={delStyle.cancelButton} onClick={() => {handleCancel}}>취소</button>
+                <button className={delStyle.okButton} onClick={() => {handleOk(rowData)}}>삭제</button>
             </div>
         </Modal>
     )
 }
 
-export function CmAddModal({isModalOpen, handleOk, handleCancel}){
+export function CmAddModal({ isModalOpen, handleOk, handleCancel }) {
     // 등록 버튼 클릭 시 호출될 함수
-    const handleSelect = () => {
-        handleOk();
+    const [codeGrpNo, setCodeGrpNo] = useState('');
+    const [codeGrpName, setCodeGrpName] = useState('');
+    const [codeGrpNameEn, setCodeGrpNameEn] = useState('');
+    const [note, setNote] = useState('');
+
+    const handleSelect = async() => {
+        const formData = {
+            codeGrpNo,
+            codeGrpName,
+            codeGrpNameEn,
+            note,
+        };
+        try {
+            // POST 요청으로 서버에 데이터 전송
+            const {data} = await axiosInstance.post('/sys/codegroup', formData);
+            // handleOk을 호출하여 모달을 닫고 상위 컴포넌트에 알림
+            handleOk(data);
+        } catch (error) {
+            console.error('Failed to add user:', error);
+        }
     };
 
     return (
-        <Modal 
-            open={isModalOpen} 
-            onCancel={handleCancel} 
+        <Modal
+            open={isModalOpen}
+            onCancel={handleCancel}
             width={480}
             footer={null}             //Ant Design의 기본 footer 제거(Cancel, OK 버튼)
         >
             {/* 모달제목 */}
-            <div className={modalStyles.title}>코드 그룹</div>
+            <div className={modalStyles.title}>코드 그룹 추가</div>
             <div className={sysStyles.card_box}>
-                <div className={sysStyles.text_field} style={{marginTop:"2rem"}}>
+                <div className={sysStyles.text_field} style={{ marginTop: "2rem" }}>
                     <div className={sysStyles.text}>
-                        {"코드 번호"}
+                        {"코드 그룹 ID"}
                     </div>
-                    <TextField id='codeNumber' label="코드 번호" variant='outlined' sx={{width:"20rem"}}/>
+                    <TextField id='codeGrpNo' value={codeGrpNo} onChange={(e) => setCodeGrpNo(e.target.value)} label="코드 그룹 번호" variant='outlined' sx={{ width: "20rem" }} />
                 </div>
                 <div className={sysStyles.text_field}>
                     <div className={sysStyles.text}>{"코드 그룹 명"}</div>
-                    <TextField id='codeGroupName' label="코드 그룹 명" variant='outlined' sx={{width:"20rem"}}/>
+                    <TextField id='codeGrpName' value={codeGrpName} onChange={(e) => setCodeGrpName(e.target.value)} label="코드 그룹 명" variant='outlined' sx={{ width: "20rem" }} />
                 </div>
                 <div className={sysStyles.text_field}>
                     <div className={sysStyles.text}>{"영문 명"}</div>
-                    <TextField id='codeGroupNameEng' label="영문 명" variant='outlined' sx={{width:"20rem"}}/>
+                    <TextField id='codeGrpNameEn' value={codeGrpNameEn} onChange={(e) => setCodeGrpNameEn(e.target.value)} label="영문 명" variant='outlined' sx={{ width: "20rem" }} />
+                </div>
+                <div className={sysStyles.text_field}>
+                    <div className={sysStyles.text}>{"노트"}</div>
+                    <TextField id='note' value={note} onChange={(e) => setNote(e.target.value)} label="노트" variant='outlined' sx={{ width: "20rem" }} />
                 </div>
             </div>
             <button className={modalStyles.select_button} onClick={handleSelect}>등록</button>
@@ -600,113 +938,167 @@ export function CmAddModal({isModalOpen, handleOk, handleCancel}){
     )
 }
 
-export function CmEditModal({isModalOpen, handleOk, handleCancel}){
-    const [selectedEmps, setSelectedEmps] = useState([]);     // 선택된 사원의 loginId list
-
-    // 등록 버튼 클릭 시 호출될 함수
-    const handleSelect = () => {
-        handleOk(selectedEmps);
-    };
-
-    return (
-        <Modal 
-            open={isModalOpen} 
-            onCancel={handleCancel} 
-            width={480}
-            footer={null}             //Ant Design의 기본 footer 제거(Cancel, OK 버튼)
-        >
-            {/* 모달제목 */}
-            <div className={modalStyles.title}>코드 그룹</div>
-            <div className={sysStyles.card_box}>
-                <div className={sysStyles.text_field} style={{marginTop:"2rem"}}>
-                    <div className={sysStyles.text}>
-                        {"코드 번호"}
-                    </div>
-                    <TextField id='codeNumber' label="코드 번호" variant='outlined' sx={{width:"20rem"}}/>
-                </div>
-                <div className={sysStyles.text_field}>
-                    <div className={sysStyles.text}>{"코드 그룹 명"}</div>
-                    <TextField id='codeGroupName' label="코드 그룹 명" variant='outlined' sx={{width:"20rem"}}/>
-                </div>
-                <div className={sysStyles.text_field}>
-                    <div className={sysStyles.text}>{"영문 명"}</div>
-                    <TextField id='codeGroupNameEng' label="영문 명" variant='outlined' sx={{width:"20rem"}}/>
-                    {/* <div className={sysStyles.text}>{"접근 권한"}</div>
-                    <Box sx={{ minWidth: "20rem" }}>
-                    <FormControl fullWidth>
-                        <InputLabel id="demo-simple-select-label">권한</InputLabel>
-                        <Select
-                        labelId="demo-simple-select-label"
-                        id="demo-simple-select"
-                        value={access}
-                        label="권한"
-                        onChange={handleAccess}
-                        >
-                        <MenuItem value={'현장담당자'}>현장담당자</MenuItem>
-                        <MenuItem value={'본사담당자'}>본사담당자</MenuItem>
-                        <MenuItem value={'관리자'}>관리자</MenuItem>
-                        </Select>
-                    </FormControl>
-                    </Box> */}
-                </div>
-            </div>
-            <button className={modalStyles.select_button} onClick={handleSelect}>등록</button>
-        </Modal>
-    )
-}
-
-export function DeleteModal({isModalOpen, handleOk, handleCancel}){
-
-    const [deleteItem, setDeleteItem] = useState(false);
-
-    const handleDelete = () => {
-        setDeleteItem(true)
-        handleOk(deleteItem);
+export function CmEditModal({ isModalOpen, handleOk, handleCancel, rowData }) {
+    // 예외처리
+    if (!rowData){
+        return <></>;
     }
+    const [codeGrpNo, setCodeGrpNo] = useState(rowData.codeGrpNo);
+    const [codeGrpName, setCodeGrpName] = useState(rowData.codeGrpName);
+    const [codeGrpNameEn, setCodeGrpNameEn] = useState(rowData.codeGrpNameEn);
+    const [note, setNote] = useState(rowData.note);
+    // 등록 버튼 클릭 시 호출될 함수
+    const handleSelect = async() => {
+        const formData = {
+            id: rowData.id,
+            codeGrpNo,
+            codeGrpName,
+            codeGrpNameEn,
+            note,
+        };
+        console.log("formData",formData);
+        try {
+            const {data} = await axiosInstance.patch('/sys/codegroup', formData);
+            // handleOk을 호출하여 모달을 닫고 상위 컴포넌트에 알림
+            handleOk(data);
+        } catch (error) {
+            console.error('Failed to add user:', error);
+        }
+    };
 
     return (
-        <Modal 
-            open={isModalOpen} 
-            onCancel={handleCancel} 
+        <Modal
+            open={isModalOpen}
+            onCancel={handleCancel}
+            width={480}
+            footer={null}             //Ant Design의 기본 footer 제거(Cancel, OK 버튼)
+        >
+            {/* 모달제목 */}
+            <div className={modalStyles.title}>코드 그룹 수정</div>
+            <div className={sysStyles.card_box}>
+                <div className={sysStyles.text_field} style={{ marginTop: "2rem" }}>
+                    <div className={sysStyles.text}>
+                        {"코드 그룹 ID"}
+                    </div>
+                    <TextField id='codeGrpNo' value={codeGrpNo} onChange={(e) => setCodeGrpNo(e.target.value)} label="코드 그룹 번호" variant='outlined' sx={{ width: "20rem" }} />
+                </div>
+                <div className={sysStyles.text_field}>
+                    <div className={sysStyles.text}>{"코드 그룹 명"}</div>
+                    <TextField id='codeGrpName' value={codeGrpName} onChange={(e) => setCodeGrpName(e.target.value)} label="코드 그룹 명" variant='outlined' sx={{ width: "20rem" }} />
+                </div>
+                <div className={sysStyles.text_field}>
+                    <div className={sysStyles.text}>{"영문 명"}</div>
+                    <TextField id='codeGrpNameEn' value={codeGrpNameEn} onChange={(e) => setCodeGrpNameEn(e.target.value)} label="영문 명" variant='outlined' sx={{ width: "20rem" }} />
+                </div>
+                <div className={sysStyles.text_field}>
+                    <div className={sysStyles.text}>{"노트"}</div>
+                    <TextField id='note' value={note} onChange={(e) => setNote(e.target.value)} label="노트" variant='outlined' sx={{ width: "20rem" }} />
+                </div>
+            </div>
+            <button className={modalStyles.select_button} onClick={handleSelect}>수정</button>
+        </Modal>
+    )
+}
+
+export function DeleteModal({ isModalOpen, handleOk, handleCancel, rowData, url }) {
+    console.log("왜널?",rowData);
+    const handleDelete = async () => {
+        try {
+            // 서버에 DELETE 요청을 보냅니다.
+            console.log("셀릭",rowData);
+            console.log(url);
+            await axiosInstance.delete(`${url}?id=${rowData.id}`);
+            handleOk(rowData); // 삭제 성공 시 상위 컴포넌트에 알림
+        } catch (error) {
+            console.error('Failed to delete user:', error);
+        }
+    };
+
+    return (
+        <Modal
+            style={{
+                top: "35%"
+            }}
+            open={isModalOpen}
+            onCancel={handleCancel}
             width={480}
             footer={null}             //Ant Design의 기본 footer 제거(Cancel, OK 버튼)
         >
             {/* 모달제목 */}
             <div>정말 삭제하시겠습니까?</div>
-            <button className={modalStyles.select_button} onClick={handleDelete}>확인</button>
+            <div style={{display:"flex"}}>
+            <button className={modalStyles.cancel_button} style={{width:"45%"}} onClick={handleCancel}>취소</button>
+            <button className={modalStyles.select_button} style={{width:"45%"}} onClick={handleDelete}>확인</button>
+            </div>
         </Modal>
     )
 }
 
-export function CmListAddModal({isModalOpen, handleOk, handleCancel}){
-// 등록 버튼 클릭 시 호출될 함수
-const handleSelect = () => {
-        handleOk();
+export function CmListAddModal({ isModalOpen, handleOk, handleCancel, rowData }) {
+    const [code, setCode] = useState('');
+    const [codeName, setCodeName] = useState('');
+    const [attr1, setAttr1] = useState('');
+    const [attr2, setAttr2] = useState('');
+    const [note, setNote] = useState('');
+    const handleSelect = async() => {
+        const formData = {
+            codeGrpNo: rowData.codeGrpNo,
+            codeGrpName: rowData.codeGrpName,
+            code,
+            codeName,
+            attr1,
+            attr2,
+            note,
+        };
+        try {
+            // POST 요청으로 서버에 데이터 전송
+            const {data} = await axiosInstance.post('/sys/code', formData);
+            // handleOk을 호출하여 모달을 닫고 상위 컴포넌트에 알림
+            handleOk(data);
+        } catch (error) {
+            console.error('Failed to add user:', error);
+        }
     };
 
     return (
-        <Modal 
-            open={isModalOpen} 
-            onCancel={handleCancel} 
+        <Modal
+            open={isModalOpen}
+            onCancel={handleCancel}
             width={480}
             footer={null}             //Ant Design의 기본 footer 제거(Cancel, OK 버튼)
         >
             {/* 모달제목 */}
-            <div className={modalStyles.title}>코드 리스트</div>
+            <div className={modalStyles.title}>코드 리스트 추가</div>
             <div className={sysStyles.card_box}>
-                <div className={sysStyles.text_field} style={{marginTop:"2rem"}}>
+                <div className={sysStyles.text_field} style={{ marginTop: "2rem" }}>
                     <div className={sysStyles.text}>
-                        {"코드 번호"}
+                        {"코드 그룹 ID"}
                     </div>
-                    <TextField id='codeNumber' label="코드 번호" variant='outlined' sx={{width:"20rem"}}/>
+                    <TextField id='codeGrpNo' value={rowData.codeGrpNo} disabled label="코드 그룹 번호" variant='outlined' sx={{ width: "20rem" }} />
+                </div>
+                <div className={sysStyles.text_field}>
+                    <div className={sysStyles.text}>{"코드 그룹 이름"}</div>
+                    <TextField id='codeName' value={rowData.codeGrpName} disabled label="코드 그룹 이름" variant='outlined' sx={{ width: "20rem" }} />
+                </div>
+                <div className={sysStyles.text_field}>
+                    <div className={sysStyles.text}>{"코드"}</div>
+                    <TextField id='code' value={code} onChange={(e) => setCode(e.target.value)} label="코드" variant='outlined' sx={{ width: "20rem" }} />
                 </div>
                 <div className={sysStyles.text_field}>
                     <div className={sysStyles.text}>{"코드 명"}</div>
-                    <TextField id='codeName' label="코드 명" variant='outlined' sx={{width:"20rem"}}/>
+                    <TextField id='codeName' value={codeName} onChange={(e) => setCodeName(e.target.value)} label="코드 명" variant='outlined' sx={{ width: "20rem" }} />
                 </div>
                 <div className={sysStyles.text_field}>
-                    <div className={sysStyles.text}>{"영문 명"}</div>
-                    <TextField id='codeNameEng' label="영문 명" variant='outlined' sx={{width:"20rem"}}/>
+                    <div className={sysStyles.text}>{"속성1"}</div>
+                    <TextField id='attr1' value={attr1} onChange={(e) => setAttr1(e.target.value)} label="속성1" variant='outlined' sx={{ width: "20rem" }} />
+                </div>
+                <div className={sysStyles.text_field}>
+                    <div className={sysStyles.text}>{"속성2"}</div>
+                    <TextField id='attr2' value={attr2} onChange={(e) => setAttr2(e.target.value)} label="속성2" variant='outlined' sx={{ width: "20rem" }} />
+                </div>
+                <div className={sysStyles.text_field}>
+                    <div className={sysStyles.text}>{"노트"}</div>
+                    <TextField id='note' value={note} onChange={(e) => setNote(e.target.value)} label="노트" variant='outlined' sx={{ width: "20rem" }} />
                 </div>
             </div>
             <button className={modalStyles.select_button} onClick={handleSelect}>등록</button>
@@ -714,161 +1106,144 @@ const handleSelect = () => {
     )
 }
 
-export function CmListEditModal({isModalOpen, handleOk, handleCancel}){
-    const [selectedEmps, setSelectedEmps] = useState([]);     // 선택된 사원의 loginId list
+export function CmListEditModal({ isModalOpen, handleOk, handleCancel, rowData }) {
+    if (!rowData){
+        return <></>;
+    }
 
-    // 등록 버튼 클릭 시 호출될 함수
-    const handleSelect = () => {
-        handleOk(selectedEmps);
+    const [code, setCode] = useState(rowData.code);
+    const [codeName, setCodeName] = useState(rowData.codeName);
+    const [attr1, setAttr1] = useState(rowData.attr1);
+    const [attr2, setAttr2] = useState(rowData.attr2);
+    const [note, setNote] = useState(rowData.note);
+    const handleSelect = async() => {
+        const formData = {
+            id: rowData.id,
+            codeGrpNo: rowData.codeGrpNo,
+            codeGrpName: rowData.codeGrpName,
+            code,
+            codeName,
+            attr1,
+            attr2,
+            note,
+        };
+        try {
+            // POST 요청으로 서버에 데이터 전송
+            const {data} = await axiosInstance.patch('/sys/code', formData);
+            // handleOk을 호출하여 모달을 닫고 상위 컴포넌트에 알림
+            handleOk(data);
+        } catch (error) {
+            console.error('Failed to add user:', error);
+        }
     };
-
     return (
-        <Modal 
-            open={isModalOpen} 
-            onCancel={handleCancel} 
+        <Modal
+            open={isModalOpen}
+            onCancel={handleCancel}
             width={480}
             footer={null}             //Ant Design의 기본 footer 제거(Cancel, OK 버튼)
         >
             {/* 모달제목 */}
             <div className={modalStyles.title}>코드 리스트</div>
             <div className={sysStyles.card_box}>
-                <div className={sysStyles.text_field} style={{marginTop:"2rem"}}>
+                <div className={sysStyles.text_field} style={{ marginTop: "2rem" }}>
                     <div className={sysStyles.text}>
-                        {"코드 번호"}
+                        {"코드 그룹 ID"}
                     </div>
-                    <TextField id='codeNumber' label="코드 번호" variant='outlined' sx={{width:"20rem"}}/>
+                    <TextField id='codeGrpNo' value={rowData.codeGrpNo} disabled label="코드 그룹 번호" variant='outlined' sx={{ width: "20rem" }} />
+                </div>
+                <div className={sysStyles.text_field}>
+                    <div className={sysStyles.text}>{"코드 그룹 이름"}</div>
+                    <TextField id='codeName' value={rowData.codeGrpName} disabled label="코드 그룹 이름" variant='outlined' sx={{ width: "20rem" }} />
+                </div>
+                <div className={sysStyles.text_field}>
+                    <div className={sysStyles.text}>{"코드"}</div>
+                    <TextField id='code' value={code} onChange={(e) => setCode(e.target.value)} label="코드" variant='outlined' sx={{ width: "20rem" }} />
                 </div>
                 <div className={sysStyles.text_field}>
                     <div className={sysStyles.text}>{"코드 명"}</div>
-                    <TextField id='codeName' label="코드 명" variant='outlined' sx={{width:"20rem"}}/>
+                    <TextField id='codeName' value={codeName} onChange={(e) => setCodeName(e.target.value)} label="코드 명" variant='outlined' sx={{ width: "20rem" }} />
                 </div>
                 <div className={sysStyles.text_field}>
-                    <div className={sysStyles.text}>{"영문 명"}</div>
-                    <TextField id='codeNameEng' label="영문 명" variant='outlined' sx={{width:"20rem"}}/>
-                    {/* <div className={sysStyles.text}>{"접근 권한"}</div>
-                    <Box sx={{ minWidth: "20rem" }}>
-                    <FormControl fullWidth>
-                        <InputLabel id="demo-simple-select-label">권한</InputLabel>
-                        <Select
-                        labelId="demo-simple-select-label"
-                        id="demo-simple-select"
-                        value={access}
-                        label="권한"
-                        onChange={handleAccess}
-                        >
-                        <MenuItem value={'현장담당자'}>현장담당자</MenuItem>
-                        <MenuItem value={'본사담당자'}>본사담당자</MenuItem>
-                        <MenuItem value={'관리자'}>관리자</MenuItem>
-                        </Select>
-                    </FormControl>
-                    </Box> */}
+                    <div className={sysStyles.text}>{"속성1"}</div>
+                    <TextField id='attr1' value={attr1} onChange={(e) => setAttr1(e.target.value)} label="속성1" variant='outlined' sx={{ width: "20rem" }} />
+                </div>
+                <div className={sysStyles.text_field}>
+                    <div className={sysStyles.text}>{"속성2"}</div>
+                    <TextField id='attr2' value={attr2} onChange={(e) => setAttr2(e.target.value)} label="속성2" variant='outlined' sx={{ width: "20rem" }} />
+                </div>
+                <div className={sysStyles.text_field}>
+                    <div className={sysStyles.text}>{"노트"}</div>
+                    <TextField id='note' value={note} onChange={(e) => setNote(e.target.value)} label="노트" variant='outlined' sx={{ width: "20rem" }} />
                 </div>
             </div>
-            <button className={modalStyles.select_button} onClick={handleSelect}>등록</button>
+            <button className={modalStyles.select_button} onClick={handleSelect}>수정</button>
         </Modal>
     )
 }
 
-export function FmAddModal({ isModalOpen, handleOk, handleCancel }) {
-    const [showResults, setShowResults] = useState(false);    // 사원 목록을 표시할지 여부
-    const [selectedEmps, setSelectedEmps] = useState([]);     // 선택된 사원의 loginId list
-    
-    // 각 input의 값을 상태로 관리
-    const [empId, setEmpId] = useState('');
-    const [empName, setEmpName] = useState('');
-    const [dept, setDept] = useState('');
+export function FmAddModal({ isModalOpen, handleOk, handleCancel, rowData }) {
+    const [showResults, setShowResults] = useState(false);    // 목록을 표시할지 여부
+    const [selectedSulbi, setSelectedSulbi] = useState([]);     // 선택된 Id list
+    const [sulbiLib, setSulbiLib] = useState([]);
+    const [equipName, setEquipName] = useState([]);
+    // 설비 라이브러리 불러오기 
+    useEffect(() => {
+        const fetchSulbiLib = async () => {
+            try {
+                const {data}= await axiosInstance.get("/equip/lib");
+                setSulbiLib(data);    
+            } catch (error) {
+                console.log(error);
+            }
+            
+        };
+        fetchSulbiLib(); // 컴포넌트 마운트 될 때 데이터불러옴
+    }, [])
 
     // 찾기 버튼 클릭 시 호출될 함수
-    const handleSearch = () => {
+    const handleSearch = (e) => {
         setShowResults(true);
-        
     };
 
-    // 사원 row 클릭 시 호출될 함수
-    const handleEmpClick = (emp) => {
-        setSelectedEmps((prevSelectedEmp) => {
-            // 선택된 사원의 loginId가 이미 배열에 존재하는지 확인
-            if (prevSelectedEmp.includes(emp.loginId)) {
+
+    // row 클릭 시 호출될 함수
+    const handleSulbiClick = (sulbi) => {
+        setSelectedSulbi((prevSelectedSulbi) => {
+            // 선택된 Id가 이미 배열에 존재하는지 확인
+            if (prevSelectedSulbi.includes(sulbi.id)) {
                 // 존재한다면 배열에서 제거
-                return prevSelectedEmp.filter((id) => id !== emp.loginId);
+                return prevSelectedSulbi.filter((id) => id !== sulbi.id);
             } else {
                 // 존재하지 않는다면 배열에 추가
-                return [...prevSelectedEmp, emp.loginId];
+                return [...prevSelectedSulbi, sulbi.id];
             }
         });
     };
-
     // 등록 버튼 클릭 시 호출될 함수
-    const handleSelect = () => {
-        handleOk(selectedEmps);
+    const handleSelect = async () => {
+        const formData = {
+            pjtId: rowData[0].id,
+            equipLibId: value1[0].id, // selectedSulbi[0] <- 여러개일땐 
+            equipName,
+        };
+
+        try {
+            // POST 요청으로 서버에 데이터 전송
+            console.log(formData);
+            const {data} = await axiosInstance.post('/equip', formData);
+            // handleOk을 호출하여 모달을 닫고 상위 컴포넌트에 알림
+            console.log(data);
+            handleOk(data);
+        } catch (error) {
+            console.error('Failed to add user:', error);
+        }
     };
 
-    const sulbiLib = [
-        {
-            label: "가설사무실 전력",
-            id: 1,
-        },
-        {
-            label: "임대사무실 전력",
-            id: 2,
-        },
-        {
-            label: "현장식당 전력",
-            id: 3,
-        },
-        {
-            label: "공사용 전력",
-            id: 4,
-        },
-        {
-            label: "법인 차량",
-            id: 5,
-        },
-        {
-            label: "직원 유류비",
-            id: 6,
-        },
-        {
-            label: "직영 장비",
-            id: 7,
-        },
-        {
-            label: "난방용 보일러",
-            id: 8,
-        },
-        {
-            label: "사무실 스팀",
-            id: 9,
-        },
-        {
-            label: "현장식당 스팀",
-            id: 10,
-        },
-        {
-            label: "사무실 보일러",
-            id: 11,
-        },
-        {
-            label: "현장식당 보일러",
-            id: 12,
-        },
-        {
-            label: "사무실 연료",
-            id: 13,
-        },
-        {
-            label: "현장식당 연료",
-            id: 14,
-        },
-        {
-            label: "Test",
-            id: 15,
-        },
-    ]
 
     const defaultProps = {
         options: sulbiLib,
-        getOptionLabel: (option) => option.label
+        getOptionLabel: (option) => option.equipLibName
     };
 
     const flatProps = {
@@ -876,11 +1251,11 @@ export function FmAddModal({ isModalOpen, handleOk, handleCancel }) {
     };
 
     const [value1, setValue] = useState([]);
-
+    console.log(value1);
     return (
-        <Modal 
-            open={isModalOpen} 
-            onCancel={handleCancel} 
+        <Modal
+            open={isModalOpen}
+            onCancel={handleCancel}
             width={680}
             footer={null}             //Ant Design의 기본 footer 제거(Cancel, OK 버튼)
         >
@@ -888,107 +1263,153 @@ export function FmAddModal({ isModalOpen, handleOk, handleCancel }) {
             <div className={modalStyles.search_container}>
                 <div className={modalStyles.search_item}>
                     <div className={modalStyles.search_title}>설비LIB명</div>
-                    <Autocomplete 
+                    <Autocomplete
                         {...defaultProps}
                         id="blur-on-select"
                         blurOnSelect
+                        disableClearable
                         onChange={(e, v) => setValue([v])}
                         renderInput={(params) => (
-                        <TextField {...params} variant="standard" sx={{width:"10rem"}}/>
+                            <TextField {...params} variant="standard" sx={{ width: "10rem" }} />
                         )}
                     />
                 </div>
                 <div className={modalStyles.input_with_btn}>
-                    <button className={modalStyles.search_button} style={{marginTop:"1rem"}} onClick={handleSearch}>조회</button>
+                    <button className={modalStyles.search_button} style={{ marginTop: "1rem" }} onClick={handleSearch}>조회</button>
                 </div>
             </div>
-            
+
             <div className={modalStyles.result_container}>
-                {showResults ? <Table data={value1} onRowClick={handleEmpClick} />
-                    : <></>}
+                {showResults && 
+                <>
+                    <Table data={value1} onRowClick={handleSulbiClick} />
+                    <div className={sysStyles.text_field}>
+                        <div className={sysStyles.text} style={{marginTop:"3rem", marginLeft:"5rem", fontWeight:"bold"}}>{"설비 명"}</div>
+                        <TextField id='equipName' label="설비 명" value={equipName} onChange={(e) => setEquipName(e.target.value)} variant='outlined' sx={{ width: "30rem", margin:"0 auto", display:"flex", justifyContent:"center", alignContent:"center" }} />
+                    </div>
+                </>
+                }
             </div>
+
 
             <button className={modalStyles.select_button} onClick={handleSelect}>등록</button>
         </Modal>
     )
 }
 
-export function UmAddModal({isModalOpen, handleOk, handleCancel}){
-    const [showResults, setShowResults] = useState(false);    // 사원 목록을 표시할지 여부
-    const [selectedEmps, setSelectedEmps] = useState([]);     // 선택된 사원의 loginId list
+export function UmAddModal({ isModalOpen, handleOk, handleCancel }) {
+    const [dept, setDept] = useState([]);
+    const [userName, setUserName] = useState('');      // 사용자명 상태
+    const [loginId, setLoginId] = useState('');        // 로그인 ID 상태
+    const [password, setPassword] = useState('');      // 비밀번호 상태
+    const [selectedDept, setSelectedDept] = useState(''); // 부서 선택 상태
+    const [selectedRole, setSelectedRole] = useState(''); // 권한 선택 상태
     const access = [
         {
-            value: 'None',
-            label: 'None'
+            value: 'FP',
+            label: '현장 담당자'
         },
         {
-            value: '현장담당자',
-            label: '현장담당자'
+            value: 'HP',
+            label: '본사 담당자'
         },
         {
-            value: '본사담당자',
-            label: '본사담당자'
-        },
-        {
-            value: '시스템관리자',
-            label: '시스템관리자'
+            value: 'ADMIN',
+            label: '시스템 관리자'
         },
     ]
+    useEffect(() => {
+        const fetchDeptCode = async () => {
+            try {
+                const res = await axiosInstance.get("/sys/unit?unitType=부서코드");
+                const options = res.data.map(dept => ({
+                    value: dept.code,
+                    label: dept.name,
+                }));
+                setDept(options);
+
+            } catch (error) {
+                console.error(error);
+            }
+        };
+
+        fetchDeptCode();
+
+
+    },[])
+
+
 
     // 등록 버튼 클릭 시 호출될 함수
-    const handleSelect = () => {
-        handleOk(selectedEmps);
+    const handleInsert = async () => {
+        const formData = {
+            userName,
+            loginId,
+            password,
+            deptCode: selectedDept,
+            role: selectedRole,
+        };
+
+        try {
+            // POST 요청으로 서버에 데이터 전송
+            const {data} = await axiosInstance.post('/sys/user', formData);
+            // handleOk을 호출하여 모달을 닫고 상위 컴포넌트에 알림
+            handleOk(data);
+        } catch (error) {
+            console.error('Failed to add user:', error);
+        }
     };
 
     return (
-        <Modal 
-            open={isModalOpen} 
-            onCancel={handleCancel} 
+        <Modal
+            open={isModalOpen}
+            onCancel={handleCancel}
             width={680}
             footer={null}             //Ant Design의 기본 footer 제거(Cancel, OK 버튼)
         >
             <div className={modalStyles.title}>사용자 등록</div>
             <div className={sysStyles.card_box}>
-                <div className={sysStyles.text_field} style={{marginTop:"2rem"}}>
+                <div className={sysStyles.text_field}>
+                    <div className={sysStyles.text} style={{marginTop:"2rem"}}>{"이름"}</div>
+                    <TextField id='userName' label="이름" value={userName} onChange={(e) => setUserName(e.target.value)} variant='outlined' sx={{ width: "20rem" }} />
+                </div>
+                <div className={sysStyles.text_field} style={{ width:"20rem" }}>
                     <div className={sysStyles.text}>
                         {"로그인 ID"}
                     </div>
-                    <TextField id='loginId' label="로그인 ID" variant='outlined' sx={{width:"20rem"}}/>
+                    <TextField id='loginId' label="로그인 ID" value={loginId} onChange={(e) => setLoginId(e.target.value)} variant='outlined' sx={{ width: "20rem" }} />
                 </div>
                 <div className={sysStyles.text_field}>
-                    <div className={sysStyles.text}>{"이름"}</div>
-                    <TextField id='userName' label="이름" variant='outlined' sx={{width:"20rem"}}/>
+                    <div className={sysStyles.text}>{"비밀번호"}</div>
+                    <TextField id='userName' label="비밀번호" value={password} onChange={(e) => setPassword(e.target.value)} variant='outlined' sx={{ width: "20rem" }} />
                 </div>
                 <div className={sysStyles.text_field}>
-                    <div className={sysStyles.text}>{"사업장"}</div>
-                    <TextField id='brnachName' label="사업장" variant='outlined' sx={{width:"20rem"}}/>
+                    <div className={sysStyles.text}>{"부서 명"}</div>
+                    <Select value={selectedDept} onChange={(value) => setSelectedDept(value)} style={{width:"20rem", height:"3.5rem", fontSize:"4rem"}}>
+                    {dept.map(option => (
+                        <Select.Option key={option.value} value={option.value}>
+                            {option.label}
+                        </Select.Option>
+                    ))}
+                    </Select>
                 </div>
                 <div className={sysStyles.text_field}>
                     <div className={sysStyles.text}>{"권한"}</div>
-                    <TextField
-                        id="outlined-select-currency-native"
-                        select
-                        label="권한"
-                        defaultValue="None"
-                        SelectProps={{
-                            native: true,
-                        }}
-                        sx={{width:"20rem"}}
-                        >
-                        {access.map((option) => (
-                            <option key={option.value} value={option.value}>
-                                {option.label}
-                            </option>
-                        ))}
-                    </TextField>
+                    <Select value={selectedRole} onChange={(value) => setSelectedRole(value)} style={{width:"20rem", height:"3.5rem", fontSize:"4rem"}}>
+                    {access.map(option => (
+                        <Select.Option key={option.value} value={option.value}>
+                            {option.label}
+                        </Select.Option>
+                    ))}
+                    </Select>
                 </div>
             </div>
-            <button className={modalStyles.select_button} onClick={handleSelect}>등록</button>
+            <button className={modalStyles.select_button} onClick={handleInsert}>등록</button>
         </Modal>
     )
 }
 
-export function MmAddModal({isModalOpen, handleOk, handleCancel}){
+export function MmAddModal({ isModalOpen, handleOk, handleCancel }) {
     const [showResults, setShowResults] = useState(false);    // 사원 목록을 표시할지 여부
     const [selectedEmps, setSelectedEmps] = useState([]);     // 선택된 사원의 loginId list
     const access = [
@@ -1016,23 +1437,23 @@ export function MmAddModal({isModalOpen, handleOk, handleCancel}){
     };
 
     return (
-        <Modal 
-            open={isModalOpen} 
-            onCancel={handleCancel} 
+        <Modal
+            open={isModalOpen}
+            onCancel={handleCancel}
             width={680}
             footer={null}             //Ant Design의 기본 footer 제거(Cancel, OK 버튼)
         >
             <div className={modalStyles.title}>메뉴 등록</div>
             <div className={sysStyles.card_box}>
-                <div className={sysStyles.text_field} style={{marginTop:"2rem"}}>
+                <div className={sysStyles.text_field} style={{ marginTop: "2rem" }}>
                     <div className={sysStyles.text}>
                         {"메뉴 이름"}
                     </div>
-                    <TextField id='menuName' label="메뉴 이름" variant='outlined' sx={{width:"20rem"}}/>
+                    <TextField id='menuName' label="메뉴 이름" variant='outlined' sx={{ width: "20rem" }} />
                 </div>
                 <div className={sysStyles.text_field}>
                     <div className={sysStyles.text}>{"상위 폴더"}</div>
-                    <TextField id='parentDir' label="상위 폴더" variant='outlined' sx={{width:"20rem"}}/>
+                    <TextField id='parentDir' label="상위 폴더" variant='outlined' sx={{ width: "20rem" }} />
                 </div>
                 <div className={sysStyles.text_field}>
                     <div className={sysStyles.text}>{"접근 권한"}</div>
@@ -1044,8 +1465,8 @@ export function MmAddModal({isModalOpen, handleOk, handleCancel}){
                         SelectProps={{
                             native: true,
                         }}
-                        sx={{width:"20rem"}}
-                        >
+                        sx={{ width: "20rem" }}
+                    >
                         {access.map((option) => (
                             <option key={option.value} value={option.value}>
                                 {option.label}
@@ -1059,3 +1480,331 @@ export function MmAddModal({isModalOpen, handleOk, handleCancel}){
     )
 }
 
+export function EsmAddModal({ isModalOpen, handleOk, handleCancel }) {
+    const [selectedEmtns, setSelectedEmtns] = useState([]);
+
+    // 배출원 row 클릭 시 호출될 함수
+    const handleEmtnClick = (row) => {
+        setSelectedEmtns(row.equipName);
+        console.log(selectedEmtns);
+    };
+
+    return (
+        <Modal
+            open={isModalOpen}
+            onCancel={handleCancel}
+            width={800}
+            footer={null}             //Ant Design의 기본 footer 제거(Cancel, OK 버튼)
+        >
+            <div className={modalStyles.title}>배출원 등록</div>
+
+            <Table data={emsData} variant='checkbox' onRowClick={handleEmtnClick} />
+
+            <button className={modalStyles.select_button} onClick={handleOk}>등록</button>
+        </Modal>
+    )
+}
+
+export function SdAddModal({ isModalOpen, handleOk, handleCancel }) {
+    const [name, setName] = useState('');
+    const [note, setNote] = useState('');
+    const fileInputRef = useRef(null);
+    const [fileList, setFileList] = useState([]);
+
+    const onUploadClick = () => {
+        if (fileInputRef.current) {
+            fileInputRef.current.click();
+        }
+    };
+    const handleFileChange = (event) => {
+        const newFiles = Array.from(event.target.files);
+        setFileList(prevFiles => {
+            const existingFileNames = new Set(prevFiles.map(file => file.name));
+            const filteredNewFiles = newFiles.filter(file => !existingFileNames.has(file.name));
+            return [...prevFiles, ...filteredNewFiles];
+        });
+        // Clear the input value to handle the same file being selected again
+        event.target.value = null;
+    };
+    const handleFileRemove = (fileName) => {
+        setFileList(prevFiles => prevFiles.filter(file => file.name !== fileName));
+    };
+
+    return (
+        <Modal
+            open={isModalOpen}
+            onCancel={handleCancel}
+            width={400}
+            footer={null}             //Ant Design의 기본 footer 제거(Cancel, OK 버튼)
+        >
+            <div className={modalStyles.title}>증빙서류 등록</div>
+
+            <div className={sdStyles.input_container}>
+                <div className={sdStyles.input_item}>
+                    <div className={sdStyles.input_title}>
+                        대상년월
+                        <span className={sdStyles.requiredAsterisk}>*</span>
+                    </div>
+                    <div className={sdStyles.select_item}>
+                        <Select defaultValue={new Date().getFullYear().toString()}>
+                            {selectYear.map(option => (
+                                <Select.Option key={option.value} value={option.value}>
+                                    {option.label}
+                                </Select.Option>
+                            ))}
+                        </Select>
+                        <div>년</div>
+                        <Select defaultValue={("00" + (new Date().getMonth() + 1)).slice(-2)}>
+                            {selectMonth.map(option => (
+                                <Select.Option key={option.value} value={option.value}>
+                                    {option.label}
+                                </Select.Option>
+                            ))}
+                        </Select>
+                        <div>월</div>
+                    </div>
+                </div>
+                <div className={sdStyles.input_item}>
+                    <div className={sdStyles.input_title}>
+                        자료명
+                        <span className={sdStyles.requiredAsterisk}>*</span>
+                    </div>
+                    <input
+                        className={sdStyles.search}
+                        value={name}
+                        onChange={(e) => setName(e.target.value)}
+                    />
+                </div>
+                <div className={sdStyles.input_item}>
+                    <div className={sdStyles.input_title}>비고</div>
+                    <input
+                        className={sdStyles.search}
+                        value={note}
+                        onChange={(e) => setNote(e.target.value)}
+                    />
+                </div>
+                <div className={sdStyles.upload_item}>
+                    <div className={sdStyles.upload_header}>
+                        <div className={sdStyles.input_title}>첨부파일</div>
+                        <div>
+                            <input
+                                type="file"
+                                id="file"
+                                name="file"
+                                multiple
+                                style={{ display: 'none' }} // 숨김 처리
+                                ref={fileInputRef} // useRef로 참조
+                                onChange={handleFileChange} // 파일 선택 시 호출
+                            />
+                            <button type="button" onClick={onUploadClick} className={ps12Styles.upload_button}>
+                                파일선택 <PaperClipOutlined />
+                            </button>
+                        </div>
+                    </div>
+                    <div className={sdStyles.file_list_container}>
+                        <div className={sdStyles.file_list}>
+                            {fileList.length === 0 ? (
+                                <></>
+                            ) : (
+                                fileList.map((file, index) => (
+                                    <div key={index} className={sdStyles.file_item}>
+                                        {file.name}
+                                        <button
+                                            type="button"
+                                            className={sdStyles.remove_button}
+                                            onClick={() => handleFileRemove(file.name)}
+                                        >
+                                            <CloseOutlined />
+                                        </button>
+                                    </div>
+                                ))
+                            )}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <button className={ps12Styles.select_button} onClick={handleOk}>저장</button>
+        </Modal>
+    )
+}
+
+export function SdShowDetailsModal({ selectedSd, isModalOpen, handleOk, handleCancel }) {
+    const fileInputRef = useRef(null);
+    const [fileList, setFileList] = useState([]);
+
+    const [formData, setFormData] = useState({
+        actvYear: '',
+        actvMonth: '',
+        name: '',
+        note: '',
+        fileList: []
+    });
+
+    const [isEditing, setIsEditing] = useState(false);
+
+    useEffect(() => {
+        if (selectedSd) {
+            setFormData({
+                actvYear: selectedSd.actvYear || new Date().getFullYear().toString(),
+                actvMonth: selectedSd.actvMonth || ("00" + (new Date().getMonth() + 1)).slice(-2),
+                name: selectedSd.name || '',
+                note: selectedSd.note || '',
+                fileList: Array.isArray(selectedSd.fileList) ? selectedSd.fileList : [] // 배열인지 확인
+            });
+            setFileList(Array.isArray(selectedSd.fileList) ? selectedSd.fileList : []); // 배열인지 확인
+        }
+    }, [selectedSd]);
+
+    const handleFileChange = (event) => {
+        const newFiles = Array.from(event.target.files);
+        setFileList(prevFiles => {
+            const existingFileNames = new Set(prevFiles.map(file => file.name));
+            const filteredNewFiles = newFiles.filter(file => !existingFileNames.has(file.name));
+            return [...prevFiles, ...filteredNewFiles];
+        });
+        // Clear the input value to handle the same file being selected again
+        event.target.value = null;
+    };
+    const handleFileRemove = (fileName) => {
+        setFileList(prevFiles => prevFiles.filter(file => file.name !== fileName));
+    };
+
+    const onSaveClick = () => {
+        const updatedFormData = {
+            ...formData,
+            fileList // 현재 상태의 파일 목록을 추가
+        };
+        handleOk(updatedFormData, false);  // 입력된 데이터를 handleOk 함수로 전달, 두번째 인자-closeModal=false
+        setIsEditing(false); // 저장 후 편집 모드 종료
+    };
+
+    const onEditClick = () => {
+        if (isEditing) {
+            onSaveClick(); // 편집 모드일 때 저장 기능 호출
+        } else {
+            setIsEditing(true); // 비편집 모드일 때 편집 모드로 전환
+        }
+    };
+
+    return (
+        <Modal
+            open={isModalOpen}
+            onCancel={handleCancel}
+            width={400}
+            footer={null}             //Ant Design의 기본 footer 제거(Cancel, OK 버튼)
+        >
+            <div className={sdStyles.modal_header}>
+                <div className={modalStyles.title}>증빙서류 상세보기</div>
+                <div  className={sdStyles.edit_button}>
+                <EditButton onClick={onEditClick} isEditing={isEditing} />
+                </div>
+            </div>
+
+            <div className={sdStyles.input_container}>
+                <div className={sdStyles.input_item}>
+                    <div className={sdStyles.input_title}>
+                        대상년월
+                        <span className={sdStyles.requiredAsterisk}>*</span>
+                    </div>
+                    <div className={sdStyles.select_item}>
+                        <Select
+                            id="actvYear"
+                            value={formData.actvYear}
+                            onChange={(value) => setFormData(prevData => ({ ...prevData, actvYear: value }))}
+                            disabled={!isEditing} // 편집 모드가 아닐 때 비활성화
+                        >
+                            {selectYear.map(option => (
+                                <Select.Option key={option.value} value={option.value}>
+                                    {option.label}
+                                </Select.Option>
+                            ))}
+                        </Select>
+                        <div>년</div>
+                        <Select
+                            id="actvMonth"
+                            value={formData.actvMonth}
+                            onChange={(value) => setFormData(prevData => ({ ...prevData, actvMonth: value }))}
+                            disabled={!isEditing} // 편집 모드가 아닐 때 비활성화
+                        >
+                            {selectMonth.map(option => (
+                                <Select.Option key={option.value} value={option.value}>
+                                    {option.label}
+                                </Select.Option>
+                            ))}
+                        </Select>
+                        <div>월</div>
+                    </div>
+                </div>
+                <div className={sdStyles.input_item}>
+                    <div className={sdStyles.input_title}>
+                        자료명
+                        <span className={sdStyles.requiredAsterisk}>*</span>
+                    </div>
+                    <input className={sdStyles.search} id="name"
+                        value={formData.name}
+                        onChange={(e) => setFormData(prevData => ({ ...prevData, name: e.target.value }))}
+                        disabled={!isEditing} // 편집 모드가 아닐 때 비활성화
+                    />
+                </div>
+                <div className={sdStyles.input_item}>
+                    <div className={sdStyles.input_title}>비고</div>
+                    <input
+                        className={sdStyles.search} id="note"
+                        value={formData.note}
+                        onChange={(e) => setFormData(prevData => ({ ...prevData, note: e.target.value }))}
+                        disabled={!isEditing} // 편집 모드가 아닐 때 비활성화
+                    />
+                </div>
+                <div className={sdStyles.upload_item}>
+                    <div className={sdStyles.upload_header}>
+                        <div className={sdStyles.input_title}>첨부파일</div>
+                        <div>
+                            <input
+                                type="file"
+                                id="fileList"
+                                name="fileList"
+                                multiple
+                                style={{ display: 'none' }} // 숨김 처리
+                                ref={fileInputRef} // useRef로 참조
+                                onChange={handleFileChange} // 파일 선택 시 호출
+                                disabled={!isEditing} // 편집 모드가 아닐 때 비활성화
+                            />
+                            <button
+                                type="button"
+                                onClick={() => fileInputRef.current.click()}
+                                className={ps12Styles.upload_button}
+                                disabled={!isEditing} // 편집 모드가 아닐 때 비활성화
+                            >
+                                파일선택 <PaperClipOutlined />
+                            </button>
+                        </div>
+                    </div>
+                    <div className={sdStyles.file_list_container}>
+                        <div className={sdStyles.file_list}>
+                            {fileList.length === 0 ? (
+                                <></>
+                            ) : (
+                                fileList.map((file, index) => (
+                                    <div key={index} className={sdStyles.file_item}>
+                                        {file.name}
+                                        <button
+                                            type="button"
+                                            className={sdStyles.remove_button}
+                                            onClick={() => handleFileRemove(file.name)}
+                                            disabled={!isEditing} // 편집 모드가 아닐 때 비활성화
+                                        >
+                                            <CloseOutlined />
+                                        </button>
+                                    </div>
+                                ))
+                            )}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <button className={ps12Styles.select_button} onClick={handleOk}>확인</button>
+        </Modal>
+    )
+}

@@ -6,7 +6,7 @@ import MenuList from "./MenuList";
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import { ArrowBackIos } from "@mui/icons-material";
 
-export default function Navigation({ menus, onMenuClick }){
+export default function Navigation({ menus, onMenuClick, activeTab }){
     const [fold, setFold] = useState(false);
 
     const handleFoldClick = () => {
@@ -17,10 +17,10 @@ export default function Navigation({ menus, onMenuClick }){
         <>
             {(!fold) ? (
                 <div className={navStyles.navigation_container}>
-                    <div onClick={handleFoldClick}>
+                    <div>
                     <Title/>
                     </div>
-                    <MenuList menus={menus} onMenuClick={onMenuClick}/>
+                    <MenuList menus={menus} onMenuClick={onMenuClick} activeTab={activeTab}/>
                     <div className={navStyles.navigation_fold} onClick={handleFoldClick}>
                     <ArrowBackIos fontSize="small" sx={{color:"black", marginLeft:"50%"}} />
                     </div>

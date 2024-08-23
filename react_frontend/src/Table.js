@@ -8,15 +8,23 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import { Box, Checkbox, TablePagination, TextField } from '@mui/material';
+import { ConstructionOutlined } from '@mui/icons-material';
 
 // TableCell을 스타일링하는 컴포넌트
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
-    backgroundColor: '#F4F2FF',
-    color: '#6E6893',
+    backgroundColor: 'rgb(237,245,254)',
+    color: 'rgb(47, 107, 208)',
+    fontSize: '0.75rem',
+    whiteSpace: 'nowrap', // 텍스트를 한 줄로 유지
+    overflow: 'hidden', // 넘치는 내용을 숨기기
+    textOverflow: 'ellipsis', // 넘치는 텍스트를 ...로 표시
   },
   [`&.${tableCellClasses.body}`]: {
-    fontSize: 14,
+    fontSize: '0.75rem',
+    whiteSpace: 'nowrap', // 텍스트를 한 줄로 유지
+    overflow: 'hidden', // 넘치는 내용을 숨기기
+    textOverflow: 'ellipsis', // 넘치는 텍스트를 ...로 표시
   },
 }));
 
@@ -26,10 +34,10 @@ const StyledTableRow = styled(TableRow)(({ theme, selected, variant }) => ({
         border: 0,
     },
     '&:hover': {
-        backgroundColor: '#E4DCFF', // 호버 시 배경색 설정
+        backgroundColor: 'rgba(133, 187, 249, 0.4)', // 호버 시 배경색 설정
     },
     '&.Mui-selected': {
-        backgroundColor: selected && variant === 'default' ? '#B7AAFF !important' : '#FFFFFF', // 선택된 상태에서 배경색 강제 적용 (default variant만)
+        backgroundColor: selected && variant === 'default' ? 'rgba(63, 118, 247, 0.5) !important' : '#FFFFFF', // 선택된 상태에서 배경색 강제 적용 (default variant만)
     },
 }));
 
@@ -56,7 +64,7 @@ export default function CustomizedTables({
         handleBlur = () => { },
         editingCell = {}
     }) {
-    const [selectedRow, setSelectedRow] = useState(null);       // default variant의 선택 상태
+    const [selectedRow, setSelectedRow] = useState({});       // default variant의 선택 상태
     const [selectedRows, setSelectedRows] = useState([]); 
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(10);             // default page row length
@@ -98,6 +106,14 @@ export default function CustomizedTables({
         return <p>No data available</p>;
     }
 
+    // `id` 컬럼을 제외한 데이터 필터링
+    const filteredData = data.map(row => {
+        const { id, ...rest } = row; // `id` 컬럼 제외
+        return rest;
+    });
+    
+    const paginatedData = filteredData.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
+
     return (
         <Box sx={{ 
             width: '100%', 
@@ -114,27 +130,23 @@ export default function CustomizedTables({
                 <Table sx={{ minWidth: 600 }} stickyHeader aria-label="customized table">
                     <TableHead>
                         <TableRow>
-                            {
-                                // checkbox가 있는 테이블이면 체크박스 셀 추가
-                                variant === 'checkbox' && <StyledTableCell></StyledTableCell> } 
-                            {
-                                // 컬럼 제목 설정
-                                Object.keys(data[0])?.map(col => (<StyledTableCell key={col}>{col}</StyledTableCell>
-                                ))    
-                            }
+                        {variant === 'checkbox' && <StyledTableCell></StyledTableCell>}
+                        {Object.keys(data[0] || {}).filter(col => col !== 'id').map(col => (
+                            <StyledTableCell key={col}>{col}</StyledTableCell>
+                        ))}
                         </TableRow>
                     </TableHead>
                     <TableBody>
                             {
                                 // 표에 data 채우기
-                                data.map((row, rowIndex) => (
+                                paginatedData.map((row, rowIndex) => (
                                     <StyledTableRow 
-                                        key={rowIndex}
+                                        key={rowIndex + (rowsPerPage * page)}
                                         selected={variant === 'checkbox' 
                                                 ? selectedRows.includes(rowIndex) 
-                                                : selectedRow === rowIndex}
+                                                : selectedRow === rowIndex + (rowsPerPage * page)}
                                         variant={variant}
-                                        onClick={() => handleRowClick(rowIndex)}
+                                        onClick={() => handleRowClick(rowIndex + (rowsPerPage * page))}
                                     >
                                         {   // checkbox가 있는 테이블이면 체크박스 셀 추가
                                             variant === 'checkbox' && (

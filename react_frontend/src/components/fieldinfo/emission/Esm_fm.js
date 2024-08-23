@@ -12,7 +12,7 @@ import project from "../../../assets/json/selectedPjt";
 import emsData from "../../../assets/json/ems";
 import sdData from "../../../assets/json/sd";
 import SearchForms from "../../../SearchForms";
-import { formField_esm } from "../../../assets/json/searchFormData.js";
+import { formField_esm_fm } from "../../../assets/json/searchFormData.js";
 import { SdAddModal, DelModal, SdShowDetailsModal } from "../../../modals/PdModal";
 
 const selectOptions = [
@@ -23,7 +23,7 @@ const selectOptions = [
     { value: '2020', label: '2020' }
 ];
 
-export default function Esm() {
+export default function Esm_fm() {
     const [formData, setFormData] = useState({});
 
     const [showResults, setShowResults] = useState(false);            // 조회결과와 담당자목록을 표시할지 여부
@@ -76,7 +76,7 @@ export default function Esm() {
         setIsModalOpen(prevState => ({ ...prevState, [modalType]: true }));
     };
     // modalType에 따라 결과 처리 해주기
-    const handleOk = (modalType) => (data, closeModal = true) => {
+    const handleOk = (modalType) => (data, closeModal=true) => {
         if (closeModal) {
             setIsModalOpen(prevState => ({ ...prevState, [modalType]: false })); //모달 닫기
         }
@@ -110,7 +110,7 @@ export default function Esm() {
                 {"현장정보 > 배출원 > 배출원 지정"}
             </div>
 
-            <SearchForms onFormSubmit={handleFormSubmit} formFields={formField_esm} />
+            <SearchForms onFormSubmit={handleFormSubmit} formFields={formField_esm_fm} />
 
             {/* showResults 상태가 true일 때만 결과를 표시 */}
             {showResults && (

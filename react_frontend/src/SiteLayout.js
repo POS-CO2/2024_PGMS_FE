@@ -5,172 +5,7 @@ import  * as headerStyles from './assets/css/header.css';
 import AppContainer from './AppContainer';
 import { Outlet, useLocation, useNavigate } from 'react-router';
 import Tabbar from './Tabbar';
-
-
-// const menus =
-// [
-//     {
-//         "level" : 1,
-//         "name": "배출실적",
-//         "menu": [
-//             {
-//                 "level" : 2,
-//                 "url" : "/ps_1_2",
-//                 "name": "실적Scope 1, 2",
-//                 "menu": []
-//             },
-//             {
-//                 "level" : 2,
-//                 "name": "실적조회",
-//                 "menu" : [
-//                     {
-//                         "level" : 3,
-//                         "name" : "총량실적 조회",
-//                         "url" : "/tep",
-//                         "menu" : []
-//                     },
-//                     {
-//                         "level" : 3,
-//                         "url" : "/psq",
-//                         "name" : "프로젝트별 조회",
-//                         "menu" : []
-//                     },
-//                 ]
-//             },
-//             {
-//                 "level" : 2,
-//                 "name" : "실적 관리",
-//                 "url" : "/pmg",
-//                 "menu" : []
-//             }
-//         ]
-//     },
-
-//     {
-//         "level" : 1,
-//         "name" : "현장정보",
-//         "menu" : [
-//             {
-//                 "level" : 2,
-//                 "name" : "프로젝트",
-//                 "menu" : [
-//                     {
-//                         "level" : 3,
-//                         "name" : "프로젝트 관리",
-//                         "menu" : [],
-//                         "url" : "/pg"
-//                     },
-//                     {
-//                         "level" : 3,
-//                         "name" : "담당자 지정",
-//                         "menu" : [],
-//                         "url" : "/pd"
-//                     },
-//                     {
-//                         "level" : 3,
-//                         "name" : "매출액 관리",
-//                         "menu" : [],
-//                         "url" : "/rm"
-//                     },
-//                 ]
-//             },
-//             {
-//                 "level" : 2,
-//                 "name" : "설비",
-//                 "menu" : [
-//                     {
-//                         "level" : 3,
-//                         "name" : "설비 지정",
-//                         "menu" : [],
-//                         "url" : "/fm"
-//                     },
-//                     {
-//                         "level" : 3,
-//                         "url" : "/fl",
-//                         "name" : "설비LIB 관리",
-//                         "menu" : []
-                        
-//                     },
-//                     {
-//                         "level" : 3,
-//                         "name" : "활동자료 관리",
-//                         "url" : "/fam",
-//                         "menu" : []
-//                     },
-//                     {
-//                         "level" : 3,
-//                         "name" : "활동자료 지정",
-//                         "url" : "/fad",
-//                         "menu" : []
-//                     },
-                    
-//                 ]
-//             },
-//             {
-//                 "level" : 2,
-//                 "name" : "배출원",
-//                 "menu" : [
-//                     {
-//                         "level" : 3,
-//                         "name" : "배출원 지정",
-//                         "url" : "/esm",
-//                         "menu" : []
-//                     },
-//                     {
-//                         "level" : 3,
-//                         "name" : "증빙자료 관리",
-//                         "url" : "/sd",
-//                         "menu" : []
-//                     }
-//                 ]
-//             },
-
-//             {
-//                 "level" : 2,
-//                 "url" : "/efm",
-//                 "name" : "배출계수 관리",
-//                 "menu" : [
-        
-//                 ]
-//             }
-
-//         ]
-
-        
-//     },
-
-//     {
-//         "level" : 1,
-//         "name" : "시스템관리",
-//         "menu" : [
-//             {
-//                 "level" : 2,
-//                 "name" : "코드 관리",
-//                 "url" : "/cm",
-//                 "menu" : []
-//             },
-//             {
-//                 "level" : 2,
-//                 "name" : "사용자 관리",
-//                 "url" : "/um",
-//                 "menu" : []
-//             },
-//             {
-//                 "level": 2,
-//                 "name" : "메뉴 관리",
-//                 "url" : "/mm",
-//                 "menu" : []
-//             },
-//             {
-//                 "level" : 2,
-//                 "url" : "/mal",
-//                 "name" : "접속로그 조회",
-//                 "menu" : []
-//             }
-//         ]
-
-//     }
-// ]
+import axiosInstance from './utils/AxiosInstance';
 
 
 export default function SiteLayout({handleLogout, menus, user}){
@@ -185,6 +20,7 @@ export default function SiteLayout({handleLogout, menus, user}){
     });
 
     const [fav, setFav] = useState(true);
+    const [loading, setLoading] = useState(false);
 
     const navigate = useNavigate();
     const tabBarRef = useRef(null);
@@ -194,8 +30,11 @@ export default function SiteLayout({handleLogout, menus, user}){
 
     // 메뉴 클릭 시 해당 url 로 이동 하는 코드.
     // 탭도 생성함
-    const handleMenuClick = (item) => {
-        console.log(item);
+    const handleMenuClick = async (item) => {
+        // console.log(item);
+        setLoading(true);
+        const response = await axiosInstance.post(`/sys/log/click?menuId=${item.id}`)
+        // console.log(response);
         const existingTab = tabs.find(tab => tab.url === item.url );
         // 중복 탭 여부 검사(이미 열려있는지)
         if (item.menu.length === 0){
@@ -208,6 +47,7 @@ export default function SiteLayout({handleLogout, menus, user}){
             localStorage.setItem('activeTab', item.url);
             navigate(item.url);
         }
+        setLoading(false);
     };
 
     // 탭 클릭시 해당 url 로 이동하는 코드
@@ -273,7 +113,6 @@ export default function SiteLayout({handleLogout, menus, user}){
     // drag 구현
     const dragStart = (e, position) => {
         dragItem.current = position;
-        console.log(e.target.innerHTML);
     };
 
     const dragEnter = (e, position) => {
@@ -291,16 +130,36 @@ export default function SiteLayout({handleLogout, menus, user}){
     }
 
     const handleFavClick = () => {
-        console.log(fav);
         setFav(!fav);
     }
-
-    
-    
+    if (loading) {
+        return (
+        <div id={mainStyles.root}>
+            <Navigation menus={menus} onMenuClick={handleMenuClick} activeTab={activeTab}/>
+            <AppContainer 
+                tabs = {tabs} 
+                handleMenuClick={handleMenuClick} 
+                activeTab={activeTab} 
+                handelTabClick={handelTabClick} 
+                handleTabClose={handleTabClose} 
+                dragStart={dragStart} 
+                dragEnter={dragEnter} 
+                drop={drop}
+                handleFavClick={handleFavClick}
+                fav={fav}
+                handleLogout={handleLogout}
+                user={user}
+                menus={menus}
+            >
+                {/* skeleton */}
+            </AppContainer>
+        </div>
+        );
+    }
 
     return (
         <div id={mainStyles.root}>
-            <Navigation menus={menus} onMenuClick={handleMenuClick}/>
+            <Navigation menus={menus} onMenuClick={handleMenuClick} activeTab={activeTab}/>
             <AppContainer 
                 tabs = {tabs} 
                 handleMenuClick={handleMenuClick} 
