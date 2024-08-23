@@ -187,7 +187,7 @@ export const formField_rm = [
 ]
 
 export const formField_fl = [
-    { type: 'InputText', name: 'equipName', label: '설비LIB명'},
+    { type: 'InputText', name: 'equipLibName', label: '설비LIB명'},
     { type: 'DropDown', name: 'equpDvs', label: '설비구분', options: []},
     { type: 'DropDown', name: 'equipType', label: '설비유형', options: []},
     { type: 'DropDown', name: 'equipSpecUnit', label: '설비사양단위', options: []}

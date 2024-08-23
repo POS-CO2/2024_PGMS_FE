@@ -13,7 +13,7 @@ import Table from "../Table";
 import { actv } from "../assets/json/selectedPjt";
 import emsData from "../assets/json/ems";
 import { selectYear, selectMonth } from "../assets/json/sd";
-import { TextField, Box, InputLabel, MenuItem, FormControl, Autocomplete } from '@mui/material';
+import { TextField, Box, InputLabel, MenuItem, FormControl, Autocomplete, createTheme, ThemeProvider  } from '@mui/material';
 import WarningAmberIcon from '@mui/icons-material/WarningAmber';
 import { Sledding } from '@mui/icons-material';
 import axiosInstance from '../utils/AxiosInstance.js';
@@ -369,18 +369,122 @@ export function RmAddModal({ isModalOpen, handleOk, handleCancel, rowData }) {
     )
 }
 
+const theme = createTheme({
+    components: {
+      MuiOutlinedInput: {
+        styleOverrides: {
+          root: {
+            height: "2.5rem", // 전체 높이 조정
+            padding: 0,
+            "& .MuiOutlinedInput-input": {
+              height: "1.5rem",
+              padding: "0.5rem",
+              boxSizing: "border-box",
+            },
+          },
+        },
+      },
+      MuiInputLabel: {
+        styleOverrides: {
+          root: {
+            transform: "translate(14px, 10px) scale(1)", // label 위치 조정
+            "&.MuiInputLabel-shrink": {
+              transform: "translate(14px, -6px) scale(0.75)", // 축소된 상태에서의 위치 조정
+            },
+          },
+        },
+      },
+    },
+  });
+
 export function FlAddModal({ isModalOpen, handleOk, handleCancel }) {
     // 등록 버튼 클릭 시 호출될 함수(등록할 설비LIB의 data를 전달)
     const handleSelect = () => {
+        const eqLibName = document.getElementById('eqLibName').value;
+        const eqDvs = document.getElementById('eqDvs').value;
+        const eqType = document.getElementById('eqType').value;
+        const eqSpecUnit = document.getElementById('eqSpecUnit').value;
+
+        // // 에러 필드 및 메시지 초기화
+        // const yearField = document.getElementById('year');
+        // const monthField = document.getElementById('month');
+        // const salesAmtField = document.getElementById('salesAmt');
+
+        // // 에러 메시지 요소
+        // const yearError = document.getElementById('year-error');
+        // const monthError = document.getElementById('month-error');
+        // const salesAmtError = document.getElementById('salesAmt-error');
+
+        // yearField.classList.remove(rmStyles.error);
+        // monthField.classList.remove(rmStyles.error);
+        // salesAmtField.classList.remove(rmStyles.error);
+
+        // yearError.textContent = '';
+        // monthError.textContent = '';
+        // salesAmtError.textContent = '';
+
+        // // 별표 제거
+        // document.getElementById('year-star').textContent = '';
+        // document.getElementById('month-star').textContent = '';
+        // document.getElementById('salesAmt-star').textContent = '';
+
+        // let hasError = false;
+
+        // // 유효성 검사
+        // if (!year) {
+        //     yearField.classList.add(rmStyles.error); // 오류 클래스 추가
+        //     yearError.textContent = `'년' is required`; // 오류 메시지 설정
+        //     document.getElementById('year-star').textContent = '*'; // 빨간색 별표 추가
+        //     hasError = true;
+        // }
+        // else {
+        //     yearError.textContent = `empty`; // 오류 메시지 설정
+        //     yearError.classList.add(rmStyles.empty_message);
+        // }
+
+        // if (!month) {
+        //     monthField.classList.add(rmStyles.error); // 오류 클래스 추가
+        //     monthError.textContent = `'월' is required`; // 오류 메시지 설정
+        //     document.getElementById('month-star').textContent = '*'; // 빨간색 별표 추가
+        //     hasError = true;
+        // }
+        // else {
+        //     monthError.textContent = `empty`; // 오류 메시지 설정
+        //     monthError.classList.add(rmStyles.empty_message);
+        // }
+
+        // if (!salesAmt) {
+        //     salesAmtField.classList.add(rmStyles.error); // 오류 클래스 추가
+        //     salesAmtError.textContent = `'매출액' is required`; // 오류 메시지 설정
+        //     document.getElementById('salesAmt-star').textContent = '*'; // 빨간색 별표 추가
+        //     hasError = true;
+        // }
+        // else {
+        //     salesAmtField.textContent = `empty`; // 오류 메시지 설정
+        //     salesAmtField.classList.add(rmStyles.empty_message);
+        // }
+
+        // if (hasError) {
+        //     return;
+        // }
+
         const formData = {
-            eqLibName: document.getElementById('eqLibName').value,
-            eqDvs: document.getElementById('eqDvs').value,
-            eqType: document.getElementById('eqType').value,
-            eqSpecUnit: document.getElementById('eqSpecUnit').value,
+            eqLibName,
+            eqDvs,
+            eqType,
+            eqSpecUnit
         };
 
-        handleOk(formData);  // 입력된 데이터를 handleOk 함수로 전달
+        // 부모 컴포넌트에 데이터 전달
+        handleOk(formData);
+
+        // 입력창 초기화
+        // yearField.value = '';
+        // monthField.value = '';
+        // salesAmtField.value = '';
     };
+
+    /////////////////////
 
     return (
         <Modal
@@ -391,10 +495,25 @@ export function FlAddModal({ isModalOpen, handleOk, handleCancel }) {
         >
             <div className={rmStyles.title}>설비LIB 등록</div>
 
-            <div className={rmStyles.search_container}>
+            <div className={rmStyles.submit_container}>
                 <div className={rmStyles.search_item}>
                     <div className={rmStyles.search_title}>설비라이브러리명</div>
-                    <input className={rmStyles.search} id="eqLibName" />
+                    <ThemeProvider theme={theme}>
+                        <TextField id='eqLibName' variant='outlined' borderRadius='4px' fullWidth
+                            sx={{
+                                width: '22rem',
+                                "& .MuiOutlinedInput-root": {
+                                    height: "2rem !important", // 강제로 높이 조정
+                                },
+                                "& .MuiOutlinedInput-input": {
+                                    height: '1.5rem !important', // 강제로 높이 조정
+                                    padding: '0.5rem !important', // 강제로 패딩 조정
+                                    boxSizing: 'border-box',
+                                },
+                            }}
+                        />
+                    </ThemeProvider>
+                    {/* <input className={rmStyles.search} id="eqLibName" /> */}
                 </div>
                 <div className={rmStyles.search_item}>
                     <div className={rmStyles.search_title}>설비구분</div>

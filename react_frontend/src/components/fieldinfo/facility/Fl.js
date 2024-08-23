@@ -20,7 +20,7 @@ export default function Fl() {
     class EqLib {
         constructor(id = '', equipLibName = '', equipDvs = '', equipType = '', equipSpecUnit = '') {
             this.id = id;
-            this.설비명 = equipLibName;
+            this.설비라이브러리명 = equipLibName;
             this.설비구분 = equipDvs;
             this.설비유형 = equipType;
             this.설비사양단위 = equipSpecUnit;
@@ -99,6 +99,7 @@ export default function Fl() {
 
     //조회 버튼 클릭시 호출될 함수
     const handleFormSubmit = async (data) => {
+        console.log("data", data);
         const params = {
             equipLibName: data.equipLibName,
             equipDvs: data.equipDvs,
@@ -138,6 +139,7 @@ export default function Fl() {
 
     // 설비LIB 등록 버튼 클릭 시 호출될 함수
     const handleOk = (modalType) => async (data) => {
+        console.log("data", data);
         setIsModalOpen(prevState => ({ ...prevState, [modalType]: false })); //모달 닫기
         
         let swalOptions = {
@@ -147,12 +149,13 @@ export default function Fl() {
         if (modalType === 'FlAdd') {
             try {
                 const requestBody = data.map(eqLib => ({
-                    equipLibName: eqLib.equipLibName,
-                    equipDvs: eqLib.equipDvs,
-                    equipType: eqLib.equipType,
-                    equipSpecUnit: eqLib.equipSpecUnit,
+                    equipLibName: eqLib.eqLibName,
+                    equipDvs: eqLib.eqDvs,
+                    equipType: eqLib.eqType,
+                    equipSpecUnit: eqLib.eqSpecUnit,
                 }));
 
+                console.log("requestBody", requestBody);
                 const response = await axiosInstance.post("/equip/lib", requestBody);
                 
                 // 데이터가 객체인 경우 처리 방법
@@ -185,7 +188,7 @@ export default function Fl() {
             }
         } else if (modalType === 'Del') {
             try {
-                const response = await axiosInstance.patch(`/equip?id=${selectedEqLib}`);
+                const response = await axiosInstance.delete(`/equip?id=${selectedEqLib}`);
 
                 // 선택된 설비LIB를 eqLib 리스트에서 제거
                 setEqLibs(prevEqLibs => prevEqLibs.filter(eqLib => eqLib.id !== selectedEqLib));
