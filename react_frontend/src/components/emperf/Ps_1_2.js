@@ -73,7 +73,7 @@ export default function Ps_1_2() {
             설비명: perf.equipName,
             배출활동유형: perf.emtnActvType,
             활동자료: perf.actvDataName,
-            단위: perf.inputUnitCode,
+            단위: key === 'actvQty' ? perf.inputUnitCode : '원', // key에 따른 단위 설정
         };
 
         // quantityList를 순회하며 월별 데이터를 추가
