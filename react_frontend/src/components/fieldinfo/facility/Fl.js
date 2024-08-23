@@ -60,17 +60,17 @@ export default function Fl() {
                 const [optionsDvs, optionsType, optionSpecUnit] = await Promise.all([
                     fetchOptions('설비구분'),
                     fetchOptions('설비유형'),
-                    //fetchOptions('설비사양단위'),
+                    fetchOptions('설비사양단위'),
                 ]);
     
                 // formField_fl를 업데이트
                 const updateFormFields = formField_fl.map(field => {
-                    if (field.name === 'equpDvs') {
+                    if (field.name === 'equipDvs') {
                         return { ...field, options: optionsDvs };
                     } else if (field.name === 'equipType') {
                         return { ...field, options: optionsType };
                     } else if (field.name === 'equipSpecUnit') {
-                        return { ...field, options: optionSpecUnit || [] };
+                        return { ...field, options: optionSpecUnit };
                     } else {
                         return field;
                     }
@@ -139,7 +139,6 @@ export default function Fl() {
 
     // 설비LIB 등록 버튼 클릭 시 호출될 함수
     const handleOk = (modalType) => async (data) => {
-        console.log("data", data);
         setIsModalOpen(prevState => ({ ...prevState, [modalType]: false })); //모달 닫기
         
         let swalOptions = {
@@ -148,14 +147,13 @@ export default function Fl() {
 
         if (modalType === 'FlAdd') {
             try {
-                const requestBody = data.map(eqLib => ({
-                    equipLibName: eqLib.eqLibName,
-                    equipDvs: eqLib.eqDvs,
-                    equipType: eqLib.eqType,
-                    equipSpecUnit: eqLib.eqSpecUnit,
-                }));
+                const requestBody = {
+                    equipLibName: data.eqLibName,
+                    equipDvs: data.eqDvs,
+                    equipType: data.eqType,
+                    equipSpecUnit: data.eqSpecUnit,
+                };
 
-                console.log("requestBody", requestBody);
                 const response = await axiosInstance.post("/equip/lib", requestBody);
                 
                 // 데이터가 객체인 경우 처리 방법
@@ -168,7 +166,7 @@ export default function Fl() {
                 );
 
                 // 기존 프로젝트에서 placeholderPjt를 제거하고 새 데이터를 병합
-                setSelectedEqLib(prevEqLibs => {
+                setEqLibs(prevEqLibs => {
                     // placeholderProject 제거
                     const cleanedEqLibs = prevEqLibs.filter(eqLib => eqLib.id !== '');
 
@@ -213,7 +211,7 @@ export default function Fl() {
         setIsModalOpen(prevState => ({ ...prevState, [modalType]: false }));
     };
 
-    // 버튼 클릭 시 모달 열림 설정 - showModal(modalType);
+    // 버튼 클릭 시 모달 열림 설정
     const onAddClick = () => {
         showModal('FlAdd');
     };
@@ -256,7 +254,8 @@ export default function Fl() {
                         'modalType': 'FlAdd',
                         'isModalOpen': isModalOpen.FlAdd,
                         'handleOk': handleOk('FlAdd'),
-                        'handleCancel': handleCancel('FlAdd')
+                        'handleCancel': handleCancel('FlAdd'),
+                        'rowData': formFields
                     }
                 ]}
             />

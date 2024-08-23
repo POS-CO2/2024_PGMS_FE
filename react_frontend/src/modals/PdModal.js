@@ -397,94 +397,29 @@ const theme = createTheme({
     },
   });
 
-export function FlAddModal({ isModalOpen, handleOk, handleCancel }) {
-    // 등록 버튼 클릭 시 호출될 함수(등록할 설비LIB의 data를 전달)
-    const handleSelect = () => {
-        const eqLibName = document.getElementById('eqLibName').value;
-        const eqDvs = document.getElementById('eqDvs').value;
-        const eqType = document.getElementById('eqType').value;
-        const eqSpecUnit = document.getElementById('eqSpecUnit').value;
+export function FlAddModal({ isModalOpen, handleOk, handleCancel, rowData }) {
+    const [eqLibName, setEqLibName] = useState('');
+    const [selectedEqDvs, setSelectedEqDvs] = useState('');
+    const [selectedEqType, setSelectedEqType] = useState('');
+    const [selectedEqSpecUnit, setSelectedEqSpecUnit] = useState('');
 
-        // // 에러 필드 및 메시지 초기화
-        // const yearField = document.getElementById('year');
-        // const monthField = document.getElementById('month');
-        // const salesAmtField = document.getElementById('salesAmt');
-
-        // // 에러 메시지 요소
-        // const yearError = document.getElementById('year-error');
-        // const monthError = document.getElementById('month-error');
-        // const salesAmtError = document.getElementById('salesAmt-error');
-
-        // yearField.classList.remove(rmStyles.error);
-        // monthField.classList.remove(rmStyles.error);
-        // salesAmtField.classList.remove(rmStyles.error);
-
-        // yearError.textContent = '';
-        // monthError.textContent = '';
-        // salesAmtError.textContent = '';
-
-        // // 별표 제거
-        // document.getElementById('year-star').textContent = '';
-        // document.getElementById('month-star').textContent = '';
-        // document.getElementById('salesAmt-star').textContent = '';
-
-        // let hasError = false;
-
-        // // 유효성 검사
-        // if (!year) {
-        //     yearField.classList.add(rmStyles.error); // 오류 클래스 추가
-        //     yearError.textContent = `'년' is required`; // 오류 메시지 설정
-        //     document.getElementById('year-star').textContent = '*'; // 빨간색 별표 추가
-        //     hasError = true;
-        // }
-        // else {
-        //     yearError.textContent = `empty`; // 오류 메시지 설정
-        //     yearError.classList.add(rmStyles.empty_message);
-        // }
-
-        // if (!month) {
-        //     monthField.classList.add(rmStyles.error); // 오류 클래스 추가
-        //     monthError.textContent = `'월' is required`; // 오류 메시지 설정
-        //     document.getElementById('month-star').textContent = '*'; // 빨간색 별표 추가
-        //     hasError = true;
-        // }
-        // else {
-        //     monthError.textContent = `empty`; // 오류 메시지 설정
-        //     monthError.classList.add(rmStyles.empty_message);
-        // }
-
-        // if (!salesAmt) {
-        //     salesAmtField.classList.add(rmStyles.error); // 오류 클래스 추가
-        //     salesAmtError.textContent = `'매출액' is required`; // 오류 메시지 설정
-        //     document.getElementById('salesAmt-star').textContent = '*'; // 빨간색 별표 추가
-        //     hasError = true;
-        // }
-        // else {
-        //     salesAmtField.textContent = `empty`; // 오류 메시지 설정
-        //     salesAmtField.classList.add(rmStyles.empty_message);
-        // }
-
-        // if (hasError) {
-        //     return;
-        // }
-
-        const formData = {
-            eqLibName,
-            eqDvs,
-            eqType,
-            eqSpecUnit
-        };
-
-        // 부모 컴포넌트에 데이터 전달
-        handleOk(formData);
-
-        // 입력창 초기화
-        // yearField.value = '';
-        // monthField.value = '';
-        // salesAmtField.value = '';
+    // 옵션을 가져오는 함수
+    const getOptions = (fieldName) => {
+        const field = rowData.find(field => field.name === fieldName);
+        return field ? field.options : [];
     };
 
-    /////////////////////
+    // 등록 버튼 클릭 시 호출될 함수
+    const handleSelect = () => {
+        const formData = {
+            eqLibName,
+            eqDvs: selectedEqDvs,
+            eqType: selectedEqType,
+            eqSpecUnit: selectedEqSpecUnit
+        };
+
+        handleOk(formData);
+    };
 
     return (
         <Modal
@@ -499,7 +434,13 @@ export function FlAddModal({ isModalOpen, handleOk, handleCancel }) {
                 <div className={rmStyles.search_item}>
                     <div className={rmStyles.search_title}>설비라이브러리명</div>
                     <ThemeProvider theme={theme}>
-                        <TextField id='eqLibName' variant='outlined' borderRadius='4px' fullWidth
+                        <TextField
+                            id='eqLibName'
+                            variant='outlined'
+                            borderRadius='4px'
+                            fullWidth
+                            value={eqLibName}
+                            onChange={(e) => setEqLibName(e.target.value)}
                             sx={{
                                 width: '22rem',
                                 "& .MuiOutlinedInput-root": {
@@ -513,30 +454,47 @@ export function FlAddModal({ isModalOpen, handleOk, handleCancel }) {
                             }}
                         />
                     </ThemeProvider>
-                    {/* <input className={rmStyles.search} id="eqLibName" /> */}
                 </div>
                 <div className={rmStyles.search_item}>
                     <div className={rmStyles.search_title}>설비구분</div>
-                    <Select id="eqDvs">
-                        <Select.Option key={"구분1"} value={"구분1"}>{"구분1"}</Select.Option>
-                        <Select.Option key={"구분2"} value={"구분2"}>{"구분2"}</Select.Option>
-                        <Select.Option key={"구분3"} value={"구분3"}>{"구분3"}</Select.Option>
+                    <Select
+                        id="eqDvs"
+                        value={selectedEqDvs}
+                        onChange={(value) => setSelectedEqDvs(value)}
+                    >
+                        {getOptions('equipDvs').map(option => (
+                            <Select.Option key={option.value} value={option.value}>
+                                {option.label}
+                            </Select.Option>
+                        ))}
                     </Select>
                 </div>
                 <div className={rmStyles.search_item}>
                     <div className={rmStyles.search_title}>설비유형</div>
-                    <Select id="eqType">
-                        <Select.Option key={"유형1"} value={"유형1"}>{"유형1"}</Select.Option>
-                        <Select.Option key={"유형2"} value={"유형2"}>{"유형2"}</Select.Option>
-                        <Select.Option key={"유형3"} value={"유형3"}>{"유형3"}</Select.Option>
+                    <Select
+                        id="eqType"
+                        value={selectedEqType}
+                        onChange={(value) => setSelectedEqType(value)}
+                    >
+                        {getOptions('equipType').map(option => (
+                            <Select.Option key={option.value} value={option.value}>
+                                {option.label}
+                            </Select.Option>
+                        ))}
                     </Select>
                 </div>
                 <div className={rmStyles.search_item}>
                     <div className={rmStyles.search_title}>설비사양단위</div>
-                    <Select id="eqSpecUnit">
-                        <Select.Option key={"단위1"} value={"단위1"}>{"단위1"}</Select.Option>
-                        <Select.Option key={"단위2"} value={"단위2"}>{"단위2"}</Select.Option>
-                        <Select.Option key={"단위3"} value={"단위3"}>{"단위3"}</Select.Option>
+                    <Select
+                        id="eqSpecUnit"
+                        value={selectedEqSpecUnit}
+                        onChange={(value) => setSelectedEqSpecUnit(value)}
+                    >
+                        {getOptions('equipSpecUnit').map(option => (
+                            <Select.Option key={option.value} value={option.value}>
+                                {option.label}
+                            </Select.Option>
+                        ))}
                     </Select>
                 </div>
             </div>
