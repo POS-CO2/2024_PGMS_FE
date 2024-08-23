@@ -109,7 +109,6 @@ export default function Pg() {
 
     // 조회 버튼 클릭시 호출될 함수
     const handleFormSubmit = async (data) => {
-        console.log("data", data);
         // data.calendar가 정의되어 있지 않거나 값이 없는 경우를 처리하기 위해 설정
         const startDate = data.calendar?.[0]?.$d;
         const endDate = data.calendar?.[1]?.$d;
@@ -231,7 +230,6 @@ export default function Pg() {
             }
         } else if (modalType === 'Del') {
             try {
-                console.log("selectedPjt", selectedPjt);
                 const response = await axiosInstance.patch(`/pjt?id=${selectedPjt}`);
 
                 // 선택된 프로젝트를 project 리스트에서 제거
@@ -270,7 +268,7 @@ export default function Pg() {
         <>
             <div className={mainStyles.breadcrumb}>현장정보 &gt; 프로젝트 &gt; 프로젝트 관리</div>
             <SearchForms onFormSubmit={handleFormSubmit} formFields={formFields} />
-    
+
             {(!projects || Object.keys(projects).length === 0) ?
             <></> : ( //TODO: 백엔드에서 받아온 값으로 바꾸기(Table 컴포넌트의 data 파라미터)
                 <>
