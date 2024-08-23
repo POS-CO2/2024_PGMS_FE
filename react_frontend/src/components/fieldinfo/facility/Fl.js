@@ -186,7 +186,7 @@ export default function Fl() {
             }
         } else if (modalType === 'Del') {
             try {
-                const response = await axiosInstance.delete(`/equip?id=${selectedEqLib}`);
+                const response = await axiosInstance.delete(`/equip/lib?id=${selectedEqLib}`);
 
                 // 선택된 설비LIB를 eqLib 리스트에서 제거
                 setEqLibs(prevEqLibs => prevEqLibs.filter(eqLib => eqLib.id !== selectedEqLib));
