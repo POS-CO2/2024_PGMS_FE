@@ -43,7 +43,7 @@ export default function Fm() {
 
     const handleRowClick = (e) => {
         setShowFacList(false);
-        setSelectedFac(e)
+        setSelectedFac(e ?? {});
     };
 
     const [isModalOpen, setIsModalOpen] = useState({

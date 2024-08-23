@@ -1003,14 +1003,17 @@ export function CmEditModal({ isModalOpen, handleOk, handleCancel, rowData }) {
 
 export function DeleteModal({ isModalOpen, handleOk, handleCancel, rowData, rowDataName, url }) {
 
-    if(rowData === null){
-        return <></>;
+    if (!rowData) {
+        return null;
     }
-    const [rowName, setRowName] = useState(rowData[rowDataName]);
-    console.log(rowName);
-    console.log(rowData);
-    console.log(rowDataName);
-    console.log(rowData[rowDataName]);
+    
+    const [rowName, setRowName] = useState(rowData[rowDataName ?? ""]);
+    useEffect(() => {
+        // rowData가 존재할 때만 rowName을 설정
+        if (rowData) {
+            setRowName(rowData[rowDataName] || '');
+        }
+    }, [rowData, rowDataName]);
     const handleDelete = async () => {
         let swalOptions = {
             confirmButtonText: '확인'
