@@ -61,7 +61,13 @@ export default function SearchForms({ onFormSubmit, formFields, onSearch, autoSu
     // 조회 버튼 클릭 시 호출될 함수
     const handleFinish = (values) => {
         onFormSubmit(values);
-    }; 
+    };
+
+    const handleProjectSelect = (selectedData) => {
+        if (onProjectSelect) {
+            onProjectSelect(selectedData, form); // form을 함께 전달
+        }
+    };
 
     return (
         <Form form={form} layout="vertical" className={searchFormStyles.form_container} onFinish={handleFinish}>
@@ -80,7 +86,7 @@ export default function SearchForms({ onFormSubmit, formFields, onSearch, autoSu
 
                         disabled={field.disabled} // disabled 상태 전달
                         placeholder={field.placeholder} // placeholder 전달
-                        onProjectSelect={onProjectSelect} // 프로젝트 선택 시 대상년도 설정
+                        onProjectSelect={handleProjectSelect} // 프로젝트 선택 시 대상년도 설정
                     />
                 )
             })}

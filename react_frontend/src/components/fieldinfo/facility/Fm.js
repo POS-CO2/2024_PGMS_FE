@@ -13,15 +13,19 @@ export default function Fm() {
 
     const [fac, setFac] = useState([]);
     const [selectedPjt, setSelectedPjt] = useState([]);
-
+    const [temp, setTemp] = useState(false);
     const handleFormSubmit = async (param) => {
         console.log(param);
         
         setSelectedPjt([param.searchProject]);
+        
         console.log([param.searchProject]);
         const {data} = await axiosInstance.get(`/equip?pjtId=${param.searchProject.id}`);
         
         setFac(data);
+        if(param && Object.keys(param).length !== 0){
+            setShowSearchResult(true);
+        }
         
     };
 
@@ -29,7 +33,7 @@ export default function Fm() {
     const [showSearchResult, setShowSearchResult] = useState(false);
 
     const handleSearchClick = () => {
-        setShowSearchResult(true);
+        
     };
 
 
@@ -39,9 +43,9 @@ export default function Fm() {
 
     const handleRowClick = (e) => {
         setShowFacList(false);
-        console.log(e);
-        setSelectedFac(e)
+        setSelectedFac(e ?? {});
     };
+    console.log(selectedFac);
 
     const [isModalOpen, setIsModalOpen] = useState({
         FmAdd: false,
@@ -114,17 +118,11 @@ export default function Fm() {
                 {showSearchResult ? (
                     <>  
                         <Card className={sysStyles.card_box} sx={{width:"100%", height:"fit-content", borderRadius:"15px"}}>
-                            <div className={sysStyles.mid_title}> 
-                                조회결과
-                            </div>
-                            <TableCustom title="" data={selectedPjt} onRowClick={() => {}}/>
+                            <TableCustom title="조회결과" data={selectedPjt} onRowClick={() => {}} pagination={false}/>
                         </Card>
                         {/** 버튼 변경 필요(엑셀 다운로드, 삭제, 등록) 및 등록 클릭 시 모달 추가 */}
                         <Card className={sysStyles.card_box} sx={{width:"100%", height:"fit-content", borderRadius:"15px"}}>
-                            <div className={sysStyles.mid_title}> 
-                                    설비목록
-                            </div>
-                        <TableCustom title="" data={fac} selectedRows={[selectedFac]} buttons={["DownloadExcel", "Delete", "Add"]} onClicks={[() => handleExcelUploadClick(table_fm_facList, 'exported_table'), handleDeleteClick, handleAddClick]} onRowClick={handleRowClick} excel={true} modals={
+                        <TableCustom title="설비목록" data={fac} selectedRows={[selectedFac]} buttons={["DownloadExcel", "Delete", "Add"]} onClicks={[() => handleExcelUploadClick(fac, 'exported_table'), handleDeleteClick, handleAddClick]} onRowClick={handleRowClick} excel={true} modals={
                             [
                                 {
                                     "modalType" : 'Delete',
@@ -132,6 +130,7 @@ export default function Fm() {
                                     'handleOk': handleOk('Delete'),
                                     'handleCancel': handleCancel('Delete'),
                                     'rowData': selectedFac, 
+                                    'rowDataName': "equipName",
                                     'url': '/equip',
                                 },
                                 {

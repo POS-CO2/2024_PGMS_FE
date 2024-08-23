@@ -24,12 +24,14 @@ import { TreeItem2Icon } from '@mui/x-tree-view/TreeItem2Icon';
 import { TreeItem2Provider } from '@mui/x-tree-view/TreeItem2Provider';
 import { TreeItem2DragAndDropOverlay } from '@mui/x-tree-view/TreeItem2DragAndDropOverlay';
 import { ButtonGroup, ButtonGroupMm } from '../../Button';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Paper from '@mui/material/Paper';
 import { Button, Card, TextField } from '@mui/material';
 import TableCustom from '../../TableCustom';
 import { table_mm } from '../../assets/json/selectedPjt';
 import * as mainStyle from '../../assets/css/main.css';
+import { Select } from 'antd';
+import axiosInstance from '../../utils/AxiosInstance';
 
 function DotIcon() {
     return (
@@ -171,7 +173,10 @@ const convertMenusToTreeItems = (menus) => {
             const id = parentId ? `${parentId}.${index + 1}` : `${index + 1}`;
             const treeItem = {
                 id,
+                originId: node.id,
+                menuOrder: node.menuOrder,
                 label: node.name,
+                accessUser: node.accessUser, 
                 children: traverse(node.menu, id),
             };
             if (node.url) {
@@ -243,7 +248,7 @@ const CustomTreeItem = React.forwardRef(function CustomTreeItem(props, ref) {
 });
 
 
-export default function Mm({menus}) {
+export default function Mm({menus, handleMenuSet}) {
     const findParentFolder = (id, menus) => {
         if (id.length === 1) {
             if(id === 0) {return null}
@@ -270,40 +275,46 @@ export default function Mm({menus}) {
     };
 
     const items = convertMenusToTreeItems(menus);
-    
     // 수정해야함
     const [showtable, setShowTable] = useState(false);
 
+    const [selectedMenu, setSelectedMenu] = useState({
+        item: '',
+        originId: '',
+        name: '',
+        parentDir: '',
+        parentDirId: '',
+        menuOrder: '',
+        accessUser: '',
+        url: '',
+    });
+
     const clickMenuHandler = (e, item) => {
         setShowTable(true);
+        setEditable(true);
         const clickedItem = findMenuItemById(item, items); // items는 전체 메뉴 트리입니다.
         if (clickedItem) {
             // 상위 폴더 찾기
             const parrentDir = findParentFolder(item, items);
-
             const newMenuInfo = {
                 id: item,
+                originId: clickedItem.originId,
                 name: clickedItem.label, // 메뉴 이름
                 parentDir: parrentDir ? parrentDir.label : '상위 폴더 없음', // 상위 폴더 이름
-                access: 'ADMIN' // 접근 권한 (필요 시 다른 값을 설정)
+                parentDirId: parrentDir ? parrentDir.originId : 0,
+                menuOrder: clickedItem.menuOrder,
+                accessUser: clickedItem.accessUser, // 접근 권한 (필요 시 다른 값을 설정)
+                url: clickedItem.url,
             };
             setSelectedMenu(newMenuInfo); // 상태 업데이트
         }
     };
-
-    const [selectedMenu, setSelectedMenu] = useState({
-        item: '',
-        name: '',
-        parentDir: '',
-        access: '',
-    });
 
     // 모달 구현부
     const [isModalOpen, setIsModalOpen] = useState({
         MmAdd: false,
         Delete: false
     });
-
     const showModal = (modalType) => {
         setIsModalOpen(prevState => ({...prevState, [modalType]: true}));
     };
@@ -311,6 +322,7 @@ export default function Mm({menus}) {
     // 담당자 지정 등록 버튼 클릭 시 호출될 함수
     const handleOk = (modalType) => (data) => {
         setIsModalOpen(prevState => ({ ...prevState, [modalType]: false }));
+        handleMenuSet();
     };
 
     const handleCancel = (modalType) => () => {
@@ -324,38 +336,137 @@ export default function Mm({menus}) {
     const handleDeleteClick = () => {
         showModal('Delete');
     }
-
-    const [editable, setEditable] = useState(true);
     const handleEditClick = () => {
-        setEditable(!editable);
+        setEditable(false);
+        (async () => {
+            const {data} = await axiosInstance.get(`/sys/menu/cand?id=${selectedMenu.originId !== undefined ? (selectedMenu.originId) : 1}`);
+            setUpperDir(data);
+        })();
+
+        (async () => {
+            const {data} = await axiosInstance.get(`/sys/menu/menu-order?id=${selectedMenu.parentDirId !== undefined ? (selectedMenu.parentDirId) : 1}&isInsert=false`);
+            data.sort();
+            setMenuOrderList(data);
+        })();
+        
     }
+    
+    const [editable, setEditable] = useState(true);
+    const [upperDir, setUpperDir] = useState([]);
+
+    const [menuName, setMenuName] = useState('');
+    const [url, setUrl] = useState('');
+    const [accessUser, setAccessUser] = useState('');
+    const [menuOrder, setMenuOrder] = useState('');
+    const [selectedUpperDir, setSelectedUpperDir] = useState('');
+    const [menuOrderList, setMenuOrderList] = useState([]);
+    const [selectedMenuOrder, setSelectedMenuOrder] = useState([]);
+    const handleSaveClick = async () => {
+        setEditable(true);
+        
+
+        const formData = {
+            id: selectedMenu.originId,
+            menuName: selectedMenu.name,
+            rootId: selectedMenu.parentDirId === undefined ? 1 : selectedMenu.parentDirId,
+            address: selectedMenu.url,
+            accessUser: selectedMenu.accessUser,
+            menuOrder: selectedMenu.menuOrder
+        }
+        try {
+            const {data} = await axiosInstance.patch('/sys/menu', formData);
+            // handleOk을 호출하여 모달을 닫고 상위 컴포넌트에 알림
+            // setUserList(prevList => prevList.map(user => 
+            //     user.id === data.id ? data : user
+            // ));
+            // setSelectedMenu(data);
+            
+        } catch (error) {
+            console.error(error);
+        }
+        handleMenuSet();
+
+    };
 
     const access = [
         {
-            value: 'None',
-            label: 'None'
-        },
-        {
-            value: '현장담당자',
+            value: 'FP',
             label: '현장담당자'
         },
         {
-            value: '본사담당자',
+            value: 'HP',
             label: '본사담당자'
         },
         {
-            value: '시스템관리자',
+            value: 'ADMIN',
             label: '시스템관리자'
         },
     ]
+    
+    let res = [];
+    function parseMenu(menuArray, bd = null, md = null) {
+        menuArray.forEach(item => {
+            if (item.level === 1) {
+                parseMenu(item.menu, item.name, null);
+            } else if (item.level === 2) {
+                if (item.menu && item.menu.length > 0) {
+                parseMenu(item.menu, bd, item.name);
+                } else {
+                res.push({ id: item.id, level: item.level, url: item.url, name: item.name, accessUser: item.accessUser, bd, md: item.name, sd: null });
+                }
+            } else if (item.level === 3) {
+                res.push({ id: item.id, level: item.level, url: item.url, name: item.name, accessUser: item.accessUser, bd, md, sd: item.name });
+            }
+        });
+    }
+    const findNameById = (id, upperDirArray) => {
+        const item = upperDirArray.find(entry => entry.id === id);
+        return item ? item : null; // 해당하는 항목이 없으면 `null`을 반환
+    };
 
+    const handleInputChangeText = (field, value) => {
+        setSelectedMenu(prevState => ({
+            ...prevState,
+            [field]: value
+        }));
+    };
+
+    const handleInputChange = (field, value) => {
+        const par = findNameById(value, upperDir)
+        // console.log(par);
+        const parName = par.name;
+        setSelectedUpperDir(par);
+        setSelectedMenu(prevState => ({
+            ...prevState,
+            [field]: value,
+            "parentDir": parName
+        }));
+        
+    };
+    useEffect(() => {
+        console.log("seud", selectedUpperDir);
+        if (selectedUpperDir) {
+          // 서버에서 해당 selectedUpperDir에 맞는 menuOrderList를 가져오는 API 호출
+            (async () => {
+                const {data} = await axiosInstance.get(`/sys/menu/menu-order?id=${selectedUpperDir.id}&isInsert=false`);
+                console.log("plz", data);
+                setMenuOrderList(data);
+            })();
+            
+        } else {
+          // selectedUpperDir가 비어있을 때는 menuOrderList를 초기화
+            setMenuOrderList([]);
+        }
+    }, [selectedUpperDir]);
+
+    menus.forEach(menu => parseMenu(menu.menu, menu.name, null));
     return (
         <>
             <div className={mainStyle.breadcrumb}>
-                {"홈 > 시스템관리 > 메뉴 관리"}
+                {"시스템관리 > 메뉴 관리"}
             </div>
             <div className={sysStyles.main_grid}>
-                <Card sx={{width:"24%", borderRadius:"15px"}}>
+                <Card sx={{width:"24%", borderRadius:"15px", height:"88vh"}}>
                 <TableCustom title='' className={sysStyles.btn_group} buttons={['Add', 'Delete', 'Edit']} 
                 onClicks={[handleAddClick,handleDeleteClick, handleEditClick]} 
                 table={false} 
@@ -365,18 +476,22 @@ export default function Mm({menus}) {
                         "modalType" : 'MmAdd',
                         'isModalOpen': isModalOpen.MmAdd,
                         'handleOk': handleOk('MmAdd'),
-                        'handleCancel': handleCancel('MmAdd')
+                        'handleCancel': handleCancel('MmAdd'),
+                        'rowData': selectedMenu,
                     },
                     {
                         "modalType" : 'Delete',
                         'isModalOpen': isModalOpen.Delete,
                         'handleOk': handleOk('Delete'),
-                        'handleCancel': handleCancel('Delete')
+                        'handleCancel': handleCancel('Delete'),
+                        'rowData': selectedMenu,
+                        'rowDataName': "name",
+                        'url': '/sys/menu',
                     },
                 ]}/>
                 <RichTreeView
                 items={items}
-                sx={{ height: 'fit-content', flexGrow: 1, maxWidth: 400, overflowY: 'auto', width:"300px"}}
+                sx={{ height: 'fit-content', flexGrow: 1, maxWidth: 400, overflowY: 'auto', width:"100%"}}
                 slots={{ item: CustomTreeItem }}
                 onItemClick={(e, item) => {clickMenuHandler(e, item);}}
                 />
@@ -385,66 +500,84 @@ export default function Mm({menus}) {
                     /** 테이블 컴포넌트 하나 생성해서 할당 */
                     /** 권한 부여 현황 어케 할건지 및 등록, 수정화면 필요 */
                     <>
-                    <Card className={sysStyles.card_box} sx={{width:"38%", borderRadius:"15px"}}>
+                    <Card className={sysStyles.card_box} sx={{width:"38%", height:"88vh", borderRadius:"15px"}}>
                         <div className={sysStyles.mid_title}>{"메뉴 정보"}</div>
                         <div className={sysStyles.text_field} style={{marginTop:"2rem"}}>
                             <div className={sysStyles.text}>
                                 {"메뉴 이름"}
                             </div>
                             {!editable ? (
-                                <TextField id='menuName' disabled={editable} onChange={(e) => setSelectedMenu(e.target.value)} defaultValue={selectedMenu.name} value={selectedMenu.name} variant='outlined' sx={{width:"20rem"}}/>
+                                <TextField size='small' id='menuName' disabled={editable} onChange={(e) => handleInputChangeText('name', e.target.value)} value={selectedMenu.name} variant='outlined' sx={{marginTop:"0.5rem",width:"20rem"}}/>
                             ) : (
-                                <TextField id='menuName' disabled={editable} onChange={(e) => setSelectedMenu(e.target.value)} defaultValue={selectedMenu.name} value={selectedMenu.name} variant='outlined' sx={{width:"20rem", backgroundColor:"rgb(223,223,223)"}}/>
+                                <TextField size='small' id='menuName' disabled={editable} onChange={handleInputChange} value={selectedMenu.name} variant='outlined' sx={{marginTop:"0.5rem",width:"20rem", backgroundColor:"rgb(223,223,223)"}}/>
                             )}
                             
                         </div>
                         <div className={sysStyles.text_field}>
                             <div className={sysStyles.text}>{"상위 폴더"}</div>
                             {!editable ? (
-                                <TextField id='parentDir' disabled={editable} variant='outlined' onChange={(e) => setSelectedMenu(e.target.value)} value={selectedMenu.parentDir} sx={{width:"20rem"}}/>
+                                <Select value={selectedMenu.parentDir} onChange={(e) => {handleInputChange('parentDirId', e);}} style={{marginTop:"0.5rem",width:"20rem", height:"2.5rem", fontSize:"4rem"}}>
+                                {upperDir.map(option => (
+                                    <Select.Option key={option.id} value={option.id}>
+                                        {option.name}
+                                    </Select.Option>
+                                ))}
+                                </Select>
                             ) : (
-                            <TextField id='parentDir' disabled={editable} variant='outlined' onChange={(e) => setSelectedMenu(e.target.value)} value={selectedMenu.parentDir} sx={{width:"20rem", backgroundColor:"rgb(223,223,223)"}}/>
+                            <TextField size='small' id='parentDir' disabled={editable} variant='outlined' value={selectedMenu.parentDir} sx={{marginTop:"0.5rem",width:"20rem", backgroundColor:"rgb(223,223,223)"}}/>
+                            )}
+                            
+                        </div>
+                        <div className={sysStyles.text_field}>
+                            <div className={sysStyles.text}>{"Url 주소"}</div>
+                            {!editable ? (
+                                <TextField size='small' id='address' defaultValue={selectedMenu.url} disabled={editable} variant='outlined' onChange={(e) => handleInputChangeText('url', e.target.value)} value={selectedMenu.url} sx={{marginTop:"0.5rem",width:"20rem"}}/>
+                            ) : (
+                            <TextField size='small' id='address' disabled={editable} variant='outlined' value={selectedMenu.url} sx={{marginTop:"0.5rem",width:"20rem", backgroundColor:"rgb(223,223,223)"}}/>
+                            )}
+                            
+                        </div>
+                        <div className={sysStyles.text_field}>
+                            <div className={sysStyles.text}>{"메뉴 순서"}</div>
+                            {!editable ? (
+                                // <TextField size='small' id='menuOrder' defaultValue={selectedMenu.menuOrder} disabled={editable} variant='outlined' onChange={(e) => handleInputChange('menuOrder', e.target.value)} value={selectedMenu.menuOrder} sx={{marginTop:"0.5rem",width:"20rem"}}/>
+                                <Select value={selectedMenu.menuOrder} onChange={(e) => handleInputChangeText('menuOrder', e)} style={{marginTop:"0.5rem",width:"20rem", height:"2.5rem", fontSize:"4rem"}}>
+                                {menuOrderList.map(option => (
+                                    <Select.Option key={option} value={option}>
+                                        {option}
+                                    </Select.Option>
+                                ))}
+                                </Select>
+                            ) : (
+                            <TextField size='small' id='menuOrder' value={selectedMenu.menuOrder} disabled={editable} variant='outlined' sx={{marginTop:"0.5rem",width:"20rem", backgroundColor:"rgb(223,223,223)"}}/>
                             )}
                             
                         </div>
                         <div className={sysStyles.text_field}>
                             <div className={sysStyles.text}>{"접근 권한"}</div>
                             {!editable ? (
-                                <TextField
-                                id="outlined-select-currency-native"
-                                select
-                                label="접근 권한"
-                                defaultValue="현장담당자"
-                                SelectProps={{
-                                    native: true,
-                                }}
-                                sx={{width:"20rem"}}
-                                >
-                                {access.map((option) => (
-                                    <option key={option.value} value={option.value}
-                                    onChange={(e) => setSelectedMenu(e.target.value)}>
+                                <Select placeholder={"접근 권한"} defaultValue={selectedMenu.accessUser} value={selectedMenu.accessUser} onChange={(value) => handleInputChangeText('accessUser', value)} style={{marginTop:"0.5rem",width:"20rem", height:"2.5rem", fontSize:"4rem"}}>
+                                {access.map(option => (
+                                    <Select.Option key={option.value} value={option.value}>
                                         {option.label}
-                                    </option>
+                                    </Select.Option>
                                 ))}
-                                
-                                </TextField>
+                                </Select>
                             ):(
-                                <TextField id='access' disabled={editable} variant='outlined' onChange={(e) => setSelectedMenu(e.target.value)} value={selectedMenu.access} sx={{width:"20rem", backgroundColor:"rgb(223,223,223)"}}/>
+                                <TextField size='small' id='access' disabled={editable} variant='outlined' value={selectedMenu.accessUser} sx={{marginTop:"0.5rem",width:"20rem", backgroundColor:"rgb(223,223,223)"}}/>
                             )}
                             
                         </div>
-                        {!editable && <Button variant='contained' onClick={handleEditClick} sx={{width:"20rem", margin:"5rem auto"}}>저장</Button>}
+                        {!editable && <Button variant='contained' onClick={handleSaveClick} sx={{marginTop:"0.5rem",width:"20rem", margin:"5rem auto"}}>저장</Button>}
                     </Card> 
                     <Card className={sysStyles.card_box} sx={{width:"38%", borderRadius:"15px"}}>
-                        <div className={sysStyles.mid_title}>{"권한 부여 현황"}</div>
-                        <TableCustom title='' data={table_mm} />
+                        <TableCustom title='권한 부여 현황' data={res} />
                         {/* <DataGrid rows = {} columns={} /> */}
                     </Card>
                     </>
                 ) : (
                     <Card className={sysStyles.card_box} sx={{width:"38%", borderRadius:"15px"}}>
-                        <div className={sysStyles.mid_title}>{"권한 부여 현황"}</div>
-                        <TableCustom title='' data={table_mm} />
+                        <TableCustom title='권한 부여 현황' data={res} />
                     </Card>
                 )}
                 

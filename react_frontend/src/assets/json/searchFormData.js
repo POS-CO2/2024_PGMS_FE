@@ -112,7 +112,7 @@ export const formField_sd = [
 ];
 
 export const formField_cm = [
-    { type: 'InputText', name: 'codeGroupId', label: '코드그룹ID'},
+    { type: 'InputText', name: 'codeGrpNo', label: '코드그룹ID'},
 ]
 
 export const formField_um = [
@@ -127,12 +127,17 @@ export const formField_um = [
 
 export const formField_mal = [
     { type: 'InputText', name: 'userName', label: "사용자명"},
-    { type: 'InputText', name: 'userID', label: "사용자 아이디"},
-    { type: 'SelectCalendar', name: 'calendar', label: "조회기간"},
+    { type: 'InputText', name: 'loginId', label: "사용자 아이디"},
+    { type: 'DropDown', name: 'deptCode', label: "부서 명", options: []},
+    { type: 'DropDown', name: 'role', label: '권한', required: false, options: [
+        {value: 'FP', label: '현장 담당자'},
+        {value: 'HP', label: '본사 담당자'},
+        {value: 'ADMIN', label: '시스템 관리자'},
+    ]},
 ]
 
 export const formField_fm = [
-    { type: 'SearchAtModal', name: 'searchProject', label: '프로젝트명/코드', modalType: '프로젝트 찾기' },
+    { type: 'SearchAtModal', name: 'searchProject', label: '프로젝트명/코드', required: true, modalType: '프로젝트 찾기' },
 ]
 
 export const formField_efm = [
@@ -165,27 +170,10 @@ export const formField_rm = [
 ]
 
 export const formField_fl = [
-    { type: 'InputText', name: 'EquipName', label: '설비LIB명'},
-    { type: 'DropDown', name: 'EqupDvs', label: '설비구분', options: [
-        {value: '1', label: 1},
-        {value: '2', label: 2},
-        {value: '3', label: 3},
-        {value: '4', label: 4},
-        {value: '5', label: 5}
-    ]},
-    { type: 'DropDown', name: 'EquipType', label: '설비유형', options: [
-        {value: '1', label: 1},
-        {value: '2', label: 3},
-        {value: '3', label: 6},
-        {value: '4', label: 9},
-        {value: '5', label: 11}
-    ]},
-    { type: 'DropDown', name: 'EquipSpecUnit', label: '설비사양단위', options: [
-        {value: '1', label: 'kWh'},
-        {value: '2', label: 'ℓ'},
-        {value: '3', label: 'TJ'},
-        {value: '4', label: 'N㎥'}
-    ]},
+    { type: 'InputText', name: 'equipLibName', label: '설비LIB명'},
+    { type: 'DropDown', name: 'equipDvs', label: '설비구분', options: []},
+    { type: 'DropDown', name: 'equipType', label: '설비유형', options: []},
+    { type: 'DropDown', name: 'equipSpecUnit', label: '설비사양단위', options: []}
 ]
 
 export const formField_fam = [

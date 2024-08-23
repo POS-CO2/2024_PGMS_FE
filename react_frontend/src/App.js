@@ -35,7 +35,6 @@ export default function App() {
     const handleLogin = async (id, password) => {
         try {
             const { data, headers } = await login(id, password);
-            console.log(headers['authorization']);
             localStorage.setItem('token', headers['authorization']);
             localStorage.setItem('user', JSON.stringify(data.user));
             localStorage.setItem('menu', JSON.stringify(data.menu));
@@ -57,11 +56,18 @@ export default function App() {
         localStorage.removeItem("activeTab");
     };
 
+    const handleMenuSet = () => {
+        (async () => {
+            const {data} = await axiosInstance.get('/sys/menu');
+            localStorage.setItem('menu', JSON.stringify(data));
+            setMenu(JSON.parse(localStorage.getItem("menu")));
+        })();
+    };
+
     useEffect(() => {
         const jwt = localStorage.getItem("token");
         const roleMenu = localStorage.getItem("menu");
         const loginUser = localStorage.getItem("user");
-        console.log(loginUser);
         if (jwt) {
             setToken(jwt);
             setMenu(JSON.parse(roleMenu));
@@ -73,7 +79,7 @@ export default function App() {
     if (loading) {
         return <div>Loading...</div>; // 로딩 상태일 때 표시할 화면
     }
-
+    console.log(menu);
     return (
         <Router>
             <Routes>
@@ -96,7 +102,7 @@ export default function App() {
                         <Route path='/sd' element={<Sd />} />
                         <Route path='/cm' element={<Cm />} />
                         <Route path='/um' element={<Um />} />
-                        <Route path='/mm' element={<Mm menus={menu} />} />
+                        <Route path='/mm' element={<Mm menus={menu} handleMenuSet={handleMenuSet} />} />
                         <Route path='/mal' element={<Mal />} />
                         <Route path='*' element={<Error404 />} />
                     </Route>

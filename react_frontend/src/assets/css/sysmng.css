@@ -1,7 +1,7 @@
 .main_grid {
     display: flex;
     flex-direction: row;
-    width: 98%;
+    width: 97%;
     margin-right: auto;
     margin-left: auto;
     gap: 1rem;
@@ -10,7 +10,7 @@
 .main_grid_fm {
     display: flex;
     flex-direction: column;
-    width: 98%;
+    width: 97%;
     margin-right: auto;
     margin-left: auto;
     gap: 1rem;
@@ -41,6 +41,6 @@
 }
 
 .text {
-    margin-bottom: 1.5rem;
+    margin-bottom: 0.5rem;
     font-size: 1.2rem;
 }

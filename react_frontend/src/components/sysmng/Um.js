@@ -33,7 +33,6 @@ export default function Um() {
 
     const handleFormSubmit = async (e) => {
         setUserShow(false);
-        console.log(e);
         const {data} = await axiosInstance.get(`/sys/user`, {
             params: {
                 loginId : e.loginId,
@@ -59,7 +58,6 @@ export default function Um() {
 
     const handleRowClick = (e) => {
         
-        console.log(e);
         setSelectedUser(e ?? {});
         if (e === undefined) {
             setInfoShow(false);
@@ -68,7 +66,7 @@ export default function Um() {
             
             setInfoShow(true);
         }
-        
+        setEditable(true);
     };
 
     const [isModalOpen, setIsModalOpen] = useState({
@@ -174,6 +172,7 @@ export default function Um() {
         fetchDeptCode();
     },[]);
 
+    
     return (
         <>
             <div className={mainStyle.breadcrumb}>
@@ -181,9 +180,8 @@ export default function Um() {
             </div>
             <SearchForms onFormSubmit={handleFormSubmit} formFields={formFields}/>
             <div className={sysStyles.main_grid}>
-                <Card className={sysStyles.card_box} sx={{width:"50%", height:"100vh", borderRadius:"15px"}}>
-                    <div className={sysStyles.mid_title}>{"사용자 목록"}</div>
-                    {userShow && <TableCustom title="" data={userList} buttons={['Add']} onClicks={[handleAddClick]} onRowClick={(e) => handleRowClick(e)} modals={
+                <Card className={sysStyles.card_box} sx={{width:"50%", height:"75vh", borderRadius:"15px"}}>
+                    {userShow && <TableCustom title="사용자 목록" data={userList} buttons={['Add']} onClicks={[handleAddClick]} onRowClick={(e) => handleRowClick(e)} modals={
                         [
                             {
                                 "modalType" : 'UmAdd',
@@ -195,11 +193,9 @@ export default function Um() {
                     }/>}
                 </Card>
                 <Card className={sysStyles.card_box} sx={{width:"50%", borderRadius:"15px"}}>
-                    <div className={sysStyles.mid_title}>{"사용자 상세 정보"}</div>
-                    
                     {infoShow ? (
                         <>
-                            <TableCustom title='' buttons={['Delete', 'Edit']} onClicks={[handleDeleteClick, handleEditable]} table={false} 
+                            <TableCustom title='사용자 상세 정보' buttons={['Delete', 'Edit']} onClicks={[handleDeleteClick, handleEditable]} table={false} 
                             selectedRows={[selectedUser]}
                             modals={
                                 [
@@ -210,6 +206,7 @@ export default function Um() {
                                         'handleOk': handleOk('Delete'),
                                         'handleCancel': handleCancel('Delete'),
                                         'rowData': selectedUser, // 추가 사항 삭제할 객체 전달
+                                        'rowDataName': "userName",
                                         'url': '/sys/user', // 삭제 전달할 api 주소
                                     },
                                 ]
@@ -220,35 +217,35 @@ export default function Um() {
                                     {"로그인 아이디"}
                                 </div>
                                 {!editable ? (
-                                    <TextField id='loginId' disabled={editable} variant='outlined' onChange={handleInputChange} defaultValue={selectedUser.loginId} value={selectedUser.loginId} sx={{width:"100%"}}/>
+                                    <TextField size="small" id='loginId' disabled={editable} variant='outlined' onChange={handleInputChange} defaultValue={selectedUser.loginId} value={selectedUser.loginId} sx={{width:"100%"}}/>
                                 ) : (
-                                    <TextField id='loginId' disabled={editable} variant='outlined' onChange={handleInputChange} defaultValue={selectedUser.loginId} value={selectedUser.loginId} sx={{width:"100%", backgroundColor:"rgb(223,223,223)"}}/>
+                                    <TextField size="small" id='loginId' disabled={editable} variant='outlined' onChange={handleInputChange} defaultValue={selectedUser.loginId} value={selectedUser.loginId} sx={{width:"100%", backgroundColor:"rgb(223,223,223)"}}/>
                                 )}
                                 
                             </div>
-                            <div className={sysStyles.text_field} style={{marginTop:"2rem",width:"50%"}}>
+                            <div className={sysStyles.text_field} style={{marginTop:"0.5rem",width:"50%"}}>
                                 <div className={sysStyles.text}>
                                     {"비밀번호"}
                                 </div>
                                 {!editable ? (
-                                    <TextField id='password' disabled={editable} variant='outlined' onChange={(e) => setPassword(e.target.value)} value={password} sx={{width:"100%"}}/>
+                                    <TextField size="small" id='password' disabled={editable} variant='outlined' onChange={(e) => setPassword(e.target.value)} value={password} sx={{width:"100%"}}/>
                                 ) : (
-                                    <TextField id='password' disabled={editable} variant='outlined' onChange={handleInputChange} value={''} placeholder='비밀번호 입력 시 비밀번호가 변경됩니다.' sx={{width:"100%", backgroundColor:"rgb(223,223,223)"}}/>
+                                    <TextField size="small" id='password' disabled={editable} variant='outlined' onChange={handleInputChange} value={''} placeholder='비밀번호 입력 시 비밀번호가 변경됩니다.' sx={{width:"100%", backgroundColor:"rgb(223,223,223)"}}/>
                                 )}
                                 
                             </div>
-                            <div className={sysStyles.text_field} style={{marginTop:"2rem",width:"50%"}}>
+                            <div className={sysStyles.text_field} style={{marginTop:"0.5rem",width:"50%"}}>
                                 <div className={sysStyles.text}>{"이름 "}</div>
                                 {!editable ? (
-                                    <TextField id='userName' disabled={editable} variant='outlined' onChange={handleInputChange} defaultValue={selectedUser.userName} value={selectedUser.userName} sx={{width:"100%"}}/>
+                                    <TextField size="small" id='userName' disabled={editable} variant='outlined' onChange={handleInputChange} defaultValue={selectedUser.userName} value={selectedUser.userName} sx={{width:"100%"}}/>
                                 ) : (
-                                    <TextField id='userName' disabled={editable} variant='outlined' onChange={handleInputChange} defaultValue={selectedUser.userName} value={selectedUser.userName} sx={{width:"100%", backgroundColor:"rgb(223,223,223)"}}/>
+                                    <TextField size="small" id='userName' disabled={editable} variant='outlined' onChange={handleInputChange} defaultValue={selectedUser.userName} value={selectedUser.userName} sx={{width:"100%", backgroundColor:"rgb(223,223,223)"}}/>
                                 )}
                             </div>
-                            <div className={sysStyles.text_field} style={{marginTop:"2rem",width:"50%"}}>
+                            <div className={sysStyles.text_field} style={{marginTop:"0.5rem",width:"50%"}}>
                                 <div className={sysStyles.text}>{"부서 명"}</div>
                                 {!editable ? (
-                                    <Select value={selectedUser.deptCode} onChange={(value) => handleInputChange({ target: { id: 'deptCode', value} })} defaultValue={selectedUser.deptCode} style={{width:"100%", height:"3.5rem", fontSize:"4rem"}}>
+                                    <Select value={selectedUser.deptCode} onChange={(value) => handleInputChange({ target: { id: 'deptCode', value} })} defaultValue={selectedUser.deptCode} style={{width:"100%", height:"2.5rem", fontSize:"4rem"}}>
                                     {dept.map(option => (
                                         <Select.Option key={option.value} value={option.value}>
                                             {option.label}
@@ -256,14 +253,14 @@ export default function Um() {
                                     ))}
                                     </Select>
                                 ) : (
-                                    <TextField id='deptCode' disabled={editable} variant='outlined' onChange={handleInputChange} defaultValue={selectedUser.deptCode} value={selectedUser.deptCode} sx={{width:"100%", backgroundColor:"rgb(223,223,223)"}}/>
+                                    <TextField size="small" id='deptCode' disabled={editable} variant='outlined' onChange={handleInputChange} defaultValue={selectedUser.deptCode} value={selectedUser.deptCode} sx={{width:"100%", backgroundColor:"rgb(223,223,223)"}}/>
                                 )}
                                 
                             </div>
-                            <div className={sysStyles.text_field} style={{marginTop:"2rem",width:"50%"}}>
+                            <div className={sysStyles.text_field} style={{marginTop:"0.5rem",width:"50%"}}>
                                 <div className={sysStyles.text}>{"권한"}</div>
                                 {!editable ? (
-                                    <Select value={selectedUser.role} onChange={(value) => handleInputChange({ target: { id: 'role', value } })} defaultValue={selectedUser.role} style={{width:"100%", height:"3.5rem", fontSize:"4rem"}}>
+                                    <Select value={selectedUser.role} onChange={(value) => handleInputChange({ target: { id: 'role', value } })} defaultValue={selectedUser.role} style={{width:"100%", height:"2.5rem", fontSize:"4rem"}}>
                                     {access.map(option => (
                                         <Select.Option key={option.value} value={option.value}>
                                             {option.label}
@@ -273,6 +270,7 @@ export default function Um() {
                                 ) : (
                                     <TextField
                                         id="role"
+                                        size="small"
                                         select
                                         disabled={editable}
                                         defaultValue={selectedUser.role}
@@ -291,15 +289,13 @@ export default function Um() {
                                     </TextField>
                                 )}
                             </div>
-                            <div className={sysStyles.text_field} style={{width:"50%", marginTop:"2rem"}}>
-                                {!editable && <Button variant='contained' onClick={handleEditClick} sx={{width:"100%"}}>저장</Button>}
+                            <div className={sysStyles.text_field} style={{width:"50%", marginTop:"0.5rem"}}>
+                                {!editable && <Button variant='contained' onClick={handleEditClick} sx={{marginTop:"0.5rem",width:"100%"}}>저장</Button>}
                             </div>
                         </div>
                         </>
                     ) : (
-                        <div>
-                            
-                        </div>
+                        <div className={sysStyles.mid_title}>{"사용자 상세 정보"}</div>
                     )}
                 </Card>
             </div>

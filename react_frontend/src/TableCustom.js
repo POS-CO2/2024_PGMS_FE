@@ -42,6 +42,7 @@ export default function TableCustom({
     modals = [],
     table = true,
     selectedRows = [],       // 테이블에서 선택된 row 리스트
+    pagination = true        // 테이블 페이지네이션 디폴트는 페이지네이션 하는걸로.
 }) {
     // 버튼 활성화 상태 결정
     
@@ -72,13 +73,15 @@ export default function TableCustom({
                             handleCancel={modal.handleCancel || (() => {})}
                             onRowClick={onRowClick}
                             rowData={modal.rowData}
+                            dropDown={modal.dropDown || []}
+                            rowDataName={modal.rowDataName}
                             url={modal.url || ""}
                         />
                     ) : null;
                 })}
             </div>
             {table ? (
-            <Table key={JSON.stringify(data)} data={data} variant={variant} onRowClick={onRowClick}/>
+            <Table key={JSON.stringify(data)} data={data} variant={variant} onRowClick={onRowClick} pagination={pagination}/>
             ) : (<></>)}
             
         </>
@@ -139,7 +142,9 @@ export function TableCustomDoubleClickEdit({
 
                 console.log("requestBody", requestBody);
                 
-                const response = await axiosInstance.patch("/pjt/sales", requestBody);
+                const response = await axiosInstance.put("/pjt/sales", requestBody);
+
+                console.log("response", response);
 
                 swalOptions.title = '성공!',
                 swalOptions.text = '매출액이 성공적으로 수정되었습니다.';

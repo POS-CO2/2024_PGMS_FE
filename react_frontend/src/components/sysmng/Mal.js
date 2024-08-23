@@ -15,6 +15,7 @@ export default function Mal() {
     const [log, setLog] = useState([]);
     const [selectedUser, setSelectedUser] = useState([]);
     const [showUser, setShowUser] = useState(true);
+    const [formFields, setFormFields] = useState(formField_mal);
 
     const handleFormSubmit = async (e) => {
         setShowUser(false);
@@ -48,7 +49,7 @@ export default function Mal() {
             setShowLog(false);
         }
     }
-
+    const [dept, setDept] = useState([]);
     useEffect(() => {
         (async () => {
             try {
@@ -58,6 +59,25 @@ export default function Mal() {
                 console.error(error);
             }
         })();
+
+        const fetchDeptCode = async () => {
+            try {
+                const res = await axiosInstance.get("/sys/unit?unitType=부서코드");
+                const options = res.data.map(dept => ({
+                    value: dept.code,
+                    label: dept.name,
+                }));
+                setDept(options);
+                const updateFormFields = formField_mal.map(field => 
+                field.name === 'deptCode' ? {...field, options } : field);
+                console.log(updateFormFields);
+                setFormFields(updateFormFields);
+            } catch (error) {
+                console.error(error);
+            }
+        };
+
+        fetchDeptCode();
     }, [])
 
     useEffect(() => {
@@ -68,29 +88,23 @@ export default function Mal() {
             <div className={mainStyle.breadcrumb}>
                 {"시스템관리 > 접속로그 조회"}
             </div>
-            <SearchForms onFormSubmit={handleFormSubmit} formFields={formField_mal} />
+            <SearchForms onFormSubmit={handleFormSubmit} formFields={formFields} />
             <div className={sysStyles.main_grid}>
                 {showUser ? (
-                    <Card className={sysStyles.card_box} sx={{width:"50%", height:"100vh", borderRadius:"15px"}}>
-                        <div className={sysStyles.mid_title}>
-                            {"사용자 목록"}
-                        </div>
-                        <TableCustom title="" data={user} button="" onRowClick={handleRowClick}/>
+                    <Card className={sysStyles.card_box} sx={{width:"50%", height:"75vh", borderRadius:"15px"}}>
+                        <TableCustom title="사용자 목록" data={user} button="" onRowClick={handleRowClick}/>
                     </Card>
                 ) : (
-                    <Card className={sysStyles.card_box} sx={{width:"50%", height:"100vh", borderRadius:"15px"}}>
-                        <div className={sysStyles.mid_title}>
-                            {"사용자 목록"}
-                        </div>
+                    <Card className={sysStyles.card_box} sx={{width:"50%", height:"75vh", borderRadius:"15px"}}>
+                        <TableCustom title="사용자 목록" data={user} button="" onRowClick={handleRowClick}/>
                     </Card>
                 )}
                 
-                <Card className={sysStyles.card_box} sx={{width:"50%", borderRadius:"15px"}}>
-                    <div className={sysStyles.mid_title}>{"메뉴 접속 로그"}</div>
+                <Card className={sysStyles.card_box} sx={{width:"50%", height:"75vh", borderRadius:"15px"}}>
                     {showLog ? (
-                        <TableCustom title="" data={log} button="" />
+                        <TableCustom title="메뉴 접속 로그" data={log} button="" />
                     ) : (
-                        <></>
+                        <div className={sysStyles.mid_title}>{"메뉴 접속 로그"}</div>
                     )}
                 </Card>
             </div>
