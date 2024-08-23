@@ -40,7 +40,7 @@ export default function Ps_1_2() {
 
     // 프로젝트 선택 후 대상년도 드롭다운 옵션 설정
     const onProjectSelect = (selectedData) => {
-        const ctrtFrYear = selectedData.ctrtFrYear;
+        const ctrtFrYear = selectedData.프로젝트시작년;
         if (ctrtFrYear) {
             const currentYear = new Date().getFullYear();
             const yearOptions = [];
