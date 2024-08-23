@@ -66,7 +66,7 @@ export default function Um() {
             
             setInfoShow(true);
         }
-        
+        setEditable(true);
     };
 
     const [isModalOpen, setIsModalOpen] = useState({

@@ -45,6 +45,7 @@ export default function Fm() {
         setShowFacList(false);
         setSelectedFac(e ?? {});
     };
+    console.log(selectedFac);
 
     const [isModalOpen, setIsModalOpen] = useState({
         FmAdd: false,
@@ -127,7 +128,7 @@ export default function Fm() {
                             <div className={sysStyles.mid_title}> 
                                     설비목록
                             </div>
-                        <TableCustom title="" data={fac} selectedRows={[selectedFac]} buttons={["DownloadExcel", "Delete", "Add"]} onClicks={[() => handleExcelUploadClick(table_fm_facList, 'exported_table'), handleDeleteClick, handleAddClick]} onRowClick={handleRowClick} excel={true} modals={
+                        <TableCustom title="" data={fac} selectedRows={[selectedFac]} buttons={["DownloadExcel", "Delete", "Add"]} onClicks={[() => handleExcelUploadClick(fac, 'exported_table'), handleDeleteClick, handleAddClick]} onRowClick={handleRowClick} excel={true} modals={
                             [
                                 {
                                     "modalType" : 'Delete',
