@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import SearchForms from "../../SearchForms";
-import { formField_ps12 } from "../../assets/json/searchFormData"
+import { formField_ps12 } from "../../assets/json/searchFormData";
 import InnerTabs from "../../InnerTabs";
 import TableCustom from "../../TableCustom.js";
 import { Card } from '@mui/material';
