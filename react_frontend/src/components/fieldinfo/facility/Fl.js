@@ -10,7 +10,7 @@ import axiosInstance from '../../../utils/AxiosInstance';
 export default function Fl() {
     const [formFields, setFormFields] = useState(formField_fl);
     const [eqLibs, setEqLibs] = useState([]);
-    const [selectedEqLib, setSelectedEqLib] = useState(null);     // 선택된 설비 LIB 목록(PK column only)
+    const [selectedEqLib, setSelectedEqLib] = useState({});     // 선택된 설비 LIB
     const [isModalOpen, setIsModalOpen] = useState({
         FlAdd: false,
         FlEdit: false,
@@ -39,7 +39,6 @@ export default function Fl() {
         const fetchEqLib = async () => {
             try {
                 const response = await axiosInstance.get(`/equip/lib`);
-                console.log("response", response)
                 const filteredEqLibs = response.data.map(eqLib => new EqLib(
                     eqLib.id,
                     eqLib.equipLibName,
@@ -99,7 +98,6 @@ export default function Fl() {
 
     //조회 버튼 클릭시 호출될 함수
     const handleFormSubmit = async (data) => {
-        console.log("data", data);
         const params = {
             equipLibName: data.equipLibName,
             equipDvs: data.equipDvs,
@@ -129,7 +127,7 @@ export default function Fl() {
 
     // 설비LIB row 클릭 시 호출될 함수
     const handleEqLibClick = (lib) => {
-        setSelectedEqLib(lib?.id ?? null);
+        setSelectedEqLib(lib ?? {});
     };
 
     // 모달 열기
@@ -178,7 +176,7 @@ export default function Fl() {
                 swalOptions.text = '설비LIB가 성공적으로 등록되었습니다.';
                 swalOptions.icon = 'success';
             } catch (error) {
-                console.log("aa:", error);
+                console.log(error);
 
                 swalOptions.title = '실패!',
                 swalOptions.text = '설비LIB 등록에 실패하였습니다.';
@@ -186,11 +184,11 @@ export default function Fl() {
             }
         } else if (modalType === 'Del') {
             try {
-                const response = await axiosInstance.delete(`/equip/lib?id=${selectedEqLib}`);
+                const response = await axiosInstance.delete(`/equip/lib?id=${selectedEqLib.id}`);
 
                 // 선택된 설비LIB를 eqLib 리스트에서 제거
-                setEqLibs(prevEqLibs => prevEqLibs.filter(eqLib => eqLib.id !== selectedEqLib));
-                setSelectedEqLib(null);
+                setEqLibs(prevEqLibs => prevEqLibs.filter(eqLib => eqLib.id !== selectedEqLib.id));
+                setSelectedEqLib({});
 
                 swalOptions.title = '성공!',
                 swalOptions.text = '설비LIB이 성공적으로 삭제되었습니다.';
@@ -200,6 +198,38 @@ export default function Fl() {
 
                 swalOptions.title = '실패!',
                 swalOptions.text = '설비LIB 삭제에 실패하였습니다.';
+                swalOptions.icon = 'success';
+            }
+        } else if (modalType === 'FlEdit') {
+            try {
+                const requestBody = {
+                    id: selectedEqLib.id,
+                    equipLibName: data.eqLibName,
+                    equipDvs: data.eqDvs,
+                    equipType: data.eqType,
+                    equipSpecUnit: data.eqSpecUnit,
+                };
+
+                const response = await axiosInstance.patch("/equip/lib", requestBody);
+
+                const filteredEqLibs = new EqLib(selectedEqLib.id, response.data.equipLibName, response.data.equipDvs, response.data.equipType, response.data.equipSpecUnit)
+
+                // 서버로부터 받은 수정된 데이터를 사용하여 리스트 업데이트
+                setEqLibs(prevEqLibs => 
+                    prevEqLibs.map(eqLib => 
+                        eqLib.id === selectedEqLib.id ? filteredEqLibs : eqLib
+                    )
+                );
+                setSelectedEqLib({});
+
+                swalOptions.title = '성공!',
+                swalOptions.text = '설비LIB이 성공적으로 수정되었습니다.';
+                swalOptions.icon = 'success';
+            } catch (error) {
+                console.log(error);
+
+                swalOptions.title = '실패!',
+                swalOptions.text = '설비LIB 수정에 실패하였습니다.';
                 swalOptions.icon = 'success';
             }
         } 
@@ -235,7 +265,7 @@ export default function Fl() {
                 buttons={['Delete', 'Edit', 'Add']}
                 onClicks={[onDeleteClick, onEditClick, onAddClick]}
                 onRowClick={(e) => handleEqLibClick(e)}
-                selectedRows={[selectedEqLib]}
+                selectedRows={[selectedEqLib.id]}
                 modals={[
                     {
                         'modalType': 'Del',
@@ -248,7 +278,8 @@ export default function Fl() {
                         'isModalOpen': isModalOpen.FlEdit,
                         'handleOk': handleOk('FlEdit'),
                         'handleCancel': handleCancel('FlEdit'),
-                        'rowData': selectedEqLib
+                        'rowData': selectedEqLib,
+                        'dropDown': formFields
                     },
                     {
                         'modalType': 'FlAdd',

@@ -3,9 +3,9 @@
     background: linear-gradient(#000046, rgb(49,95,175));
     height: 100vh;
     min-width: 200px;
-    flex-shrink: 0;
+    display: flex;
     align-items: stretch;
-    overflow-y: auto;
+    flex-direction: column;
 }
 
 .navigation_fold{

@@ -5,21 +5,8 @@
 
 export const formField_ps12 = [ 
     { type: 'SearchAtModal', name: 'searchProject', label: '프로젝트코드/명', required: true, modalType: '프로젝트 찾기' },
-    { type: 'DropDown', name: 'actvYear', label: '대상년도', required: true, options: [
-        { value: '2024', label: '2024' },
-        { value: '2023', label: '2023' },
-        { value: '2022', label: '2022' },
-        { value: '2021', label: '2021' },
-        { value: '2020', label: '2020' }
-    ], defaultSelected: true },
-    { type: 'DropDown', name: 'equipType', label: '배출활동유형', required: true, options: [
-        { value: 'option1', label: 'OptionOption 1' },
-        { value: 'option2', label: 'OptionOpt 2' },
-        { value: 'option3', label: 'OptionOptio 3' },
-        { value: 'option4', label: 'OptionOption 4' },
-        { value: 'option5', label: 'OptionOp 5' }
-    ] },
-    { type: 'InputText', name: 'equipName', label: '설비명' },
+    { type: 'DropDown', name: 'actvYear', label: '대상년도', required: true, options: []/*, defaultSelected: true*//*, disabled: true, placeholder: '프로젝트를 선택하세요.'*/ },
+    { type: 'DropDown', name: 'emtnActvType', label: '배출활동유형', options: [] },
 ];
 
 export const formField_ps12_fm = [ 
@@ -35,14 +22,13 @@ export const formField_ps12_fm = [
         { value: '2021', label: '2021' },
         { value: '2020', label: '2020' }
     ], defaultSelected: true },
-    { type: 'DropDown', name: 'equipType', label: '배출활동유형', required: true, options: [
+    { type: 'DropDown', name: 'emtnActvType', label: '배출활동유형', options: [
         { value: 'option1', label: 'Option 1' },
         { value: 'option2', label: 'Option 2' },
         { value: 'option3', label: 'Option 3' },
         { value: 'option4', label: 'Option 4' },
         { value: 'option5', label: 'Option 5' }
     ] },
-    { type: 'InputText', name: 'equipName', label: '설비명' },
 ];
 
 export const formFieldEx1 = [
@@ -127,9 +113,6 @@ export const formField_sd = [
 
 export const formField_cm = [
     { type: 'InputText', name: 'codeGrpNo', label: '코드그룹ID'},
-    { type: 'InputText', name: 'codeGrpName', label: '코드그룹 이름'},
-    { type: 'InputText', name: 'codeGrpNameEn', label: '코드그룹 영문이름'},
-    { type: 'InputText', name: 'note', label: '노트'},
 ]
 
 export const formField_um = [
@@ -154,7 +137,7 @@ export const formField_mal = [
 ]
 
 export const formField_fm = [
-    { type: 'SearchAtModal', name: 'searchProject', label: '프로젝트명/코드', modalType: '프로젝트 찾기' },
+    { type: 'SearchAtModal', name: 'searchProject', label: '프로젝트명/코드', required: true, modalType: '프로젝트 찾기' },
 ]
 
 export const formField_efm = [
@@ -165,8 +148,8 @@ export const formField_pg = [
     { type: 'InputText', name: 'pjtName', label: '프로젝트명'},
     { type: 'InputText', name: 'managerId', label: '담당자사번'},
     { type: 'InputText', name: 'managerName', label: '담당자명'},
-    { type: 'InputText', name: 'DivName', label: '본부명'},
-    { type: 'DropDown', name: 'PjtProgStus', label: '프로젝트진행상태', options: []},
+    { type: 'DropDown', name: 'divCode', label: '본부명', options: []},
+    { type: 'DropDown', name: 'pjtProgStus', label: '프로젝트진행상태', options: []},
     { type: 'DropDown', name: 'reg', label: '지역', options: []},
     { type: 'SelectCalendar', name: 'calendar', label: '조회기간' }
 ]

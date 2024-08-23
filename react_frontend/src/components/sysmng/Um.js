@@ -33,7 +33,6 @@ export default function Um() {
 
     const handleFormSubmit = async (e) => {
         setUserShow(false);
-        console.log(e);
         const {data} = await axiosInstance.get(`/sys/user`, {
             params: {
                 loginId : e.loginId,
@@ -59,7 +58,6 @@ export default function Um() {
 
     const handleRowClick = (e) => {
         
-        console.log(e);
         setSelectedUser(e ?? {});
         if (e === undefined) {
             setInfoShow(false);
@@ -210,6 +208,7 @@ export default function Um() {
                                         'handleOk': handleOk('Delete'),
                                         'handleCancel': handleCancel('Delete'),
                                         'rowData': selectedUser, // 추가 사항 삭제할 객체 전달
+                                        'rowDataName': "userName",
                                         'url': '/sys/user', // 삭제 전달할 api 주소
                                     },
                                 ]

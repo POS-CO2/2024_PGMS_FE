@@ -18,6 +18,7 @@ import WarningAmberIcon from '@mui/icons-material/WarningAmber';
 import { Sledding } from '@mui/icons-material';
 import axiosInstance from '../utils/AxiosInstance.js';
 import { Center } from '@react-three/drei';
+import Swal from 'sweetalert2'
 
 export function PgAddModal({ isModalOpen, handleOk, handleCancel }) {
     const [formData, setFormData] = useState({});             // 검색 데이터
@@ -29,8 +30,24 @@ export function PgAddModal({ isModalOpen, handleOk, handleCancel }) {
         const fetchProject = async () => {
             try {
                 const response = await axiosInstance.get(`/pjt?pgmsYn=n`);
-                setAllProjects(response.data);
-                setProject(response.data);
+
+                const filteredPjts = response.data.map(project => ({
+                    id: project.id,
+                    프로젝트코드: project.pjtCode,
+                    프로젝트명: project.pjtName,
+                    프로젝트유형: project.pjtType,
+                    지역: project.regCode,
+                    프로젝트시작년: project.ctrtFrYear,
+                    프로젝트시작월: project.ctrtFrMth,
+                    프로젝트종료년: project.ctrtToYear,
+                    프로젝트종료월: project.ctrtToMth,
+                    본부: project.divCode,
+                    '연면적(m²)': project.bldArea,
+                    프로젝트진행상태: project.pjtProgStus
+                }));
+
+                setAllProjects(filteredPjts);
+                setProject(filteredPjts);
             } catch (error) {
                 console.log(error);
             }
@@ -51,8 +68,8 @@ export function PgAddModal({ isModalOpen, handleOk, handleCancel }) {
     //찾기 버튼 클릭시 호출될 함수
     const handleFormSubmit = () => {
         const filteredProjects = allProjects.filter(pjt => {
-        const matchesCode = formData.projectCode ? pjt.pjtCode.includes(formData.projectCode) : true;
-        const matchesName = formData.projectName ? pjt.pjtName.includes(formData.projectName) : true;
+        const matchesCode = formData.projectCode ? pjt.프로젝트코드?.includes(formData.projectCode) : true;
+        const matchesName = formData.projectName ? pjt.프로젝트명?.includes(formData.projectName) : true;
         return matchesCode && matchesName;
         });
         setProject(filteredProjects);
@@ -143,7 +160,6 @@ export function PdAddModal({ isModalOpen, handleOk, handleCancel }) {
                 사번: emp.loginId,
                 이름: emp.userName,
                 부서: emp.deptCode,
-                권한: emp.role
             }));
 
             setFormData(filteredResponse);
@@ -1077,19 +1093,48 @@ export function CmEditModal({ isModalOpen, handleOk, handleCancel, rowData }) {
     )
 }
 
-export function DeleteModal({ isModalOpen, handleOk, handleCancel, rowData, url }) {
-    console.log("왜널?",rowData);
+export function DeleteModal({ isModalOpen, handleOk, handleCancel, rowData, rowDataName, url }) {
+
+    if (!rowData) {
+        return null;
+    }
+    
+    const [rowName, setRowName] = useState(rowData[rowDataName ?? ""]);
+    useEffect(() => {
+        // rowData가 존재할 때만 rowName을 설정
+        if (rowData) {
+            setRowName(rowData[rowDataName] || '');
+        }
+    }, [rowData, rowDataName]);
     const handleDelete = async () => {
+        let swalOptions = {
+            confirmButtonText: '확인'
+        };
         try {
             // 서버에 DELETE 요청을 보냅니다.
-            console.log("셀릭",rowData);
-            console.log(url);
-            await axiosInstance.delete(`${url}?id=${rowData.id}`);
-            handleOk(rowData); // 삭제 성공 시 상위 컴포넌트에 알림
+            if (url == "/sys/menu"){
+                await axiosInstance.delete(`${url}?id=${rowData.originId}`);
+                swalOptions.title = '성공!',
+                swalOptions.text = `${rowName}가 성공적으로 삭제되었습니다.`;
+                swalOptions.icon = 'success';
+                handleOk(rowData);
+            }
+            else{
+                await axiosInstance.delete(`${url}?id=${rowData.id}`);
+                swalOptions.title = '성공!',
+                swalOptions.text = `${rowName}가 성공적으로 삭제되었습니다.`;
+                swalOptions.icon = 'success';
+                handleOk(rowData); // 삭제 성공 시 상위 컴포넌트에 알림
+            }
         } catch (error) {
             console.error('Failed to delete user:', error);
+            swalOptions.title = '실패!',
+            swalOptions.text = `${rowName} 삭제에 실패하였습니다.`;
+            swalOptions.icon = 'success';
         }
+        Swal.fire(swalOptions);
     };
+    
 
     return (
         <Modal
@@ -1098,11 +1143,13 @@ export function DeleteModal({ isModalOpen, handleOk, handleCancel, rowData, url 
             }}
             open={isModalOpen}
             onCancel={handleCancel}
-            width={480}
+            width={380}
             footer={null}             //Ant Design의 기본 footer 제거(Cancel, OK 버튼)
         >
             {/* 모달제목 */}
-            <div>정말 삭제하시겠습니까?</div>
+            <div style={{display:"flex", marginTop:"3%", marginLeft:"5%", gap:"1rem", fontSize:"1.3rem", fontWeight:"bold"}}>
+                <WarningAmberIcon fontSize="large" sx={{color:"red"}}/>
+                정말 삭제하시겠습니까?</div>
             <div style={{display:"flex"}}>
             <button className={modalStyles.cancel_button} style={{width:"45%"}} onClick={handleCancel}>취소</button>
             <button className={modalStyles.select_button} style={{width:"45%"}} onClick={handleDelete}>확인</button>
@@ -1486,33 +1533,62 @@ export function UmAddModal({ isModalOpen, handleOk, handleCancel }) {
     )
 }
 
-export function MmAddModal({ isModalOpen, handleOk, handleCancel }) {
-    const [showResults, setShowResults] = useState(false);    // 사원 목록을 표시할지 여부
-    const [selectedEmps, setSelectedEmps] = useState([]);     // 선택된 사원의 loginId list
+export function MmAddModal({ isModalOpen, handleOk, handleCancel, rowData }) {
+    const [selectedRole, setSelectedRole] = useState('');
     const access = [
         {
-            value: 'None',
-            label: 'None'
+            value: 'FP',
+            label: '현장 담당자'
         },
         {
-            value: '현장담당자',
-            label: '현장담당자'
+            value: 'HP',
+            label: '본사 담당자'
         },
         {
-            value: '본사담당자',
-            label: '본사담당자'
-        },
-        {
-            value: '시스템관리자',
-            label: '시스템관리자'
+            value: 'ADMIN',
+            label: '시스템 관리자'
         },
     ]
-
+    const [menuName, setMenuName] = useState('');
+    const [url, setUrl] = useState('');
+    const [orderMenu, setOrderMenu] = useState('');
+    
+    
     // 등록 버튼 클릭 시 호출될 함수
-    const handleSelect = () => {
-        handleOk(selectedEmps);
+    const handleSelect = async () => {
+        const formData = {
+            menuName,
+            rootId: selectedUpperDir,
+            address: url,
+            accessUser: selectedRole,
+            menuOrder: orderMenu
+        };
+        
+        try {
+            // POST 요청으로 서버에 데이터 전송
+            const {data} = await axiosInstance.post('/sys/menu', formData);
+            // handleOk을 호출하여 모달을 닫고 상위 컴포넌트에 알림
+            handleOk(data);
+        } catch (error) {
+            console.error('Failed to add menu:', error);
+        }
     };
+    
+    const [upperDir, setUpperDir] = useState([]);
+    const [selectedUpperDir, setSelectedUpperDir] = useState('');
 
+    useEffect(() => {
+        const fetchUpperDir = async () => {
+            try {
+                const {data} = await axiosInstance.get(`/sys/menu/cand?id=0`)
+                setUpperDir(data);
+            } catch (error) {
+                console.error(error);
+            }
+        };
+
+        fetchUpperDir();
+    },[])
     return (
         <Modal
             open={isModalOpen}
@@ -1526,30 +1602,35 @@ export function MmAddModal({ isModalOpen, handleOk, handleCancel }) {
                     <div className={sysStyles.text}>
                         {"메뉴 이름"}
                     </div>
-                    <TextField id='menuName' label="메뉴 이름" variant='outlined' sx={{ width: "20rem" }} />
+                    <TextField id='menuName' value={menuName} onChange={(e) => setMenuName(e.target.value)} label="메뉴 이름" variant='outlined' sx={{ width: "20rem" }} />
                 </div>
                 <div className={sysStyles.text_field}>
                     <div className={sysStyles.text}>{"상위 폴더"}</div>
-                    <TextField id='parentDir' label="상위 폴더" variant='outlined' sx={{ width: "20rem" }} />
+                    <Select value={selectedUpperDir} onChange={(e) => {setSelectedUpperDir(e); console.log(e);}} style={{width:"20rem", height:"3.5rem", fontSize:"4rem"}}>
+                    {upperDir.map(option => (
+                        <Select.Option key={option.id} value={option.id}>
+                            {option.name}
+                        </Select.Option>
+                    ))}
+                    </Select>
+                </div>
+                <div className={sysStyles.text_field}>
+                    <div className={sysStyles.text}>{"Url 주소"}</div>
+                    <TextField id='address' value={url} onChange={(e) => setUrl(e.target.value)} label="Url 주소" variant='outlined' sx={{ width: "20rem" }} />
+                </div>
+                <div className={sysStyles.text_field}>
+                    <div className={sysStyles.text}>{"메뉴 순서"}</div>
+                    <TextField id='menuOrder' value={orderMenu} onChange={(e) => setOrderMenu(e.target.value)} label="메뉴 순서" variant='outlined' sx={{ width: "20rem" }} />
                 </div>
                 <div className={sysStyles.text_field}>
                     <div className={sysStyles.text}>{"접근 권한"}</div>
-                    <TextField
-                        id="outlined-select-currency-native"
-                        select
-                        label="접근 권한"
-                        defaultValue="현장담당자"
-                        SelectProps={{
-                            native: true,
-                        }}
-                        sx={{ width: "20rem" }}
-                    >
-                        {access.map((option) => (
-                            <option key={option.value} value={option.value}>
-                                {option.label}
-                            </option>
-                        ))}
-                    </TextField>
+                    <Select placeholder={"접근 권한"} value={selectedRole} onChange={(value) => setSelectedRole(value)} style={{width:"20rem", height:"3.5rem", fontSize:"4rem"}}>
+                    {access.map(option => (
+                        <Select.Option key={option.value} value={option.value}>
+                            {option.label}
+                        </Select.Option>
+                    ))}
+                    </Select>
                 </div>
             </div>
             <button className={modalStyles.select_button} onClick={handleSelect}>등록</button>

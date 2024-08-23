@@ -8,7 +8,7 @@ import SearchLibModal from "./SearchLibModal";
 /**
  * 프로젝트 찾기(searchProject), 설비LIB 찾기(searchLib)
  */
-export default function SearchAtModal({ name, label, required = false, modalType = "검색", form }) {
+export default function SearchAtModal({ name, label, required = false, modalType = "검색", form, onProjectSelect }) {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [inputValue, setInputValue] = useState("");
 
@@ -26,7 +26,11 @@ export default function SearchAtModal({ name, label, required = false, modalType
         setIsModalOpen(false);
         const selectedData = data;
         form.setFieldsValue({ [name]: selectedData  });
-        setInputValue(selectedData.pjtCode + '/' + selectedData.pjtName); // SearchProjectModal.js 에서 [pjt.pjtCode, pjt.pjtName]을 pjt로 넘겨주어 변경
+        setInputValue(selectedData.프로젝트코드 + '/' + selectedData.프로젝트명); // SearchProjectModal.js 에서 [pjt.pjtCode, pjt.pjtName]을 pjt로 넘겨주어 변경
+
+        if (onProjectSelect) {  // onProjectSelect 콜백이 존재하는 경우 호출
+            onProjectSelect(selectedData);
+        }
     };
     const handleCancel = () => {
         setIsModalOpen(false);
