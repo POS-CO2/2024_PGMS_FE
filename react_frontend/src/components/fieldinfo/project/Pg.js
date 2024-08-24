@@ -244,7 +244,7 @@ export default function Pg() {
 
                 swalOptions.title = '실패!',
                 swalOptions.text = '프로젝트 삭제에 실패하였습니다.';
-                swalOptions.icon = 'success';
+                swalOptions.icon = 'error';
             }
         } 
         Swal.fire(swalOptions);
