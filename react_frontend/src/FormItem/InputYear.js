@@ -30,7 +30,7 @@ export default function InputYear({ name, label, required = false }) {
 			className={formItemStyles.form_item}
 			name={name}
 			label={label}
-			rules={[{ required: required, message: '${label}는 필수입니다.' }]}
+			rules={[{ required: required, message: '${label} 입력은 필수입니다.' }]}
 		>
 			<Input
 				type='number'

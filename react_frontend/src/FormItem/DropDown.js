@@ -14,7 +14,7 @@ export default function DropDown({ name, label, required=false, options, default
             className={formItemStyles.form_item}
             name={name}
             label={label}
-            rules={[{ required: required, message: '${label}는 필수입니다.' }]}
+            rules={[{ required: required, message: '${label} 선택은 필수입니다.' }]}
             initialValue={defaultSelected ? options[0].value : undefined}
         >
             <Select
