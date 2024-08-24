@@ -8,10 +8,13 @@ import * as mainStyle from '../../assets/css/main.css';
 import { Card } from '@mui/material';
 import axios from 'axios';
 import axiosInstance from '../../utils/AxiosInstance';
+import { menuLogColumns, userColumns } from '../../assets/json/tableColumn';
+
 
 
 export default function Mal() {
     const [user, setUser] = useState([]);
+    const [transUser, setTransUser] = useState([]);
     const [log, setLog] = useState([]);
     const [selectedUser, setSelectedUser] = useState([]);
     const [showUser, setShowUser] = useState(true);
@@ -38,10 +41,8 @@ export default function Mal() {
     const handleRowClick = async (e) => {
         setShowLog(true);
         setSelectedUser(e);
-        console.log(e);
         if (e) {
             const {data} = await axiosInstance.get(`/sys/log?loginId=${e.loginId}`);
-            console.log(data[0].logMenuList);
             const res = data[0].logMenuList
             setLog(res);
         }
@@ -70,7 +71,6 @@ export default function Mal() {
                 setDept(options);
                 const updateFormFields = formField_mal.map(field => 
                 field.name === 'deptCode' ? {...field, options } : field);
-                console.log(updateFormFields);
                 setFormFields(updateFormFields);
             } catch (error) {
                 console.error(error);
@@ -82,7 +82,6 @@ export default function Mal() {
 
     useEffect(() => {
     }, [user])
-
     return (
         <>
             <div className={mainStyle.breadcrumb}>
@@ -92,17 +91,17 @@ export default function Mal() {
             <div className={sysStyles.main_grid}>
                 {showUser ? (
                     <Card className={sysStyles.card_box} sx={{width:"50%", height:"75vh", borderRadius:"15px"}}>
-                        <TableCustom title="사용자 목록" data={user} button="" onRowClick={handleRowClick}/>
+                        <TableCustom title="사용자 목록" data={user} button="" onRowClick={handleRowClick} columns={userColumns}/>
                     </Card>
                 ) : (
                     <Card className={sysStyles.card_box} sx={{width:"50%", height:"75vh", borderRadius:"15px"}}>
-                        <TableCustom title="사용자 목록" data={user} button="" onRowClick={handleRowClick}/>
+                        <TableCustom title="사용자 목록" data={user} button="" onRowClick={handleRowClick} columns={userColumns}/>
                     </Card>
                 )}
                 
                 <Card className={sysStyles.card_box} sx={{width:"50%", height:"75vh", borderRadius:"15px"}}>
                     {showLog ? (
-                        <TableCustom title="메뉴 접속 로그" data={log} button="" />
+                        <TableCustom title="메뉴 접속 로그" data={log} button="" columns={menuLogColumns}/>
                     ) : (
                         <div className={sysStyles.mid_title}>{"메뉴 접속 로그"}</div>
                     )}

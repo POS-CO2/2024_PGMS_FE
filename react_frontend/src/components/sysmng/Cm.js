@@ -8,11 +8,13 @@ import * as sysStyles from '../../assets/css/sysmng.css';
 import * as mainStyle from '../../assets/css/main.css';
 import { Card } from '@mui/material';
 import axiosInstance from '../../utils/AxiosInstance';
+import { codeColumns, codeGroupColumns } from '../../assets/json/tableColumn';
 
 
 export default function Cm() {
     const [codeGroup, setCodeGroup] = useState([]);
     const [showCodeGroup, setShowCodeGroup] = useState(true);
+
     const handleFormSubmit = async (e) => {
         setShowCodeGroup(false);
         const {data} = await axiosInstance.get(`/sys/codegroup`, {
@@ -145,7 +147,7 @@ export default function Cm() {
             <SearchForms onFormSubmit={handleFormSubmit} formFields={formField_cm} />
             <div className={sysStyles.main_grid}>
             <Card className={sysStyles.card_box} sx={{width:"50%", height:"75vh", borderRadius:"15px"}}>
-            <TableCustom title="코드그룹ID" data={codeGroup} buttons={["Add", "Edit", "Delete"]} selectedRows={[selectedCodeGroup]} onRowClick={(e) => handleCodeGroupRowClick(e)} onClicks={[handleAddClick, handleEditClick, handleDeleteAClick]} modals={
+            <TableCustom title="코드그룹ID" data={codeGroup} buttons={["Add", "Edit", "Delete"]} selectedRows={[selectedCodeGroup]} onRowClick={(e) => handleCodeGroupRowClick(e)} onClicks={[handleAddClick, handleEditClick, handleDeleteAClick]} columns={codeGroupColumns} modals={
                 [
                     {
                         "modalType" : 'CMAdd',
@@ -176,7 +178,7 @@ export default function Cm() {
             <Card className={sysStyles.card_box} sx={{width:"50%", height:"75vh", borderRadius:"15px"}}>
             
             {showCode ? (
-                <TableCustom title="코드리스트" data={code} buttons={["Add", "Edit", "Delete"]} selectedRows={[selectedCode]} onRowClick={handleCodeRowClick} onClicks={[handleListAddClick, handleListEditClick, handleDeleteBClick]} modals={
+                <TableCustom title="코드리스트" data={code} buttons={["Add", "Edit", "Delete"]} columns={codeColumns} selectedRows={[selectedCode]} onRowClick={handleCodeRowClick} onClicks={[handleListAddClick, handleListEditClick, handleDeleteBClick]} modals={
                     [
                         {
                             "modalType" : 'CMListAdd',

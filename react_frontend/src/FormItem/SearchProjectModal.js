@@ -10,28 +10,48 @@ export default function ModalComponent({ isModalOpen, handleOk, handleCancel}) {
   const [allProjects, setAllProjects] = useState([]);     // 전체 프로젝트
   const [project, setProject] = useState([]);
 
+  const pjtColumns = [
+    { key: 'id', label: 'id', hidden: true },
+    { key: 'pjtCode', label: '프로젝트 코드', hidden: false },
+    { key: 'pjtName', label: '프로젝트 이름', hidden: false },
+    { key: 'pjtType', label: '프로젝트 유형', hidden: false },
+    { key: 'regCode', label: '지역 코드', hidden: false },
+    { key: 'ctrtFrYear', label: '계약 시작 년', hidden: false },
+    { key: 'ctrtFrMth', label: '계약 시작 월', hidden: false },
+    { key: 'ctrtToYear', label: '계약 종료 년', hidden: false },
+    { key: 'ctrtToMnt', label: '계약 종료 월', hidden: false },
+    { key: 'divCode', label: '본부 코드', hidden: false },
+    { key: 'bldArea', label: '연면적(m²)', hidden: false },
+    { key: 'pjtProgStus', label: '프로젝트진행 상태', hidden: false },
+    { key: 'pgmsYn', label: 'Y/N', hidden: false },
+    { key: 'userLoginId', label: '로그인 아이디', hidden: true },
+    { key: 'userName', label: '유저 명', hidden: true },
+    { key: 'startDate', label: '시작 일', hidden: true },
+    { key: 'endDate', label: '종료 일', hidden: true },
+]
+
   useEffect(() => {
       const fetchProject = async () => {
           try {
-              const response = await axiosInstance.get(`/pjt?pgmsYn=y`);
+              const {data} = await axiosInstance.get(`/pjt?pgmsYn=y`);
+              console.log(data);
+              // const filteredPjts = response.data.map(project => ({
+              //   id: project.id,
+              //   프로젝트코드: project.pjtCode,
+              //   프로젝트명: project.pjtName,
+              //   프로젝트유형: project.pjtType,
+              //   지역: project.regCode,
+              //   프로젝트시작년: project.ctrtFrYear,
+              //   프로젝트시작월: project.ctrtFrMth,
+              //   프로젝트종료년: project.ctrtToYear,
+              //   프로젝트종료월: project.ctrtToMth,
+              //   본부: project.divCode,
+              //   '연면적(m²)': project.bldArea,
+              //   프로젝트진행상태: project.pjtProgStus
+              // }));
 
-              const filteredPjts = response.data.map(project => ({
-                id: project.id,
-                프로젝트코드: project.pjtCode,
-                프로젝트명: project.pjtName,
-                프로젝트유형: project.pjtType,
-                지역: project.regCode,
-                프로젝트시작년: project.ctrtFrYear,
-                프로젝트시작월: project.ctrtFrMth,
-                프로젝트종료년: project.ctrtToYear,
-                프로젝트종료월: project.ctrtToMth,
-                본부: project.divCode,
-                '연면적(m²)': project.bldArea,
-                프로젝트진행상태: project.pjtProgStus
-              }));
-
-              setAllProjects(filteredPjts);
-              setProject(filteredPjts);
+              setAllProjects(data);
+              setProject(data);
           } catch (error) {
               console.log(error);
           }
@@ -52,8 +72,9 @@ export default function ModalComponent({ isModalOpen, handleOk, handleCancel}) {
   //찾기 버튼 클릭시 호출될 함수
   const handleFormSubmit = () => {
     const filteredProjects = allProjects.filter(pjt => {
-      const matchesCode = formData.projectCode ? pjt.프로젝트코드?.includes(formData.projectCode) : true;
-      const matchesName = formData.projectName ? pjt.프로젝트명?.includes(formData.projectName) : true;
+      console.log("pjt", pjt);
+      const matchesCode = formData.projectCode ? pjt.pjtCode?.includes(formData.projectCode) : true;
+      const matchesName = formData.projectName ? pjt.pjtName?.includes(formData.projectName) : true;
       return matchesCode && matchesName;
     });
     
@@ -112,7 +133,7 @@ export default function ModalComponent({ isModalOpen, handleOk, handleCancel}) {
       </div>
 
       <div className={pjtModalStyles.result_container}>
-        <Table data={project} onRowClick={handlePjtClick} />
+        <Table columns={pjtColumns} data={project} onRowClick={handlePjtClick} />
       </div>
 
       <button className={pjtModalStyles.select_button} onClick={handleSelect}>선택</button>

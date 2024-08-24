@@ -19,6 +19,7 @@ import { Sledding } from '@mui/icons-material';
 import axiosInstance from '../utils/AxiosInstance.js';
 import { Center } from '@react-three/drei';
 import Swal from 'sweetalert2'
+import { equipColumns, equipLibColumns } from '../assets/json/tableColumn.js';
 
 export function PgAddModal({ isModalOpen, handleOk, handleCancel }) {
     const [formData, setFormData] = useState({});             // 검색 데이터
@@ -959,6 +960,7 @@ export function DelModal({ isModalOpen, handleOk, handleCancel, rowData }) { // 
                 maxWidth: '20rem',
                 important: true
             }}
+
             footer={null}
         >
             <div className={delStyle.container}>
@@ -1435,7 +1437,6 @@ export function FmAddModal({ isModalOpen, handleOk, handleCancel, rowData }) {
     const flatProps = {
         options: sulbiLib.map((option) => option.label),
     };
-
     const [value1, setValue] = useState([]);
     return (
         <Modal
@@ -1463,11 +1464,10 @@ export function FmAddModal({ isModalOpen, handleOk, handleCancel, rowData }) {
                     <button className={modalStyles.search_button} style={{ marginTop: "1rem" }} onClick={handleSearch}>조회</button>
                 </div>
             </div>
-
             <div className={modalStyles.result_container}>
                 {showResults && 
                 <>
-                    <Table data={value1} onRowClick={handleSulbiClick} />
+                    <Table columns={equipColumns} data={value1} onRowClick={handleSulbiClick} />
                     <div className={sysStyles.text_field}>
                         <div className={sysStyles.text} style={{marginTop:"3rem", marginLeft:"5rem", fontWeight:"bold"}}>{"설비 명"}</div>
                         <TextField size="small" id='equipName' label="설비 명" value={equipName} onChange={(e) => setEquipName(e.target.value)} variant='outlined' sx={{ width: "25rem", margin:"0 auto", display:"flex", justifyContent:"center", alignContent:"center" }} />
@@ -1682,7 +1682,7 @@ export function MmAddModal({ isModalOpen, handleOk, handleCancel, rowData }) {
             })();
         }
         else {
-            setOrderMenuList([]);
+            // setOrderMenuList([]);
         }
     })
 

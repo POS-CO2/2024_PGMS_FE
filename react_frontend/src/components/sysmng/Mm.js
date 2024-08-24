@@ -33,6 +33,7 @@ import * as mainStyle from '../../assets/css/main.css';
 import { Select } from 'antd';
 import axiosInstance from '../../utils/AxiosInstance';
 import Swal from 'sweetalert2';
+import { menuTableColumns } from '../../assets/json/tableColumn';
 
 function DotIcon() {
     return (
@@ -250,6 +251,7 @@ const CustomTreeItem = React.forwardRef(function CustomTreeItem(props, ref) {
 
 
 export default function Mm({menus, handleMenuSet}) {
+
     const findParentFolder = (id, menus) => {
         if (id.length === 1) {
             if(id === 0) {return null}
@@ -446,6 +448,7 @@ export default function Mm({menus, handleMenuSet}) {
         }));
         
     };
+
     useEffect(() => {
         console.log("seud", selectedUpperDir);
         if (selectedUpperDir) {
@@ -574,13 +577,13 @@ export default function Mm({menus, handleMenuSet}) {
                         {!editable && <Button variant='contained' onClick={handleSaveClick} sx={{marginTop:"0.5rem",width:"20rem", margin:"5rem auto"}}>저장</Button>}
                     </Card> 
                     <Card className={sysStyles.card_box} sx={{width:"38%", borderRadius:"15px"}}>
-                        <TableCustom title='권한 부여 현황' data={res} />
+                        <TableCustom title='권한 부여 현황' data={res} columns={menuTableColumns}/>
                         {/* <DataGrid rows = {} columns={} /> */}
                     </Card>
                     </>
                 ) : (
                     <Card className={sysStyles.card_box} sx={{width:"38%", borderRadius:"15px"}}>
-                        <TableCustom title='권한 부여 현황' data={res} />
+                        <TableCustom title='권한 부여 현황' data={res} columns={menuTableColumns}/>
                     </Card>
                 )}
                 

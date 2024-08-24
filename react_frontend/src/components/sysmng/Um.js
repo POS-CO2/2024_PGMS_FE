@@ -11,6 +11,7 @@ import { Dropdown } from '@mui/base';
 import axiosInstance from '../../utils/AxiosInstance';
 import { Select } from 'antd';
 import Swal from 'sweetalert2';
+import { userColumns } from '../../assets/json/tableColumn';
 
 
 export default function Um() {
@@ -18,6 +19,8 @@ export default function Um() {
     const [userList, setUserList] = useState([]);
     const [userShow, setUserShow] = useState(true);
     const [password, setPassword] = useState(null);
+    
+
     const access = [
         {
             value: 'FP',
@@ -193,7 +196,7 @@ export default function Um() {
             <SearchForms onFormSubmit={handleFormSubmit} formFields={formFields}/>
             <div className={sysStyles.main_grid}>
                 <Card className={sysStyles.card_box} sx={{width:"50%", height:"75vh", borderRadius:"15px"}}>
-                    {userShow && <TableCustom title="사용자 목록" data={userList} buttons={['Add']} onClicks={[handleAddClick]} onRowClick={(e) => handleRowClick(e)} modals={
+                    {userShow && <TableCustom title="사용자 목록" columns={userColumns} data={userList} buttons={['Add']} onClicks={[handleAddClick]} onRowClick={(e) => handleRowClick(e)} modals={
                         [
                             {
                                 "modalType" : 'UmAdd',
