@@ -200,11 +200,11 @@ export const perfTotalColumns = [
 ]
 
 export const perfPjtColumns = [
-    { key: 'actvYear', label: '활동시작년', hidden: false },
-    { key: 'actvMth', label: '활동시작월', hidden: false },
-    { key: 'scope1', label: '스코프1', hidden: false },
-    { key: 'scope2', label: '스코프2', hidden: false },
-    { key: 'total', label: '총량', hidden: false },
+    { key: 'actvYear', label: '활동시작년', hidden: true },
+    { key: 'actvMth', label: '월', hidden: false },
+    { key: 'scope1', label: 'Scope1배출량', hidden: false },
+    { key: 'scope2', label: 'Scope2배출량', hidden: false },
+    { key: 'total', label: '총배출량', hidden: false },
 ]
 
 export const equipEmissionColumns = [
