@@ -60,7 +60,7 @@ export const formFieldEx2 = [
 ]
 
 export const formField_tep = [
-    { type: 'InputYear', name: 'actvYear', label: '대상년도', required: true }
+    { type: 'InputYear', name: 'year', label: '대상년도', required: true }
 ];
 
 export const formField_psq = [

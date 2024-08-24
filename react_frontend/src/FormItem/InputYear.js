@@ -35,6 +35,7 @@ export default function InputYear({ name, label, required = false }) {
 			<Input
 				type='number'
 				min="0"
+				max="9999"
 				//className={formItemStyles.inputNumber}
 				style={{ width: 120 }}
 				value={yearNum}

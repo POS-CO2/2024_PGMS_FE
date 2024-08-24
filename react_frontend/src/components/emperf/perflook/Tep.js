@@ -4,17 +4,51 @@ import { formField_tep } from "../../../assets/json/searchFormData"
 import InnerTabs from "../../../InnerTabs";
 import TableCustom from "../../../TableCustom.js";
 import ChartCustom from "../../../ChartCustom.js";
-import { tepData } from "../../../assets/json/tep";
-import { temp_data } from '../../../assets/json/chartData';
 import { Card } from '@mui/material';
 import * as mainStyle from '../../../assets/css/main.css';
+import axiosInstance from '../../../utils/AxiosInstance';
 
 export default function Tep() {
-    const [formData, setFormData] = useState({});
+    const [formData, setFormData] = useState(); // 검색 데이터
+    const [tablePerfs, setTablePerfs] = useState([]);
+    const [chartPerfs, setChartPerfs] = useState([]);
 
-    const handleFormSubmit = (data) => {
+    // 조회 버튼 클릭시 호출될 함수
+    const handleFormSubmit = async (data) => {
         setFormData(data);
-        console.log(data);
+
+        let url = `/perf/total?year=${data.year}`;
+        const response = await axiosInstance.get(url);
+
+        // data가 빈 배열인지 확인
+        if (response.data.length === 0) {
+            // 빈 데이터인 경우, 배열의 필드를 유지하면서 빈 값으로 채운 배열 생성
+            setTablePerfs([{ 월: '', Scope1배출량: '', Scope2배출량: '', 총배출량: '' }]);
+            setChartPerfs([
+                { data: Array(12).fill(null), stack: 'A', label: 'Scope 1' },
+                { data: Array(12).fill(null), stack: 'A', label: 'Scope 2' }
+            ]);
+
+        } else {
+            // 필요한 필드만 추출하여 설정
+            // 표
+            const filteredTablePerfs = response.data.map(perf => ({
+                월: perf.actvMth,
+                Scope1배출량: perf.scope1,
+                Scope2배출량: perf.scope2,
+                총배출량: perf.total
+            }));
+            setTablePerfs(filteredTablePerfs);
+
+            //차트
+            const scope1Data = response.data.map(perf => perf.scope1 || null);
+            const scope2Data = response.data.map(perf => perf.scope2 || null);
+            const formattedChartPerfs = [
+                { data: scope1Data, stack: 'A', label: 'Scope 1' },
+                { data: scope2Data, stack: 'A', label: 'Scope 2' }
+            ];
+            setChartPerfs(formattedChartPerfs);
+        }
     };
 
     return (
@@ -23,28 +57,34 @@ export default function Tep() {
                 {"배출실적 > 실적조회 > 총량실적 조회"}
             </div>
             <SearchForms onFormSubmit={handleFormSubmit} formFields={formField_tep} /*autoSubmitOnInit={true}*/ />
-            <InnerTabs items={[
-                {
-                    label: '차트', key: '1', children: <Card sx={{ width: "100%", height: "100%", borderRadius: "15px" }}>
-                                                            <ChartCustom title={"총량실적차트"} data={temp_data} />
-                                                        </Card>,
-                },
-                { label: '표', key: '2', children: <TableTab formData={formData} tepData={tepData} />, },
-            ]} />
+
+            {(!formData || Object.keys(formData).length === 0) ?
+                <></> : (
+                    <InnerTabs items={[
+                        { label: '차트', key: '1', children: <ChartTab data={chartPerfs} />, },
+                        { label: '표', key: '2', children: <TableTab data={tablePerfs} />, },
+                    ]} />
+                )}
         </div>
     );
 }
 
-function TableTab({ formData, tepData }) {
-    const tableData = tepData.filter(data => data.actvYear === Number(formData.actvYear));
+function ChartTab({ data }) {
+    return (
+        <Card sx={{ width: "100%", height: "100%", borderRadius: "15px" }}>
+            <ChartCustom title={"총량실적차트"} data={data} />
+        </Card>
+    )
+}
 
+function TableTab({ data }) {
     const onDownloadExcelClick = () => {
         console.log("onDownloadExcelClick");
     };
 
     return (
         <Card sx={{ width: "100%", height: "100%", borderRadius: "15px" }}>
-            <TableCustom title="총량실적표" data={tableData} buttons={['DownloadExcel']} onClicks={[onDownloadExcelClick]} />
+            <TableCustom title="총량실적표" data={data} buttons={['DownloadExcel']} onClicks={[onDownloadExcelClick]} />
         </Card>
     )
 }
