@@ -22,14 +22,22 @@ export default function SearchAtModal({ name, label, required = false, modalType
         form.setFieldsValue({ [name]: selectedOption  }); // 선택된 label을 폼 필드에 설정
         setInputValue(selectedLabel);
     };
-    const handleOk = (data) => {
+    const searchProject = (data) => {
         setIsModalOpen(false);
-        const selectedData = data;
-        form.setFieldsValue({ [name]: selectedData  });
-        setInputValue(selectedData.프로젝트코드 + '/' + selectedData.프로젝트명); // SearchProjectModal.js 에서 [pjt.pjtCode, pjt.pjtName]을 pjt로 넘겨주어 변경
+        form.setFieldsValue({ [name]: data  });
+        setInputValue(data.프로젝트코드 + '/' + data.프로젝트명); // SearchProjectModal.js 에서 [pjt.pjtCode, pjt.pjtName]을 pjt로 넘겨주어 변경
 
         if (onProjectSelect) {  // onProjectSelect 콜백이 존재하는 경우 호출
-            onProjectSelect(selectedData);
+            onProjectSelect(data);
+        }
+    };
+    const searchEqLib = (data) => {
+        setIsModalOpen(false);
+        form.setFieldsValue({ [name]: data  });
+        setInputValue(data.설비라이브러리명); // SearchProjectModal.js 에서 [pjt.pjtCode, pjt.pjtName]을 pjt로 넘겨주어 변경
+
+        if (onProjectSelect) {  // onProjectSelect 콜백이 존재하는 경우 호출
+            onProjectSelect(data);
         }
     };
     const handleCancel = () => {
@@ -39,11 +47,11 @@ export default function SearchAtModal({ name, label, required = false, modalType
     const renderModal = () => {
         switch (modalType) {
             case "프로젝트 찾기":
-                return <SearchProjectModal isModalOpen={isModalOpen} handleOk={handleOk} handleCancel={handleCancel} />;
+                return <SearchProjectModal isModalOpen={isModalOpen} handleOk={searchProject} handleCancel={handleCancel} />;
             case "설비LIB 찾기":
-                return <SearchLibModal isModalOpen={isModalOpen} handleOk={handleOk} handleCancel={handleCancel} />;
+                return <SearchLibModal isModalOpen={isModalOpen} handleOk={searchEqLib} handleCancel={handleCancel} />;
             default:
-                return <ModalComponent title={modalType} contents="테스트" isModalOpen={isModalOpen} handleOk={handleOk} handleCancel={handleCancel} />;
+                return <ModalComponent title={modalType} contents="테스트" isModalOpen={isModalOpen} handleOk={searchProject} handleCancel={handleCancel} />;
         }
     }; 
 
