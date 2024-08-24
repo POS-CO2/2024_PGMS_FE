@@ -7,6 +7,7 @@ import ChartCustom from "../../../ChartCustom.js";
 import { Card } from '@mui/material';
 import * as mainStyle from '../../../assets/css/main.css';
 import axiosInstance from '../../../utils/AxiosInstance';
+import { perfTotalColumns } from '../../../assets/json/tableColumn';
 
 export default function Tep() {
     const [formData, setFormData] = useState(); // 검색 데이터
@@ -33,10 +34,10 @@ export default function Tep() {
             // 필요한 필드만 추출하여 설정
             // 표
             const filteredTablePerfs = response.data.map(perf => ({
-                월: perf.actvMth,
-                Scope1배출량: perf.scope1,
-                Scope2배출량: perf.scope2,
-                총배출량: perf.total
+                actvMth: perf.actvMth,
+                scope1: perf.scope1,
+                scope2: perf.scope2,
+                total: perf.total
             }));
             setTablePerfs(filteredTablePerfs);
 
@@ -84,7 +85,7 @@ function TableTab({ data }) {
 
     return (
         <Card sx={{ width: "100%", height: "100%", borderRadius: "15px" }}>
-            <TableCustom title="총량실적표" data={data} buttons={['DownloadExcel']} onClicks={[onDownloadExcelClick]} />
+            <TableCustom columns={perfTotalColumns} title="총량실적표" data={data} buttons={['DownloadExcel']} onClicks={[onDownloadExcelClick]} />
         </Card>
     )
 }
