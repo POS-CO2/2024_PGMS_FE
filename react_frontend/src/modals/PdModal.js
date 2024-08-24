@@ -13,7 +13,7 @@ import Table from "../Table";
 import { actv } from "../assets/json/selectedPjt";
 import emsData from "../assets/json/ems";
 import { selectYear, selectMonth } from "../assets/json/sd";
-import { TextField, Box, InputLabel, MenuItem, FormControl, Autocomplete } from '@mui/material';
+import { TextField, Box, InputLabel, MenuItem, FormControl, Autocomplete, createTheme, ThemeProvider  } from '@mui/material';
 import WarningAmberIcon from '@mui/icons-material/WarningAmber';
 import { Sledding } from '@mui/icons-material';
 import axiosInstance from '../utils/AxiosInstance.js';
@@ -385,17 +385,56 @@ export function RmAddModal({ isModalOpen, handleOk, handleCancel, rowData }) {
     )
 }
 
-export function FlAddModal({ isModalOpen, handleOk, handleCancel }) {
-    // 등록 버튼 클릭 시 호출될 함수(등록할 설비LIB의 data를 전달)
+const theme = createTheme({
+    components: {
+      MuiOutlinedInput: {
+        styleOverrides: {
+          root: {
+            height: "2.5rem", // 전체 높이 조정
+            padding: 0,
+            "& .MuiOutlinedInput-input": {
+              height: "1.5rem",
+              padding: "0.5rem",
+              boxSizing: "border-box",
+            },
+          },
+        },
+      },
+      MuiInputLabel: {
+        styleOverrides: {
+          root: {
+            transform: "translate(14px, 10px) scale(1)", // label 위치 조정
+            "&.MuiInputLabel-shrink": {
+              transform: "translate(14px, -6px) scale(0.75)", // 축소된 상태에서의 위치 조정
+            },
+          },
+        },
+      },
+    },
+  });
+
+export function FlAddModal({ isModalOpen, handleOk, handleCancel, dropDown }) {
+    const [eqLibName, setEqLibName] = useState('');
+    const [selectedEqDvs, setSelectedEqDvs] = useState('');
+    const [selectedEqType, setSelectedEqType] = useState('');
+    const [selectedEqSpecUnit, setSelectedEqSpecUnit] = useState('');
+
+    // 옵션을 가져오는 함수
+    const getOptions = (fieldName) => {
+        const field = dropDown.find(field => field.name === fieldName);
+        return field ? field.options : [];
+    };
+
+    // 등록 버튼 클릭 시 호출될 함수
     const handleSelect = () => {
         const formData = {
-            eqLibName: document.getElementById('eqLibName').value,
-            eqDvs: document.getElementById('eqDvs').value,
-            eqType: document.getElementById('eqType').value,
-            eqSpecUnit: document.getElementById('eqSpecUnit').value,
+            eqLibName,
+            eqDvs: selectedEqDvs,
+            eqType: selectedEqType,
+            eqSpecUnit: selectedEqSpecUnit
         };
 
-        handleOk(formData);  // 입력된 데이터를 handleOk 함수로 전달
+        handleOk(formData);
     };
 
     return (
@@ -407,33 +446,71 @@ export function FlAddModal({ isModalOpen, handleOk, handleCancel }) {
         >
             <div className={rmStyles.title}>설비LIB 등록</div>
 
-            <div className={rmStyles.search_container}>
+            <div className={rmStyles.submit_container}>
                 <div className={rmStyles.search_item}>
                     <div className={rmStyles.search_title}>설비라이브러리명</div>
-                    <input className={rmStyles.search} id="eqLibName" />
+                    <ThemeProvider theme={theme}>
+                        <TextField
+                            id='eqLibName'
+                            variant='outlined'
+                            borderRadius='4px'
+                            fullWidth
+                            value={eqLibName}
+                            onChange={(e) => setEqLibName(e.target.value)}
+                            sx={{
+                                width: '22rem',
+                                "& .MuiOutlinedInput-root": {
+                                    height: "2rem !important", // 강제로 높이 조정
+                                },
+                                "& .MuiOutlinedInput-input": {
+                                    height: '1.5rem !important', // 강제로 높이 조정
+                                    padding: '0.5rem !important', // 강제로 패딩 조정
+                                    boxSizing: 'border-box',
+                                },
+                            }}
+                        />
+                    </ThemeProvider>
                 </div>
                 <div className={rmStyles.search_item}>
                     <div className={rmStyles.search_title}>설비구분</div>
-                    <Select id="eqDvs">
-                        <Select.Option key={"구분1"} value={"구분1"}>{"구분1"}</Select.Option>
-                        <Select.Option key={"구분2"} value={"구분2"}>{"구분2"}</Select.Option>
-                        <Select.Option key={"구분3"} value={"구분3"}>{"구분3"}</Select.Option>
+                    <Select
+                        id="eqDvs"
+                        value={selectedEqDvs}
+                        onChange={(value) => setSelectedEqDvs(value)}
+                    >
+                        {getOptions('equipDvs').map(option => (
+                            <Select.Option key={option.value} value={option.value}>
+                                {option.label}
+                            </Select.Option>
+                        ))}
                     </Select>
                 </div>
                 <div className={rmStyles.search_item}>
                     <div className={rmStyles.search_title}>설비유형</div>
-                    <Select id="eqType">
-                        <Select.Option key={"유형1"} value={"유형1"}>{"유형1"}</Select.Option>
-                        <Select.Option key={"유형2"} value={"유형2"}>{"유형2"}</Select.Option>
-                        <Select.Option key={"유형3"} value={"유형3"}>{"유형3"}</Select.Option>
+                    <Select
+                        id="eqType"
+                        value={selectedEqType}
+                        onChange={(value) => setSelectedEqType(value)}
+                    >
+                        {getOptions('equipType').map(option => (
+                            <Select.Option key={option.value} value={option.value}>
+                                {option.label}
+                            </Select.Option>
+                        ))}
                     </Select>
                 </div>
                 <div className={rmStyles.search_item}>
                     <div className={rmStyles.search_title}>설비사양단위</div>
-                    <Select id="eqSpecUnit">
-                        <Select.Option key={"단위1"} value={"단위1"}>{"단위1"}</Select.Option>
-                        <Select.Option key={"단위2"} value={"단위2"}>{"단위2"}</Select.Option>
-                        <Select.Option key={"단위3"} value={"단위3"}>{"단위3"}</Select.Option>
+                    <Select
+                        id="eqSpecUnit"
+                        value={selectedEqSpecUnit}
+                        onChange={(value) => setSelectedEqSpecUnit(value)}
+                    >
+                        {getOptions('equipSpecUnit').map(option => (
+                            <Select.Option key={option.value} value={option.value}>
+                                {option.label}
+                            </Select.Option>
+                        ))}
                     </Select>
                 </div>
             </div>
@@ -443,36 +520,41 @@ export function FlAddModal({ isModalOpen, handleOk, handleCancel }) {
     )
 }
 
-export function FlEditModal({ isModalOpen, handleOk, handleCancel, rowData }) {
-    const [formValues, setFormValues] = useState({
-        eqLibName: '',
-        equipDvs: '',
-        equipType: '',
-        equipSpecUnit: ''
-    });
+export function FlEditModal({ isModalOpen, handleOk, handleCancel, rowData, dropDown }) {
+    const [eqLibName, setEqLibName] = useState('');
+    const [selectedEqDvs, setSelectedEqDvs] = useState('');
+    const [selectedEqType, setSelectedEqType] = useState('');
+    const [selectedEqSpecUnit, setSelectedEqSpecUnit] = useState('');
+
+    // 옵션을 가져오는 함수
+    const getOptions = (fieldName) => {
+        const field = dropDown.find(field => field.name === fieldName);
+        return field ? field.options : [];
+    };
 
     // 모달이 열릴 때 rowData로부터 폼 필드 값을 설정
     useEffect(() => {
         if (isModalOpen && rowData) {
-            setFormValues({
-                eqLibName: rowData.EquipName || '',
-                equipDvs: rowData.equipDvs || '',
-                equipType: rowData.equipType || '',
-                equipSpecUnit: rowData.equipSpecUnit || '',
-            });
+            const equipDvsOption = getOptions('equipDvs').find(option => option.label === rowData.설비구분);
+            const equipTypeOption = getOptions('equipType').find(option => option.label === rowData.설비유형);
+            const equipSpecUnitOption = getOptions('equipSpecUnit').find(option => option.label === rowData.설비사양단위);
+
+        setEqLibName(rowData.설비라이브러리명 || '');
+        setSelectedEqDvs(equipDvsOption ? equipDvsOption.value : '');
+        setSelectedEqType(equipTypeOption ? equipTypeOption.value : '');
+        setSelectedEqSpecUnit(equipSpecUnitOption ? equipSpecUnitOption.value : '');
         }
     }, [rowData, isModalOpen]);
 
-    const handleChange = (e) => {
-        const { id, value } = e.target;
-        setFormValues(prevValues => ({
-            ...prevValues,
-            [id]: value
-        }));
-    };
-
     const handleSelect = () => {
-        handleOk(formValues);
+        const formData = {
+            eqLibName,
+            eqDvs: selectedEqDvs,
+            eqType: selectedEqType,
+            eqSpecUnit: selectedEqSpecUnit
+        };
+
+        handleOk(formData);
     };
 
     return (
@@ -482,48 +564,58 @@ export function FlEditModal({ isModalOpen, handleOk, handleCancel, rowData }) {
             style={{ width: '25rem', maxWidth: '25rem', important: true }}
             footer={null}                                                   //Ant Design의 기본 footer 제거(Cancel, OK 버튼)
         >
-            <div className={rmStyles.title}>설비LIB 등록</div>
+            <div className={rmStyles.title}>설비LIB 수정</div>
 
-            <div className={rmStyles.search_container}>
+            <div className={rmStyles.submit_container}>
                 <div className={rmStyles.search_item}>
                     <div className={rmStyles.search_title}>설비라이브러리명</div>
-                    <input 
-                        className={rmStyles.search} 
-                        value={formValues.eqLibName}
-                        onChange={handleChange}
+                    <TextField
+                        id='eqLibName'
+                        variant='outlined'
+                        size='small'
+                        fullWidth
+                        value={eqLibName}
+                        onChange={(e) => setEqLibName(e.target.value)}
+                        sx={{width: '22rem'}}
                     />
                 </div>
                 <div className={rmStyles.search_item}>
                     <div className={rmStyles.search_title}>설비구분</div>
-                    <Select 
-                        value={formValues.equipDvs}
-                        onChange={(value) => setFormValues(prevValues => ({ ...prevValues, actvDvs: value }))}
+                    <Select
+                        value={selectedEqDvs}
+                        onChange={(value) => setSelectedEqDvs(value)}
                     >
-                        <Select.Option key={"구분1"} value={"구분1"}>{"구분1"}</Select.Option>
-                        <Select.Option key={"구분2"} value={"구분2"}>{"구분2"}</Select.Option>
-                        <Select.Option key={"구분3"} value={"구분3"}>{"구분3"}</Select.Option>
+                        {getOptions('equipDvs').map(option => (
+                            <Select.Option key={option.value} value={option.value}>
+                                {option.label}
+                            </Select.Option>
+                        ))}
                     </Select>
                 </div>
                 <div className={rmStyles.search_item}>
                     <div className={rmStyles.search_title}>설비유형</div>
-                    <Select 
-                        value={formValues.equipType}
-                        onChange={(value) => setFormValues(prevValues => ({ ...prevValues, actvDvs: value }))}
+                    <Select
+                        value={selectedEqType}
+                        onChange={(value) => setSelectedEqType(value)}
                     >
-                        <Select.Option key={"유형1"} value={"유형1"}>{"유형1"}</Select.Option>
-                        <Select.Option key={"유형2"} value={"유형2"}>{"유형2"}</Select.Option>
-                        <Select.Option key={"유형3"} value={"유형3"}>{"유형3"}</Select.Option>
+                        {getOptions('equipType').map(option => (
+                            <Select.Option key={option.value} value={option.value}>
+                                {option.label}
+                            </Select.Option>
+                        ))}
                     </Select>
                 </div>
                 <div className={rmStyles.search_item}>
                     <div className={rmStyles.search_title}>설비사양단위</div>
-                    <Select 
-                        value={formValues.equipSpecUnit}
-                        onChange={(value) => setFormValues(prevValues => ({ ...prevValues, actvDvs: value }))}
+                    <Select
+                        value={selectedEqSpecUnit}
+                        onChange={(value) => setSelectedEqSpecUnit(value)}
                     >
-                        <Select.Option key={"단위1"} value={"단위1"}>{"단위1"}</Select.Option>
-                        <Select.Option key={"단위2"} value={"단위2"}>{"단위2"}</Select.Option>
-                        <Select.Option key={"단위3"} value={"단위3"}>{"단위3"}</Select.Option>
+                        {getOptions('equipSpecUnit').map(option => (
+                            <Select.Option key={option.value} value={option.value}>
+                                {option.label}
+                            </Select.Option>
+                        ))}
                     </Select>
                 </div>
             </div>
@@ -909,32 +1001,35 @@ export function CmAddModal({ isModalOpen, handleOk, handleCancel }) {
         <Modal
             open={isModalOpen}
             onCancel={handleCancel}
-            width={480}
+            width={400}
             footer={null}             //Ant Design의 기본 footer 제거(Cancel, OK 버튼)
         >
             {/* 모달제목 */}
             <div className={modalStyles.title}>코드 그룹 추가</div>
             <div className={sysStyles.card_box}>
-                <div className={sysStyles.text_field} style={{ marginTop: "2rem" }}>
+                <div className={sysStyles.text_field} style={{ marginTop: "0.5rem" }}>
                     <div className={sysStyles.text}>
                         {"코드 그룹 ID"}
                     </div>
-                    <TextField id='codeGrpNo' value={codeGrpNo} onChange={(e) => setCodeGrpNo(e.target.value)} label="코드 그룹 번호" variant='outlined' sx={{ width: "20rem" }} />
+                    <TextField size="small" id='codeGrpNo' value={codeGrpNo} onChange={(e) => setCodeGrpNo(e.target.value)} label="코드 그룹 번호" variant='outlined' sx={{ width: "20rem" }} />
                 </div>
                 <div className={sysStyles.text_field}>
                     <div className={sysStyles.text}>{"코드 그룹 명"}</div>
-                    <TextField id='codeGrpName' value={codeGrpName} onChange={(e) => setCodeGrpName(e.target.value)} label="코드 그룹 명" variant='outlined' sx={{ width: "20rem" }} />
+                    <TextField size="small" id='codeGrpName' value={codeGrpName} onChange={(e) => setCodeGrpName(e.target.value)} label="코드 그룹 명" variant='outlined' sx={{ width: "20rem" }} />
                 </div>
                 <div className={sysStyles.text_field}>
                     <div className={sysStyles.text}>{"영문 명"}</div>
-                    <TextField id='codeGrpNameEn' value={codeGrpNameEn} onChange={(e) => setCodeGrpNameEn(e.target.value)} label="영문 명" variant='outlined' sx={{ width: "20rem" }} />
+                    <TextField size="small" id='codeGrpNameEn' value={codeGrpNameEn} onChange={(e) => setCodeGrpNameEn(e.target.value)} label="영문 명" variant='outlined' sx={{ width: "20rem" }} />
                 </div>
                 <div className={sysStyles.text_field}>
                     <div className={sysStyles.text}>{"노트"}</div>
-                    <TextField id='note' value={note} onChange={(e) => setNote(e.target.value)} label="노트" variant='outlined' sx={{ width: "20rem" }} />
+                    <TextField size="small" id='note' value={note} onChange={(e) => setNote(e.target.value)} label="노트" variant='outlined' sx={{ width: "20rem" }} />
                 </div>
             </div>
-            <button className={modalStyles.select_button} onClick={handleSelect}>등록</button>
+            <div style={{display:"flex", justifyContent:"center", alignContent:"center"}}>
+                <button style={{width:"20rem"}} className={modalStyles.select_button} onClick={handleSelect}>등록</button>
+            </div>
+            
         </Modal>
     )
 }
@@ -971,32 +1066,34 @@ export function CmEditModal({ isModalOpen, handleOk, handleCancel, rowData }) {
         <Modal
             open={isModalOpen}
             onCancel={handleCancel}
-            width={480}
+            width={400}
             footer={null}             //Ant Design의 기본 footer 제거(Cancel, OK 버튼)
         >
             {/* 모달제목 */}
             <div className={modalStyles.title}>코드 그룹 수정</div>
             <div className={sysStyles.card_box}>
-                <div className={sysStyles.text_field} style={{ marginTop: "2rem" }}>
+                <div className={sysStyles.text_field} style={{ marginTop: "0.5rem" }}>
                     <div className={sysStyles.text}>
                         {"코드 그룹 ID"}
                     </div>
-                    <TextField id='codeGrpNo' value={codeGrpNo} onChange={(e) => setCodeGrpNo(e.target.value)} label="코드 그룹 번호" variant='outlined' sx={{ width: "20rem" }} />
+                    <TextField size='small' id='codeGrpNo' value={codeGrpNo} onChange={(e) => setCodeGrpNo(e.target.value)} label="코드 그룹 번호" variant='outlined' sx={{ width: "20rem" }} />
                 </div>
                 <div className={sysStyles.text_field}>
                     <div className={sysStyles.text}>{"코드 그룹 명"}</div>
-                    <TextField id='codeGrpName' value={codeGrpName} onChange={(e) => setCodeGrpName(e.target.value)} label="코드 그룹 명" variant='outlined' sx={{ width: "20rem" }} />
+                    <TextField size='small' id='codeGrpName' value={codeGrpName} onChange={(e) => setCodeGrpName(e.target.value)} label="코드 그룹 명" variant='outlined' sx={{ width: "20rem" }} />
                 </div>
                 <div className={sysStyles.text_field}>
                     <div className={sysStyles.text}>{"영문 명"}</div>
-                    <TextField id='codeGrpNameEn' value={codeGrpNameEn} onChange={(e) => setCodeGrpNameEn(e.target.value)} label="영문 명" variant='outlined' sx={{ width: "20rem" }} />
+                    <TextField size='small' id='codeGrpNameEn' value={codeGrpNameEn} onChange={(e) => setCodeGrpNameEn(e.target.value)} label="영문 명" variant='outlined' sx={{ width: "20rem" }} />
                 </div>
                 <div className={sysStyles.text_field}>
                     <div className={sysStyles.text}>{"노트"}</div>
-                    <TextField id='note' value={note} onChange={(e) => setNote(e.target.value)} label="노트" variant='outlined' sx={{ width: "20rem" }} />
+                    <TextField size='small' id='note' value={note} onChange={(e) => setNote(e.target.value)} label="노트" variant='outlined' sx={{ width: "20rem" }} />
                 </div>
             </div>
-            <button className={modalStyles.select_button} onClick={handleSelect}>수정</button>
+            <div style={{display:"flex", justifyContent:"center", alignContent:"center"}}>
+            <button style={{width:"20rem"}} className={modalStyles.select_button} onClick={handleSelect}>수정</button>
+            </div>
         </Modal>
     )
 }
@@ -1096,44 +1193,46 @@ export function CmListAddModal({ isModalOpen, handleOk, handleCancel, rowData })
         <Modal
             open={isModalOpen}
             onCancel={handleCancel}
-            width={480}
+            width={400}
             footer={null}             //Ant Design의 기본 footer 제거(Cancel, OK 버튼)
         >
             {/* 모달제목 */}
             <div className={modalStyles.title}>코드 리스트 추가</div>
             <div className={sysStyles.card_box}>
-                <div className={sysStyles.text_field} style={{ marginTop: "2rem" }}>
+                <div className={sysStyles.text_field} style={{ marginTop: "0.5rem" }}>
                     <div className={sysStyles.text}>
                         {"코드 그룹 ID"}
                     </div>
-                    <TextField id='codeGrpNo' value={rowData.codeGrpNo} disabled label="코드 그룹 번호" variant='outlined' sx={{ width: "20rem" }} />
+                    <TextField size='small' id='codeGrpNo' value={rowData.codeGrpNo} disabled label="코드 그룹 번호" variant='outlined' sx={{ width: "20rem" }} />
                 </div>
                 <div className={sysStyles.text_field}>
                     <div className={sysStyles.text}>{"코드 그룹 이름"}</div>
-                    <TextField id='codeName' value={rowData.codeGrpName} disabled label="코드 그룹 이름" variant='outlined' sx={{ width: "20rem" }} />
+                    <TextField size='small' id='codeName' value={rowData.codeGrpName} disabled label="코드 그룹 이름" variant='outlined' sx={{ width: "20rem" }} />
                 </div>
                 <div className={sysStyles.text_field}>
                     <div className={sysStyles.text}>{"코드"}</div>
-                    <TextField id='code' value={code} onChange={(e) => setCode(e.target.value)} label="코드" variant='outlined' sx={{ width: "20rem" }} />
+                    <TextField size='small' id='code' value={code} onChange={(e) => setCode(e.target.value)} label="코드" variant='outlined' sx={{ width: "20rem" }} />
                 </div>
                 <div className={sysStyles.text_field}>
                     <div className={sysStyles.text}>{"코드 명"}</div>
-                    <TextField id='codeName' value={codeName} onChange={(e) => setCodeName(e.target.value)} label="코드 명" variant='outlined' sx={{ width: "20rem" }} />
+                    <TextField size='small' id='codeName' value={codeName} onChange={(e) => setCodeName(e.target.value)} label="코드 명" variant='outlined' sx={{ width: "20rem" }} />
                 </div>
                 <div className={sysStyles.text_field}>
                     <div className={sysStyles.text}>{"속성1"}</div>
-                    <TextField id='attr1' value={attr1} onChange={(e) => setAttr1(e.target.value)} label="속성1" variant='outlined' sx={{ width: "20rem" }} />
+                    <TextField size='small' id='attr1' value={attr1} onChange={(e) => setAttr1(e.target.value)} label="속성1" variant='outlined' sx={{ width: "20rem" }} />
                 </div>
                 <div className={sysStyles.text_field}>
                     <div className={sysStyles.text}>{"속성2"}</div>
-                    <TextField id='attr2' value={attr2} onChange={(e) => setAttr2(e.target.value)} label="속성2" variant='outlined' sx={{ width: "20rem" }} />
+                    <TextField size='small' id='attr2' value={attr2} onChange={(e) => setAttr2(e.target.value)} label="속성2" variant='outlined' sx={{ width: "20rem" }} />
                 </div>
                 <div className={sysStyles.text_field}>
                     <div className={sysStyles.text}>{"노트"}</div>
-                    <TextField id='note' value={note} onChange={(e) => setNote(e.target.value)} label="노트" variant='outlined' sx={{ width: "20rem" }} />
+                    <TextField size='small' id='note' value={note} onChange={(e) => setNote(e.target.value)} label="노트" variant='outlined' sx={{ width: "20rem" }} />
                 </div>
             </div>
-            <button className={modalStyles.select_button} onClick={handleSelect}>등록</button>
+            <div style={{display:"flex", justifyContent:"center", alignContent:"center"}}>
+            <button style={{width:"20rem"}} className={modalStyles.select_button} onClick={handleSelect}>등록</button>
+            </div>
         </Modal>
     )
 }
@@ -1172,44 +1271,46 @@ export function CmListEditModal({ isModalOpen, handleOk, handleCancel, rowData }
         <Modal
             open={isModalOpen}
             onCancel={handleCancel}
-            width={480}
+            width={400}
             footer={null}             //Ant Design의 기본 footer 제거(Cancel, OK 버튼)
         >
             {/* 모달제목 */}
             <div className={modalStyles.title}>코드 리스트</div>
             <div className={sysStyles.card_box}>
-                <div className={sysStyles.text_field} style={{ marginTop: "2rem" }}>
+                <div className={sysStyles.text_field} style={{ marginTop: "0.5rem" }}>
                     <div className={sysStyles.text}>
                         {"코드 그룹 ID"}
                     </div>
-                    <TextField id='codeGrpNo' value={rowData.codeGrpNo} disabled label="코드 그룹 번호" variant='outlined' sx={{ width: "20rem" }} />
+                    <TextField size='small' id='codeGrpNo' value={rowData.codeGrpNo} disabled label="코드 그룹 번호" variant='outlined' sx={{ width: "20rem" }} />
                 </div>
                 <div className={sysStyles.text_field}>
                     <div className={sysStyles.text}>{"코드 그룹 이름"}</div>
-                    <TextField id='codeName' value={rowData.codeGrpName} disabled label="코드 그룹 이름" variant='outlined' sx={{ width: "20rem" }} />
+                    <TextField size='small' id='codeName' value={rowData.codeGrpName} disabled label="코드 그룹 이름" variant='outlined' sx={{ width: "20rem" }} />
                 </div>
                 <div className={sysStyles.text_field}>
                     <div className={sysStyles.text}>{"코드"}</div>
-                    <TextField id='code' value={code} onChange={(e) => setCode(e.target.value)} label="코드" variant='outlined' sx={{ width: "20rem" }} />
+                    <TextField size='small' id='code' value={code} onChange={(e) => setCode(e.target.value)} label="코드" variant='outlined' sx={{ width: "20rem" }} />
                 </div>
                 <div className={sysStyles.text_field}>
                     <div className={sysStyles.text}>{"코드 명"}</div>
-                    <TextField id='codeName' value={codeName} onChange={(e) => setCodeName(e.target.value)} label="코드 명" variant='outlined' sx={{ width: "20rem" }} />
+                    <TextField size='small' id='codeName' value={codeName} onChange={(e) => setCodeName(e.target.value)} label="코드 명" variant='outlined' sx={{ width: "20rem" }} />
                 </div>
                 <div className={sysStyles.text_field}>
                     <div className={sysStyles.text}>{"속성1"}</div>
-                    <TextField id='attr1' value={attr1} onChange={(e) => setAttr1(e.target.value)} label="속성1" variant='outlined' sx={{ width: "20rem" }} />
+                    <TextField size='small' id='attr1' value={attr1} onChange={(e) => setAttr1(e.target.value)} label="속성1" variant='outlined' sx={{ width: "20rem" }} />
                 </div>
                 <div className={sysStyles.text_field}>
                     <div className={sysStyles.text}>{"속성2"}</div>
-                    <TextField id='attr2' value={attr2} onChange={(e) => setAttr2(e.target.value)} label="속성2" variant='outlined' sx={{ width: "20rem" }} />
+                    <TextField size='small' id='attr2' value={attr2} onChange={(e) => setAttr2(e.target.value)} label="속성2" variant='outlined' sx={{ width: "20rem" }} />
                 </div>
                 <div className={sysStyles.text_field}>
                     <div className={sysStyles.text}>{"노트"}</div>
-                    <TextField id='note' value={note} onChange={(e) => setNote(e.target.value)} label="노트" variant='outlined' sx={{ width: "20rem" }} />
+                    <TextField size='small' id='note' value={note} onChange={(e) => setNote(e.target.value)} label="노트" variant='outlined' sx={{ width: "20rem" }} />
                 </div>
             </div>
+            <div style={{display:"flex", justifyContent:"center", alignContent:"center"}}>
             <button className={modalStyles.select_button} onClick={handleSelect}>수정</button>
+            </div>
         </Modal>
     )
 }
@@ -1283,12 +1384,11 @@ export function FmAddModal({ isModalOpen, handleOk, handleCancel, rowData }) {
     };
 
     const [value1, setValue] = useState([]);
-    console.log(value1);
     return (
         <Modal
             open={isModalOpen}
             onCancel={handleCancel}
-            width={680}
+            width={600}
             footer={null}             //Ant Design의 기본 footer 제거(Cancel, OK 버튼)
         >
             <div className={modalStyles.title}>설비 지정</div>
@@ -1317,13 +1417,11 @@ export function FmAddModal({ isModalOpen, handleOk, handleCancel, rowData }) {
                     <Table data={value1} onRowClick={handleSulbiClick} />
                     <div className={sysStyles.text_field}>
                         <div className={sysStyles.text} style={{marginTop:"3rem", marginLeft:"5rem", fontWeight:"bold"}}>{"설비 명"}</div>
-                        <TextField id='equipName' label="설비 명" value={equipName} onChange={(e) => setEquipName(e.target.value)} variant='outlined' sx={{ width: "30rem", margin:"0 auto", display:"flex", justifyContent:"center", alignContent:"center" }} />
+                        <TextField size="small" id='equipName' label="설비 명" value={equipName} onChange={(e) => setEquipName(e.target.value)} variant='outlined' sx={{ width: "25rem", margin:"0 auto", display:"flex", justifyContent:"center", alignContent:"center" }} />
                     </div>
                 </>
                 }
             </div>
-
-
             <button className={modalStyles.select_button} onClick={handleSelect}>등록</button>
         </Modal>
     )
@@ -1396,28 +1494,28 @@ export function UmAddModal({ isModalOpen, handleOk, handleCancel }) {
         <Modal
             open={isModalOpen}
             onCancel={handleCancel}
-            width={680}
+            width={400}
             footer={null}             //Ant Design의 기본 footer 제거(Cancel, OK 버튼)
         >
             <div className={modalStyles.title}>사용자 등록</div>
             <div className={sysStyles.card_box}>
                 <div className={sysStyles.text_field}>
-                    <div className={sysStyles.text} style={{marginTop:"2rem"}}>{"이름"}</div>
-                    <TextField id='userName' label="이름" value={userName} onChange={(e) => setUserName(e.target.value)} variant='outlined' sx={{ width: "20rem" }} />
+                    <div className={sysStyles.text} style={{marginTop:"0.5rem"}}>{"이름"}</div>
+                    <TextField id='userName' size="small" label="이름" value={userName} onChange={(e) => setUserName(e.target.value)} borderRadious="4px" variant='outlined' sx={{ width: "20rem" }} />
                 </div>
                 <div className={sysStyles.text_field} style={{ width:"20rem" }}>
                     <div className={sysStyles.text}>
                         {"로그인 ID"}
                     </div>
-                    <TextField id='loginId' label="로그인 ID" value={loginId} onChange={(e) => setLoginId(e.target.value)} variant='outlined' sx={{ width: "20rem" }} />
+                    <TextField id='loginId' size="small" label="로그인 ID" value={loginId} onChange={(e) => setLoginId(e.target.value)} variant='outlined' sx={{ width: "20rem" }} />
                 </div>
                 <div className={sysStyles.text_field}>
                     <div className={sysStyles.text}>{"비밀번호"}</div>
-                    <TextField id='userName' label="비밀번호" value={password} onChange={(e) => setPassword(e.target.value)} variant='outlined' sx={{ width: "20rem" }} />
+                    <TextField id='userName' size="small" label="비밀번호" value={password} onChange={(e) => setPassword(e.target.value)} variant='outlined' sx={{ width: "20rem" }} />
                 </div>
                 <div className={sysStyles.text_field}>
                     <div className={sysStyles.text}>{"부서 명"}</div>
-                    <Select value={selectedDept} onChange={(value) => setSelectedDept(value)} style={{width:"20rem", height:"3.5rem", fontSize:"4rem"}}>
+                    <Select value={selectedDept} onChange={(value) => setSelectedDept(value)} style={{width:"20rem", height:"2.5rem",fontSize:"4rem"}}>
                     {dept.map(option => (
                         <Select.Option key={option.value} value={option.value}>
                             {option.label}
@@ -1427,7 +1525,7 @@ export function UmAddModal({ isModalOpen, handleOk, handleCancel }) {
                 </div>
                 <div className={sysStyles.text_field}>
                     <div className={sysStyles.text}>{"권한"}</div>
-                    <Select value={selectedRole} onChange={(value) => setSelectedRole(value)} style={{width:"20rem", height:"3.5rem", fontSize:"4rem"}}>
+                    <Select value={selectedRole} onChange={(value) => setSelectedRole(value)} style={{width:"20rem", height:"2.5rem", fontSize:"4rem"}}>
                     {access.map(option => (
                         <Select.Option key={option.value} value={option.value}>
                             {option.label}
@@ -1436,7 +1534,9 @@ export function UmAddModal({ isModalOpen, handleOk, handleCancel }) {
                     </Select>
                 </div>
             </div>
-            <button className={modalStyles.select_button} onClick={handleInsert}>등록</button>
+            <div style={{display:"flex", justifyContent:"center", alignContent:"center"}}>
+                <button style={{width:"20rem"}} className={modalStyles.select_button} onClick={handleInsert}>등록</button>
+            </div>
         </Modal>
     )
 }
@@ -1484,6 +1584,8 @@ export function MmAddModal({ isModalOpen, handleOk, handleCancel, rowData }) {
     
     const [upperDir, setUpperDir] = useState([]);
     const [selectedUpperDir, setSelectedUpperDir] = useState('');
+    const [orderMenuList, setOrderMenuList] = useState([]);
+    const [selectedOrderMenu, setSelectedOrderMenu] = useState([]);
 
     useEffect(() => {
         const fetchUpperDir = async () => {
@@ -1497,24 +1599,37 @@ export function MmAddModal({ isModalOpen, handleOk, handleCancel, rowData }) {
 
         fetchUpperDir();
     },[])
+
+    useEffect(() => {
+        if (selectedUpperDir){
+            (async () => {
+                const {data} = await axiosInstance.get(`/sys/menu/menu-order?id=${selectedUpperDir}&isInsert=true`)
+                setOrderMenuList(data);
+            })();
+        }
+        else {
+            setOrderMenuList([]);
+        }
+    })
+
     return (
         <Modal
             open={isModalOpen}
             onCancel={handleCancel}
-            width={680}
+            width={400}
             footer={null}             //Ant Design의 기본 footer 제거(Cancel, OK 버튼)
         >
             <div className={modalStyles.title}>메뉴 등록</div>
             <div className={sysStyles.card_box}>
-                <div className={sysStyles.text_field} style={{ marginTop: "2rem" }}>
+                <div className={sysStyles.text_field} style={{ marginTop: "0.5rem" }}>
                     <div className={sysStyles.text}>
                         {"메뉴 이름"}
                     </div>
-                    <TextField id='menuName' value={menuName} onChange={(e) => setMenuName(e.target.value)} label="메뉴 이름" variant='outlined' sx={{ width: "20rem" }} />
+                    <TextField size='small' id='menuName' value={menuName} onChange={(e) => setMenuName(e.target.value)} label="메뉴 이름" variant='outlined' sx={{ width: "20rem" }} />
                 </div>
                 <div className={sysStyles.text_field}>
                     <div className={sysStyles.text}>{"상위 폴더"}</div>
-                    <Select value={selectedUpperDir} onChange={(e) => {setSelectedUpperDir(e); console.log(e);}} style={{width:"20rem", height:"3.5rem", fontSize:"4rem"}}>
+                    <Select value={selectedUpperDir} onChange={(e) => {setSelectedUpperDir(e)}} style={{width:"20rem", height:"2.5rem", fontSize:"4rem"}}>
                     {upperDir.map(option => (
                         <Select.Option key={option.id} value={option.id}>
                             {option.name}
@@ -1524,15 +1639,21 @@ export function MmAddModal({ isModalOpen, handleOk, handleCancel, rowData }) {
                 </div>
                 <div className={sysStyles.text_field}>
                     <div className={sysStyles.text}>{"Url 주소"}</div>
-                    <TextField id='address' value={url} onChange={(e) => setUrl(e.target.value)} label="Url 주소" variant='outlined' sx={{ width: "20rem" }} />
+                    <TextField size='small' id='address' value={url} onChange={(e) => setUrl(e.target.value)} label="Url 주소" variant='outlined' sx={{ width: "20rem" }} />
                 </div>
                 <div className={sysStyles.text_field}>
                     <div className={sysStyles.text}>{"메뉴 순서"}</div>
-                    <TextField id='menuOrder' value={orderMenu} onChange={(e) => setOrderMenu(e.target.value)} label="메뉴 순서" variant='outlined' sx={{ width: "20rem" }} />
+                    <Select placeholder={"메뉴 순서"} value={orderMenu} onChange={(value) => setOrderMenu(value)} style={{width:"20rem", height:"2.5rem", fontSize:"4rem"}}>
+                    {orderMenuList.map(option => (
+                        <Select.Option key={option} value={option}>
+                            {option}
+                        </Select.Option>
+                    ))}
+                    </Select>
                 </div>
                 <div className={sysStyles.text_field}>
                     <div className={sysStyles.text}>{"접근 권한"}</div>
-                    <Select placeholder={"접근 권한"} value={selectedRole} onChange={(value) => setSelectedRole(value)} style={{width:"20rem", height:"3.5rem", fontSize:"4rem"}}>
+                    <Select placeholder={"접근 권한"} value={selectedRole} onChange={(value) => setSelectedRole(value)} style={{width:"20rem", height:"2.5rem", fontSize:"4rem"}}>
                     {access.map(option => (
                         <Select.Option key={option.value} value={option.value}>
                             {option.label}
@@ -1541,7 +1662,9 @@ export function MmAddModal({ isModalOpen, handleOk, handleCancel, rowData }) {
                     </Select>
                 </div>
             </div>
-            <button className={modalStyles.select_button} onClick={handleSelect}>등록</button>
+            <div style={{display:"flex", justifyContent:"center", alignContent:"center"}}>
+            <button style={{width:"20rem"}} className={modalStyles.select_button} onClick={handleSelect}>등록</button>
+            </div>
         </Modal>
     )
 }

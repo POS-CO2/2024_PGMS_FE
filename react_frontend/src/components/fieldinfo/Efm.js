@@ -68,17 +68,17 @@ export default function Efm() {
             </div>
             <SearchForms onFormSubmit={handleFormSubmit} formFields={formField_efm}/>
             <div className={sysStyles.main_grid} >
-                <Card className={sysStyles.card_box} sx={{width:"50%", height:"fit-content", borderRadius:"15px"}}>
-                    <div className={sysStyles.mid_title}>
+                <Card className={sysStyles.card_box} sx={{width:"50%", height:"75vh", borderRadius:"15px"}}>
+                    {/* <div className={sysStyles.mid_title}>
                         {"활동자료"}
-                    </div>
-                    <TableCustom title="" data={efm} onRowClick={handleRowClick}/>
+                    </div> */}
+                    <TableCustom title="활동자료" data={efm} onRowClick={handleRowClick}/>
                 </Card>
                 {showSearchResult ? (
                     <>
                         
                         
-                        <Card className={sysStyles.card_box} sx={{width:"50%", height:"fit-content", borderRadius:"15px"}}>
+                        <Card className={sysStyles.card_box} sx={{width:"50%", height:"75vh", borderRadius:"15px"}}>
                             <div className={sysStyles.mid_title}>
                                 {"배출계수목록"}
                             </div>
