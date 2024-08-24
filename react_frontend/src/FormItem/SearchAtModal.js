@@ -67,9 +67,8 @@ export default function SearchAtModal({ name, label, required = false, modalType
                 <Button className={formItemStyles.modal_button} type="primary" onClick={showModal}>
                     {modalType}
                 </Button>
+                {renderModal()}
             </div>
-
-            {renderModal()}
-        </Form.Item >
+        </Form.Item>
     )
 }

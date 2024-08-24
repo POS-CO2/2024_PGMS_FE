@@ -7,7 +7,7 @@ import axiosInstance from '../utils/AxiosInstance.js';
 export default function ModalComponent({ isModalOpen, handleOk, handleCancel }) {
   const [searchedEqLibs, setSearchedEqLibs] = useState([]);         // 검색 결과
   const [selectedEqLib, setSelectedEqLib] = useState({});           // 선택된 프로젝트
-  const [inputValue, setInputValue] = useState('');               // 입력한 설비라이브러리명
+  const [inputValue, setInputValue] = useState('');                 // 입력한 설비라이브러리명
 
   useEffect(() => {
     const fetchEqLib = async () => {
