@@ -199,7 +199,6 @@ export default function Fam() {
                 const response = await axiosInstance.delete(`/equip/actv?id=${selectedActv.id}`);
 
                 // 선택된 활동자료를 actves 리스트에서 제거
-                console.log("response", response);
                 setActves(prevActves => prevActves.filter(actv => actv.id !== selectedActv.id));
                 setSelectedActv({});
 
@@ -211,6 +210,48 @@ export default function Fam() {
 
                 swalOptions.title = '실패!',
                 swalOptions.text = '활동자료 삭제에 실패하였습니다.';
+                swalOptions.icon = 'error';
+            }
+        } else if (modalType === 'FamEdit') {
+            try {
+                const requestBody = {
+                    id: selectedActv.id,
+                    actvDataName: data.actvDataName,
+                    actvDataDvs: data.actvDataDvs,
+                    emtnActvType: data.emtnActvType,
+                    calUnitCode: data.calUnitCode,
+                    inputUnitCode: data.inputUnitCode,
+                    unitConvCoef: data.unitConvCoef
+                };
+
+                const response = await axiosInstance.patch("/equip/actv", requestBody);
+
+                const filteredActv = new Actv(
+                    selectedActv.id, 
+                    response.data.actvDataName, 
+                    response.data.actvDataDvs, 
+                    response.data.emtnActvType, 
+                    response.data.calUnitCode, 
+                    response.data.inputUnitCode, 
+                    response.data.unitConvCoef
+                );
+
+                // 서버로부터 받은 수정된 데이터를 사용하여 리스트 업데이트
+                setActves(prevActves => 
+                    prevActves.map(actv => 
+                        actv.id === selectedActv.id ? filteredActv : actv
+                    )
+                );
+                setSelectedActv({});
+
+                swalOptions.title = '성공!',
+                swalOptions.text = '활동자료가 성공적으로 수정되었습니다.';
+                swalOptions.icon = 'success';
+            } catch (error) {
+                console.log(error);
+
+                swalOptions.title = '실패!',
+                swalOptions.text = '활동자료 수정에 실패하였습니다.';
                 swalOptions.icon = 'error';
             }
         } 
