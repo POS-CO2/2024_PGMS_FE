@@ -57,7 +57,7 @@ export default function Tep() {
             <div className={mainStyle.breadcrumb}>
                 {"배출실적 > 실적조회 > 총량실적 조회"}
             </div>
-            <SearchForms onFormSubmit={handleFormSubmit} formFields={formField_tep} /*autoSubmitOnInit={true}*/ />
+            <SearchForms onFormSubmit={handleFormSubmit} formFields={formField_tep} autoSubmitOnInit={true} />
 
             {(!formData || Object.keys(formData).length === 0) ?
                 <></> : (

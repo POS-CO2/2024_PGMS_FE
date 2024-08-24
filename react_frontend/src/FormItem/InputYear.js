@@ -3,7 +3,7 @@ import * as formItemStyles from '../assets/css/formItem.css';
 import { Form, Input } from 'antd';
 import { CloseOutlined } from '@ant-design/icons';
 
-export default function InputYear({ name, label, required = false }) {
+export default function InputYear({ name, label, required=false, defaultSelected=false }) {
 	const currentYear = new Date().getFullYear();
 	const [yearNum, setYearNum] = useState(currentYear);
 
@@ -31,6 +31,7 @@ export default function InputYear({ name, label, required = false }) {
 			name={name}
 			label={label}
 			rules={[{ required: required, message: '${label} 입력은 필수입니다.' }]}
+			initialValue={defaultSelected ? new Date().getFullYear() : undefined}
 		>
 			<Input
 				type='number'
