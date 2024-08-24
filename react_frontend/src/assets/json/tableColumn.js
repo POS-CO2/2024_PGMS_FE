@@ -175,21 +175,21 @@ export const pjtMyColumns = [
 ]
 
 export const perfColumns = [
-    { key: 'emissionId', label: '배출ID', hidden: false },
+    { key: 'emissionId', label: '배출ID', hidden: true },
     { key: 'equipName', label: '설비명', hidden: false },
-    { key: 'emtnActvType', label: '설비활동유형', hidden: false },
-    { key: 'actvDataName', label: '활동자료이름', hidden: false },
-    { key: 'inputUnitCode', label: '입력단위코드', hidden: false },
-    { key: 'quantityList', label: '퀀티티리스트', hidden: false },
+    { key: 'emtnActvType', label: '배출활동유형', hidden: false },
+    { key: 'actvDataName', label: '활동자료명', hidden: false },
+    { key: 'inputUnitCode', label: '단위', hidden: false },
+    { key: 'quantityList', label: '퀀티티리스트', hidden: true },
 ]
-
-export const quantityListColumns = [
-    { key: 'id', label: 'id', hidden: true },
-    { key: 'fee', label: '비용', hidden: false },
-    { key: 'actvQty', label: '활동량', hidden: false },
-    { key: 'actvYear', label: '활동시작년', hidden: false },
-    { key: 'actvMth', label: '활동시작월', hidden: false },
-]
+// 월별 칼럼 추가
+for (let month = 1; month <= 12; month++) {
+    perfColumns.push({
+        key: `month${month}`,
+        label: `${month}월`,
+        hidden: false
+    });
+}
 
 export const perfTotalColumns = [
     { key: 'actvYear', label: '활동시작년', hidden: false },
