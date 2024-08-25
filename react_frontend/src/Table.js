@@ -63,7 +63,8 @@ export default function CustomizedTables({
         handleInputChange = () => { }, 
         handleBlur = () => { },
         editingCell = {},
-        pagination
+        pagination,
+        columns
     }) {
     const [selectedRow, setSelectedRow] = useState({});       // default variant의 선택 상태
     const [selectedRows, setSelectedRows] = useState([]); 
@@ -108,9 +109,19 @@ export default function CustomizedTables({
     }
 
     // `id` 컬럼을 제외한 데이터 필터링
+    // const filteredData = data.map(row => {
+    //     const { id, ...rest } = row; // `id` 컬럼 제외
+    //     return rest;
+    // });
+
+    const visibleColumns = columns.filter(col => !col.hidden);
+
     const filteredData = data.map(row => {
-        const { id, ...rest } = row; // `id` 컬럼 제외
-        return rest;
+        let filteredRow = {};
+        visibleColumns.forEach(col => {
+            filteredRow[col.key] = row[col.key];
+        });
+        return filteredRow;
     });
     
     const paginatedData = filteredData.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
@@ -131,8 +142,8 @@ export default function CustomizedTables({
                     <TableHead>
                         <TableRow>
                         {variant === 'checkbox' && <StyledTableCell></StyledTableCell>}
-                        {Object.keys(data[0] || {}).filter(col => col !== 'id').map(col => (
-                            <StyledTableCell key={col}>{col}</StyledTableCell>
+                        {visibleColumns.map(col => (
+                            <StyledTableCell key={col.key}>{col.label}</StyledTableCell>
                         ))}
                         </TableRow>
                     </TableHead>
@@ -160,7 +171,7 @@ export default function CustomizedTables({
                                         }
 
                                         {   // 데이터 값 채우기
-                                            Object.values(row).map((value, colIndex) => (
+                                            visibleColumns.map((col, colIndex) => (
                                                 <StyledTableCell 
                                                     key={colIndex} 
                                                     align="left"
@@ -168,14 +179,14 @@ export default function CustomizedTables({
                                                 >
                                                     {editingCell.row === rowIndex && editingCell.col === colIndex ? (
                                                     <TextField
-                                                        value={value}
+                                                        value={row[col.key]}
                                                         onChange={(e) => handleInputChange(e, rowIndex, colIndex)}
                                                         onBlur={handleBlur}
                                                         autoFocus
                                                         size="small"
                                                     />
                                                 ) : (
-                                                    value
+                                                    row[col.key]
                                                 )}
                                                 </StyledTableCell>
                                             ))

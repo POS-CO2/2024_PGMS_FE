@@ -19,6 +19,7 @@ import { Sledding } from '@mui/icons-material';
 import axiosInstance from '../utils/AxiosInstance.js';
 import { Center } from '@react-three/drei';
 import Swal from 'sweetalert2'
+import { equipColumns, equipLibColumns } from '../assets/json/tableColumn.js';
 
 export function PgAddModal({ isModalOpen, handleOk, handleCancel }) {
     const [formData, setFormData] = useState({});             // 검색 데이터
@@ -1088,6 +1089,7 @@ export function DelModal({ isModalOpen, handleOk, handleCancel, rowData }) { // 
                 maxWidth: '20rem',
                 important: true
             }}
+
             footer={null}
         >
             <div className={delStyle.container}>
@@ -1110,6 +1112,10 @@ export function CmAddModal({ isModalOpen, handleOk, handleCancel }) {
     const [note, setNote] = useState('');
 
     const handleSelect = async() => {
+        let swalOptions = {
+            confirmButtonText: '확인'
+        };
+
         const formData = {
             codeGrpNo,
             codeGrpName,
@@ -1120,10 +1126,18 @@ export function CmAddModal({ isModalOpen, handleOk, handleCancel }) {
             // POST 요청으로 서버에 데이터 전송
             const {data} = await axiosInstance.post('/sys/codegroup', formData);
             // handleOk을 호출하여 모달을 닫고 상위 컴포넌트에 알림
+            swalOptions.title = '성공!',
+            swalOptions.text = `${formData.codeGrpName}가 성공적으로 등록되었습니다.`;
+            swalOptions.icon = 'success';
             handleOk(data);
         } catch (error) {
             console.error('Failed to add user:', error);
+
+            swalOptions.title = '실패!',
+            swalOptions.text = `${formData.codeGrpName} 등록에 실패하였습니다.`;
+            swalOptions.icon = 'error';
         }
+        Swal.fire(swalOptions);
     };
 
     return (
@@ -1174,6 +1188,10 @@ export function CmEditModal({ isModalOpen, handleOk, handleCancel, rowData }) {
     const [note, setNote] = useState(rowData.note);
     // 등록 버튼 클릭 시 호출될 함수
     const handleSelect = async() => {
+
+        let swalOptions = {
+            confirmButtonText: '확인'
+        };
         const formData = {
             id: rowData.id,
             codeGrpNo,
@@ -1186,9 +1204,16 @@ export function CmEditModal({ isModalOpen, handleOk, handleCancel, rowData }) {
             const {data} = await axiosInstance.patch('/sys/codegroup', formData);
             // handleOk을 호출하여 모달을 닫고 상위 컴포넌트에 알림
             handleOk(data);
+            swalOptions.title = '성공!',
+            swalOptions.text = `${formData.codeGrpName}이 성공적으로 수정되었습니다.`;
+            swalOptions.icon = 'success';
         } catch (error) {
             console.error('Failed to add user:', error);
+            swalOptions.title = '실패!',
+            swalOptions.text = `${formData.codeGrpName} 등록에 실패하였습니다.`;
+            swalOptions.icon = 'error';
         }
+        Swal.fire(swalOptions);
     };
 
     return (
@@ -1264,7 +1289,7 @@ export function DeleteModal({ isModalOpen, handleOk, handleCancel, rowData, rowD
             console.error('Failed to delete user:', error);
             swalOptions.title = '실패!',
             swalOptions.text = `${rowName} 삭제에 실패하였습니다.`;
-            swalOptions.icon = 'success';
+            swalOptions.icon = 'error';
         }
         Swal.fire(swalOptions);
     };
@@ -1299,6 +1324,10 @@ export function CmListAddModal({ isModalOpen, handleOk, handleCancel, rowData })
     const [attr2, setAttr2] = useState('');
     const [note, setNote] = useState('');
     const handleSelect = async() => {
+        let swalOptions = {
+            confirmButtonText: '확인'
+        };
+
         const formData = {
             codeGrpNo: rowData.codeGrpNo,
             codeGrpName: rowData.codeGrpName,
@@ -1313,9 +1342,16 @@ export function CmListAddModal({ isModalOpen, handleOk, handleCancel, rowData })
             const {data} = await axiosInstance.post('/sys/code', formData);
             // handleOk을 호출하여 모달을 닫고 상위 컴포넌트에 알림
             handleOk(data);
+            swalOptions.title = '성공!',
+            swalOptions.text = `${formData.codeName}가 성공적으로 등록되었습니다.`;
+            swalOptions.icon = 'success';
         } catch (error) {
             console.error('Failed to add user:', error);
+            swalOptions.title = '실패!',
+            swalOptions.text = `${formData.codeName} 등록에 실패하였습니다.`;
+            swalOptions.icon = 'error';
         }
+        Swal.fire(swalOptions);
     };
 
     return (
@@ -1377,6 +1413,9 @@ export function CmListEditModal({ isModalOpen, handleOk, handleCancel, rowData }
     const [attr2, setAttr2] = useState(rowData.attr2);
     const [note, setNote] = useState(rowData.note);
     const handleSelect = async() => {
+        let swalOptions = {
+            confirmButtonText: '확인'
+        };
         const formData = {
             id: rowData.id,
             codeGrpNo: rowData.codeGrpNo,
@@ -1392,9 +1431,16 @@ export function CmListEditModal({ isModalOpen, handleOk, handleCancel, rowData }
             const {data} = await axiosInstance.patch('/sys/code', formData);
             // handleOk을 호출하여 모달을 닫고 상위 컴포넌트에 알림
             handleOk(data);
+            swalOptions.title = '성공!',
+            swalOptions.text = `${formData.codeName}이 성공적으로 수정되었습니다.`;
+            swalOptions.icon = 'success';
         } catch (error) {
             console.error('Failed to add user:', error);
+            swalOptions.title = '실패!',
+            swalOptions.text = `${formData.codeName} 등록에 실패하였습니다.`;
+            swalOptions.icon = 'error';
         }
+        Swal.fire(swalOptions);
     };
     return (
         <Modal
@@ -1484,6 +1530,10 @@ export function FmAddModal({ isModalOpen, handleOk, handleCancel, rowData }) {
     };
     // 등록 버튼 클릭 시 호출될 함수
     const handleSelect = async () => {
+        let swalOptions = {
+            confirmButtonText: '확인'
+        };
+
         const formData = {
             pjtId: rowData[0].id,
             equipLibId: value1[0].id, // selectedSulbi[0] <- 여러개일땐 
@@ -1492,14 +1542,19 @@ export function FmAddModal({ isModalOpen, handleOk, handleCancel, rowData }) {
 
         try {
             // POST 요청으로 서버에 데이터 전송
-            console.log(formData);
             const {data} = await axiosInstance.post('/equip', formData);
             // handleOk을 호출하여 모달을 닫고 상위 컴포넌트에 알림
-            console.log(data);
             handleOk(data);
+            swalOptions.title = '성공!',
+            swalOptions.text = `${formData.equipName}가 성공적으로 등록되었습니다.`;
+            swalOptions.icon = 'success';
         } catch (error) {
             console.error('Failed to add user:', error);
+            swalOptions.title = '실패!',
+            swalOptions.text = `${formData.equipName} 등록에 실패하였습니다.`;
+            swalOptions.icon = 'error';
         }
+        Swal.fire(swalOptions);
     };
 
 
@@ -1511,7 +1566,6 @@ export function FmAddModal({ isModalOpen, handleOk, handleCancel, rowData }) {
     const flatProps = {
         options: sulbiLib.map((option) => option.label),
     };
-
     const [value1, setValue] = useState([]);
     return (
         <Modal
@@ -1539,11 +1593,10 @@ export function FmAddModal({ isModalOpen, handleOk, handleCancel, rowData }) {
                     <button className={modalStyles.search_button} style={{ marginTop: "1rem" }} onClick={handleSearch}>조회</button>
                 </div>
             </div>
-
             <div className={modalStyles.result_container}>
                 {showResults && 
                 <>
-                    <Table data={value1} onRowClick={handleSulbiClick} />
+                    <Table columns={equipColumns} data={value1} onRowClick={handleSulbiClick} />
                     <div className={sysStyles.text_field}>
                         <div className={sysStyles.text} style={{marginTop:"3rem", marginLeft:"5rem", fontWeight:"bold"}}>{"설비 명"}</div>
                         <TextField size="small" id='equipName' label="설비 명" value={equipName} onChange={(e) => setEquipName(e.target.value)} variant='outlined' sx={{ width: "25rem", margin:"0 auto", display:"flex", justifyContent:"center", alignContent:"center" }} />
@@ -1601,6 +1654,9 @@ export function UmAddModal({ isModalOpen, handleOk, handleCancel }) {
 
     // 등록 버튼 클릭 시 호출될 함수
     const handleInsert = async () => {
+        let swalOptions = {
+            confirmButtonText: '확인'
+        };
         const formData = {
             userName,
             loginId,
@@ -1614,9 +1670,17 @@ export function UmAddModal({ isModalOpen, handleOk, handleCancel }) {
             const {data} = await axiosInstance.post('/sys/user', formData);
             // handleOk을 호출하여 모달을 닫고 상위 컴포넌트에 알림
             handleOk(data);
+            swalOptions.title = '성공!',
+            swalOptions.text = `${formData.userName}가 성공적으로 등록되었습니다.`;
+            swalOptions.icon = 'success';
         } catch (error) {
             console.error('Failed to add user:', error);
+            swalOptions.title = '실패!',
+            swalOptions.text = `${formData.userName} 등록에 실패하였습니다.`;
+            swalOptions.icon = 'error';
+
         }
+        Swal.fire(swalOptions);
     };
 
     return (
@@ -1693,6 +1757,9 @@ export function MmAddModal({ isModalOpen, handleOk, handleCancel, rowData }) {
     
     // 등록 버튼 클릭 시 호출될 함수
     const handleSelect = async () => {
+        let swalOptions = {
+            confirmButtonText: '확인'
+        };
         const formData = {
             menuName,
             rootId: selectedUpperDir,
@@ -1706,9 +1773,16 @@ export function MmAddModal({ isModalOpen, handleOk, handleCancel, rowData }) {
             const {data} = await axiosInstance.post('/sys/menu', formData);
             // handleOk을 호출하여 모달을 닫고 상위 컴포넌트에 알림
             handleOk(data);
+            swalOptions.title = '성공!',
+            swalOptions.text = `${formData.menuName}가 성공적으로 등록되었습니다.`;
+            swalOptions.icon = 'success';
         } catch (error) {
             console.error('Failed to add menu:', error);
+            swalOptions.title = '실패!',
+            swalOptions.text = `${formData.menuName} 등록에 실패하였습니다.`;
+            swalOptions.icon = 'error';
         }
+        Swal.fire(swalOptions);
     };
     
     const [upperDir, setUpperDir] = useState([]);
@@ -1737,7 +1811,7 @@ export function MmAddModal({ isModalOpen, handleOk, handleCancel, rowData }) {
             })();
         }
         else {
-            setOrderMenuList([]);
+            // setOrderMenuList([]);
         }
     })
 

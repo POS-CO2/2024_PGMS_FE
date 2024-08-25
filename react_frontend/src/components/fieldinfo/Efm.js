@@ -8,6 +8,8 @@ import * as sysStyles from '../../assets/css/sysmng.css';
 import * as mainStyle from '../../assets/css/main.css';
 import { Card, FormControl, InputLabel, MenuItem, Select } from '@mui/material';
 import axiosInstance from '../../utils/AxiosInstance';
+import { label } from 'three/webgpu';
+import { actvColumns, coefColumns, efmColumns, equipActvColumns, equipCoefColumns } from '../../assets/json/tableColumn';
 
 
 export default function Efm() {
@@ -53,7 +55,6 @@ export default function Efm() {
         const yearSelectedEfm = selectedEfm.filter((e) => e.applyYear === selectedYear);
         setFilteredEfm(yearSelectedEfm);
     }
-
     useEffect(() => {
         (async () => {
             const {data} = await axiosInstance.get(`/equip/actv`);
@@ -72,7 +73,7 @@ export default function Efm() {
                     {/* <div className={sysStyles.mid_title}>
                         {"활동자료"}
                     </div> */}
-                    <TableCustom title="활동자료" data={efm} onRowClick={handleRowClick}/>
+                    <TableCustom title="활동자료" columns={equipActvColumns} data={efm} onRowClick={handleRowClick}/>
                 </Card>
                 {showSearchResult ? (
                     <>
@@ -98,7 +99,7 @@ export default function Efm() {
                                 <MenuItem value={2021}>2021</MenuItem>
                             </Select>
                             </FormControl>
-                            <TableCustom title="" data={filteredEfm} button="AllButton" />
+                            <TableCustom title="" columns={equipCoefColumns} data={filteredEfm} button="AllButton" />
                         </Card>
                     </>
                 ) : (
