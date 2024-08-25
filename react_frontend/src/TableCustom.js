@@ -141,11 +141,7 @@ export function TableCustomDoubleClickEdit({
                     salesAmt: row['매출액']
                 }));
 
-                console.log("requestBody", requestBody);
-                
                 const response = await axiosInstance.put("/pjt/sales", requestBody);
-
-                console.log("response", response);
 
                 swalOptions.title = '성공!',
                 swalOptions.text = '매출액이 성공적으로 수정되었습니다.';

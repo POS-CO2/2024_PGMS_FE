@@ -540,13 +540,14 @@ export function FlEditModal({ isModalOpen, handleOk, handleCancel, rowData, drop
             const equipTypeOption = getOptions('equipType').find(option => option.label === rowData.설비유형);
             const equipSpecUnitOption = getOptions('equipSpecUnit').find(option => option.label === rowData.설비사양단위);
 
-        setEqLibName(rowData.설비라이브러리명 || '');
-        setSelectedEqDvs(equipDvsOption ? equipDvsOption.value : '');
-        setSelectedEqType(equipTypeOption ? equipTypeOption.value : '');
-        setSelectedEqSpecUnit(equipSpecUnitOption ? equipSpecUnitOption.value : '');
+            setEqLibName(rowData.설비라이브러리명 || '');
+            setSelectedEqDvs(equipDvsOption ? equipDvsOption.value : '');
+            setSelectedEqType(equipTypeOption ? equipTypeOption.value : '');
+            setSelectedEqSpecUnit(equipSpecUnitOption ? equipSpecUnitOption.value : '');
         }
     }, [rowData, isModalOpen]);
 
+    // 수정 버튼 클릭 시 호출될 함수
     const handleSelect = () => {
         const formData = {
             eqLibName,
@@ -626,19 +627,72 @@ export function FlEditModal({ isModalOpen, handleOk, handleCancel, rowData, drop
     )
 }
 
-export function FamAddModal({ isModalOpen, handleOk, handleCancel }) {
-    // 등록 버튼 클릭 시 호출될 함수(등록할 활동자료의 data를 전달)
+export function FamAddModal({ isModalOpen, handleOk, handleCancel, dropDown }) {
+    const [actvName, setActvName] = useState('');
+    const [selectedActvDvs, setSelectedActvDvs] = useState('');
+    const [selectedEmtnActv, setSelectedEmtnActv] = useState('');
+    const [selectedInputUnit, setSelectedInputUnit] = useState('');
+    const [calUnit, setCalUnit] = useState('');
+    const [unitConvCoef, setUnitConvCoef] = useState('');
+    const [actvUnits, setActvUnits] = useState([]);
+
+    useEffect(() => {
+        const fetchActvUnit = async () => {
+            try {
+                const response = await axiosInstance.get(`/sys/actv-unit`);
+                setActvUnits(response.data);
+            } catch (error) {
+                console.log(error);
+            }
+        };
+    
+        fetchActvUnit();
+    }, []);
+
+    //// 모달이 열릴 때 폼 필드 초기화
+    useEffect(() => {
+        if (isModalOpen) {
+            setActvName('');
+            setSelectedActvDvs('');
+            setSelectedEmtnActv('');
+            setSelectedInputUnit('');
+            setCalUnit('');
+            setUnitConvCoef('');
+        }
+    }, [isModalOpen]);
+
+    // 옵션을 가져오는 함수
+    const getOptions = (fieldName) => {
+        const field = dropDown.find(field => field.name === fieldName);
+        return field ? field.options : [];
+    };
+
+    // 입력단위 선택 시 대응하는 산정단위와 단위환산계수 업데이트
+    const handleInputUnitChange = (value) => {
+        setSelectedInputUnit(value);
+
+        const matchedUnit = actvUnits.find(unit => unit.inputUnitCode === value);
+        if (matchedUnit) {
+            setCalUnit(matchedUnit.calUnitCode);
+            setUnitConvCoef(matchedUnit.unitConvCoef);
+        } else {
+            setCalUnit('');
+            setUnitConvCoef('');
+        }
+    };
+
+    // 등록 버튼 클릭 시 호출될 함수
     const handleSelect = () => {
         const formData = {
-            actvName: document.getElementById('actvName').value,
-            actvDvs: document.getElementById('actvDvs').value,
-            emtnActvType: document.getElementById('emtnActvType').value,
-            calUnit: document.getElementById('calUnit').value,
-            inputUnit: document.getElementById('inputUnit').value,
-            unitConvCoef: document.getElementById('unitConvCoef').value,
+            actvDataName: actvName,
+            actvDataDvs: selectedActvDvs,
+            emtnActvType: selectedEmtnActv,
+            inputUnit: selectedInputUnit,
+            calUnit: calUnit,
+            unitConvCoef: unitConvCoef
         };
 
-        handleOk(formData);  // 입력된 데이터를 handleOk 함수로 전달
+        handleOk(formData);
     };
 
     return (
@@ -650,46 +704,77 @@ export function FamAddModal({ isModalOpen, handleOk, handleCancel }) {
         >
             <div className={rmStyles.title}>활동자료 등록</div>
 
-            <div className={rmStyles.search_container}>
+            <div className={rmStyles.submit_container}>
                 <div className={rmStyles.search_item}>
                     <div className={rmStyles.search_title}>활동자료명</div>
-                    <input className={rmStyles.search} id="actvName" />
+                    <TextField
+                        id='actvName'
+                        variant='outlined'
+                        size='small'
+                        fullWidth
+                        value={actvName}
+                        onChange={(e) => setActvName(e.target.value)}
+                        sx={{width: '22rem'}}
+                    />
                 </div>
                 <div className={rmStyles.search_item}>
                     <div className={rmStyles.search_title}>활동자료구분</div>
-                    <Select id="actvDvs">
-                        <Select.Option key={"구분1"} value={"구분1"}>{"구분1"}</Select.Option>
-                        <Select.Option key={"구분2"} value={"구분2"}>{"구분2"}</Select.Option>
-                        <Select.Option key={"구분3"} value={"구분3"}>{"구분3"}</Select.Option>
+                    <Select
+                        value={selectedActvDvs}
+                        onChange={(value) => setSelectedActvDvs(value)}
+                    >
+                        {getOptions('actvDataDvs').map(option => (
+                            <Select.Option key={option.value} value={option.value}>
+                                {option.label}
+                            </Select.Option>
+                        ))}
                     </Select>
                 </div>
                 <div className={rmStyles.search_item}>
                     <div className={rmStyles.search_title}>배출활동유형</div>
-                    <Select id="emtnActvType">
-                        <Select.Option key={"유형1"} value={"유형1"}>{"유형1"}</Select.Option>
-                        <Select.Option key={"유형2"} value={"유형2"}>{"유형2"}</Select.Option>
-                        <Select.Option key={"유형3"} value={"유형3"}>{"유형3"}</Select.Option>
-                    </Select>
-                </div>
-                <div className={rmStyles.search_item}>
-                    <div className={rmStyles.search_title}>산정단위</div>
-                    <Select id="calUnit">
-                        <Select.Option key={"단위1"} value={"단위1"}>{"단위1"}</Select.Option>
-                        <Select.Option key={"단위2"} value={"단위2"}>{"단위2"}</Select.Option>
-                        <Select.Option key={"단위3"} value={"단위3"}>{"단위3"}</Select.Option>
+                    <Select
+                        value={selectedEmtnActv}
+                        onChange={(value) => setSelectedEmtnActv(value)}
+                    >
+                        {getOptions('emtnActvType').map(option => (
+                            <Select.Option key={option.value} value={option.value}>
+                                {option.label}
+                            </Select.Option>
+                        ))}
                     </Select>
                 </div>
                 <div className={rmStyles.search_item}>
                     <div className={rmStyles.search_title}>입력단위</div>
-                    <Select id="inputUnit">
-                        <Select.Option key={"단위1"} value={"단위1"}>{"단위1"}</Select.Option>
-                        <Select.Option key={"단위2"} value={"단위2"}>{"단위2"}</Select.Option>
-                        <Select.Option key={"단위3"} value={"단위3"}>{"단위3"}</Select.Option>
+                    <Select
+                        value={selectedInputUnit}
+                        onChange={(value) => handleInputUnitChange(value)}
+                    >
+                        {actvUnits.map(unit => (
+                            <Select.Option key={unit.inputUnitCode} value={unit.inputUnitCode}>
+                                {unit.inputUnitCode}
+                            </Select.Option>
+                        ))}
                     </Select>
                 </div>
                 <div className={rmStyles.search_item}>
+                    <div className={rmStyles.search_title}>산정단위</div>
+                    <input 
+                        className={rmStyles.search} 
+                        id="calUnit" 
+                        value={calUnit} 
+                        readOnly 
+                        style={{ width: '22rem' }}
+                    />
+                </div>
+                <div className={rmStyles.search_item}>
                     <div className={rmStyles.search_title}>단위환산계수</div>
-                    <input className={rmStyles.search} id="unitConvCoef" />
+                    <input 
+                        className={rmStyles.search} 
+                        id="unitConvCoef" 
+                        value={unitConvCoef} 
+                        readOnly 
+                        style={{ width: '22rem' }}
+                    />
                 </div>
             </div>
 
@@ -698,40 +783,74 @@ export function FamAddModal({ isModalOpen, handleOk, handleCancel }) {
     )
 }
 
-export function FamEditModal({ isModalOpen, handleOk, handleCancel, rowData }) {
-    const [formValues, setFormValues] = useState({
-        actvName: '',
-        actvDvs: '',
-        emtnActvType: '',
-        calUnit: '',
-        inputUnit: '',
-        unitConvCoef: ''
-    });
+export function FamEditModal({ isModalOpen, handleOk, handleCancel, rowData, dropDown }) {
+    const [actvName, setActvName] = useState('');
+    const [selectedActvDvs, setSelectedActvDvs] = useState('');
+    const [selectedEmtnActv, setSelectedEmtnActv] = useState('');
+    const [selectedInputUnit, setSelectedInputUnit] = useState('');
+    const [calUnit, setCalUnit] = useState('');
+    const [unitConvCoef, setUnitConvCoef] = useState('');
+    const [actvUnits, setActvUnits] = useState([]);
+
+    useEffect(() => {
+        const fetchActvUnit = async () => {
+            try {
+                const response = await axiosInstance.get(`/sys/actv-unit`);
+                setActvUnits(response.data);
+            } catch (error) {
+                console.log(error);
+            }
+        };
+        fetchActvUnit();
+    }, []);
 
     // 모달이 열릴 때 rowData로부터 폼 필드 값을 설정
     useEffect(() => {
         if (isModalOpen && rowData) {
-            setFormValues({
-                actvName: rowData.actvDataName || '',
-                actvDvs: rowData.actvDataDvs || '',
-                emtnActvType: rowData.emtnActvType || '',
-                calUnit: rowData.calUnit || '',
-                inputUnit: rowData.inputUnit || '',
-                unitConvCoef: rowData.unitConvCoef || ''
-            });
+            const actvDvsOption = getOptions('actvDataDvs').find(option => option.label === rowData.활동자료구분);
+            const actvTypeOption = getOptions('emtnActvType').find(option => option.label === rowData.배출활동유형);
+            const inputUnitOption = getOptions('inputUnit').find(option => option.label === rowData.입력단위);
+
+            setActvName(rowData.활동자료명 || '');
+            setSelectedActvDvs(actvDvsOption ? actvDvsOption.value : '');
+            setSelectedEmtnActv(actvTypeOption ? actvTypeOption.value : '');
+            handleInputUnitChange(inputUnitOption.value);
         }
     }, [rowData, isModalOpen]);
 
-    const handleChange = (e) => {
-        const { id, value } = e.target;
-        setFormValues(prevValues => ({
-            ...prevValues,
-            [id]: value
-        }));
+    // 옵션을 가져오는 함수
+    const getOptions = (fieldName) => {
+        const field = dropDown.find(field => field.name === fieldName);
+        return field ? field.options : [];
     };
 
+    // 입력단위 선택 시 대응하는 산정단위와 단위환산계수 업데이트
+    const handleInputUnitChange = (value) => {
+        setSelectedInputUnit(value);
+
+        const matchedUnit = actvUnits.find(unit => unit.inputUnitCode === value);
+        
+        if (matchedUnit) {
+            setCalUnit(matchedUnit.calUnitCode);
+            setUnitConvCoef(matchedUnit.unitConvCoef);
+        } else {
+            setCalUnit('');
+            setUnitConvCoef('');
+        }
+    };
+
+    // 수정 버튼 클릭 시 호출될 함수
     const handleSelect = () => {
-        handleOk(formValues);
+        const formData = {
+            actvDataName: actvName,
+            actvDataDvs: selectedActvDvs,
+            emtnActvType: selectedEmtnActv,
+            inputUnitCode: selectedInputUnit,
+            calUnitCode: calUnit,
+            unitConvCoef: unitConvCoef
+        };
+
+        handleOk(formData);
     };
 
     return (
@@ -743,65 +862,75 @@ export function FamEditModal({ isModalOpen, handleOk, handleCancel, rowData }) {
         >
             <div className={rmStyles.title}>활동자료 수정</div>
 
-            <div className={rmStyles.search_container}>
+            <div className={rmStyles.submit_container}>
                 <div className={rmStyles.search_item}>
                     <div className={rmStyles.search_title}>활동자료명</div>
-                    <input
-                        className={rmStyles.search}
-                        value={formValues.actvName}
-                        onChange={handleChange}
+                    <TextField
+                        variant='outlined'
+                        size='small'
+                        fullWidth
+                        value={actvName}
+                        onChange={(e) => setActvName(e.target.value)}
+                        sx={{width: '22rem'}}
                     />
                 </div>
                 <div className={rmStyles.search_item}>
                     <div className={rmStyles.search_title}>활동자료구분</div>
                     <Select
-                        value={formValues.actvDvs}
-                        onChange={(value) => setFormValues(prevValues => ({ ...prevValues, actvDvs: value }))}
+                        value={selectedActvDvs}
+                        onChange={(value) => setSelectedActvDvs(value)}
                     >
-                        <Select.Option key={"구분1"} value={"구분1"}>{"구분1"}</Select.Option>
-                        <Select.Option key={"구분2"} value={"구분2"}>{"구분2"}</Select.Option>
-                        <Select.Option key={"구분3"} value={"구분3"}>{"구분3"}</Select.Option>
+                        {getOptions('actvDataDvs').map(option => (
+                            <Select.Option key={option.value} value={option.value}>
+                                {option.label}
+                            </Select.Option>
+                        ))}
                     </Select>
                 </div>
                 <div className={rmStyles.search_item}>
                     <div className={rmStyles.search_title}>배출활동유형</div>
                     <Select
-                        value={formValues.emtnActvType}
-                        onChange={(value) => setFormValues(prevValues => ({ ...prevValues, emtnActvType: value }))}
+                        value={selectedEmtnActv}
+                        onChange={(value) => setSelectedEmtnActv(value)}
                     >
-                        <Select.Option key={"유형1"} value={"유형1"}>{"유형1"}</Select.Option>
-                        <Select.Option key={"유형2"} value={"유형2"}>{"유형2"}</Select.Option>
-                        <Select.Option key={"유형3"} value={"유형3"}>{"유형3"}</Select.Option>
-                    </Select>
-                </div>
-                <div className={rmStyles.search_item}>
-                    <div className={rmStyles.search_title}>산정단위</div>
-                    <Select
-                        value={formValues.calUnit}
-                        onChange={(value) => setFormValues(prevValues => ({ ...prevValues, calUnit: value }))}
-                    >
-                        <Select.Option key={"단위1"} value={"단위1"}>{"단위1"}</Select.Option>
-                        <Select.Option key={"단위2"} value={"단위2"}>{"단위2"}</Select.Option>
-                        <Select.Option key={"단위3"} value={"단위3"}>{"단위3"}</Select.Option>
+                        {getOptions('emtnActvType').map(option => (
+                            <Select.Option key={option.value} value={option.value}>
+                                {option.label}
+                            </Select.Option>
+                        ))}
                     </Select>
                 </div>
                 <div className={rmStyles.search_item}>
                     <div className={rmStyles.search_title}>입력단위</div>
                     <Select
-                        value={formValues.inputUnit}
-                        onChange={(value) => setFormValues(prevValues => ({ ...prevValues, inputUnit: value }))}
+                        value={selectedInputUnit}
+                        onChange={(value) => handleInputUnitChange(value)}
                     >
-                        <Select.Option key={"단위1"} value={"단위1"}>{"단위1"}</Select.Option>
-                        <Select.Option key={"단위2"} value={"단위2"}>{"단위2"}</Select.Option>
-                        <Select.Option key={"단위3"} value={"단위3"}>{"단위3"}</Select.Option>
+                        {actvUnits.map(unit => (
+                            <Select.Option key={unit.inputUnitCode} value={unit.inputUnitCode}>
+                                {unit.inputUnitCode}
+                            </Select.Option>
+                        ))}
                     </Select>
                 </div>
                 <div className={rmStyles.search_item}>
+                    <div className={rmStyles.search_title}>산정단위</div>
+                    <input 
+                        className={rmStyles.search} 
+                        id="calUnit" 
+                        value={calUnit} 
+                        readOnly 
+                        style={{ width: '22rem' }}
+                    />
+                </div>
+                <div className={rmStyles.search_item}>
                     <div className={rmStyles.search_title}>단위환산계수</div>
-                    <input
-                        className={rmStyles.search}
-                        value={formValues.unitConvCoef}
-                        onChange={handleChange}
+                    <input 
+                        className={rmStyles.search} 
+                        id="unitConvCoef" 
+                        value={unitConvCoef} 
+                        readOnly 
+                        style={{ width: '22rem' }}
                     />
                 </div>
             </div>
