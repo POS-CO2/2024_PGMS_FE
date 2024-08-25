@@ -208,9 +208,9 @@ export const perfPjtColumns = [
 ]
 
 export const equipEmissionColumns = [
-    { key: 'id', label: 'id', hidden: false },
-    { key: 'equipId', label: '설비ID', hidden: false },
-    { key: 'actvDataId', label: '활동자료ID', hidden: false },
+    { key: 'id', label: 'id', hidden: true },
+    { key: 'equipId', label: '설비ID', hidden: true },
+    { key: 'actvDataId', label: '활동자료ID', hidden: true },
     { key: 'equipName', label: '설비명', hidden: false },
     { key: 'equipLibName', label: '설비LIB명', hidden: false },
     { key: 'equipDvs', label: '설비구분', hidden: false },
@@ -220,7 +220,7 @@ export const equipEmissionColumns = [
     { key: 'actvDataDvs', label: '활동자료구분', hidden: false },
     { key: 'actvDataName', label: '활동자료이름', hidden: false },
     { key: 'inputUnitCode', label: '입력단위코드', hidden: false },
-    { key: 'calUnitCode', label: 'cal단위코드', hidden: false },
+    { key: 'calUnitCode', label: '산정단위코드', hidden: false },
     { key: 'unitConvCoef', label: '유닛콘브코에프', hidden: false },
 ]
 

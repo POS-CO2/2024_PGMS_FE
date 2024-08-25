@@ -13,7 +13,9 @@ import emsData from "../../../assets/json/ems";
 import sdData from "../../../assets/json/sd";
 import SearchForms from "../../../SearchForms";
 import { formField_esm } from "../../../assets/json/searchFormData.js";
-import { SdAddModal, DelModal, SdShowDetailsModal } from "../../../modals/PdModal";
+import { SdAddModal, DeleteModal, SdShowDetailsModal } from "../../../modals/PdModal";
+import axiosInstance from '../../../utils/AxiosInstance';
+import { pjtColumns, equipEmissionColumns } from '../../../assets/json/tableColumn';
 
 const selectOptions = [
     { value: '2024', label: '2024' },
@@ -26,11 +28,13 @@ const selectOptions = [
 export default function Esm() {
     const [formData, setFormData] = useState({});
 
-    const [showResults, setShowResults] = useState(false);            // 조회결과와 담당자목록을 표시할지 여부
-    const [selectedPjt, setSelectedPjt] = useState(null);             // 선택된 프로젝트 코드
+    const [showResults, setShowResults] = useState(false);            // 조회결과를 표시할지 여부
+    const [selectedPjt, setSelectedPjt] = useState(null);             // 선택된 프로젝트
+    const [emtns, setEmtns] = useState([]);                           // 배출원 목록
     const [selectedEmtn, setSelectedEmtn] = useState(null);           // 선택된 배출원
+    const [showSds, setShowSds] = useState(false);                    // 증빙자료 목록을 표시할지 여부
+    const [sds, setSds] = useState([]);                               // 증빙자료 목록
     const [selectedSd, setSelectedSd] = useState(null);               // 선택된 증빙자료
-    const [showSds, setShowSds] = useState(false);
 
     const [buttonStatus, setButtonStatus] = useState([false, false, false]);
     useEffect(() => {
@@ -46,26 +50,37 @@ export default function Esm() {
         EsmAdd: false, // 배출원 등록
         SdAdd: false, // 증빙자료 등록
         SdShowDetails: false, // 증빙자료 상세보기
-        Del: false
+        Delete: false
     });
 
-    const handleFormSubmit = (data) => {
-        setFormData(data);
+    const handleFormSubmit = async (param) => {
+        setSelectedPjt([param.searchProject]);
 
-        if (data && Object.keys(data).length !== 0) {
+        //let url = `/equip/emission?projectId=${param.searchProject.id}`;
+        let url = `/equip/emission?projectId=2`;
+        const emtnData = await axiosInstance.get(url);
+        setEmtns(emtnData.data);
+
+        if (param && Object.keys(param).length !== 0) {
             setShowResults(true);
         }
     };
 
-    // 프로젝트 row 클릭 시 호출될 함수
-    const handlePjtClick = (row) => {
-        setSelectedPjt(row.PjtCode);   // 클릭된 프로젝트의 코드로 상태를 설정
-    };
     // 배출원 row 클릭 시 호출될 함수
-    const handleEmtnClick = (row) => {
-        setSelectedEmtn(row.equipName);
-        setShowSds(true);
+    const handleEmtnClick = async (row) => {
+        setSelectedEmtn(row);
+        
+        if (row) {
+            const currentYear = new Date().getFullYear();
+            const { sdData } = await axiosInstance.get(`/equip/document?actvYear=${currentYear}&emissionId=${row.id}`);
+            setSds(sdData);
+            setShowSds(true);
+        } else {
+            setSds([]);
+            setShowSds(false);
+        }
     };
+
     // 증빙자료 row 클릭 시 호출될 함수
     const handleSdClick = (row) => {
         setSelectedSd(row);
@@ -80,8 +95,17 @@ export default function Esm() {
         if (closeModal) {
             setIsModalOpen(prevState => ({ ...prevState, [modalType]: false })); //모달 닫기
         }
+
         // 데이터 전달 로직은 각자 구현하기
         console.log(data);
+        /*
+        if (modalType === 'FmAdd') {
+            setFac(prevList => [...prevList, data]); // 선택된 프로젝트 데이터를 상태로 저장
+        }
+        else if (modalType === 'Delete') {
+            setFac(prevList => prevList.filter(fac => fac.id !== data.id));
+        }
+        */
     };
     const handleCancel = (modalType) => () => {
         setIsModalOpen(prevState => ({ ...prevState, [modalType]: false }));
@@ -91,14 +115,14 @@ export default function Esm() {
         showModal('EsmAdd');
     };
     const onEmsDeleteClick = () => {
-        showModal('Del');
+        showModal('Delete');
     };
 
     const onSdAddClick = () => {
         showModal('SdAdd');
     };
     const onSdDeleteClick = () => {
-        showModal('Del');
+        showModal('Delete');
     };
     const onSdShowDetailsClick = () => {
         showModal('SdShowDetails');
@@ -107,7 +131,7 @@ export default function Esm() {
     return (
         <>
             <div className={mainStyle.breadcrumb}>
-                {"현장정보 > 배출원 > 배출원 지정"}
+                {"현장정보 > 배출원 > 배출원 관리"}
             </div>
 
             <SearchForms onFormSubmit={handleFormSubmit} formFields={formField_esm} />
@@ -117,19 +141,16 @@ export default function Esm() {
                 <>
                     <div className={esmStyles.main_grid}>
                         <Card sx={{ width: "100%", height: "auto", borderRadius: "15px", marginBottom: "1rem" }}>
-                            <div className={tableStyles.table_title}>조회결과</div>
-                            <Table data={project} onRowClick={handlePjtClick} />
+                            <TableCustom title="조회결과" columns={pjtColumns} data={selectedPjt} pagination={false} />
                         </Card>
                     </div>
 
                     <div className={sysStyles.main_grid}>
                         <Card className={sysStyles.card_box} sx={{ width: "50%", height: "100vh", borderRadius: "15px" }}>
-                            <div className={sysStyles.mid_title}>
-                                {"배출원목록"}
-                            </div>
                             <TableCustom
-                                title=""
-                                data={emsData}
+                                title="배출원목록"
+                                columns={equipEmissionColumns}
+                                data={emtns}
                                 buttons={['Delete', 'Add']}
                                 onClicks={[onEmsDeleteClick, onEmsAddClick]}
                                 onRowClick={handleEmtnClick}
@@ -139,21 +160,26 @@ export default function Esm() {
                                         isModalOpen: isModalOpen.EsmAdd,
                                         handleOk: handleOk('EsmAdd'),
                                         handleCancel: handleCancel('EsmAdd'),
+                                        /*'rowData': selectedPjt,*/
                                     }, {
-                                        modalType: 'Del',
-                                        isModalOpen: isModalOpen.Del,
-                                        handleOk: handleOk('Del'),
-                                        handleCancel: handleCancel('Del'),
+                                        modalType: 'Delete',
+                                        isModalOpen: isModalOpen.Delete,
+                                        handleOk: handleOk('Delete'),
+                                        handleCancel: handleCancel('Delete'),
+                                        /*'rowData': selectedFac, 
+                                        'rowDataName': "equipName",
+                                        'url': '/equip',*/
                                     }
                                 ]}
                                 selectedRows={[selectedEmtn]}
                             />
                         </Card>
-
+                        
                         <Card className={sysStyles.card_box} sx={{ width: "50%", borderRadius: "15px" }}>
                             <div className={sysStyles.mid_title}>
                                 {"증빙자료 목록"}
                             </div>
+                            {/*
                             {showSds ? (
                                 <>
                                     <div className={esmStyles.select_button_container}>
@@ -176,10 +202,10 @@ export default function Esm() {
                                         handleOk={handleOk('SdAdd')}
                                         handleCancel={handleCancel('SdAdd')}
                                     />
-                                    <DelModal
-                                        isModalOpen={isModalOpen.Del}
-                                        handleOk={handleOk('Del')}
-                                        handleCancel={handleCancel('Del')}
+                                    <DeleteModal
+                                        isModalOpen={isModalOpen.Delete}
+                                        handleOk={handleOk('Delete')}
+                                        handleCancel={handleCancel('Delete')}
                                     />
                                     <SdShowDetailsModal
                                         selectedSd={selectedSd}
@@ -192,7 +218,7 @@ export default function Esm() {
                                 : (
                                     <></>
                                 )}
-
+*/}
                         </Card>
                     </div>
                 </>
