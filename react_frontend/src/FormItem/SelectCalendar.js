@@ -21,7 +21,7 @@ export default function SelectCalendar({ name, label, required = false }) {
                 className={formItemStyles.form_item}
                 name={name}
                 label={label}
-                rules={[{ required: required }]}
+                rules={[{ required: required, message: '${label} 선택은 필수입니다.' }]}
             >
                 <RangePicker
                     picker="month"

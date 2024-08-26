@@ -36,14 +36,10 @@ export default function Fm() {
         
     };
 
-
-    const [showFacList, setShowFacList] = useState(false);
-
     const [selectedFac, setSelectedFac] = useState(null);
 
     const handleRowClick = (e) => {
-        setShowFacList(false);
-        setSelectedFac(e ?? {});
+        setSelectedFac(e);
     };
 
     const [isModalOpen, setIsModalOpen] = useState({
@@ -105,7 +101,6 @@ export default function Fm() {
     const handleDeleteClick = () => {
         showModal('Delete');
     }
-    console.log(fac);
 
     return (
         <>

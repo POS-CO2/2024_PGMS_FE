@@ -11,7 +11,7 @@ import {FilledInput, IconButton, FormControl, OutlinedInput} from "@mui/material
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import { useNavigate } from 'react-router';
-import kuromi from '../../assets/images/kuromi.jpg';
+import posco from '../../assets/images/poscoenc.jpg';
 
 
 export default function Login({handleLogin}) {
@@ -40,7 +40,9 @@ export default function Login({handleLogin}) {
 
     return (
             <div className={loginStyles.loginBox}>
-                <img className={loginStyles.login_img} src={kuromi} />
+                <div className={loginStyles.login_img_box}>
+                    <img className={loginStyles.login_img} src={posco} />
+                </div>
                 <div className={loginStyles.inlineContainer}>
                     <div className={loginStyles.logo}>
                         <span>PGMS</span>
@@ -48,7 +50,7 @@ export default function Login({handleLogin}) {
                         <span>온실가스관리시스템</span>
                     </div>
                     <div className={loginStyles.inlineContainer}>
-                    <Box sx={{display: 'flex', alignItems: 'flex-end', width: "235px"}} autoComplete="on">
+                        <Box sx={{display: 'flex', alignItems: 'flex-end', width: "235px"}} autoComplete="on">
                             <TextField id='outlined-basic' value={id} onChange={(e) => setId(e.target.value)} label='ID' variant='outlined' InputProps={{
                                 startAdornment: (
                                     <InputAdornment position="start">
@@ -93,7 +95,9 @@ export default function Login({handleLogin}) {
                     />
                     </FormControl>
                     </div>
-                    <Button onClick={async () => {await handleLogin(id,password); } } style={{backgroundColor: "#000046", color: "white", width: "235px"}}>로그인</Button>
+                    <div className={loginStyles.inlineContainer}>
+                        <Button onClick={async () => {await handleLogin(id,password); } } style={{backgroundColor: "#000046", color: "white", width: "235px"}}>로그인</Button>
+                    </div>
                 </div>
                     
             </div>

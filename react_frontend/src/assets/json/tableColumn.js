@@ -110,42 +110,42 @@ export const pjtManagerColumns = [
 ]
 
 export const perfColumns = [
-    { key: 'emissionId', label: '배출ID', hidden: false },
+    { key: 'emissionId', label: '배출ID', hidden: true },
     { key: 'equipName', label: '설비명', hidden: false },
-    { key: 'emtnActvType', label: '설비활동유형', hidden: false },
-    { key: 'actvDataName', label: '활동자료이름', hidden: false },
-    { key: 'inputUnitCode', label: '입력단위코드', hidden: false },
-    { key: 'quantityList', label: '퀀티티리스트', hidden: false },
+    { key: 'emtnActvType', label: '배출활동유형', hidden: false },
+    { key: 'actvDataName', label: '활동자료명', hidden: false },
+    { key: 'inputUnitCode', label: '단위', hidden: false },
+    { key: 'quantityList', label: '퀀티티리스트', hidden: true },
 ]
-
-export const quantityListColumns = [
-    { key: 'id', label: 'id', hidden: true },
-    { key: 'fee', label: '비용', hidden: false },
-    { key: 'actvQty', label: '활동량', hidden: false },
-    { key: 'actvYear', label: '활동시작년', hidden: false },
-    { key: 'actvMth', label: '활동시작월', hidden: false },
-]
+// 월별 칼럼 추가
+for (let month = 1; month <= 12; month++) {
+    perfColumns.push({
+        key: `month${month}`,
+        label: `${month}월`,
+        hidden: false
+    });
+}
 
 export const perfTotalColumns = [
-    { key: 'actvYear', label: '활동시작년', hidden: false },
-    { key: 'actvMth', label: '활동시작월', hidden: false },
-    { key: 'scope1', label: '스코프1', hidden: false },
-    { key: 'scope2', label: '스코프2', hidden: false },
-    { key: 'total', label: '총량', hidden: false },
+    { key: 'actvYear', label: '활동시작년', hidden: true },
+    { key: 'actvMth', label: '월', hidden: false },
+    { key: 'scope1', label: 'Scope1배출량', hidden: false },
+    { key: 'scope2', label: 'Scope2배출량', hidden: false },
+    { key: 'total', label: '총배출량', hidden: false },
 ]
 
 export const perfPjtColumns = [
-    { key: 'actvYear', label: '활동시작년', hidden: false },
-    { key: 'actvMth', label: '활동시작월', hidden: false },
-    { key: 'scope1', label: '스코프1', hidden: false },
-    { key: 'scope2', label: '스코프2', hidden: false },
-    { key: 'total', label: '총량', hidden: false },
+    { key: 'actvYear', label: '활동시작년', hidden: true },
+    { key: 'actvMth', label: '월', hidden: false },
+    { key: 'scope1', label: 'Scope1배출량', hidden: false },
+    { key: 'scope2', label: 'Scope2배출량', hidden: false },
+    { key: 'total', label: '총배출량', hidden: false },
 ]
 
 export const equipEmissionColumns = [
-    { key: 'id', label: 'id', hidden: false },
-    { key: 'equipId', label: '설비ID', hidden: false },
-    { key: 'actvDataId', label: '활동자료ID', hidden: false },
+    { key: 'id', label: 'id', hidden: true },
+    { key: 'equipId', label: '설비ID', hidden: true },
+    { key: 'actvDataId', label: '활동자료ID', hidden: true },
     { key: 'equipName', label: '설비명', hidden: false },
     { key: 'equipLibName', label: '설비LIB명', hidden: false },
     { key: 'equipDvs', label: '설비구분', hidden: false },
@@ -155,7 +155,7 @@ export const equipEmissionColumns = [
     { key: 'actvDataDvs', label: '활동자료구분', hidden: false },
     { key: 'actvDataName', label: '활동자료이름', hidden: false },
     { key: 'inputUnitCode', label: '입력단위코드', hidden: false },
-    { key: 'calUnitCode', label: 'cal단위코드', hidden: false },
+    { key: 'calUnitCode', label: '산정단위코드', hidden: false },
     { key: 'unitConvCoef', label: '유닛콘브코에프', hidden: false },
 ]
 
