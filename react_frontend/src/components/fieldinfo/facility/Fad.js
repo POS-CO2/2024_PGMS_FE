@@ -96,13 +96,24 @@ export default function Fad() {
 
                 const response = await axiosInstance.post("/equip/libmap", requestBody);
 
+                const filteredData = response.data.map(actv => new Actv(
+                    actv.id,
+                    actv.actvDataName,
+                    actv.actvDataDvs,
+                    actv.emtnActvType,
+                    actv.calUnitCode,
+                    actv.inputUnitCode,
+                    actv.unitConvCoef
+                ));
+
+                console.log("response", response);
                 // 기존 활동자료에서 placeholderActv를 제거하고 새 데이터를 병합
                 setActves(prevActves => {
                     // placeholderProject 제거
                     const cleanedActves = prevActves.filter(actv => actv.id !== '');
 
                     // 새로 추가된 설비LIB을 병합
-                    return [...cleanedActves, response.data];
+                    return [...cleanedActves, ...filteredData];
                 });
 
                 swalOptions.title = '성공!',
