@@ -8,14 +8,11 @@ import * as mainStyle from '../../../assets/css/main.css';
 import * as esmStyles from '../../../assets/css/esm.css';
 import { Card } from '@mui/material';
 import { Select } from 'antd';
-import project from "../../../assets/json/selectedPjt";
-import emsData from "../../../assets/json/ems";
-import sdData from "../../../assets/json/sd";
 import SearchForms from "../../../SearchForms";
 import { formField_esm } from "../../../assets/json/searchFormData.js";
 import { SdAddModal, DeleteModal, SdShowDetailsModal } from "../../../modals/PdModal";
 import axiosInstance from '../../../utils/AxiosInstance';
-import { pjtColumns, equipEmissionColumns } from '../../../assets/json/tableColumn';
+import { pjtColumns, equipEmissionColumns, equipDocumentColumns } from '../../../assets/json/tableColumn';
 
 const selectOptions = [
     { value: '2024', label: '2024' },
@@ -35,14 +32,17 @@ export default function Esm() {
     const [showSds, setShowSds] = useState(false);                    // 증빙자료 목록을 표시할지 여부
     const [sds, setSds] = useState([]);                               // 증빙자료 목록
     const [selectedSd, setSelectedSd] = useState(null);               // 선택된 증빙자료
+    const [selectedYear, setSelectedYear] = useState(new Date().getFullYear().toString()); // 선택된 연도
 
     const [buttonStatus, setButtonStatus] = useState([false, false, false]);
     useEffect(() => {
         // selectedSd가 null인지 여부에 따라 버튼 상태를 설정합니다.
         if (selectedSd === null) {
             setButtonStatus([false, false, true]); // Add만 활성화
-        } else {
+        } else if (selectedSd.length === 1) {
             setButtonStatus([true, true, true]); // 모든 버튼 활성화
+        } else { // 여러개 선택된 경우
+            setButtonStatus([false, true, true]); // 삭제, 등록 활성화
         }
     }, [selectedSd]);
 
@@ -70,9 +70,9 @@ export default function Esm() {
         setSelectedEmtn(row);
         
         if (row) {
-            const currentYear = new Date().getFullYear();
-            const { sdData } = await axiosInstance.get(`/equip/document?actvYear=${currentYear}&emissionId=${row.id}`);
-            setSds(sdData);
+            let url = `/equip/document?actvYear=${selectedYear}&emissionId=${row.id}`;
+            const sdData = await axiosInstance.get(url);
+            setSds(sdData.data);
             setShowSds(true);
         } else {
             setSds([]);
@@ -97,12 +97,13 @@ export default function Esm() {
 
         if (modalType === 'EsmAdd') {
             console.log(data);
-            setEmtns(prevList => [...prevList, data]); // 선택된 프로젝트 데이터를 상태로 저장
+            setEmtns(prevList => [...prevList, ...data]); // 선택된 프로젝트 데이터를 상태로 저장
             console.log(emtns);
         }
         
         else if (modalType === 'Delete') {
             setEmtns(prevList => prevList.filter(emtns => emtns.id !== data.id));
+            setSelectedEmtn(null);
         }
         
     };
@@ -127,6 +128,17 @@ export default function Esm() {
         showModal('SdShowDetails');
     };
 
+    // 연도 선택 시 호출될 함수
+    const handleYearChange = async (value) => {
+        setSelectedYear(value);
+
+        if (selectedEmtn) {
+            let url = `/equip/document?actvYear=${value}&emissionId=${selectedEmtn.id}`;
+            const sdData = await axiosInstance.get(url);
+            setSds(sdData.data);
+        }
+    };
+
     return (
         <>
             <div className={mainStyle.breadcrumb}>
@@ -146,7 +158,6 @@ export default function Esm() {
 
                     <div className={sysStyles.main_grid}>
                         <Card className={sysStyles.card_box} sx={{ width: "50%", height: "100vh", borderRadius: "15px" }}>
-                       {console.log(emtns)}
                             <TableCustom
                                 title="배출원목록"
                                 columns={equipEmissionColumns}
@@ -179,11 +190,11 @@ export default function Esm() {
                             <div className={sysStyles.mid_title}>
                                 {"증빙자료 목록"}
                             </div>
-                            {/*
+                            
                             {showSds ? (
                                 <>
                                     <div className={esmStyles.select_button_container}>
-                                        <Select defaultValue="2024">
+                                        <Select defaultValue={selectedYear} onChange={handleYearChange}>
                                             {selectOptions.map(option => (
                                                 <Select.Option key={option.value} value={option.value}>
                                                     {option.label}
@@ -195,7 +206,7 @@ export default function Esm() {
                                             onClicks={[onSdShowDetailsClick, onSdDeleteClick, onSdAddClick]}
                                             buttonStatus={buttonStatus} />
                                     </div>
-                                    <Table data={sdData} variant='default' onRowClick={handleSdClick} />
+                                    <Table data={sds} variant='checkbox' onRowClick={handleSdClick} columns={equipDocumentColumns} />
 
                                     <SdAddModal
                                         isModalOpen={isModalOpen.SdAdd}
@@ -218,7 +229,7 @@ export default function Esm() {
                                 : (
                                     <></>
                                 )}
-*/}
+
                         </Card>
                     </div>
                 </>

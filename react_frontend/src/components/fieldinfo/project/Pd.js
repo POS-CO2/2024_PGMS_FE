@@ -6,6 +6,7 @@ import Table from "../../../Table";
 import TableCustom from "../../../TableCustom";
 import SearchForms from "../../../SearchForms";
 import {formField_ps12} from "../../../assets/json/searchFormData";
+import { pjtColumns, pjtManagerColumns } from '../../../assets/json/tableColumn';
 import axiosInstance from '../../../utils/AxiosInstance';
 
 export default function Pd() {
@@ -25,9 +26,9 @@ export default function Pd() {
         if (managers.length === 0) {
             const placeholderManager = {
                 id: '',
-                사번: '',
-                이름: '',
-                부서: '',
+                userLoginId: '',
+                userName: '',
+                userDeptCode: ''
             };
             setManagers([placeholderManager]);
         }
@@ -43,23 +44,15 @@ export default function Pd() {
             // 빈 데이터인 경우, 기본 형태의 객체를 생성
             const placeholderManager = {
                 id: '',
-                사번: '',
-                이름: '',
-                부서: '',
+                userLoginId: '',
+                userName: '',
+                userDeptCode: ''
             };
 
             // 배열의 필드를 유지하면서 빈 값으로 채운 배열 생성
             setManagers([placeholderManager]);
         } else {
-            // 필요한 필드만 추출하여 managers에 설정
-            const filteredManagers = response.data.map(manager => ({
-                id: manager.id,
-                사번: manager.userLoginId,
-                이름: manager.userName,
-                부서: manager.userDeptCode,
-            }));
-
-            setManagers(filteredManagers);
+            setManagers(response.data);
         }
     };
     
@@ -91,14 +84,6 @@ export default function Pd() {
                 }));
 
                 const response = await axiosInstance.post("/pjt/manager", requestBody);
-            
-                const filteredData = response.data.map(manager => ({
-                    id: manager.id,
-                    사번: manager.userId,
-                    이름: manager.userName,
-                    부서: manager.userDeptCode,
-                    권한: manager.userRole
-                }));
 
                 // 기존 managers에서 placeholderManager 제거하고 새 데이터를 병합
                 setManagers(prevManagers => {
@@ -106,7 +91,7 @@ export default function Pd() {
                     const cleanedManagers = prevManagers.filter(manager => manager.id !== '');
 
                     // 새로 추가된 담당자를 병합
-                    return [...cleanedManagers, ...filteredData];
+                    return [...cleanedManagers, ...response.data];
                 });
 
                 swalOptions.title = '성공!',
@@ -166,11 +151,13 @@ export default function Pd() {
                     <div className={tableStyles.table_title}>조회결과</div>
                     <Table 
                         data={formData}
+                        columns={pjtColumns}
                         key={JSON.stringify(formData)} // formData 변경 시 key 변경되어 리렌더링
                     />                    
                     <TableCustom
                         title='담당자목록' 
-                        data={managers}                   
+                        data={managers}
+                        columns={pjtManagerColumns}                 
                         buttons={['Delete', 'Add']}
                         onClicks={[onDeleteClick, onAddClick]}
                         onRowClick={handleManagerClick}

@@ -1,72 +1,62 @@
 export const pjtColumns = [
     { key: 'id', label: 'id', hidden: true },
-    { key: 'pjtCode', label: '프로젝트 코드', hidden: false },
-    { key: 'pjtName', label: '프로젝트 이름', hidden: false },
-    { key: 'pjtType', label: '프로젝트 유형', hidden: false },
-    { key: 'regCode', label: '지역 코드', hidden: false },
-    { key: 'ctrtFrYear', label: '계약 시작 년', hidden: false },
-    { key: 'ctrtFrMth', label: '계약 시작 월', hidden: false },
-    { key: 'ctrtToYear', label: '계약 종료 년', hidden: false },
-    { key: 'ctrtToMnt', label: '계약 종료 월', hidden: false },
-    { key: 'divCode', label: '본부 코드', hidden: false },
-    { key: 'bldArea', label: '연면적값', hidden: false },
-    { key: 'pjtProgStus', label: '프로젝트진행 상태', hidden: false },
-    { key: 'pgmsYn', label: 'Y/N', hidden: false },
-    { key: 'userLoginId', label: '로그인 아이디', hidden: true },
-    { key: 'userName', label: '유저 명', hidden: true },
-    { key: 'startDate', label: '시작 일', hidden: true },
-    { key: 'endDate', label: '종료 일', hidden: true },
+    { key: 'pjtCode', label: '프로젝트코드', hidden: false },
+    { key: 'pjtName', label: '프로젝트명', hidden: false },
+    { key: 'pjtType', label: '프로젝트유형', hidden: false },
+    { key: 'regCode', label: '지역', hidden: false },
+    { key: 'ctrtFrYear', label: '계약시작년', hidden: false },
+    { key: 'ctrtFrMth', label: '계약시작월', hidden: false },
+    { key: 'ctrtToYear', label: '계약종료년', hidden: false },
+    { key: 'ctrtToMth', label: '계약종료월', hidden: false },
+    { key: 'divCode', label: '본부', hidden: false },
+    { key: 'bldArea', label: '연면적(m²)', hidden: false },
+    { key: 'pjtProgStus', label: '프로젝트진행상태', hidden: false },
+    { key: 'userLoginId', label: '담당자사번', hidden: true },
+    { key: 'userName', label: '담당자이름', hidden: true },
 ]
 
 export const equipColumns = [
     { key: 'id', label: 'id', hidden: true },
-    { key: 'equipDvs', label: '설비구분', hidden: false },
     { key: 'equipLibName', label: '설비LIB명', hidden: false },
     { key: 'equipName', label: '설비명', hidden: false },
-    { key: 'equipSpecUnit', label: '설비사양단위', hidden: false },
+    { key: 'equipDvs', label: '설비구분', hidden: false },
     { key: 'equipType', label: '설비유형', hidden: false },
+    { key: 'equipSpecUnit', label: '설비사양단위', hidden: false },
 ]
 
 export const equipLibColumns = [
     { key: 'id', label: 'id', hidden: true },
-    { key: 'equipLibId', label: '설비LIB아이디', hidden: false },
-    { key: 'pjtId', label: '프로젝트 ID', hidden: false },
-    { key: 'equipName', label: '설비 명', hidden: false },
-    { key: 'creatorId', label: '생성자', hidden: true },
-    { key: 'createDate', label: '생성일', hidden: true },
-    { key: 'mdfrId', label: '수정자', hidden: true },
-    { key: 'updateDate', label: '수정일', hidden: true },
+    { key: 'equipLibName', label: '설비라이브러리명', hidden: false },
+    { key: 'equipDvs', label: '설비구분', hidden: false },
+    { key: 'equipType', label: '설비유형', hidden: false },
+    { key: 'equipSpecUnit', label: '설비사양단위', hidden: false },
 ]
 
 export const codeColumns = [
     { key: 'id', label: 'id', hidden: true },
     { key: 'codeGrpNo', label: '코드그룹ID', hidden: false },
-    { key: 'codeGrpName', label: '코드 그룹 명', hidden: false },
-    { key: 'code', label: '코드 번호', hidden: false },
-    { key: 'codeName', label: '코드 명', hidden: false },
+    { key: 'codeGrpName', label: '코드그룹명', hidden: false },
+    { key: 'code', label: '코드번호', hidden: false },
+    { key: 'codeName', label: '코드명', hidden: false },
     { key: 'attri1', label: '속성1', hidden: false },
     { key: 'attri2', label: '속성2', hidden: false },
     { key: 'note', label: '비고', hidden: false },
-    { key: 'creatorId', label: '작성자', hidden: true },
-    { key: 'createDate', label: '작성일', hidden: true },
-    { key: 'mdfrId', label: '수정자', hidden: true },
-    { key: 'updateDate', label: '수정일', hidden: true },
 ]
 
 export const codeGroupColumns = [
-    { key: 'codeGrpNo', label: '코드 그룹 번호', hidden: false },
-    { key: 'codeGrpName', label: '코드 그룹 명', hidden: false },
-    { key: 'codeGrpNameEn', label: '코드 그룹 영문명', hidden: false },
+    { key: 'codeGrpNo', label: '코드그룹번호', hidden: false },
+    { key: 'codeGrpName', label: '코드그룹명', hidden: false },
+    { key: 'codeGrpNameEn', label: '코드그룹영문명', hidden: false },
     { key: 'note', label: '비고', hidden: false },
 ]
 
 export const userColumns = [
     { key: 'id', label: 'id', hidden: true },
-    { key: 'userName', label: '사용자 명', hidden: false },
-    { key: 'loginId', label: '로그인 아이디', hidden: false },
+    { key: 'loginId', label: '사번', hidden: false },
+    { key: 'userName', label: '이름', hidden: false },
     { key: 'password', label: '비밀번호', hidden: true },
-    { key: 'deptCode', label: '부서 명', hidden: false },
-    { key: 'role', label: '역할', hidden: false }
+    { key: 'deptCode', label: '부서', hidden: false },
+    { key: 'role', label: '역할', hidden: true }
 ]
 
 export const menuTableColumns = [
@@ -76,27 +66,23 @@ export const menuTableColumns = [
     { key: 'md', label: '중분류', hidden: false },
     { key: 'sd', label: '소분류', hidden: false },
     { key: 'url', label: 'Url', hidden: false },
-    { key: 'name', label: '메뉴 명', hidden: false },
-    { key: 'accessUser', label: '접근 가능 권한', hidden: false },
+    { key: 'name', label: '메뉴명', hidden: false },
+    { key: 'accessUser', label: '접근가능권한', hidden: false },
 ]
 
 export const menuLogColumns = [
-    { key: 'menuName', label: '접속 메뉴', hidden: false },
-    { key: 'cnt', label: '접속 횟수', hidden: false },
+    { key: 'menuName', label: '접속메뉴', hidden: false },
+    { key: 'cnt', label: '접속횟수', hidden: false },
 ]
 
 export const equipActvColumns = [
     { key: 'id', label: 'id', hidden: true },
-    { key: 'emtnActvType', label: '활동유형', hidden: false },
-    { key: 'actvDataDvs', label: '활동자료구분', hidden: false },
     { key: 'actvDataName', label: '활동자료명', hidden: false },
-    { key: 'inputUnitCode', label: '입력단위코드', hidden: false },
+    { key: 'actvDataDvs', label: '활동자료구분', hidden: false },
+    { key: 'emtnActvType', label: '배출활동유형', hidden: false },
     { key: 'calUnitCode', label: '산정단위코드', hidden: false },
+    { key: 'inputUnitCode', label: '입력단위코드', hidden: false },
     { key: 'unitConvCoef', label: '단위환산계수', hidden: false },
-    { key: 'creatorId', label: '등록자ID', hidden: true },
-    { key: 'createDate', label: '등록일시', hidden: true },
-    { key: 'mdfrId', label: '수정자ID', hidden: true },
-    { key: 'updateDate', label: '수정일시', hidden: true },
 ]
 
 export const equipCoefColumns = [
@@ -110,68 +96,17 @@ export const equipCoefColumns = [
 ]
 
 export const pjtSalesColumns = [
-    { key: 'pjtId', label: '프로젝트ID', hidden: false },
-    { key: 'year', label: '년도', hidden: false },
+    { key: 'id', label: 'id', hidden: true },
+    { key: 'year', label: '년도', hidden: true },
+    { key: 'mth', label: '월', hidden: false },
+    { key: 'salesAmt', label: '매출액', hidden: false },
 ]
 
 export const pjtManagerColumns = [
-    { key: 'id', label: '', hidden: true },
-    { key: 'pjtId', label: '', hidden: false },
-    { key: 'pjtCode', label: '', hidden: false },
-    { key: 'pjtName', label: '', hidden: false },
-    { key: 'pjtType', label: '', hidden: false },
-    { key: 'regCode', label: '', hidden: false },
-    { key: 'ctrtFrYear', label: '', hidden: false },
-    { key: 'ctrtFrMth', label: '', hidden: false },
-    { key: 'ctrtToYear', label: '', hidden: false },
-    { key: 'ctrtToMth', label: '', hidden: false },
-    { key: 'divCode', label: '', hidden: false },
-    { key: 'bldArea', label: '', hidden: false },
-    { key: 'pjtProgStus', label: '', hidden: false },
-    { key: 'userId', label: '', hidden: false },
-    { key: 'userLoginId', label: '', hidden: false },
-    { key: 'userName', label: '', hidden: false },
-    { key: 'userDeptCode', label: '', hidden: false },
-]
-
-export const pjtSelectedColumns = [
     { key: 'id', label: 'id', hidden: true },
-    { key: 'pjtCode', label: '프로젝트 코드', hidden: false },
-    { key: 'pjtName', label: '프로젝트 이름', hidden: false },
-    { key: 'pjtType', label: '프로젝트 유형', hidden: false },
-    { key: 'regCode', label: '지역 코드', hidden: false },
-    { key: 'ctrtFrYear', label: '계약 시작 년', hidden: false },
-    { key: 'ctrtFrMth', label: '계약 시작 월', hidden: false },
-    { key: 'ctrtToYear', label: '계약 종료 년', hidden: false },
-    { key: 'ctrtToMnt', label: '계약 종료 월', hidden: false },
-    { key: 'divCode', label: '본부 코드', hidden: false },
-    { key: 'bldArea', label: '연면적값', hidden: false },
-    { key: 'pjtProgStus', label: '프로젝트진행 상태', hidden: false },
-    { key: 'userId', label: '유저 ID', hidden: true },
-    { key: 'userLoginId', label: '로그인 아이디', hidden: true },
-    { key: 'userName', label: '유저 명', hidden: true },
-    { key: 'userDeptCode', label: '부서 명', hidden: true },
-]
-
-export const pjtNotManagerColumns = [
-    { key: 'pjtId', label: '프로젝트ID', hidden: false },
-    { key: 'userName', label: '사용자명', hidden: false },
-    { key: 'loginId', label: '로그인ID', hidden: false },
-]
-
-export const pjtMyColumns = [
-    { key: 'id', label: 'id', hidden: true },
-    { key: 'pjtCode', label: '프로젝트 코드', hidden: false },
-    { key: 'pjtName', label: '프로젝트 이름', hidden: false },
-    { key: 'pjtType', label: '프로젝트 유형', hidden: false },
-    { key: 'regCode', label: '지역 코드', hidden: false },
-    { key: 'ctrtFrYear', label: '계약 시작 년', hidden: false },
-    { key: 'ctrtFrMth', label: '계약 시작 월', hidden: false },
-    { key: 'ctrtToYear', label: '계약 종료 년', hidden: false },
-    { key: 'ctrtToMnt', label: '계약 종료 월', hidden: false },
-    { key: 'divCode', label: '본부 코드', hidden: false },
-    { key: 'bldArea', label: '연면적값', hidden: false },
-    { key: 'pjtProgStus', label: '프로젝트진행 상태', hidden: false },
+    { key: 'userLoginId', label: '사번', hidden: false },
+    { key: 'userName', label: '이름', hidden: false },
+    { key: 'userDeptCode', label: '부서명', hidden: false },
 ]
 
 export const perfColumns = [

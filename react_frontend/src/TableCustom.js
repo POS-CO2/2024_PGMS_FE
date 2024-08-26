@@ -99,7 +99,8 @@ export function TableCustomDoubleClickEdit({
     selectedRows = [],       // 테이블에서 선택된 row 리스트
     rowData = {},
     modals = [],
-    table = true
+    table = true,
+    columns = []
 }) {
     const [isEditing, setIsEditing] = useState(false); // 'Edit' 모드 상태 관리
     const [editableData, setEditableData] = useState(data); // 수정된 데이터 저장
@@ -223,6 +224,7 @@ export function TableCustomDoubleClickEdit({
             <Table 
                 key={JSON.stringify(data)}
                 data={editableData} 
+                columns={columns}
                 variant={variant} 
                 onRowClick={onRowClick} 
                 handleDoubleClick={handleDoubleClick} 
