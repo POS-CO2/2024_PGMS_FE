@@ -45,8 +45,8 @@ export default function Fad() {
     const handleFormSubmit = async (data) => {
         setSearchResult(data.searchLib);
 
-        // 선택한 lib에 이미 등록된 활동자료를 걸러서 조회
-        const response = await axiosInstance.get(`/equip/actv/lib?libId=${searchResult.id}`);
+        // 선택한 lib에 매핑된 활동자료 목록 조회
+        const response = await axiosInstance.get(`/equip/actv/${data.searchLib.id}`);
 
         // data가 빈 배열인지 확인
         if (response.data.length === 0) {
@@ -117,7 +117,7 @@ export default function Fad() {
             }
         } else if (modalType === 'Del') {
             try {
-                const response = await axiosInstance.delete(`/equip/libmap?id=${selectedActv.id}`);
+                const response = await axiosInstance.delete(`/equip/libmap?equipLibId=${searchResult.id}&actvDataId=${selectedActv.id}`);
 
                 // 선택된 활동자료를 actves 리스트에서 제거
                 setActves(prevActves => prevActves.filter(actv => actv.id !== selectedActv.id));
@@ -184,7 +184,8 @@ export default function Fad() {
                                 'modalType': 'FadAdd',
                                 'isModalOpen': isModalOpen.FadAdd,
                                 'handleOk': handleOk('FadAdd'),
-                                'handleCancel': handleCancel('FadAdd')
+                                'handleCancel': handleCancel('FadAdd'),
+                                'rowData': searchResult
                             },
                         ]}
                     />

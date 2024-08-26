@@ -137,22 +137,23 @@ export function PgAddModal({ isModalOpen, handleOk, handleCancel }) {
 }
 
 export function PdAddModal({ isModalOpen, handleOk, handleCancel }) {
-    const [formData, setFormData] = useState({});
+    const [formData, setFormData] = useState([]);
     const [selectedEmps, setSelectedEmps] = useState([]);     // 선택된 사원의 loginId list
-    
-    // 각 input의 값을 상태로 관리
-    const [empId, setEmpId] = useState('');
-    const [empName, setEmpName] = useState('');
+    const [inputEmpId, setInputEmpId] = useState('');         // 입력한 사번
+    const [inputEmpName, setInputEmpName] = useState('');     // 입력한 사원명
 
-    // input 필드 변경 시 호출될 함수
-    const handleInputChange = (e, setter) => {
-        setter(e.target.value);
+    // 엔터 키 입력 시 handleSearch 호출
+    const handleKeyDown = (e) => {
+        if (e.key === 'Enter') {
+        e.preventDefault();  // 폼의 기본 제출 동작 방지
+        handleSearch();
+        }
     };
     
     // 찾기 버튼 클릭 시 호출될 함수
     const handleSearch = async() => {
         try {
-            const response = await axiosInstance.get(`/pjt/not-manager?loginId=${empId}&userName=${empName}`);
+            const response = await axiosInstance.get(`/pjt/not-manager?loginId=${inputEmpId}&userName=${inputEmpName}`);
 
             // 필요한 필드만 추출하여 managers에 설정
             const filteredResponse = response.data.map(emp => ({
@@ -168,14 +169,6 @@ export function PdAddModal({ isModalOpen, handleOk, handleCancel }) {
         }
     };
 
-    // 엔터 키 입력 시 handleFormSubmit 호출
-    const handleKeyDown = (e) => {
-        if (e.key === 'Enter') {
-        e.preventDefault();  // 폼의 기본 제출 동작 방지
-        handleSearch();
-        }
-    };
-
     // 사원 row 클릭 시 호출될 함수
     const handleEmpClick = (emp) => {
         setSelectedEmps(emp);
@@ -183,7 +176,7 @@ export function PdAddModal({ isModalOpen, handleOk, handleCancel }) {
 
     // 등록 버튼 클릭 시 호출될 함수
     const handleSelect = () => {
-        setFormData({});
+        setFormData([]);
         handleOk(selectedEmps);
     };
 
@@ -198,19 +191,27 @@ export function PdAddModal({ isModalOpen, handleOk, handleCancel }) {
             <div className={modalStyles.search_container}>
                 <div className={modalStyles.search_item}>
                     <div className={modalStyles.search_title}>사번</div>
-                    <input 
-                        className={modalStyles.search} 
-                        onChange={(e) => handleInputChange(e, setEmpId)}
+                    <TextField
+                        variant='outlined'
+                        size='small'
+                        fullWidth
+                        value={inputEmpId}
+                        onChange={(e) => setInputEmpId(e.target.value)}
                         onKeyDown={handleKeyDown}
+                        sx={{width: '10rem'}}
                     />
                 </div>
                 <div className={modalStyles.search_item}>
                     <div className={modalStyles.search_title}>이름</div>
                     <div className={modalStyles.input_with_btn}>
-                        <input 
-                            className={modalStyles.search} 
-                            onChange={(e) => handleInputChange(e, setEmpName)} 
+                        <TextField
+                            variant='outlined'
+                            size='small'
+                            fullWidth
+                            value={inputEmpName}
+                            onChange={(e) => setInputEmpName(e.target.value)}
                             onKeyDown={handleKeyDown}
+                            sx={{width: '10rem'}}
                         />
                         <button className={modalStyles.search_button} onClick={handleSearch}>조회</button>
                     </div>
@@ -223,7 +224,8 @@ export function PdAddModal({ isModalOpen, handleOk, handleCancel }) {
                 }
             </div>
 
-            <button className={modalStyles.select_button} onClick={handleSelect}>등록</button>
+            {(!selectedEmps || selectedEmps.length === 0) ?
+            <></> : ( <button className={modalStyles.select_button} onClick={handleSelect}>등록</button> )}
         </Modal>
     )
 }
@@ -810,22 +812,98 @@ export function FamEditModal({ isModalOpen, handleOk, handleCancel, rowData }) {
     )
 }
 
-export function FadAddModal({ isModalOpen, handleOk, handleCancel }) {
-    const [formData, setFormData] = useState({});             // 검색 데이터
+export function FadAddModal({ isModalOpen, handleOk, handleCancel, rowData }) {
+    const [actvDvsList, setActvDvsList] = useState([]);
+    const [allActv, setAllActv] = useState([]);
+    const [actves, setActves] = useState([]);                     // 검색 데이터
     const [selectedActves, setselectedActves] = useState([]);     // 선택된 프로젝트
-    
+    const [inputActvName, setInputActvName] = useState('');       // 입력한 활동자료명
+    const [inputActvDvs, setInputActvDvs] = useState('');         // 입력한 활동자료구분
+
+    class Actv {
+        constructor(id = '', actvDataName = '', actvDataDvs = '', emtnActvType = '', calUnitCode = '', inputUnitCode = '', unitConvCoef = '') {
+            this.id = id;
+            this.활동자료명 = actvDataName;
+            this.활동자료구분 = actvDataDvs;
+            this.배출활동유형 = emtnActvType;
+            this.산정단위 = calUnitCode;
+            this.입력단위 = inputUnitCode;
+            this.단위환산계수 = unitConvCoef;            ;
+        }
+    }
+
+    // 컴포넌트 생성시 활동자료 목록, 활동자료구분 리스트 불러오기
+    useEffect(() => {
+        const fetchActvDvs = async () => {
+            try {
+                // 선택한 lib에 이미 등록된 활동자료를 걸러서 조회
+                const response = await axiosInstance.get(`/equip/actv/lib?equipLibId=${rowData.id}`);
+
+                const filteredActves = response.data.map(actv => new Actv(
+                    actv.id,
+                    actv.actvDataName,
+                    actv.actvDataDvs,
+                    actv.emtnActvType,
+                    actv.calUnitCode,
+                    actv.inputUnitCode,
+                    actv.unitConvCoef
+                ));
+
+                setAllActv(filteredActves);
+                setActves(filteredActves);
+            } catch (error) {
+                console.log(error);
+            }
+        };
+
+        const fetchDropDown = async () => {
+            try {
+                const response = await axiosInstance.get("/sys/unit?unitType=활동자료구분");
+
+                const optionsActvDvs = response.data.map(item => ({
+                    value: item.code,
+                    label: item.name,
+                }));
+
+                setActvDvsList(optionsActvDvs);
+            } catch (error) {
+                console.error(error);
+            }
+        };
+
+        fetchDropDown();
+        fetchActvDvs();
+    }, []);
+
+    // 엔터 키 입력 시 handleSearch 호출
+    const handleKeyDown = (e) => {
+        if (e.key === 'Enter') {
+        e.preventDefault();  // 폼의 기본 제출 동작 방지
+        handleSearch();
+        }
+    };
+
     // 찾기 버튼 클릭시 호출될 함수
-    const handleFormSubmit = (data) => {
-        setFormData(data); 
+    const handleSearch = async() => {
+        const filteredActves = allActv.filter(actv => {
+            const opt = actvDvsList.find(option => option.value === inputActvDvs);
+
+            const matchesName = inputActvName ? actv.활동자료명?.includes(inputActvName) : true;
+            const matchesActvDvs = inputActvDvs ? actv.활동자료구분?.includes(opt.label) : true;
+            return matchesName && matchesActvDvs;
+          });
+          
+          setActves(filteredActves);
     };
   
     // 활동자료 row 클릭 시 호출될 함수
-    const handleActvClick = (actves) => {
-        setselectedActves(actves.map(actv => actv.actvDataName));
+    const handleActvClick = (actv) => {
+        setselectedActves(actv);
     };
   
-    // 선택 버튼 클릭 시 호출될 함수
+    // 등록 버튼 클릭 시 호출될 함수
     const handleSelect = () => {
+        setActves([]);
         handleOk(selectedActves);
     };
   
@@ -841,27 +919,42 @@ export function FadAddModal({ isModalOpen, handleOk, handleCancel }) {
         <div className={pjtModalStyles.search_container}>
             <div className={pjtModalStyles.search_item}>
                 <div className={pjtModalStyles.search_title}>활동자료명</div>
-                <input className={pjtModalStyles.search_code}/>
+                <TextField
+                    variant='outlined'
+                    size='small'
+                    fullWidth
+                    value={inputActvName}
+                    onChange={(e) => setInputActvName(e.target.value)}
+                    onKeyDown={handleKeyDown}
+                    sx={{width: '10rem'}}
+                />
             </div>
             <div className={pjtModalStyles.search_item}>
                 <div className={pjtModalStyles.search_title}>활동자료구분</div>
                 <div className={modalStyles.input_with_btn}>
-                    <Select style={{ width: '250px' }}>
-                        <Select.Option key={"단위1"} value={"단위1"}>{"단위1"}</Select.Option>
-                        <Select.Option key={"단위2"} value={"단위2"}>{"단위2"}</Select.Option>
-                        <Select.Option key={"단위3"} value={"단위3"}>{"단위3"}</Select.Option>
+                    <Select
+                        value={inputActvDvs}
+                        onChange={(value) => setInputActvDvs(value)}
+                        style={{ width: '15rem' }}
+                    >
+                        {actvDvsList.map(option => (
+                            <Select.Option key={option.value} value={option.value}>
+                                {option.label}
+                            </Select.Option>
+                        ))}
                     </Select>
-                    <button className={pjtModalStyles.search_button} onClick={handleFormSubmit}>찾기</button>
+                    <button className={pjtModalStyles.search_button} onClick={handleSearch}>찾기</button>
                 </div>
             </div>
         </div>
   
         <div className={pjtModalStyles.result_container}>
-            {(!formData || Object.keys(formData).length === 0) ?
-                <></> : ( <Table data={actv} variant='checkbox' onRowClick={handleActvClick} /> )}
+            {(!actves || Object.keys(actves).length === 0) ?
+                <></> : ( <Table data={actves} variant='checkbox' onRowClick={handleActvClick} /> )}
         </div>
   
-        <button className={pjtModalStyles.select_button} onClick={handleSelect}>등록</button>
+        {(!selectedActves || selectedActves.length === 0) ?
+            <></> : ( <button className={pjtModalStyles.select_button} onClick={handleSelect}>등록</button> )}
       </Modal>
     )
 }
