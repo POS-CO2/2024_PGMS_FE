@@ -14,6 +14,7 @@ import { RichTreeView } from '@mui/x-tree-view/RichTreeView';
 import { treeItemClasses } from '@mui/x-tree-view/TreeItem';
 import { unstable_useTreeItem2 as useTreeItem2 } from '@mui/x-tree-view/useTreeItem2';
 import {
+    TreeItem2,
     TreeItem2Checkbox,
     TreeItem2Content,
     TreeItem2IconContainer,
@@ -51,6 +52,10 @@ function DotIcon() {
         />
     );
 }
+
+const StyledTreeItem = styled(TreeItem2)(({theme}) => ({
+    overflowY:"auto",
+}));
 
 const StyledTreeItemRoot = styled(TreeItem2Root)(({ theme }) => ({
     color:
@@ -455,7 +460,6 @@ export default function Mm({menus, handleMenuSet}) {
           // 서버에서 해당 selectedUpperDir에 맞는 menuOrderList를 가져오는 API 호출
             (async () => {
                 const {data} = await axiosInstance.get(`/sys/menu/menu-order?id=${selectedUpperDir.id}&isInsert=false`);
-                console.log("plz", data);
                 setMenuOrderList(data);
             })();
             
@@ -472,7 +476,7 @@ export default function Mm({menus, handleMenuSet}) {
                 {"시스템관리 > 메뉴 관리"}
             </div>
             <div className={sysStyles.main_grid}>
-                <Card sx={{width:"24%", borderRadius:"15px", height:"88vh"}}>
+                <Card sx={{width:"24%", borderRadius:"15px", height:"88vh", overflowY:"auto"}}>
                 <TableCustom title='' className={sysStyles.btn_group} buttons={['Add', 'Delete', 'Edit']} 
                 onClicks={[handleAddClick,handleDeleteClick, handleEditClick]} 
                 table={false} 

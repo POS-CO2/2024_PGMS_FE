@@ -1320,8 +1320,8 @@ export function DeleteModal({ isModalOpen, handleOk, handleCancel, rowData, rowD
 export function CmListAddModal({ isModalOpen, handleOk, handleCancel, rowData }) {
     const [code, setCode] = useState('');
     const [codeName, setCodeName] = useState('');
-    const [attr1, setAttr1] = useState('');
-    const [attr2, setAttr2] = useState('');
+    const [attri1, setAttri1] = useState('');
+    const [attri2, setAttri2] = useState('');
     const [note, setNote] = useState('');
     const handleSelect = async() => {
         let swalOptions = {
@@ -1333,8 +1333,8 @@ export function CmListAddModal({ isModalOpen, handleOk, handleCancel, rowData })
             codeGrpName: rowData.codeGrpName,
             code,
             codeName,
-            attr1,
-            attr2,
+            attri1,
+            attri2,
             note,
         };
         try {
@@ -1384,11 +1384,11 @@ export function CmListAddModal({ isModalOpen, handleOk, handleCancel, rowData })
                 </div>
                 <div className={sysStyles.text_field}>
                     <div className={sysStyles.text}>{"속성1"}</div>
-                    <TextField size='small' id='attr1' value={attr1} onChange={(e) => setAttr1(e.target.value)} label="속성1" variant='outlined' sx={{ width: "20rem" }} />
+                    <TextField size='small' id='attri1' value={attri1} onChange={(e) => setAttri1(e.target.value)} label="속성1" variant='outlined' sx={{ width: "20rem" }} />
                 </div>
                 <div className={sysStyles.text_field}>
                     <div className={sysStyles.text}>{"속성2"}</div>
-                    <TextField size='small' id='attr2' value={attr2} onChange={(e) => setAttr2(e.target.value)} label="속성2" variant='outlined' sx={{ width: "20rem" }} />
+                    <TextField size='small' id='attri2' value={attri2} onChange={(e) => setAttri2(e.target.value)} label="속성2" variant='outlined' sx={{ width: "20rem" }} />
                 </div>
                 <div className={sysStyles.text_field}>
                     <div className={sysStyles.text}>{"노트"}</div>
@@ -1409,8 +1409,8 @@ export function CmListEditModal({ isModalOpen, handleOk, handleCancel, rowData }
 
     const [code, setCode] = useState(rowData.code);
     const [codeName, setCodeName] = useState(rowData.codeName);
-    const [attr1, setAttr1] = useState(rowData.attr1);
-    const [attr2, setAttr2] = useState(rowData.attr2);
+    const [attri1, setAttri1] = useState(rowData.attri1);
+    const [attri2, setAttri2] = useState(rowData.attri2);
     const [note, setNote] = useState(rowData.note);
     const handleSelect = async() => {
         let swalOptions = {
@@ -1422,8 +1422,8 @@ export function CmListEditModal({ isModalOpen, handleOk, handleCancel, rowData }
             codeGrpName: rowData.codeGrpName,
             code,
             codeName,
-            attr1,
-            attr2,
+            attri1,
+            attri2,
             note,
         };
         try {
@@ -1472,11 +1472,11 @@ export function CmListEditModal({ isModalOpen, handleOk, handleCancel, rowData }
                 </div>
                 <div className={sysStyles.text_field}>
                     <div className={sysStyles.text}>{"속성1"}</div>
-                    <TextField size='small' id='attr1' value={attr1} onChange={(e) => setAttr1(e.target.value)} label="속성1" variant='outlined' sx={{ width: "20rem" }} />
+                    <TextField size='small' id='attri1' value={attri1} onChange={(e) => setAttri1(e.target.value)} label="속성1" variant='outlined' sx={{ width: "20rem" }} />
                 </div>
                 <div className={sysStyles.text_field}>
                     <div className={sysStyles.text}>{"속성2"}</div>
-                    <TextField size='small' id='attr2' value={attr2} onChange={(e) => setAttr2(e.target.value)} label="속성2" variant='outlined' sx={{ width: "20rem" }} />
+                    <TextField size='small' id='attri2' value={attri2} onChange={(e) => setAttri2(e.target.value)} label="속성2" variant='outlined' sx={{ width: "20rem" }} />
                 </div>
                 <div className={sysStyles.text_field}>
                     <div className={sysStyles.text}>{"노트"}</div>
