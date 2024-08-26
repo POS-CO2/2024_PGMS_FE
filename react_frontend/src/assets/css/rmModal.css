@@ -106,7 +106,7 @@
 }
 
 .select_button {
-    width: 100%;            /* 모달 창의 전체 너비로 확장 */
+    width: 21rem;
     height: 41px;
     padding: 5px 10px;
     background: rgb(85, 146, 248);

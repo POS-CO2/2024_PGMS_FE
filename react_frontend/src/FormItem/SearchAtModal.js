@@ -66,7 +66,7 @@ export default function SearchAtModal({ name, label, required = false, modalType
             <div className={formItemStyles.input_button_container}>
                 <Input className={formItemStyles.input_field} disabled={true} value={inputValue} />
                 <Button className={formItemStyles.modal_button} type="primary" onClick={showModal}>
-                    {modalType}
+                    찾기
                 </Button>
                 {renderModal()}
             </div>

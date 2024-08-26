@@ -14,10 +14,6 @@ export default function Rm() {
     const [formData, setFormData] = useState([]);         // 검색 데이터(프로젝트 조회 결과)
     const [salesAmts, setSalesAmts] = useState([]);       // 조회 결과(매출액 목록 리스트)
     const [selectedSA, setSelectedSA] = useState(null);   // 선택된 매출액(pk column only)
-    const [isModalOpen, setIsModalOpen] = useState({
-        RmAdd: false,
-        Del: false
-    });
 
     // selectedSA 변경될 때마다 실행될 useEffect
     useEffect(() => {}, [selectedSA]);
@@ -65,72 +61,6 @@ export default function Rm() {
         setIsModalOpen(prevState => ({ ...prevState, [modalType]: true }));
     };
 
-    // 매출액 등록 버튼 클릭 시 호출될 함수
-    const handleOk = (modalType) => async (data) => {
-
-        setIsModalOpen(prevState => ({ ...prevState, [modalType]: false })); //모달 닫기
-
-        // modalType에 따른 SweetAlert2 설정
-        let swalOptions = {
-            confirmButtonText: '확인'
-        };
-
-        if (modalType === 'RmAdd') {
-            try {
-                const requestBody = {
-                    pjtId: formData[0].id,
-                    year: data.year,
-                    mth: data.month,
-                    salesAmt: data.salesAmt
-                };
-                
-                const response = await axiosInstance.post("/pjt/sales", requestBody);
-                
-                // 기존 managers에서 placeholderManager 제거하고 새 데이터를 병합
-                setSalesAmts(prevSAs => {
-                    // placeholderManager 제거
-                    const cleanedSAs = prevSAs.filter(sales => sales.id !== '');
-
-                    // 새로 추가된 담당자를 병합
-                    return [...cleanedSAs, response.data];
-                });
-
-                swalOptions.title = '성공!',
-                swalOptions.text = '매출액이 성공적으로 등록되었습니다.';
-                swalOptions.icon = 'success';
-            } catch (error) {
-                console.log(error);
-
-                swalOptions.title = '실패!',
-                swalOptions.text = '매출액 등록에 실패하였습니다.';
-                swalOptions.icon = 'error';
-
-                // if(error.response.status === 400) {
-                //     swalOptions.text = `이미 ${error.config.data}에 등록된 매출액이 존재합니다.`;
-                // }
-            }
-        } else if (modalType === 'Del') {
-            try {
-                const response = await axiosInstance.delete(`/pjt/sales?id=${selectedSA}`);
-
-                // 선택된 담당자를 managers 리스트에서 제거
-                setSalesAmts(prevSAs => prevSAs.filter(salesAmt => salesAmt.id !== selectedSA));
-                setSelectedSA(null);
-
-                swalOptions.title = '성공!',
-                swalOptions.text = '매출액이 성공적으로 삭제되었습니다.';
-                swalOptions.icon = 'success';
-            } catch (error) {
-                console.log(error);
-
-                swalOptions.title = '실패!',
-                swalOptions.text = '매출액 삭제에 실패하였습니다.';
-                swalOptions.icon = 'success';
-            }
-        } 
-        Swal.fire(swalOptions);
-    };
-
     // 모달 닫기
     const handleCancel = (modalType) => () => {
         setIsModalOpen(prevState => ({ ...prevState, [modalType]: false }));
@@ -163,26 +93,11 @@ export default function Rm() {
                         title='매출액목록' 
                         data={salesAmts}
                         columns={pjtSalesColumns}                
-                        buttons={['Delete', 'Edit', 'Add']}
-                        onClicks={[onDeleteClick, () => {}, onAddClick]}
+                        buttons={['Edit']}
+                        onClicks={[() => {}]}
                         onRowClick={handleSAClick}
                         selectedRows={[selectedSA]}
                         rowData={{'pjtId': formData[0].id}}
-                        modals={[
-                            {
-                                'modalType': 'Del',
-                                'isModalOpen': isModalOpen.Del,
-                                'handleOk': handleOk('Del'),
-                                'handleCancel': handleCancel('Del')
-                            },
-                            {
-                                'modalType': 'RmAdd',
-                                'isModalOpen': isModalOpen.RmAdd,
-                                'handleOk': handleOk('RmAdd'),
-                                'handleCancel': handleCancel('RmAdd'),
-                                'rowData': {'pjtCode': formData[0].pjtCode, 'pjtName': formData[0].pjtName}
-                            },
-                        ]}
                     />
                 </Card>
             )}

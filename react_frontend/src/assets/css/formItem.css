@@ -19,10 +19,13 @@
     font-size: 12px;
     font-weight: bold;
 }
+
 .modal_button {
     flex-shrink: 0; /* Prevent the button from shrinking */
     padding-left: 0.2rem;
     padding-right: 0.2rem;
+    width: 4rem;
+    height: 1.8rem;
 }
 
 .search_btn {

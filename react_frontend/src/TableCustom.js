@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Swal from 'sweetalert2'
 import Table from "./Table.js";
 import * as tableStyles from "./assets/css/newTable.css"
-import { DelModal, PgAddModal, PdAddModal, RmAddModal, FlAddModal, FlEditModal, FamAddModal, FamEditModal, FadAddModal, Ps12UploadExcelModal, CmAddModal, DeleteModal, CmEditModal, CmListAddModal, CmListEditModal, FmAddModal, UmAddModal, MmAddModal, EsmAddModal, SdAddModal, SdShowDetailsModal } from "./modals/PdModal.js";
+import { DelModal, PgAddModal, PdAddModal, FlAddModal, FlEditModal, FamAddModal, FamEditModal, FadAddModal, Ps12UploadExcelModal, CmAddModal, DeleteModal, CmEditModal, CmListAddModal, CmListEditModal, FmAddModal, UmAddModal, MmAddModal, EsmAddModal, SdAddModal, SdShowDetailsModal } from "./modals/PdModal.js";
 import { ButtonGroup } from './Button';
 import axiosInstance from './utils/AxiosInstance';
 
@@ -17,7 +17,6 @@ const modalMap = {
     Ps12UploadExcel: Ps12UploadExcelModal,
     PgAdd: PgAddModal,
     PdAdd: PdAddModal,
-    RmAdd: RmAddModal,
     FlAdd: FlAddModal,
     FlEdit: FlEditModal,
     FamAdd: FamAddModal,
@@ -132,14 +131,13 @@ export function TableCustomDoubleClickEdit({
 
         if (isEditing) {    // 저장 버튼 클릭 시
             const updatedRows = editedRows.map(index => editableData[index]);
-
             try {
                 const requestBody = updatedRows.map(row => ({
                     id: row.id,
-                    pjtId: rowData.pjtId,
-                    year: row['년'],
-                    mth: row['월'],
-                    salesAmt: row['매출액']
+                    pjtId: row.pjtId,
+                    year: row.year,
+                    mth: row.mth,
+                    salesAmt: row.salesAmt
                 }));
 
                 const response = await axiosInstance.put("/pjt/sales", requestBody);
@@ -179,7 +177,7 @@ export function TableCustomDoubleClickEdit({
         const newData = [...editableData];  // editableData 복사
         newData[rowIndex] = {
             ...newData[rowIndex],            // 해당 행 복사
-            [Object.keys(newData[rowIndex])[colIndex+1]]: e.target.value // 특정 셀의 데이터만 업데이트(id 컬럼으로 인해 colIndex+1)
+            [Object.keys(newData[rowIndex])[colIndex+3]]: e.target.value // 특정 셀의 데이터만 업데이트(id 컬럼으로 인해 colIndex+1)
         };
 
         // 수정된 행의 인덱스를 추가

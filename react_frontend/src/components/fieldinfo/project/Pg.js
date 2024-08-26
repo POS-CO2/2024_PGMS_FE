@@ -163,25 +163,22 @@ export default function Pg() {
 
                 const response = await axiosInstance.post("/pjt", requestBody);
 
-                // 기존 프로젝트에서 placeholderPjt를 제거하고 새 데이터를 병합
-                setProjects(prevPjts => {
-                    // placeholderProject 제거
-                    const cleanedPjts = prevPjts.filter(pjt => pjt.id !== '');
-
-                    // 새로 추가된 프로젝트를 병합
-                    return [...cleanedPjts, ...response.data];
-                });
-
                 swalOptions.title = '성공!',
                 swalOptions.text = '프로젝트가 성공적으로 등록되었습니다.';
                 swalOptions.icon = 'success';
             } catch (error) {
-                console.log("aa:", error);
+                console.log(error);
 
                 swalOptions.title = '실패!',
                 swalOptions.text = '프로젝트 등록에 실패하였습니다.';
                 swalOptions.icon = 'error';
             }
+            // Swal.fire(swalOptions).then((result) => {
+            //     // 사용자가 확인 버튼을 클릭했을 때만 리렌더링
+            //     if (result.isConfirmed) { 
+            //         window.location.reload();
+            //     }
+            // });
         } else if (modalType === 'Del') {
             try {
                 const response = await axiosInstance.patch(`/pjt?id=${selectedPjt}`);
@@ -200,8 +197,8 @@ export default function Pg() {
                 swalOptions.text = '프로젝트 삭제에 실패하였습니다.';
                 swalOptions.icon = 'error';
             }
+            Swal.fire(swalOptions);
         } 
-        Swal.fire(swalOptions);
     };
 
     // 모달 닫기
