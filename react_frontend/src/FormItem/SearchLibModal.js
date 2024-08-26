@@ -1,26 +1,55 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Modal } from 'antd';
 import * as pjtModalStyles from "../assets/css/pjtModal.css";
+import { equipLibColumns } from '../assets/json/tableColumn';
 import Table from "../Table";
-import {lib} from "../assets/json/selectedPjt"
+import axiosInstance from '../utils/AxiosInstance.js';
 
 export default function ModalComponent({ isModalOpen, handleOk, handleCancel }) {
-  const [formData, setFormData] = useState({});           // 검색 데이터
-  const [selectedEq, setSelectedEq] = useState(null);     // 선택된 설비 리스트
+  const [searchedEqLibs, setSearchedEqLibs] = useState([]);         // 검색 결과
+  const [selectedEqLib, setSelectedEqLib] = useState({});           // 선택된 프로젝트
+  const [inputValue, setInputValue] = useState('');                 // 입력한 설비라이브러리명
+
+  useEffect(() => {
+    const fetchEqLib = async () => {
+      try {
+          const response = await axiosInstance.get("/equip/lib");
+
+          setSearchedEqLibs(response.data);
+      } catch (error) {
+          console.log(error);
+      }
+    };
+    fetchEqLib(); // 컴포넌트 마운트 될 때 데이터불러옴
+  }, [])
+
+  // 엔터 키 입력 시 handleSearch 호출
+  const handleKeyDown = (e) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();  // 폼의 기본 제출 동작 방지
+      handleSearch();
+    }
+  };
 
   // 찾기 버튼 클릭 시 호출될 함수
-  const handleFormSubmit = (data) => {
-    setFormData(data);
+  const handleSearch = async() => {
+    try {
+        const response = await axiosInstance.get(`/equip/lib?equipLibName=${inputValue}`);
+
+        setSearchedEqLibs(response.data);
+    } catch (error) {
+        console.log(error);
+    }
   };
 
   // 설비 row 클릭 시 호출될 함수
-  const handleEqClick = (eq) => {
-    setSelectedEq(eq.EquipName);
+  const handleEqClick = (eqLib) => {
+    setSelectedEqLib(eqLib ?? {});
   };
 
   // 선택 버튼 클릭 시 호출될 함수
   const handleSelect = () => {
-    handleOk(selectedEq);
+    handleOk(selectedEqLib);
   };
   
   return (
@@ -35,15 +64,19 @@ export default function ModalComponent({ isModalOpen, handleOk, handleCancel }) 
         <div className={pjtModalStyles.search_item}>
           <div className={pjtModalStyles.search_title}>설비LIB명</div>
           <div className={pjtModalStyles.search_container}>
-            <input className={pjtModalStyles.search_name}/>
-            <button className={pjtModalStyles.search_button} onClick={handleFormSubmit}>찾기</button>
+            <input 
+              value={inputValue}
+              className={pjtModalStyles.search_name} 
+              onChange={(e) => setInputValue(e.target.value)}
+              onKeyDown={handleKeyDown}
+            />
+            <button className={pjtModalStyles.search_button} onClick={handleSearch}>찾기</button>
           </div>
         </div>
       </div>
 
       <div className={pjtModalStyles.result_container}>
-        {(!formData || Object.keys(formData).length === 0) ?
-          <></> : ( <Table data={lib} onRowClick={handleEqClick} /> )}
+          <Table data={searchedEqLibs} columns={equipLibColumns} onRowClick={handleEqClick} />
       </div>
 
       <button className={pjtModalStyles.select_button} onClick={handleSelect}>선택</button>

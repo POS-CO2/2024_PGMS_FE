@@ -4,7 +4,8 @@ import { Card } from '@mui/material';
 import * as mainStyles from "../../../assets/css/main.css"
 import TableCustom from "../../../TableCustom";
 import SearchForms from "../../../SearchForms";
-import {formField_fl} from "../../../assets/json/searchFormData.js";
+import {formField_fl} from "../../../assets/json/searchFormData";
+import { equipLibColumns } from '../../../assets/json/tableColumn';
 import axiosInstance from '../../../utils/AxiosInstance';
 
 export default function Fl() {
@@ -20,10 +21,10 @@ export default function Fl() {
     class EqLib {
         constructor(id = '', equipLibName = '', equipDvs = '', equipType = '', equipSpecUnit = '') {
             this.id = id;
-            this.설비라이브러리명 = equipLibName;
-            this.설비구분 = equipDvs;
-            this.설비유형 = equipType;
-            this.설비사양단위 = equipSpecUnit;
+            this.equipLibName = equipLibName;
+            this.equipDvs = equipDvs;
+            this.equipType = equipType;
+            this.equipSpecUnit = equipSpecUnit;
         }
     }
 
@@ -38,16 +39,8 @@ export default function Fl() {
     useEffect(() => {
         const fetchEqLib = async () => {
             try {
-                const response = await axiosInstance.get(`/equip/lib`);
-                const filteredEqLibs = response.data.map(eqLib => new EqLib(
-                    eqLib.id,
-                    eqLib.equipLibName,
-                    eqLib.equipDvs,
-                    eqLib.equipType,
-                    eqLib.equipSpecUnit
-                ));
-
-                setEqLibs(filteredEqLibs);
+                const response = await axiosInstance.get("/equip/lib");
+                setEqLibs(response.data);
             } catch (error) {
                 console.log(error);
             }
@@ -113,15 +106,7 @@ export default function Fl() {
             const placeholderSA = new EqLib();
             setEqLibs([placeholderSA]);
         } else {
-            // 필요한 필드만 추출하여 managers에 설정
-            const filteredEqLibs = response.data.map(eqLib => new EqLib(
-                eqLib.id,
-                eqLib.equipLibName,
-                eqLib.equipDvs,
-                eqLib.equipType,
-                eqLib.equipSpecUnit
-            ));
-            setEqLibs(filteredEqLibs);
+            setEqLibs(response.data);
         }
     };
 
@@ -153,15 +138,6 @@ export default function Fl() {
                 };
 
                 const response = await axiosInstance.post("/equip/lib", requestBody);
-                
-                // 데이터가 객체인 경우 처리 방법
-                const filteredData = new EqLib(
-                    response.data.id,
-                    response.data.equipLibName,
-                    response.data.equipDvs,
-                    response.data.equipType,
-                    response.data.equipSpecUnit
-                );
 
                 // 기존 프로젝트에서 placeholderPjt를 제거하고 새 데이터를 병합
                 setEqLibs(prevEqLibs => {
@@ -169,7 +145,7 @@ export default function Fl() {
                     const cleanedEqLibs = prevEqLibs.filter(eqLib => eqLib.id !== '');
 
                     // 새로 추가된 설비LIB을 병합
-                    return [...cleanedEqLibs, filteredData];
+                    return [...cleanedEqLibs, response.data];
                 });
 
                 swalOptions.title = '성공!',
@@ -212,12 +188,10 @@ export default function Fl() {
 
                 const response = await axiosInstance.patch("/equip/lib", requestBody);
 
-                const filteredEqLibs = new EqLib(selectedEqLib.id, response.data.equipLibName, response.data.equipDvs, response.data.equipType, response.data.equipSpecUnit)
-
                 // 서버로부터 받은 수정된 데이터를 사용하여 리스트 업데이트
                 setEqLibs(prevEqLibs => 
                     prevEqLibs.map(eqLib => 
-                        eqLib.id === selectedEqLib.id ? filteredEqLibs : eqLib
+                        eqLib.id === selectedEqLib.id ? response.data : eqLib
                     )
                 );
                 setSelectedEqLib({});
@@ -262,6 +236,7 @@ export default function Fl() {
             <TableCustom 
                 title='설비LIB목록' 
                 data={eqLibs}                   
+                columns={equipLibColumns}
                 buttons={['Delete', 'Edit', 'Add']}
                 onClicks={[onDeleteClick, onEditClick, onAddClick]}
                 onRowClick={(e) => handleEqLibClick(e)}
