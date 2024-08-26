@@ -15,7 +15,7 @@ export default function Fam() {
     const [isModalOpen, setIsModalOpen] = useState({
         FamAdd: false,
         FamEdit: false,
-        Del: false
+        Delete: false
     });
 
     class Actv {
@@ -164,10 +164,9 @@ export default function Fam() {
                 swalOptions.text = '활동자료 등록에 실패하였습니다.';
                 swalOptions.icon = 'error';
             }
-        } else if (modalType === 'Del') {
+            Swal.fire(swalOptions);
+        } else if (modalType === 'Delete') {
             try {
-                const response = await axiosInstance.delete(`/equip/actv?id=${selectedActv.id}`);
-
                 // 선택된 활동자료를 actves 리스트에서 제거
                 setActves(prevActves => prevActves.filter(actv => actv.id !== selectedActv.id));
                 setSelectedActv({});
@@ -214,8 +213,8 @@ export default function Fam() {
                 swalOptions.text = '활동자료 수정에 실패하였습니다.';
                 swalOptions.icon = 'error';
             }
+            Swal.fire(swalOptions);
         } 
-        Swal.fire(swalOptions);
     };
 
     // 모달 닫기
@@ -233,7 +232,7 @@ export default function Fam() {
     };
 
     const onDeleteClick = () => {
-        showModal('Del');
+        showModal('Delete');
     };
 
     return (
@@ -251,10 +250,13 @@ export default function Fam() {
                 selectedRows={[selectedActv.id]}
                 modals={[
                     {
-                        'modalType': 'Del',
-                        'isModalOpen': isModalOpen.Del,
-                        'handleOk': handleOk('Del'),
-                        'handleCancel': handleCancel('Del')
+                        'modalType': 'Delete',
+                        'isModalOpen': isModalOpen.Delete,
+                        'handleOk': handleOk('Delete'),
+                        'handleCancel': handleCancel('Delete'),
+                        'rowData': selectedActv,
+                        'rowDataName': 'actvDataName',
+                        'url': '/equip/actv'
                     },
                     {
                         'modalType': 'FamEdit',
