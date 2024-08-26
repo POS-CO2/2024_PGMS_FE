@@ -29,7 +29,7 @@ export default function Esm() {
     const [formData, setFormData] = useState({});
 
     const [showResults, setShowResults] = useState(false);            // 조회결과를 표시할지 여부
-    const [selectedPjt, setSelectedPjt] = useState(null);             // 선택된 프로젝트
+    const [selectedPjt, setSelectedPjt] = useState([]);               // 선택된 프로젝트
     const [emtns, setEmtns] = useState([]);                           // 배출원 목록
     const [selectedEmtn, setSelectedEmtn] = useState(null);           // 선택된 배출원
     const [showSds, setShowSds] = useState(false);                    // 증빙자료 목록을 표시할지 여부
@@ -56,8 +56,7 @@ export default function Esm() {
     const handleFormSubmit = async (param) => {
         setSelectedPjt([param.searchProject]);
 
-        //let url = `/equip/emission?projectId=${param.searchProject.id}`;
-        let url = `/equip/emission?projectId=2`;
+        let url = `/equip/emission?projectId=${param.searchProject.id}`;
         const emtnData = await axiosInstance.get(url);
         setEmtns(emtnData.data);
 
@@ -96,16 +95,16 @@ export default function Esm() {
             setIsModalOpen(prevState => ({ ...prevState, [modalType]: false })); //모달 닫기
         }
 
-        // 데이터 전달 로직은 각자 구현하기
-        console.log(data);
-        /*
-        if (modalType === 'FmAdd') {
-            setFac(prevList => [...prevList, data]); // 선택된 프로젝트 데이터를 상태로 저장
+        if (modalType === 'EsmAdd') {
+            console.log(data);
+            setEmtns(prevList => [...prevList, data]); // 선택된 프로젝트 데이터를 상태로 저장
+            console.log(emtns);
         }
+        
         else if (modalType === 'Delete') {
-            setFac(prevList => prevList.filter(fac => fac.id !== data.id));
+            setEmtns(prevList => prevList.filter(emtns => emtns.id !== data.id));
         }
-        */
+        
     };
     const handleCancel = (modalType) => () => {
         setIsModalOpen(prevState => ({ ...prevState, [modalType]: false }));
@@ -147,6 +146,7 @@ export default function Esm() {
 
                     <div className={sysStyles.main_grid}>
                         <Card className={sysStyles.card_box} sx={{ width: "50%", height: "100vh", borderRadius: "15px" }}>
+                       {console.log(emtns)}
                             <TableCustom
                                 title="배출원목록"
                                 columns={equipEmissionColumns}
@@ -160,15 +160,15 @@ export default function Esm() {
                                         isModalOpen: isModalOpen.EsmAdd,
                                         handleOk: handleOk('EsmAdd'),
                                         handleCancel: handleCancel('EsmAdd'),
-                                        /*'rowData': selectedPjt,*/
+                                        rowData: selectedPjt,
                                     }, {
                                         modalType: 'Delete',
                                         isModalOpen: isModalOpen.Delete,
                                         handleOk: handleOk('Delete'),
                                         handleCancel: handleCancel('Delete'),
-                                        /*'rowData': selectedFac, 
-                                        'rowDataName': "equipName",
-                                        'url': '/equip',*/
+                                        rowData: selectedEmtn,
+                                        rowDataName: "equipName",
+                                        url: '/equip/emission',
                                     }
                                 ]}
                                 selectedRows={[selectedEmtn]}
