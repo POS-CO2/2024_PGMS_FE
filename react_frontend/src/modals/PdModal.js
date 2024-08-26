@@ -1948,7 +1948,7 @@ export function EsmAddModal({ isModalOpen, handleOk, handleCancel, rowData }) {
             
         };
         fetchEmtnCands(); // 컴포넌트 마운트 될 때 데이터불러옴
-    }, [rowData])
+    }, [isModalOpen, rowData])
 
     // 배출원 row 클릭 시 호출될 함수
     const handleEmtnClick = (row) => {
@@ -1985,9 +1985,10 @@ export function EsmAddModal({ isModalOpen, handleOk, handleCancel, rowData }) {
 
             // 모든 요청이 완료될 때까지 대기
             const responses = await Promise.all(requests);
+            const responseEmtnCands = responses.map(response => response.data);
 
             // handleOk을 호출하여 모달을 닫고 상위 컴포넌트에 알림
-            handleOk(selectedEmtnCands);
+            handleOk(responseEmtnCands);
             swalOptions.title = '성공!',
             swalOptions.text = `배출원이 성공적으로 등록되었습니다.`;
             swalOptions.icon = 'success';

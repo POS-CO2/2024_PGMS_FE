@@ -36,13 +36,11 @@ export default function Esm() {
 
     const [buttonStatus, setButtonStatus] = useState([false, false, false]);
     useEffect(() => {
-        // selectedSd가 null인지 여부에 따라 버튼 상태를 설정합니다.
+        // selectedSd가 null인지 여부에 따라 버튼 상태를 설정
         if (selectedSd === null) {
             setButtonStatus([false, false, true]); // Add만 활성화
-        } else if (selectedSd.length === 1) {
+        } else {
             setButtonStatus([true, true, true]); // 모든 버튼 활성화
-        } else { // 여러개 선택된 경우
-            setButtonStatus([false, true, true]); // 삭제, 등록 활성화
         }
     }, [selectedSd]);
 
@@ -50,7 +48,8 @@ export default function Esm() {
         EsmAdd: false, // 배출원 등록
         SdAdd: false, // 증빙자료 등록
         SdShowDetails: false, // 증빙자료 상세보기
-        Delete: false
+        DeleteA: false, // 배출원 삭제
+        DeleteB: false, // 증빙자료 삭제
     });
 
     const handleFormSubmit = async (param) => {
@@ -83,7 +82,9 @@ export default function Esm() {
     // 증빙자료 row 클릭 시 호출될 함수
     const handleSdClick = (row) => {
         setSelectedSd(row);
-        console.log(selectedSd);
+        if(!row) {
+            setSelectedSd(null);
+        }
     };
 
     const showModal = (modalType) => {
@@ -101,9 +102,14 @@ export default function Esm() {
             console.log(emtns);
         }
         
-        else if (modalType === 'Delete') {
+        else if (modalType === 'DeleteA') {
             setEmtns(prevList => prevList.filter(emtns => emtns.id !== data.id));
             setSelectedEmtn(null);
+        }
+
+        else if (modalType === 'DeleteB') {
+            setSds(prevList => prevList.filter(sd => sd.id !== data.id));
+            setSelectedSd(null);
         }
         
     };
@@ -115,14 +121,14 @@ export default function Esm() {
         showModal('EsmAdd');
     };
     const onEmsDeleteClick = () => {
-        showModal('Delete');
+        showModal('DeleteA');
     };
 
     const onSdAddClick = () => {
         showModal('SdAdd');
     };
     const onSdDeleteClick = () => {
-        showModal('Delete');
+        showModal('DeleteB');
     };
     const onSdShowDetailsClick = () => {
         showModal('SdShowDetails');
@@ -173,10 +179,10 @@ export default function Esm() {
                                         handleCancel: handleCancel('EsmAdd'),
                                         rowData: selectedPjt,
                                     }, {
-                                        modalType: 'Delete',
-                                        isModalOpen: isModalOpen.Delete,
-                                        handleOk: handleOk('Delete'),
-                                        handleCancel: handleCancel('Delete'),
+                                        modalType: 'DeleteA',
+                                        isModalOpen: isModalOpen.DeleteA,
+                                        handleOk: handleOk('DeleteA'),
+                                        handleCancel: handleCancel('DeleteA'),
                                         rowData: selectedEmtn,
                                         rowDataName: "equipName",
                                         url: '/equip/emission',
@@ -187,7 +193,7 @@ export default function Esm() {
                         </Card>
                         
                         <Card className={sysStyles.card_box} sx={{ width: "50%", borderRadius: "15px" }}>
-                            <div className={sysStyles.mid_title}>
+                            <div className={tableStyles.table_title}>
                                 {"증빙자료 목록"}
                             </div>
                             
@@ -206,7 +212,7 @@ export default function Esm() {
                                             onClicks={[onSdShowDetailsClick, onSdDeleteClick, onSdAddClick]}
                                             buttonStatus={buttonStatus} />
                                     </div>
-                                    <Table data={sds} variant='checkbox' onRowClick={handleSdClick} columns={equipDocumentColumns} />
+                                    <Table data={sds} onRowClick={handleSdClick} columns={equipDocumentColumns} />
 
                                     <SdAddModal
                                         isModalOpen={isModalOpen.SdAdd}
@@ -214,9 +220,12 @@ export default function Esm() {
                                         handleCancel={handleCancel('SdAdd')}
                                     />
                                     <DeleteModal
-                                        isModalOpen={isModalOpen.Delete}
-                                        handleOk={handleOk('Delete')}
-                                        handleCancel={handleCancel('Delete')}
+                                        isModalOpen={isModalOpen.DeleteB}
+                                        handleOk={handleOk('DeleteB')}
+                                        handleCancel={handleCancel('DeleteB')}
+                                        rowData={selectedSd}
+                                        rowDataName="name"
+                                        url='/equip/document'
                                     />
                                     <SdShowDetailsModal
                                         selectedSd={selectedSd}
