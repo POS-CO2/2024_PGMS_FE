@@ -20,7 +20,7 @@ import { Sledding } from '@mui/icons-material';
 import axiosInstance from '../utils/AxiosInstance.js';
 import { Center } from '@react-three/drei';
 import Swal from 'sweetalert2'
-import { pjtColumns, userColumns, equipColumns, equipActvColumns } from '../assets/json/tableColumn.js';
+import { pjtColumns, userColumns, equipColumns, equipActvColumns, equipLibColumns, equipEmissionColumns } from '../assets/json/tableColumn.js';
 
 export function PgAddModal({ isModalOpen, handleOk, handleCancel }) {
     const [formData, setFormData] = useState({});             // 검색 데이터
@@ -1951,13 +1951,74 @@ export function MmAddModal({ isModalOpen, handleOk, handleCancel, rowData }) {
     )
 }
 
-export function EsmAddModal({ isModalOpen, handleOk, handleCancel }) {
-    const [selectedEmtns, setSelectedEmtns] = useState([]);
+export function EsmAddModal({ isModalOpen, handleOk, handleCancel, rowData }) {
+    const [emtnCands, setEmtnCands] = useState([]); // 배출원 후보 목록
+    const [selectedEmtnCands, setSelectedEmtnCands] = useState([]); // 선택된 배출원 후보 목록
+
+    // 배출원 후보 불러오기 
+    useEffect(() => {
+        const fetchEmtnCands = async () => {
+            try {
+                let url = `/equip/emission/cand?projectId=${rowData[0].id}`;
+                const emtnCandData = await axiosInstance.get(url);
+                setEmtnCands(emtnCandData.data);
+            } catch (error) {
+                console.log(error);
+            }
+            
+        };
+        fetchEmtnCands(); // 컴포넌트 마운트 될 때 데이터불러옴
+    }, [isModalOpen, rowData])
 
     // 배출원 row 클릭 시 호출될 함수
     const handleEmtnClick = (row) => {
-        setSelectedEmtns(row.equipName);
-        console.log(selectedEmtns);
+        setSelectedEmtnCands(row);
+        console.log(row);
+    };
+
+    // 등록 버튼 클릭 시 호출될 함수
+    const handleSelect = async () => {
+        let swalOptions = {
+            confirmButtonText: '확인'
+        };
+
+        // selectedEmtnCands가 null이거나 비어있는지 확인
+        if (!selectedEmtnCands || selectedEmtnCands.length === 0) {
+            swalOptions.title = '실패!';
+            swalOptions.text = '선택된 배출원이 없습니다.';
+            swalOptions.icon = 'error';
+            Swal.fire(swalOptions);
+            return; // 더 이상 진행하지 않도록 함수 종료
+        }
+
+        try {
+            // POST 요청으로 서버에 데이터 전송
+            const requests = selectedEmtnCands.map((selectedEmtnCand) => {
+                const regData = {
+                    equipId: selectedEmtnCand.equipId,
+                    actvDataId: selectedEmtnCand.actvDataId,
+                };
+
+                // 각 항목에 대해 POST 요청을 보내고, 요청 결과를 Promise 배열로 수집
+                return axiosInstance.post('/equip/emission', regData);
+            });
+
+            // 모든 요청이 완료될 때까지 대기
+            const responses = await Promise.all(requests);
+            const responseEmtnCands = responses.map(response => response.data);
+
+            // handleOk을 호출하여 모달을 닫고 상위 컴포넌트에 알림
+            handleOk(responseEmtnCands);
+            swalOptions.title = '성공!',
+            swalOptions.text = `배출원이 성공적으로 등록되었습니다.`;
+            swalOptions.icon = 'success';
+        } catch (error) {
+            console.error('Failed to add user:', error);
+            swalOptions.title = '실패!',
+            swalOptions.text = `배출원 등록에 실패하였습니다.`;
+            swalOptions.icon = 'error';
+        }
+        Swal.fire(swalOptions);
     };
 
     return (
@@ -1969,9 +2030,9 @@ export function EsmAddModal({ isModalOpen, handleOk, handleCancel }) {
         >
             <div className={modalStyles.title}>배출원 등록</div>
 
-            <Table data={emsData} variant='checkbox' onRowClick={handleEmtnClick} />
+            <Table data={emtnCands} variant='checkbox' onRowClick={handleEmtnClick} columns={equipEmissionColumns} />
 
-            <button className={modalStyles.select_button} onClick={handleOk}>등록</button>
+            <button className={modalStyles.select_button} onClick={handleSelect}>등록</button>
         </Modal>
     )
 }

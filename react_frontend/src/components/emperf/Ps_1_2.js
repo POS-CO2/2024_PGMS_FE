@@ -7,6 +7,7 @@ import { Card } from '@mui/material';
 import * as mainStyle from '../../assets/css/main.css';
 // import * as ps12Style from '../../assets/css/ps12.css';
 import axiosInstance from '../../utils/AxiosInstance';
+import { perfColumns } from '../../assets/json/tableColumn';
 
 export default function Ps_1_2() {
     const [formFields, setFormFields] = useState(formField_ps12);
@@ -26,8 +27,8 @@ export default function Ps_1_2() {
                     label: emtnActvType.name,
                 }));
                 setEmtnActvType(options);
-                const updateFormFields = formFields.map(field => 
-                    field.name === 'emtnActvType' ? {...field, options } : field
+                const updateFormFields = formFields.map(field =>
+                    field.name === 'emtnActvType' ? { ...field, options } : field
                 );
 
                 setFormFields(updateFormFields);
@@ -37,11 +38,11 @@ export default function Ps_1_2() {
         };
 
         fetchEmtnActvTypeCode();
-    },[]);
+    }, []);
 
     // 프로젝트 선택 후 대상년도 드롭다운 옵션 설정
     const onProjectSelect = (selectedData, form) => {
-        const ctrtFrYear = selectedData.프로젝트시작년;
+        const ctrtFrYear = selectedData.ctrtFrYear;
         if (ctrtFrYear) {
             const currentYear = new Date().getFullYear();
             const yearOptions = [];
@@ -52,7 +53,7 @@ export default function Ps_1_2() {
             }
 
             // actvYear 필드를 업데이트하여 새로운 옵션 반영
-            const updatedFields = formFields.map(field => 
+            const updatedFields = formFields.map(field =>
                 field.name === 'actvYear' ? { ...field, options: yearOptions } : field
             );
 
@@ -69,22 +70,23 @@ export default function Ps_1_2() {
     const createPerfData = (perf, key) => {
         // 기본 구조 설정
         const perfData = {
-            id: perf.emissionId,
-            설비명: perf.equipName,
-            배출활동유형: perf.emtnActvType,
-            활동자료: perf.actvDataName,
-            단위: key === 'actvQty' ? perf.inputUnitCode : '원', // key에 따른 단위 설정
+            emissionId: perf.emissionId,
+            equipName: perf.equipName,
+            emtnActvType: perf.emtnActvType,
+            actvDataName: perf.actvDataName,
+            inputUnitCode: key === 'actvQty' ? perf.inputUnitCode : '원', // key에 따른 단위 설정
         };
 
         // quantityList를 순회하며 월별 데이터를 추가
         perf.quantityList.forEach(item => {
             if (item && item.actvMth) {
-                perfData[`${item.actvMth}월`] = item[key];
+                const monthKey = `month${item.actvMth}`; // 'month1', 'month2', ...
+                perfData[monthKey] = item[key];
             }
         });
         // 모든 월(1월부터 12월까지)의 데이터가 없을 경우 기본값으로 채워줌
         for (let month = 1; month <= 12; month++) {
-            const monthKey = `${month}월`;
+            const monthKey = `month${month}`;
             if (!perfData.hasOwnProperty(monthKey)) {
                 perfData[monthKey] = 0.0; // 데이터가 없는 경우 기본값 0.0 설정
             }
@@ -111,7 +113,7 @@ export default function Ps_1_2() {
                 emissionId: '',
                 설비명: '',
                 배출활동유형: '',
-                활동자료: '',
+                활동자료명: '',
                 단위: '',
                 '1월': '',
                 '2월': '',
@@ -134,7 +136,7 @@ export default function Ps_1_2() {
             // 필요한 필드만 추출하여 설정
             const usageFilteredPerfs = response.data.map(perf => createPerfData(perf, 'actvQty'));
             const amountUsedFilteredPerfs = response.data.map(perf => createPerfData(perf, 'fee'));
-            
+
             setUsagePerfs(usageFilteredPerfs);
             setAmountUsedPerfs(amountUsedFilteredPerfs);
         }
@@ -146,10 +148,10 @@ export default function Ps_1_2() {
                 {"배출실적 > 활동량 관리"}
             </div>
 
-            <SearchForms onFormSubmit={handleFormSubmit} 
-            //formFields={formFields} 
-            formFields={formFields.map(field => field.name === 'actvYear' ? {...field, disabled: actvYearDisabled, placeholder: actvYearDisabled ? '프로젝트를 선택하세요.' : '' } : field)} // actvYear 필드의 disabled 상태 반영
-            onProjectSelect={onProjectSelect} />
+            <SearchForms onFormSubmit={handleFormSubmit}
+                //formFields={formFields} 
+                formFields={formFields.map(field => field.name === 'actvYear' ? { ...field, disabled: actvYearDisabled, placeholder: actvYearDisabled ? '프로젝트를 선택하세요.' : '' } : field)} // actvYear 필드의 disabled 상태 반영
+                onProjectSelect={onProjectSelect} />
 
             {(!formData || Object.keys(formData).length === 0) ?
                 <></> : (
@@ -188,6 +190,7 @@ function Usage({ data }) {
     return (
         <Card sx={{ width: "100%", height: "100%", borderRadius: "15px" }}>
             <TableCustom
+                columns={perfColumns}
                 title="실적목록"
                 data={data}
                 buttons={['UploadExcel', 'DownloadExcelForm']}
@@ -230,6 +233,7 @@ function AmountUsed({ data }) {
     return (
         <Card sx={{ width: "100%", height: "100%", borderRadius: "15px" }}>
             <TableCustom
+                columns={perfColumns}
                 title="실적목록"
                 data={data}
                 buttons={['UploadExcel', 'DownloadExcelForm']}

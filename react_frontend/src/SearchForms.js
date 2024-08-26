@@ -3,6 +3,7 @@ import * as searchFormStyles from './assets/css/searchForm.css';
 import { Form } from 'antd';
 import DropDown from "./FormItem/DropDown";
 import InputText from "./FormItem/InputText";
+import InputYear from "./FormItem/InputYear";
 import SelectCalendar from "./FormItem/SelectCalendar";
 import SearchAtModal from "./FormItem/SearchAtModal";
 import SearchBtn from "./FormItem/SearchBtn";
@@ -31,6 +32,7 @@ import SearchBtn from "./FormItem/SearchBtn";
 const formItemComponents = {
     DropDown,
     InputText,
+    InputYear,
     SelectCalendar,
     SearchAtModal
 };

@@ -9,28 +9,18 @@ export default function InputText({ name, label, required = false }) {
     const handleChange = (e) => {
         setValue(e.target.value);
     };
-    const handleClear = (e) => {
-        setValue('');
-    };
-
-    const clearIcon = (
-        <CloseOutlined
-            onClick={handleClear}
-            style={{ cursor: 'pointer' }}
-        />
-    );
 
     return (
         <Form.Item
             className={formItemStyles.form_item}
             name={name}
             label={label}
-            rules={[{ required: required }]}
+            rules={[{ required: required, message: '${label} 입력은 필수입니다.' }]}
         >
             <Input
                 value={value}
                 onChange={handleChange}
-                allowClear={{ clearIcon: <CloseOutlined style={{color: "red"}} /> }}
+                allowClear={{ clearIcon: <CloseOutlined style={{ color: "red" }} /> }}
             />
         </Form.Item>
     )
