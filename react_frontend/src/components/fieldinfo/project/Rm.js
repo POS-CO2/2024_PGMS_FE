@@ -55,26 +55,7 @@ export default function Rm() {
     const handleSAClick = (salesAmt) => {
         setSelectedSA(salesAmt?.id ?? null);
     };
-
-    // 모달 열기
-    const showModal = (modalType) => {
-        setIsModalOpen(prevState => ({ ...prevState, [modalType]: true }));
-    };
-
-    // 모달 닫기
-    const handleCancel = (modalType) => () => {
-        setIsModalOpen(prevState => ({ ...prevState, [modalType]: false }));
-    };
-
-    // 버튼 클릭 시 모달 열림 설정
-    const onAddClick = () => {
-        showModal('RmAdd');
-    };
-
-    const onDeleteClick = () => {
-        showModal('Del');
-    };
-
+    
     return (
         <div>
             <div className={mainStyles.breadcrumb}>현장정보 &gt; 프로젝트 &gt; 매출액 관리</div>
@@ -94,10 +75,10 @@ export default function Rm() {
                         data={salesAmts}
                         columns={pjtSalesColumns}                
                         buttons={['Edit']}
+                        pagination={false}
                         onClicks={[() => {}]}
                         onRowClick={handleSAClick}
                         selectedRows={[selectedSA]}
-                        rowData={{'pjtId': formData[0].id}}
                     />
                 </Card>
             )}

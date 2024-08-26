@@ -12,10 +12,10 @@ import dayjs from 'dayjs';
 export default function Pg() {
     const [formFields, setFormFields] = useState(formField_pg);
     const [projects, setProjects] = useState([]);                   // 검색 데이터(프로젝트 목록)
-    const [selectedPjt, setSelectedPjt] = useState(null);           // 선택된 프로젝트(PK column only)
+    const [selectedPjt, setSelectedPjt] = useState({});           // 선택된 프로젝트(PK column only)
     const [isModalOpen, setIsModalOpen] = useState({
         PgAdd: false,
-        Del: false
+        Delete: false
     });
 
     const fetchOptions = async (unitType) => {
@@ -139,7 +139,7 @@ export default function Pg() {
 
     // 프로젝트 row 클릭 시 호출될 함수
     const handlePjtClick = (pjt) => {
-        setSelectedPjt(pjt?.id ?? null);
+        setSelectedPjt(pjt ?? {});
     };
 
     // 모달 열기
@@ -163,6 +163,15 @@ export default function Pg() {
 
                 const response = await axiosInstance.post("/pjt", requestBody);
 
+                // 기존 프로젝트에서 placeholderPjt를 제거하고 새 데이터를 병합
+                setProjects(prevPjts => {
+                    // placeholderProject 제거
+                    const cleanedPjts = prevPjts.filter(pjt => pjt.id !== '');
+
+                    // 새로 추가된 프로젝트를 병합
+                    return [...cleanedPjts, ...response.data];
+                });
+
                 swalOptions.title = '성공!',
                 swalOptions.text = '프로젝트가 성공적으로 등록되었습니다.';
                 swalOptions.icon = 'success';
@@ -173,31 +182,21 @@ export default function Pg() {
                 swalOptions.text = '프로젝트 등록에 실패하였습니다.';
                 swalOptions.icon = 'error';
             }
+            Swal.fire(swalOptions);
             // Swal.fire(swalOptions).then((result) => {
             //     // 사용자가 확인 버튼을 클릭했을 때만 리렌더링
             //     if (result.isConfirmed) { 
             //         window.location.reload();
             //     }
             // });
-        } else if (modalType === 'Del') {
+        } else if (modalType === 'Delete') {
             try {
-                const response = await axiosInstance.patch(`/pjt?id=${selectedPjt}`);
-
                 // 선택된 프로젝트를 project 리스트에서 제거
-                setProjects(prevPjts => prevPjts.filter(project => project.id !== selectedPjt));
-                setSelectedPjt(null);
-
-                swalOptions.title = '성공!',
-                swalOptions.text = '프로젝트가 성공적으로 삭제되었습니다.';
-                swalOptions.icon = 'success';
+                setProjects(prevPjts => prevPjts.filter(project => project.id !== selectedPjt.id));
+                setSelectedPjt({});
             } catch (error) {
                 console.log(error);
-
-                swalOptions.title = '실패!',
-                swalOptions.text = '프로젝트 삭제에 실패하였습니다.';
-                swalOptions.icon = 'error';
             }
-            Swal.fire(swalOptions);
         } 
     };
 
@@ -212,7 +211,7 @@ export default function Pg() {
     };
 
     const onDeleteClick = () => {
-        showModal('Del');
+        showModal('Delete');
     };
 
     return (
@@ -230,13 +229,16 @@ export default function Pg() {
                         buttons={['Delete', 'Add']}
                         onClicks={[onDeleteClick, onAddClick]}
                         onRowClick={handlePjtClick}
-                        selectedRows={[selectedPjt]}
+                        selectedRows={[selectedPjt.id]}
                         modals={[
                             {
-                                'modalType': 'Del',
-                                'isModalOpen': isModalOpen.Del,
-                                'handleOk': handleOk('Del'),
-                                'handleCancel': handleCancel('Del')
+                                'modalType': 'Delete',
+                                'isModalOpen': isModalOpen.Delete,
+                                'handleOk': handleOk('Delete'),
+                                'handleCancel': handleCancel('Delete'),
+                                'rowData': selectedPjt,
+                                'rowDataName': 'pjtName',
+                                'url': '/pjt'
                             },
                             {
                                 'modalType': 'PgAdd',

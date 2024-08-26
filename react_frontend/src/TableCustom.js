@@ -96,7 +96,7 @@ export function TableCustomDoubleClickEdit({
     onClicks = [],
     onRowClick = () => { },  // 기본값으로 빈 함수 설정
     selectedRows = [],       // 테이블에서 선택된 row 리스트
-    rowData = {},
+    pagination = true,
     modals = [],
     table = true,
     columns = []
@@ -224,6 +224,7 @@ export function TableCustomDoubleClickEdit({
                 data={editableData} 
                 columns={columns}
                 variant={variant} 
+                pagination={pagination}
                 onRowClick={onRowClick} 
                 handleDoubleClick={handleDoubleClick} 
                 handleInputChange={handleInputChange} 

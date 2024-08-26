@@ -140,7 +140,7 @@ export function PdAddModal({ isModalOpen, handleOk, handleCancel }) {
     const handleSearch = async() => {
         try {
             const response = await axiosInstance.get(`/pjt/not-manager?loginId=${inputEmpId}&userName=${inputEmpName}`);
-
+            console.log("response", response);
             setFormData(response.data);
         } catch (error) {
             console.log(error);
@@ -492,8 +492,7 @@ export function FamAddModal({ isModalOpen, handleOk, handleCancel, dropDown }) {
                         value={actvName}
                         allowClear={{ clearIcon: <CloseOutlined style={{color: "red"}} /> }}
                         onChange={(e) => setActvName(e.target.value)}
-                        onKeyDown={handleKeyDown}
-                        style={{ width: '12rem' }}
+                        style={{ width: '21rem' }}
                     />
                 </div>
                 <div className={rmStyles.search_item}>
@@ -548,7 +547,7 @@ export function FamAddModal({ isModalOpen, handleOk, handleCancel, dropDown }) {
                         id="calUnit" 
                         value={calUnit} 
                         readOnly 
-                        style={{ width: '22rem' }}
+                        style={{ width: '21rem' }}
                     />
                 </div>
                 <div className={rmStyles.search_item}>
@@ -558,7 +557,7 @@ export function FamAddModal({ isModalOpen, handleOk, handleCancel, dropDown }) {
                         id="unitConvCoef" 
                         value={unitConvCoef} 
                         readOnly 
-                        style={{ width: '22rem' }}
+                        style={{ width: '21rem' }}
                     />
                 </div>
             </div>
@@ -1110,7 +1109,6 @@ export function CmEditModal({ isModalOpen, handleOk, handleCancel, rowData }) {
 }
 
 export function DeleteModal({ isModalOpen, handleOk, handleCancel, rowData, rowDataName, url }) {
-
     if (!rowData) {
         return null;
     }
@@ -1128,20 +1126,23 @@ export function DeleteModal({ isModalOpen, handleOk, handleCancel, rowData, rowD
         };
         try {
             // 서버에 DELETE 요청을 보냅니다.
-            if (url == "/sys/menu"){
+            if (url === "/sys/menu"){
                 await axiosInstance.delete(`${url}?id=${rowData.originId}`);
-                swalOptions.title = '성공!',
-                swalOptions.text = `${rowName}가 성공적으로 삭제되었습니다.`;
-                swalOptions.icon = 'success';
-                handleOk(rowData);
             }
-            else{
+            else if (url === "/equip/libmap") {
+                await axiosInstance.delete(`/equip/libmap?equipLibId=${rowData.equipLibId}&actvDataId=${rowData.id}`);
+            }
+            else if (url === "/pjt") {
+                await axiosInstance.patch(`/pjt?id=${rowData.id}`);
+            }
+            else {
                 await axiosInstance.delete(`${url}?id=${rowData.id}`);
-                swalOptions.title = '성공!',
-                swalOptions.text = `${rowName}가 성공적으로 삭제되었습니다.`;
-                swalOptions.icon = 'success';
-                handleOk(rowData); // 삭제 성공 시 상위 컴포넌트에 알림
             }
+            
+            swalOptions.title = '성공!',
+            swalOptions.text = `${rowName}(이)가 성공적으로 삭제되었습니다.`;
+            swalOptions.icon = 'success';
+            handleOk(rowData);
         } catch (error) {
             console.error('Failed to delete user:', error);
             swalOptions.title = '실패!',
@@ -1163,12 +1164,13 @@ export function DeleteModal({ isModalOpen, handleOk, handleCancel, rowData, rowD
             footer={null}             //Ant Design의 기본 footer 제거(Cancel, OK 버튼)
         >
             {/* 모달제목 */}
-            <div style={{display:"flex", marginTop:"3%", marginLeft:"5%", gap:"1rem", fontSize:"1.3rem", fontWeight:"bold"}}>
+            <div style={{display:"flex", marginTop:"10%", marginLeft:"5%", gap:"1rem", fontSize:"1.3rem", fontWeight:"bold"}}>
                 <WarningAmberIcon fontSize="large" sx={{color:"red"}}/>
-                정말 삭제하시겠습니까?</div>
+                정말 삭제하시겠습니까?
+            </div>
             <div style={{display:"flex"}}>
-            <button className={modalStyles.cancel_button} style={{width:"45%"}} onClick={handleCancel}>취소</button>
-            <button className={modalStyles.select_button} style={{width:"45%"}} onClick={handleDelete}>확인</button>
+                <button className={modalStyles.cancel_button} style={{width:"45%"}} onClick={handleCancel}>취소</button>
+                <button className={modalStyles.select_button} style={{width:"45%"}} onClick={handleDelete}>확인</button>
             </div>
         </Modal>
     )
