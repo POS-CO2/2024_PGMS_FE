@@ -385,6 +385,8 @@ export default function Mm({menus, handleMenuSet}) {
         }
         try {
             const {data} = await axiosInstance.patch('/sys/menu', formData);
+            console.log("form", formData);
+            console.log("patchdata",data);
             swalOptions.title = '성공!',
             swalOptions.text = `${formData.menuName}이 성공적으로 수정되었습니다.`;
             swalOptions.icon = 'success';
@@ -439,27 +441,38 @@ export default function Mm({menus, handleMenuSet}) {
             ...prevState,
             [field]: value
         }));
+        console.log(selectedMenu);
     };
+    const [upperChange, setUpperChange] = useState(false);
 
     const handleInputChange = (field, value) => {
         const par = findNameById(value, upperDir)
         // console.log(par);
         const parName = par.name;
+        // if(par.id !== selectedMenu.parentDirId){
+        //     setUpperChange(true);
+        //     console.log("origin", menuOrderList);
+        
+        //     setMenuOrderList(prev=>[...prev, prev.length + 1]);
+        //     console.log(menuOrderList);
+        // }
+        // else{
+        //     setUpperChange(false);
+        // }
         setSelectedUpperDir(par);
         setSelectedMenu(prevState => ({
             ...prevState,
             [field]: value,
             "parentDir": parName
         }));
-        
+        console.log(selectedMenu);
     };
-
     useEffect(() => {
-        console.log("seud", selectedUpperDir);
         if (selectedUpperDir) {
           // 서버에서 해당 selectedUpperDir에 맞는 menuOrderList를 가져오는 API 호출
             (async () => {
                 const {data} = await axiosInstance.get(`/sys/menu/menu-order?id=${selectedUpperDir.id}&isInsert=false`);
+                data.push(data.length+1);
                 setMenuOrderList(data);
             })();
             

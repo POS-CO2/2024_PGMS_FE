@@ -104,23 +104,23 @@ export default function Main() {
         const tempTargetKeys = [];
         const tempMockData = [];
         
-        tempArray.map(v => {
-            const data = {
-                key: v.equipId,
-                title: v.equipName,
-                description: v.equipLibName,
-                chosen: v.id != null,
-            }
-            console.log(data);
-            if (data.chosen) {
-                tempTargetKeys.push(data.key);
-            }
-            tempMockData.push(data);
-        });
+        // tempArray.map(v => {
+        //     const data = {
+        //         key: v.equipId,
+        //         title: v.equipName,
+        //         description: v.equipLibName,
+        //         chosen: v.id != null,
+        //     }
+        //     console.log(data);
+        //     if (data.chosen) {
+        //         tempTargetKeys.push(data.key);
+        //     }
+        //     tempMockData.push(data);
+        // });
         for (let i = 0; i < 20; i++) {
             const data = {
             key: i.toString(),
-            title: `content${i + 1}`,
+            title: `배출원${i + 1}`,
             description: `description of content${i + 1}`,
             chosen: i % 2 === 0,
             };
@@ -153,6 +153,7 @@ export default function Main() {
                 console.error(error);
             }
         })();
+        getMock();
     }, []);
 
     const filterOption = (inputValue, option) => option.description.indexOf(inputValue) > -1;
