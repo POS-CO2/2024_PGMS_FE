@@ -61,7 +61,7 @@ export default function SearchAtModal({ name, label, required = false, modalType
             className={formItemStyles.form_item}
             name={name}
             label={label}
-            rules={[{ required: required }]}
+            rules={[{ required: required, message: '${label} 선택은 필수입니다.' }]}
         >
             <div className={formItemStyles.input_button_container}>
                 <Input className={formItemStyles.input_field} disabled={true} value={inputValue} />
