@@ -8,14 +8,14 @@ import * as sysStyles from '../../../assets/css/sysmng.css';
 import * as mainStyle from '../../../assets/css/main.css';
 import { Card } from '@mui/material';
 import axiosInstance from '../../../utils/AxiosInstance';
+import { equipColumns, facColumns, pjtColumns } from '../../../assets/json/tableColumn';
 
 export default function Fm() {
 
     const [fac, setFac] = useState([]);
     const [selectedPjt, setSelectedPjt] = useState([]);
-    const [temp, setTemp] = useState(false);
+
     const handleFormSubmit = async (param) => {
-        console.log(param);
         
         setSelectedPjt([param.searchProject]);
         
@@ -45,7 +45,6 @@ export default function Fm() {
         setShowFacList(false);
         setSelectedFac(e ?? {});
     };
-    console.log(selectedFac);
 
     const [isModalOpen, setIsModalOpen] = useState({
         FmAdd: false,
@@ -106,6 +105,7 @@ export default function Fm() {
     const handleDeleteClick = () => {
         showModal('Delete');
     }
+    console.log(fac);
 
     return (
         <>
@@ -118,11 +118,11 @@ export default function Fm() {
                 {showSearchResult ? (
                     <>  
                         <Card className={sysStyles.card_box} sx={{width:"100%", height:"fit-content", borderRadius:"15px"}}>
-                            <TableCustom title="조회결과" data={selectedPjt} onRowClick={() => {}} pagination={false}/>
+                            <TableCustom title="조회결과" columns={pjtColumns} data={selectedPjt} onRowClick={() => {}} pagination={false}/>
                         </Card>
                         {/** 버튼 변경 필요(엑셀 다운로드, 삭제, 등록) 및 등록 클릭 시 모달 추가 */}
                         <Card className={sysStyles.card_box} sx={{width:"100%", height:"fit-content", borderRadius:"15px"}}>
-                        <TableCustom title="설비목록" data={fac} selectedRows={[selectedFac]} buttons={["DownloadExcel", "Delete", "Add"]} onClicks={[() => handleExcelUploadClick(fac, 'exported_table'), handleDeleteClick, handleAddClick]} onRowClick={handleRowClick} excel={true} modals={
+                        <TableCustom title="설비목록" columns={equipColumns} data={fac} selectedRows={[selectedFac]} buttons={["DownloadExcel", "Delete", "Add"]} onClicks={[() => handleExcelUploadClick(fac, 'exported_table'), handleDeleteClick, handleAddClick]} onRowClick={handleRowClick} excel={true} modals={
                             [
                                 {
                                     "modalType" : 'Delete',

@@ -32,6 +32,8 @@ import { table_mm } from '../../assets/json/selectedPjt';
 import * as mainStyle from '../../assets/css/main.css';
 import { Select } from 'antd';
 import axiosInstance from '../../utils/AxiosInstance';
+import Swal from 'sweetalert2';
+import { menuTableColumns } from '../../assets/json/tableColumn';
 
 function DotIcon() {
     return (
@@ -249,6 +251,7 @@ const CustomTreeItem = React.forwardRef(function CustomTreeItem(props, ref) {
 
 
 export default function Mm({menus, handleMenuSet}) {
+
     const findParentFolder = (id, menus) => {
         if (id.length === 1) {
             if(id === 0) {return null}
@@ -363,7 +366,9 @@ export default function Mm({menus, handleMenuSet}) {
     const [selectedMenuOrder, setSelectedMenuOrder] = useState([]);
     const handleSaveClick = async () => {
         setEditable(true);
-        
+        let swalOptions = {
+            confirmButtonText: '확인'
+        };
 
         const formData = {
             id: selectedMenu.originId,
@@ -375,17 +380,17 @@ export default function Mm({menus, handleMenuSet}) {
         }
         try {
             const {data} = await axiosInstance.patch('/sys/menu', formData);
-            // handleOk을 호출하여 모달을 닫고 상위 컴포넌트에 알림
-            // setUserList(prevList => prevList.map(user => 
-            //     user.id === data.id ? data : user
-            // ));
-            // setSelectedMenu(data);
-            
+            swalOptions.title = '성공!',
+            swalOptions.text = `${formData.menuName}이 성공적으로 수정되었습니다.`;
+            swalOptions.icon = 'success';
         } catch (error) {
             console.error(error);
+            swalOptions.title = '실패!',
+            swalOptions.text = `${formData.menuName} 등록에 실패하였습니다.`;
+            swalOptions.icon = 'error';
         }
         handleMenuSet();
-
+        Swal.fire(swalOptions);
     };
 
     const access = [
@@ -443,6 +448,7 @@ export default function Mm({menus, handleMenuSet}) {
         }));
         
     };
+
     useEffect(() => {
         console.log("seud", selectedUpperDir);
         if (selectedUpperDir) {
@@ -571,13 +577,13 @@ export default function Mm({menus, handleMenuSet}) {
                         {!editable && <Button variant='contained' onClick={handleSaveClick} sx={{marginTop:"0.5rem",width:"20rem", margin:"5rem auto"}}>저장</Button>}
                     </Card> 
                     <Card className={sysStyles.card_box} sx={{width:"38%", borderRadius:"15px"}}>
-                        <TableCustom title='권한 부여 현황' data={res} />
+                        <TableCustom title='권한 부여 현황' data={res} columns={menuTableColumns}/>
                         {/* <DataGrid rows = {} columns={} /> */}
                     </Card>
                     </>
                 ) : (
                     <Card className={sysStyles.card_box} sx={{width:"38%", borderRadius:"15px"}}>
-                        <TableCustom title='권한 부여 현황' data={res} />
+                        <TableCustom title='권한 부여 현황' data={res} columns={menuTableColumns}/>
                     </Card>
                 )}
                 

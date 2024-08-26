@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Modal } from 'antd';
 import * as pjtModalStyles from "../assets/css/pjtModal.css";
+import { equipLibColumns } from '../assets/json/tableColumn';
 import Table from "../Table";
 import axiosInstance from '../utils/AxiosInstance.js';
 
@@ -14,15 +15,7 @@ export default function ModalComponent({ isModalOpen, handleOk, handleCancel }) 
       try {
           const response = await axiosInstance.get("/equip/lib");
 
-          const filteredEqLibs = response.data.map(eqLib => ({
-            id: eqLib.id,
-            설비라이브러리명: eqLib.equipLibName,
-            설비구분: eqLib.equipDvs,
-            설비유형: eqLib.equipType,
-            설비사양단위: eqLib.equipSpecUnit
-          }));
-
-          setSearchedEqLibs(filteredEqLibs);
+          setSearchedEqLibs(response.data);
       } catch (error) {
           console.log(error);
       }
@@ -43,16 +36,7 @@ export default function ModalComponent({ isModalOpen, handleOk, handleCancel }) 
     try {
         const response = await axiosInstance.get(`/equip/lib?equipLibName=${inputValue}`);
 
-        // 필요한 필드만 추출하여 managers에 설정
-        const filteredEqLibs = response.data.map(eqLib => ({
-          id: eqLib.id,
-          설비라이브러리명: eqLib.equipLibName,
-          설비구분: eqLib.equipDvs,
-          설비유형: eqLib.equipType,
-          설비사양단위: eqLib.equipSpecUnit
-        }));
-
-        setSearchedEqLibs(filteredEqLibs);
+        setSearchedEqLibs(response.data);
     } catch (error) {
         console.log(error);
     }
@@ -92,7 +76,7 @@ export default function ModalComponent({ isModalOpen, handleOk, handleCancel }) 
       </div>
 
       <div className={pjtModalStyles.result_container}>
-          <Table data={searchedEqLibs} onRowClick={handleEqClick} />
+          <Table data={searchedEqLibs} columns={equipLibColumns} onRowClick={handleEqClick} />
       </div>
 
       <button className={pjtModalStyles.select_button} onClick={handleSelect}>선택</button>

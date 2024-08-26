@@ -177,32 +177,10 @@ export const formField_fl = [
 ]
 
 export const formField_fam = [
-    { type: 'InputText', name: 'ActvDataName', label: '활동자료명'},
-    { type: 'DropDown', name: 'ActvDataDvs', label: '활동자료구분', options: [
-        {value: '1', label: '제철용 PCI탄'},
-        {value: '2', label: '석유코크(고체)'},
-        {value: '3', label: '폐기물 소각열'},
-        {value: '4', label: '공정폐열'},
-        {value: '5', label: '원유'},
-        {value: '6', label: '오리멀젼'},
-        {value: '7', label: '천연가스액(NGL)'},
-        {value: '8', label: '휘발유'}
-    ]},
-    { type: 'DropDown', name: 'equipType', label: '배출활동유형', options: [
-        { value: 'option1', label: 'Option 1' },
-        { value: 'option2', label: 'Option 2' },
-        { value: 'option3', label: 'Option 3' },
-        { value: 'option4', label: 'Option 4' },
-        { value: 'option5', label: 'Option 5' }
-    ] },
-    { type: 'DropDown', name: 'calUnitCode', label: '산정단위', options: [
-        { value: 'option1', label: 'Option 1' },
-        { value: 'option2', label: 'Option 2' },
-        { value: 'option3', label: 'Option 3' },
-        { value: 'option4', label: 'Option 4' },
-        { value: 'option5', label: 'Option 5' }
-    ] },
-
+    { type: 'InputText', name: 'actvDataName', label: '활동자료명'},
+    { type: 'DropDown', name: 'actvDataDvs', label: '활동자료구분', options: []},
+    { type: 'DropDown', name: 'emtnActvType', label: '배출활동유형', options: []},
+    { type: 'DropDown', name: 'inputUnit', label: '입력단위', options: []}
 ]
 
 export const formField_fad = [

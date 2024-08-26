@@ -42,7 +42,8 @@ export default function TableCustom({
     modals = [],
     table = true,
     selectedRows = [],       // 테이블에서 선택된 row 리스트
-    pagination = true        // 테이블 페이지네이션 디폴트는 페이지네이션 하는걸로.
+    pagination = true,        // 테이블 페이지네이션 디폴트는 페이지네이션 하는걸로.
+    columns = []
 }) {
     // 버튼 활성화 상태 결정
     
@@ -81,7 +82,7 @@ export default function TableCustom({
                 })}
             </div>
             {table ? (
-            <Table key={JSON.stringify(data)} data={data} variant={variant} onRowClick={onRowClick} pagination={pagination}/>
+            <Table key={JSON.stringify(data)} data={data} variant={variant} onRowClick={onRowClick} pagination={pagination} columns={columns}/>
             ) : (<></>)}
             
         </>
@@ -98,7 +99,8 @@ export function TableCustomDoubleClickEdit({
     selectedRows = [],       // 테이블에서 선택된 row 리스트
     rowData = {},
     modals = [],
-    table = true
+    table = true,
+    columns = []
 }) {
     const [isEditing, setIsEditing] = useState(false); // 'Edit' 모드 상태 관리
     const [editableData, setEditableData] = useState(data); // 수정된 데이터 저장
@@ -140,11 +142,7 @@ export function TableCustomDoubleClickEdit({
                     salesAmt: row['매출액']
                 }));
 
-                console.log("requestBody", requestBody);
-                
                 const response = await axiosInstance.put("/pjt/sales", requestBody);
-
-                console.log("response", response);
 
                 swalOptions.title = '성공!',
                 swalOptions.text = '매출액이 성공적으로 수정되었습니다.';
@@ -226,6 +224,7 @@ export function TableCustomDoubleClickEdit({
             <Table 
                 key={JSON.stringify(data)}
                 data={editableData} 
+                columns={columns}
                 variant={variant} 
                 onRowClick={onRowClick} 
                 handleDoubleClick={handleDoubleClick} 

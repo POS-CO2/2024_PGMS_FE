@@ -6,7 +6,8 @@ import * as mainStyles from "../../../assets/css/main.css"
 import Table from "../../../Table";
 import {TableCustomDoubleClickEdit} from "../../../TableCustom";
 import SearchForms from "../../../SearchForms";
-import {formField_rm} from "../../../assets/json/searchFormData.js";
+import {formField_rm} from "../../../assets/json/searchFormData";
+import { pjtColumns, pjtSalesColumns } from '../../../assets/json/tableColumn';
 import axiosInstance from '../../../utils/AxiosInstance';
 
 export default function Rm() {
@@ -26,9 +27,9 @@ export default function Rm() {
         if (salesAmts.length === 0) {
             const placeholderSA = {
                 id: '',
-                년: '',
-                월: '',
-                매출액: '',
+                year: '',
+                mth: '',
+                salesAmt: '',
             };
             setSalesAmts([placeholderSA]);
         }
@@ -44,20 +45,13 @@ export default function Rm() {
             // 빈 데이터인 경우, 기본 형태의 객체를 생성
             const placeholderSA = {
                 id: '',
-                년: '',
-                월: '',
-                매출액: ''
+                year: '',
+                mth: '',
+                salesAmt: ''
             };
             setSalesAmts([placeholderSA]);
         } else {
-            // 필요한 필드만 추출하여 managers에 설정
-            const filteredSAs = response.data.map(sales => ({
-                id: sales.id,
-                년: sales.year,
-                월: sales.mth,
-                매출액: sales.salesAmt
-            }));
-            setSalesAmts(filteredSAs);
+            setSalesAmts(response.data);
         }
     };
 
@@ -92,29 +86,20 @@ export default function Rm() {
                 
                 const response = await axiosInstance.post("/pjt/sales", requestBody);
                 
-
-                // 데이터가 객체인 경우 처리 방법
-                const filteredData = {
-                    id: response.data.id,
-                    년: response.data.year,
-                    월: response.data.mth,
-                    매출액: response.data.salesAmt,
-                };
-
                 // 기존 managers에서 placeholderManager 제거하고 새 데이터를 병합
                 setSalesAmts(prevSAs => {
                     // placeholderManager 제거
                     const cleanedSAs = prevSAs.filter(sales => sales.id !== '');
 
                     // 새로 추가된 담당자를 병합
-                    return [...cleanedSAs, filteredData];
+                    return [...cleanedSAs, response.data];
                 });
 
                 swalOptions.title = '성공!',
                 swalOptions.text = '매출액이 성공적으로 등록되었습니다.';
                 swalOptions.icon = 'success';
             } catch (error) {
-                //console.log("aa:", error);
+                console.log(error);
 
                 swalOptions.title = '실패!',
                 swalOptions.text = '매출액 등록에 실패하였습니다.';
@@ -171,11 +156,13 @@ export default function Rm() {
                     <div className={tableStyles.table_title}>조회결과</div>
                     <Table 
                         data={formData}
+                        columns={pjtColumns}
                         key={JSON.stringify(formData)} // formData 변경 시 key 변경되어 리렌더링
                     />                    
                     <TableCustomDoubleClickEdit 
                         title='매출액목록' 
-                        data={salesAmts}                   
+                        data={salesAmts}
+                        columns={pjtSalesColumns}                
                         buttons={['Delete', 'Edit', 'Add']}
                         onClicks={[onDeleteClick, () => {}, onAddClick]}
                         onRowClick={handleSAClick}

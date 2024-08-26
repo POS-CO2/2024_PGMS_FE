@@ -19,6 +19,7 @@ import { Sledding } from '@mui/icons-material';
 import axiosInstance from '../utils/AxiosInstance.js';
 import { Center } from '@react-three/drei';
 import Swal from 'sweetalert2'
+import { pjtColumns, userColumns, equipColumns, equipActvColumns } from '../assets/json/tableColumn.js';
 
 export function PgAddModal({ isModalOpen, handleOk, handleCancel }) {
     const [formData, setFormData] = useState({});             // 검색 데이터
@@ -31,30 +32,15 @@ export function PgAddModal({ isModalOpen, handleOk, handleCancel }) {
             try {
                 const response = await axiosInstance.get(`/pjt?pgmsYn=n`);
 
-                const filteredPjts = response.data.map(project => ({
-                    id: project.id,
-                    프로젝트코드: project.pjtCode,
-                    프로젝트명: project.pjtName,
-                    프로젝트유형: project.pjtType,
-                    지역: project.regCode,
-                    프로젝트시작년: project.ctrtFrYear,
-                    프로젝트시작월: project.ctrtFrMth,
-                    프로젝트종료년: project.ctrtToYear,
-                    프로젝트종료월: project.ctrtToMth,
-                    본부: project.divCode,
-                    '연면적(m²)': project.bldArea,
-                    프로젝트진행상태: project.pjtProgStus
-                }));
-
-                setAllProjects(filteredPjts);
-                setProject(filteredPjts);
+                setAllProjects(response.data);
+                setProject(response.data);
             } catch (error) {
                 console.log(error);
             }
             
         };
         fetchProject(); // 컴포넌트 마운트 될 때 데이터불러옴
-    }, [])
+    }, [isModalOpen])
 
     // input 필드 변경 시 호출될 함수
     const handleInputChange = (e) => {
@@ -68,8 +54,8 @@ export function PgAddModal({ isModalOpen, handleOk, handleCancel }) {
     //찾기 버튼 클릭시 호출될 함수
     const handleFormSubmit = () => {
         const filteredProjects = allProjects.filter(pjt => {
-        const matchesCode = formData.projectCode ? pjt.프로젝트코드?.includes(formData.projectCode) : true;
-        const matchesName = formData.projectName ? pjt.프로젝트명?.includes(formData.projectName) : true;
+        const matchesCode = formData.projectCode ? pjt.projectCode?.includes(formData.projectCode) : true;
+        const matchesName = formData.projectName ? pjt.projectName?.includes(formData.projectName) : true;
         return matchesCode && matchesName;
         });
         setProject(filteredProjects);
@@ -128,7 +114,7 @@ export function PgAddModal({ isModalOpen, handleOk, handleCancel }) {
         </div>
   
         <div className={pjtModalStyles.result_container}>
-            <Table data={project} variant='checkbox' onRowClick={handlePjtClick} />
+            <Table data={project} columns={pjtColumns} variant='checkbox' onRowClick={handlePjtClick} />
         </div>
   
         <button className={pjtModalStyles.select_button} onClick={handleSelect}>등록</button>
@@ -155,15 +141,7 @@ export function PdAddModal({ isModalOpen, handleOk, handleCancel }) {
         try {
             const response = await axiosInstance.get(`/pjt/not-manager?loginId=${inputEmpId}&userName=${inputEmpName}`);
 
-            // 필요한 필드만 추출하여 managers에 설정
-            const filteredResponse = response.data.map(emp => ({
-                id: emp.id,
-                사번: emp.loginId,
-                이름: emp.userName,
-                부서: emp.deptCode,
-            }));
-
-            setFormData(filteredResponse);
+            setFormData(response.data);
         } catch (error) {
             console.log(error);
         }
@@ -220,7 +198,7 @@ export function PdAddModal({ isModalOpen, handleOk, handleCancel }) {
 
             <div className={modalStyles.result_container}>
                 {(!formData || Object.keys(formData).length === 0) ? 
-                <></> : <Table data={formData} variant='checkbox' onRowClick={handleEmpClick} />
+                <></> : <Table data={formData} columns={userColumns} variant='checkbox' onRowClick={handleEmpClick} />
                 }
             </div>
 
@@ -455,7 +433,6 @@ export function FlAddModal({ isModalOpen, handleOk, handleCancel, dropDown }) {
                         <TextField
                             id='eqLibName'
                             variant='outlined'
-                            borderRadius='4px'
                             fullWidth
                             value={eqLibName}
                             onChange={(e) => setEqLibName(e.target.value)}
@@ -537,17 +514,18 @@ export function FlEditModal({ isModalOpen, handleOk, handleCancel, rowData, drop
     // 모달이 열릴 때 rowData로부터 폼 필드 값을 설정
     useEffect(() => {
         if (isModalOpen && rowData) {
-            const equipDvsOption = getOptions('equipDvs').find(option => option.label === rowData.설비구분);
-            const equipTypeOption = getOptions('equipType').find(option => option.label === rowData.설비유형);
-            const equipSpecUnitOption = getOptions('equipSpecUnit').find(option => option.label === rowData.설비사양단위);
+            const equipDvsOption = getOptions('equipDvs').find(option => option.label === rowData.equipDvs);
+            const equipTypeOption = getOptions('equipType').find(option => option.label === rowData.equipType);
+            const equipSpecUnitOption = getOptions('equipSpecUnit').find(option => option.label === rowData.equipSpecUnit);
 
-        setEqLibName(rowData.설비라이브러리명 || '');
-        setSelectedEqDvs(equipDvsOption ? equipDvsOption.value : '');
-        setSelectedEqType(equipTypeOption ? equipTypeOption.value : '');
-        setSelectedEqSpecUnit(equipSpecUnitOption ? equipSpecUnitOption.value : '');
+            setEqLibName(rowData.equipLibName || '');
+            setSelectedEqDvs(equipDvsOption ? equipDvsOption.value : '');
+            setSelectedEqType(equipTypeOption ? equipTypeOption.value : '');
+            setSelectedEqSpecUnit(equipSpecUnitOption ? equipSpecUnitOption.value : '');
         }
     }, [rowData, isModalOpen]);
 
+    // 수정 버튼 클릭 시 호출될 함수
     const handleSelect = () => {
         const formData = {
             eqLibName,
@@ -627,19 +605,72 @@ export function FlEditModal({ isModalOpen, handleOk, handleCancel, rowData, drop
     )
 }
 
-export function FamAddModal({ isModalOpen, handleOk, handleCancel }) {
-    // 등록 버튼 클릭 시 호출될 함수(등록할 활동자료의 data를 전달)
+export function FamAddModal({ isModalOpen, handleOk, handleCancel, dropDown }) {
+    const [actvName, setActvName] = useState('');
+    const [selectedActvDvs, setSelectedActvDvs] = useState('');
+    const [selectedEmtnActv, setSelectedEmtnActv] = useState('');
+    const [selectedInputUnit, setSelectedInputUnit] = useState('');
+    const [calUnit, setCalUnit] = useState('');
+    const [unitConvCoef, setUnitConvCoef] = useState('');
+    const [actvUnits, setActvUnits] = useState([]);
+
+    useEffect(() => {
+        const fetchActvUnit = async () => {
+            try {
+                const response = await axiosInstance.get(`/sys/actv-unit`);
+                setActvUnits(response.data);
+            } catch (error) {
+                console.log(error);
+            }
+        };
+    
+        fetchActvUnit();
+    }, []);
+
+    //// 모달이 열릴 때 폼 필드 초기화
+    useEffect(() => {
+        if (isModalOpen) {
+            setActvName('');
+            setSelectedActvDvs('');
+            setSelectedEmtnActv('');
+            setSelectedInputUnit('');
+            setCalUnit('');
+            setUnitConvCoef('');
+        }
+    }, [isModalOpen]);
+
+    // 옵션을 가져오는 함수
+    const getOptions = (fieldName) => {
+        const field = dropDown.find(field => field.name === fieldName);
+        return field ? field.options : [];
+    };
+
+    // 입력단위 선택 시 대응하는 산정단위와 단위환산계수 업데이트
+    const handleInputUnitChange = (value) => {
+        setSelectedInputUnit(value);
+
+        const matchedUnit = actvUnits.find(unit => unit.inputUnitCode === value);
+        if (matchedUnit) {
+            setCalUnit(matchedUnit.calUnitCode);
+            setUnitConvCoef(matchedUnit.unitConvCoef);
+        } else {
+            setCalUnit('');
+            setUnitConvCoef('');
+        }
+    };
+
+    // 등록 버튼 클릭 시 호출될 함수
     const handleSelect = () => {
         const formData = {
-            actvName: document.getElementById('actvName').value,
-            actvDvs: document.getElementById('actvDvs').value,
-            emtnActvType: document.getElementById('emtnActvType').value,
-            calUnit: document.getElementById('calUnit').value,
-            inputUnit: document.getElementById('inputUnit').value,
-            unitConvCoef: document.getElementById('unitConvCoef').value,
+            actvDataName: actvName,
+            actvDataDvs: selectedActvDvs,
+            emtnActvType: selectedEmtnActv,
+            inputUnit: selectedInputUnit,
+            calUnit: calUnit,
+            unitConvCoef: unitConvCoef
         };
 
-        handleOk(formData);  // 입력된 데이터를 handleOk 함수로 전달
+        handleOk(formData);
     };
 
     return (
@@ -651,46 +682,77 @@ export function FamAddModal({ isModalOpen, handleOk, handleCancel }) {
         >
             <div className={rmStyles.title}>활동자료 등록</div>
 
-            <div className={rmStyles.search_container}>
+            <div className={rmStyles.submit_container}>
                 <div className={rmStyles.search_item}>
                     <div className={rmStyles.search_title}>활동자료명</div>
-                    <input className={rmStyles.search} id="actvName" />
+                    <TextField
+                        id='actvName'
+                        variant='outlined'
+                        size='small'
+                        fullWidth
+                        value={actvName}
+                        onChange={(e) => setActvName(e.target.value)}
+                        sx={{width: '22rem'}}
+                    />
                 </div>
                 <div className={rmStyles.search_item}>
                     <div className={rmStyles.search_title}>활동자료구분</div>
-                    <Select id="actvDvs">
-                        <Select.Option key={"구분1"} value={"구분1"}>{"구분1"}</Select.Option>
-                        <Select.Option key={"구분2"} value={"구분2"}>{"구분2"}</Select.Option>
-                        <Select.Option key={"구분3"} value={"구분3"}>{"구분3"}</Select.Option>
+                    <Select
+                        value={selectedActvDvs}
+                        onChange={(value) => setSelectedActvDvs(value)}
+                    >
+                        {getOptions('actvDataDvs').map(option => (
+                            <Select.Option key={option.value} value={option.value}>
+                                {option.label}
+                            </Select.Option>
+                        ))}
                     </Select>
                 </div>
                 <div className={rmStyles.search_item}>
                     <div className={rmStyles.search_title}>배출활동유형</div>
-                    <Select id="emtnActvType">
-                        <Select.Option key={"유형1"} value={"유형1"}>{"유형1"}</Select.Option>
-                        <Select.Option key={"유형2"} value={"유형2"}>{"유형2"}</Select.Option>
-                        <Select.Option key={"유형3"} value={"유형3"}>{"유형3"}</Select.Option>
-                    </Select>
-                </div>
-                <div className={rmStyles.search_item}>
-                    <div className={rmStyles.search_title}>산정단위</div>
-                    <Select id="calUnit">
-                        <Select.Option key={"단위1"} value={"단위1"}>{"단위1"}</Select.Option>
-                        <Select.Option key={"단위2"} value={"단위2"}>{"단위2"}</Select.Option>
-                        <Select.Option key={"단위3"} value={"단위3"}>{"단위3"}</Select.Option>
+                    <Select
+                        value={selectedEmtnActv}
+                        onChange={(value) => setSelectedEmtnActv(value)}
+                    >
+                        {getOptions('emtnActvType').map(option => (
+                            <Select.Option key={option.value} value={option.value}>
+                                {option.label}
+                            </Select.Option>
+                        ))}
                     </Select>
                 </div>
                 <div className={rmStyles.search_item}>
                     <div className={rmStyles.search_title}>입력단위</div>
-                    <Select id="inputUnit">
-                        <Select.Option key={"단위1"} value={"단위1"}>{"단위1"}</Select.Option>
-                        <Select.Option key={"단위2"} value={"단위2"}>{"단위2"}</Select.Option>
-                        <Select.Option key={"단위3"} value={"단위3"}>{"단위3"}</Select.Option>
+                    <Select
+                        value={selectedInputUnit}
+                        onChange={(value) => handleInputUnitChange(value)}
+                    >
+                        {actvUnits.map(unit => (
+                            <Select.Option key={unit.inputUnitCode} value={unit.inputUnitCode}>
+                                {unit.inputUnitCode}
+                            </Select.Option>
+                        ))}
                     </Select>
                 </div>
                 <div className={rmStyles.search_item}>
+                    <div className={rmStyles.search_title}>산정단위</div>
+                    <input 
+                        className={rmStyles.search} 
+                        id="calUnit" 
+                        value={calUnit} 
+                        readOnly 
+                        style={{ width: '22rem' }}
+                    />
+                </div>
+                <div className={rmStyles.search_item}>
                     <div className={rmStyles.search_title}>단위환산계수</div>
-                    <input className={rmStyles.search} id="unitConvCoef" />
+                    <input 
+                        className={rmStyles.search} 
+                        id="unitConvCoef" 
+                        value={unitConvCoef} 
+                        readOnly 
+                        style={{ width: '22rem' }}
+                    />
                 </div>
             </div>
 
@@ -699,40 +761,74 @@ export function FamAddModal({ isModalOpen, handleOk, handleCancel }) {
     )
 }
 
-export function FamEditModal({ isModalOpen, handleOk, handleCancel, rowData }) {
-    const [formValues, setFormValues] = useState({
-        actvName: '',
-        actvDvs: '',
-        emtnActvType: '',
-        calUnit: '',
-        inputUnit: '',
-        unitConvCoef: ''
-    });
+export function FamEditModal({ isModalOpen, handleOk, handleCancel, rowData, dropDown }) {
+    const [actvName, setActvName] = useState('');
+    const [selectedActvDvs, setSelectedActvDvs] = useState('');
+    const [selectedEmtnActv, setSelectedEmtnActv] = useState('');
+    const [selectedInputUnit, setSelectedInputUnit] = useState('');
+    const [calUnit, setCalUnit] = useState('');
+    const [unitConvCoef, setUnitConvCoef] = useState('');
+    const [actvUnits, setActvUnits] = useState([]);
+
+    useEffect(() => {
+        const fetchActvUnit = async () => {
+            try {
+                const response = await axiosInstance.get(`/sys/actv-unit`);
+                setActvUnits(response.data);
+            } catch (error) {
+                console.log(error);
+            }
+        };
+        fetchActvUnit();
+    }, []);
 
     // 모달이 열릴 때 rowData로부터 폼 필드 값을 설정
     useEffect(() => {
         if (isModalOpen && rowData) {
-            setFormValues({
-                actvName: rowData.actvDataName || '',
-                actvDvs: rowData.actvDataDvs || '',
-                emtnActvType: rowData.emtnActvType || '',
-                calUnit: rowData.calUnit || '',
-                inputUnit: rowData.inputUnit || '',
-                unitConvCoef: rowData.unitConvCoef || ''
-            });
+            const actvDvsOption = getOptions('actvDataDvs').find(option => option.label === rowData.actvDataDvs);
+            const actvTypeOption = getOptions('emtnActvType').find(option => option.label === rowData.emtnActvType);
+            const inputUnitOption = getOptions('inputUnit').find(option => option.label === rowData.inputUnitCode);
+
+            setActvName(rowData.actvDataName || '');
+            setSelectedActvDvs(actvDvsOption ? actvDvsOption.value : '');
+            setSelectedEmtnActv(actvTypeOption ? actvTypeOption.value : '');
+            handleInputUnitChange(inputUnitOption.value);
         }
     }, [rowData, isModalOpen]);
 
-    const handleChange = (e) => {
-        const { id, value } = e.target;
-        setFormValues(prevValues => ({
-            ...prevValues,
-            [id]: value
-        }));
+    // 옵션을 가져오는 함수
+    const getOptions = (fieldName) => {
+        const field = dropDown.find(field => field.name === fieldName);
+        return field ? field.options : [];
     };
 
+    // 입력단위 선택 시 대응하는 산정단위와 단위환산계수 업데이트
+    const handleInputUnitChange = (value) => {
+        setSelectedInputUnit(value);
+
+        const matchedUnit = actvUnits.find(unit => unit.inputUnitCode === value);
+        
+        if (matchedUnit) {
+            setCalUnit(matchedUnit.calUnitCode);
+            setUnitConvCoef(matchedUnit.unitConvCoef);
+        } else {
+            setCalUnit('');
+            setUnitConvCoef('');
+        }
+    };
+
+    // 수정 버튼 클릭 시 호출될 함수
     const handleSelect = () => {
-        handleOk(formValues);
+        const formData = {
+            actvDataName: actvName,
+            actvDataDvs: selectedActvDvs,
+            emtnActvType: selectedEmtnActv,
+            inputUnitCode: selectedInputUnit,
+            calUnitCode: calUnit,
+            unitConvCoef: unitConvCoef
+        };
+
+        handleOk(formData);
     };
 
     return (
@@ -744,65 +840,75 @@ export function FamEditModal({ isModalOpen, handleOk, handleCancel, rowData }) {
         >
             <div className={rmStyles.title}>활동자료 수정</div>
 
-            <div className={rmStyles.search_container}>
+            <div className={rmStyles.submit_container}>
                 <div className={rmStyles.search_item}>
                     <div className={rmStyles.search_title}>활동자료명</div>
-                    <input
-                        className={rmStyles.search}
-                        value={formValues.actvName}
-                        onChange={handleChange}
+                    <TextField
+                        variant='outlined'
+                        size='small'
+                        fullWidth
+                        value={actvName}
+                        onChange={(e) => setActvName(e.target.value)}
+                        sx={{width: '22rem'}}
                     />
                 </div>
                 <div className={rmStyles.search_item}>
                     <div className={rmStyles.search_title}>활동자료구분</div>
                     <Select
-                        value={formValues.actvDvs}
-                        onChange={(value) => setFormValues(prevValues => ({ ...prevValues, actvDvs: value }))}
+                        value={selectedActvDvs}
+                        onChange={(value) => setSelectedActvDvs(value)}
                     >
-                        <Select.Option key={"구분1"} value={"구분1"}>{"구분1"}</Select.Option>
-                        <Select.Option key={"구분2"} value={"구분2"}>{"구분2"}</Select.Option>
-                        <Select.Option key={"구분3"} value={"구분3"}>{"구분3"}</Select.Option>
+                        {getOptions('actvDataDvs').map(option => (
+                            <Select.Option key={option.value} value={option.value}>
+                                {option.label}
+                            </Select.Option>
+                        ))}
                     </Select>
                 </div>
                 <div className={rmStyles.search_item}>
                     <div className={rmStyles.search_title}>배출활동유형</div>
                     <Select
-                        value={formValues.emtnActvType}
-                        onChange={(value) => setFormValues(prevValues => ({ ...prevValues, emtnActvType: value }))}
+                        value={selectedEmtnActv}
+                        onChange={(value) => setSelectedEmtnActv(value)}
                     >
-                        <Select.Option key={"유형1"} value={"유형1"}>{"유형1"}</Select.Option>
-                        <Select.Option key={"유형2"} value={"유형2"}>{"유형2"}</Select.Option>
-                        <Select.Option key={"유형3"} value={"유형3"}>{"유형3"}</Select.Option>
-                    </Select>
-                </div>
-                <div className={rmStyles.search_item}>
-                    <div className={rmStyles.search_title}>산정단위</div>
-                    <Select
-                        value={formValues.calUnit}
-                        onChange={(value) => setFormValues(prevValues => ({ ...prevValues, calUnit: value }))}
-                    >
-                        <Select.Option key={"단위1"} value={"단위1"}>{"단위1"}</Select.Option>
-                        <Select.Option key={"단위2"} value={"단위2"}>{"단위2"}</Select.Option>
-                        <Select.Option key={"단위3"} value={"단위3"}>{"단위3"}</Select.Option>
+                        {getOptions('emtnActvType').map(option => (
+                            <Select.Option key={option.value} value={option.value}>
+                                {option.label}
+                            </Select.Option>
+                        ))}
                     </Select>
                 </div>
                 <div className={rmStyles.search_item}>
                     <div className={rmStyles.search_title}>입력단위</div>
                     <Select
-                        value={formValues.inputUnit}
-                        onChange={(value) => setFormValues(prevValues => ({ ...prevValues, inputUnit: value }))}
+                        value={selectedInputUnit}
+                        onChange={(value) => handleInputUnitChange(value)}
                     >
-                        <Select.Option key={"단위1"} value={"단위1"}>{"단위1"}</Select.Option>
-                        <Select.Option key={"단위2"} value={"단위2"}>{"단위2"}</Select.Option>
-                        <Select.Option key={"단위3"} value={"단위3"}>{"단위3"}</Select.Option>
+                        {actvUnits.map(unit => (
+                            <Select.Option key={unit.inputUnitCode} value={unit.inputUnitCode}>
+                                {unit.inputUnitCode}
+                            </Select.Option>
+                        ))}
                     </Select>
                 </div>
                 <div className={rmStyles.search_item}>
+                    <div className={rmStyles.search_title}>산정단위</div>
+                    <input 
+                        className={rmStyles.search} 
+                        id="calUnit" 
+                        value={calUnit} 
+                        readOnly 
+                        style={{ width: '22rem' }}
+                    />
+                </div>
+                <div className={rmStyles.search_item}>
                     <div className={rmStyles.search_title}>단위환산계수</div>
-                    <input
-                        className={rmStyles.search}
-                        value={formValues.unitConvCoef}
-                        onChange={handleChange}
+                    <input 
+                        className={rmStyles.search} 
+                        id="unitConvCoef" 
+                        value={unitConvCoef} 
+                        readOnly 
+                        style={{ width: '22rem' }}
                     />
                 </div>
             </div>
@@ -823,12 +929,12 @@ export function FadAddModal({ isModalOpen, handleOk, handleCancel, rowData }) {
     class Actv {
         constructor(id = '', actvDataName = '', actvDataDvs = '', emtnActvType = '', calUnitCode = '', inputUnitCode = '', unitConvCoef = '') {
             this.id = id;
-            this.활동자료명 = actvDataName;
-            this.활동자료구분 = actvDataDvs;
-            this.배출활동유형 = emtnActvType;
-            this.산정단위 = calUnitCode;
-            this.입력단위 = inputUnitCode;
-            this.단위환산계수 = unitConvCoef;            ;
+            this.actvDataName = actvDataName;
+            this.actvDataDvs = actvDataDvs;
+            this.emtnActvType = emtnActvType;
+            this.calUnitCode = calUnitCode;
+            this.inputUnitCode = inputUnitCode;
+            this.unitConvCoef = unitConvCoef;            ;
         }
     }
 
@@ -839,18 +945,8 @@ export function FadAddModal({ isModalOpen, handleOk, handleCancel, rowData }) {
                 // 선택한 lib에 이미 등록된 활동자료를 걸러서 조회
                 const response = await axiosInstance.get(`/equip/actv/lib?equipLibId=${rowData.id}`);
 
-                const filteredActves = response.data.map(actv => new Actv(
-                    actv.id,
-                    actv.actvDataName,
-                    actv.actvDataDvs,
-                    actv.emtnActvType,
-                    actv.calUnitCode,
-                    actv.inputUnitCode,
-                    actv.unitConvCoef
-                ));
-
-                setAllActv(filteredActves);
-                setActves(filteredActves);
+                setAllActv(response.data);
+                setActves(response.data);
             } catch (error) {
                 console.log(error);
             }
@@ -950,7 +1046,7 @@ export function FadAddModal({ isModalOpen, handleOk, handleCancel, rowData }) {
   
         <div className={pjtModalStyles.result_container}>
             {(!actves || Object.keys(actves).length === 0) ?
-                <></> : ( <Table data={actves} variant='checkbox' onRowClick={handleActvClick} /> )}
+                <></> : ( <Table data={actves} columns={equipActvColumns} variant='checkbox' onRowClick={handleActvClick} /> )}
         </div>
   
         {(!selectedActves || selectedActves.length === 0) ?
@@ -1052,6 +1148,7 @@ export function DelModal({ isModalOpen, handleOk, handleCancel, rowData }) { // 
                 maxWidth: '20rem',
                 important: true
             }}
+
             footer={null}
         >
             <div className={delStyle.container}>
@@ -1074,6 +1171,10 @@ export function CmAddModal({ isModalOpen, handleOk, handleCancel }) {
     const [note, setNote] = useState('');
 
     const handleSelect = async() => {
+        let swalOptions = {
+            confirmButtonText: '확인'
+        };
+
         const formData = {
             codeGrpNo,
             codeGrpName,
@@ -1084,10 +1185,18 @@ export function CmAddModal({ isModalOpen, handleOk, handleCancel }) {
             // POST 요청으로 서버에 데이터 전송
             const {data} = await axiosInstance.post('/sys/codegroup', formData);
             // handleOk을 호출하여 모달을 닫고 상위 컴포넌트에 알림
+            swalOptions.title = '성공!',
+            swalOptions.text = `${formData.codeGrpName}가 성공적으로 등록되었습니다.`;
+            swalOptions.icon = 'success';
             handleOk(data);
         } catch (error) {
             console.error('Failed to add user:', error);
+
+            swalOptions.title = '실패!',
+            swalOptions.text = `${formData.codeGrpName} 등록에 실패하였습니다.`;
+            swalOptions.icon = 'error';
         }
+        Swal.fire(swalOptions);
     };
 
     return (
@@ -1138,6 +1247,10 @@ export function CmEditModal({ isModalOpen, handleOk, handleCancel, rowData }) {
     const [note, setNote] = useState(rowData.note);
     // 등록 버튼 클릭 시 호출될 함수
     const handleSelect = async() => {
+
+        let swalOptions = {
+            confirmButtonText: '확인'
+        };
         const formData = {
             id: rowData.id,
             codeGrpNo,
@@ -1150,9 +1263,16 @@ export function CmEditModal({ isModalOpen, handleOk, handleCancel, rowData }) {
             const {data} = await axiosInstance.patch('/sys/codegroup', formData);
             // handleOk을 호출하여 모달을 닫고 상위 컴포넌트에 알림
             handleOk(data);
+            swalOptions.title = '성공!',
+            swalOptions.text = `${formData.codeGrpName}이 성공적으로 수정되었습니다.`;
+            swalOptions.icon = 'success';
         } catch (error) {
             console.error('Failed to add user:', error);
+            swalOptions.title = '실패!',
+            swalOptions.text = `${formData.codeGrpName} 등록에 실패하였습니다.`;
+            swalOptions.icon = 'error';
         }
+        Swal.fire(swalOptions);
     };
 
     return (
@@ -1228,7 +1348,7 @@ export function DeleteModal({ isModalOpen, handleOk, handleCancel, rowData, rowD
             console.error('Failed to delete user:', error);
             swalOptions.title = '실패!',
             swalOptions.text = `${rowName} 삭제에 실패하였습니다.`;
-            swalOptions.icon = 'success';
+            swalOptions.icon = 'error';
         }
         Swal.fire(swalOptions);
     };
@@ -1263,6 +1383,10 @@ export function CmListAddModal({ isModalOpen, handleOk, handleCancel, rowData })
     const [attr2, setAttr2] = useState('');
     const [note, setNote] = useState('');
     const handleSelect = async() => {
+        let swalOptions = {
+            confirmButtonText: '확인'
+        };
+
         const formData = {
             codeGrpNo: rowData.codeGrpNo,
             codeGrpName: rowData.codeGrpName,
@@ -1277,9 +1401,16 @@ export function CmListAddModal({ isModalOpen, handleOk, handleCancel, rowData })
             const {data} = await axiosInstance.post('/sys/code', formData);
             // handleOk을 호출하여 모달을 닫고 상위 컴포넌트에 알림
             handleOk(data);
+            swalOptions.title = '성공!',
+            swalOptions.text = `${formData.codeName}가 성공적으로 등록되었습니다.`;
+            swalOptions.icon = 'success';
         } catch (error) {
             console.error('Failed to add user:', error);
+            swalOptions.title = '실패!',
+            swalOptions.text = `${formData.codeName} 등록에 실패하였습니다.`;
+            swalOptions.icon = 'error';
         }
+        Swal.fire(swalOptions);
     };
 
     return (
@@ -1341,6 +1472,9 @@ export function CmListEditModal({ isModalOpen, handleOk, handleCancel, rowData }
     const [attr2, setAttr2] = useState(rowData.attr2);
     const [note, setNote] = useState(rowData.note);
     const handleSelect = async() => {
+        let swalOptions = {
+            confirmButtonText: '확인'
+        };
         const formData = {
             id: rowData.id,
             codeGrpNo: rowData.codeGrpNo,
@@ -1356,9 +1490,16 @@ export function CmListEditModal({ isModalOpen, handleOk, handleCancel, rowData }
             const {data} = await axiosInstance.patch('/sys/code', formData);
             // handleOk을 호출하여 모달을 닫고 상위 컴포넌트에 알림
             handleOk(data);
+            swalOptions.title = '성공!',
+            swalOptions.text = `${formData.codeName}이 성공적으로 수정되었습니다.`;
+            swalOptions.icon = 'success';
         } catch (error) {
             console.error('Failed to add user:', error);
+            swalOptions.title = '실패!',
+            swalOptions.text = `${formData.codeName} 등록에 실패하였습니다.`;
+            swalOptions.icon = 'error';
         }
+        Swal.fire(swalOptions);
     };
     return (
         <Modal
@@ -1448,6 +1589,10 @@ export function FmAddModal({ isModalOpen, handleOk, handleCancel, rowData }) {
     };
     // 등록 버튼 클릭 시 호출될 함수
     const handleSelect = async () => {
+        let swalOptions = {
+            confirmButtonText: '확인'
+        };
+
         const formData = {
             pjtId: rowData[0].id,
             equipLibId: value1[0].id, // selectedSulbi[0] <- 여러개일땐 
@@ -1456,14 +1601,19 @@ export function FmAddModal({ isModalOpen, handleOk, handleCancel, rowData }) {
 
         try {
             // POST 요청으로 서버에 데이터 전송
-            console.log(formData);
             const {data} = await axiosInstance.post('/equip', formData);
             // handleOk을 호출하여 모달을 닫고 상위 컴포넌트에 알림
-            console.log(data);
             handleOk(data);
+            swalOptions.title = '성공!',
+            swalOptions.text = `${formData.equipName}가 성공적으로 등록되었습니다.`;
+            swalOptions.icon = 'success';
         } catch (error) {
             console.error('Failed to add user:', error);
+            swalOptions.title = '실패!',
+            swalOptions.text = `${formData.equipName} 등록에 실패하였습니다.`;
+            swalOptions.icon = 'error';
         }
+        Swal.fire(swalOptions);
     };
 
 
@@ -1475,7 +1625,6 @@ export function FmAddModal({ isModalOpen, handleOk, handleCancel, rowData }) {
     const flatProps = {
         options: sulbiLib.map((option) => option.label),
     };
-
     const [value1, setValue] = useState([]);
     return (
         <Modal
@@ -1503,11 +1652,10 @@ export function FmAddModal({ isModalOpen, handleOk, handleCancel, rowData }) {
                     <button className={modalStyles.search_button} style={{ marginTop: "1rem" }} onClick={handleSearch}>조회</button>
                 </div>
             </div>
-
             <div className={modalStyles.result_container}>
                 {showResults && 
                 <>
-                    <Table data={value1} onRowClick={handleSulbiClick} />
+                    <Table columns={equipColumns} data={value1} onRowClick={handleSulbiClick} />
                     <div className={sysStyles.text_field}>
                         <div className={sysStyles.text} style={{marginTop:"3rem", marginLeft:"5rem", fontWeight:"bold"}}>{"설비 명"}</div>
                         <TextField size="small" id='equipName' label="설비 명" value={equipName} onChange={(e) => setEquipName(e.target.value)} variant='outlined' sx={{ width: "25rem", margin:"0 auto", display:"flex", justifyContent:"center", alignContent:"center" }} />
@@ -1565,6 +1713,9 @@ export function UmAddModal({ isModalOpen, handleOk, handleCancel }) {
 
     // 등록 버튼 클릭 시 호출될 함수
     const handleInsert = async () => {
+        let swalOptions = {
+            confirmButtonText: '확인'
+        };
         const formData = {
             userName,
             loginId,
@@ -1578,9 +1729,17 @@ export function UmAddModal({ isModalOpen, handleOk, handleCancel }) {
             const {data} = await axiosInstance.post('/sys/user', formData);
             // handleOk을 호출하여 모달을 닫고 상위 컴포넌트에 알림
             handleOk(data);
+            swalOptions.title = '성공!',
+            swalOptions.text = `${formData.userName}가 성공적으로 등록되었습니다.`;
+            swalOptions.icon = 'success';
         } catch (error) {
             console.error('Failed to add user:', error);
+            swalOptions.title = '실패!',
+            swalOptions.text = `${formData.userName} 등록에 실패하였습니다.`;
+            swalOptions.icon = 'error';
+
         }
+        Swal.fire(swalOptions);
     };
 
     return (
@@ -1657,6 +1816,9 @@ export function MmAddModal({ isModalOpen, handleOk, handleCancel, rowData }) {
     
     // 등록 버튼 클릭 시 호출될 함수
     const handleSelect = async () => {
+        let swalOptions = {
+            confirmButtonText: '확인'
+        };
         const formData = {
             menuName,
             rootId: selectedUpperDir,
@@ -1670,9 +1832,16 @@ export function MmAddModal({ isModalOpen, handleOk, handleCancel, rowData }) {
             const {data} = await axiosInstance.post('/sys/menu', formData);
             // handleOk을 호출하여 모달을 닫고 상위 컴포넌트에 알림
             handleOk(data);
+            swalOptions.title = '성공!',
+            swalOptions.text = `${formData.menuName}가 성공적으로 등록되었습니다.`;
+            swalOptions.icon = 'success';
         } catch (error) {
             console.error('Failed to add menu:', error);
+            swalOptions.title = '실패!',
+            swalOptions.text = `${formData.menuName} 등록에 실패하였습니다.`;
+            swalOptions.icon = 'error';
         }
+        Swal.fire(swalOptions);
     };
     
     const [upperDir, setUpperDir] = useState([]);
@@ -1701,7 +1870,7 @@ export function MmAddModal({ isModalOpen, handleOk, handleCancel, rowData }) {
             })();
         }
         else {
-            setOrderMenuList([]);
+            // setOrderMenuList([]);
         }
     })
 

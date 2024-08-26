@@ -6,7 +6,8 @@ import * as mainStyles from "../../../assets/css/main.css";
 import Table from "../../../Table";
 import TableCustom from "../../../TableCustom";
 import SearchForms from "../../../SearchForms";
-import {formField_fad} from "../../../assets/json/searchFormData";
+import { formField_fad } from "../../../assets/json/searchFormData";
+import { equipLibColumns, equipActvColumns } from '../../../assets/json/tableColumn';
 import axiosInstance from '../../../utils/AxiosInstance';
 
 export default function Fad() {
@@ -21,12 +22,12 @@ export default function Fad() {
     class Actv {
         constructor(id = '', actvDataName = '', actvDataDvs = '', emtnActvType = '', calUnitCode = '', inputUnitCode = '', unitConvCoef = '') {
             this.id = id;
-            this.활동자료명 = actvDataName;
-            this.활동자료구분 = actvDataDvs;
-            this.배출활동유형 = emtnActvType;
-            this.산정단위 = calUnitCode;
-            this.입력단위 = inputUnitCode;
-            this.단위환산계수 = unitConvCoef;            ;
+            this.actvDataName = actvDataName;
+            this.actvDataDvs = actvDataDvs;
+            this.emtnActvType = emtnActvType;
+            this.calUnitCode = calUnitCode;
+            this.inputUnitCode = inputUnitCode;
+            this.unitConvCoef = unitConvCoef;            ;
         }
     }
 
@@ -54,17 +55,7 @@ export default function Fad() {
             const placeholderActv = new Actv();
             setSelectedActv([placeholderActv]);
         } else {
-            // 필요한 필드만 추출하여 actves에 설정
-            const filteredActves = response.data.map(actv => new Actv(
-                actv.id,
-                actv.actvDataName,
-                actv.actvDataDvs,
-                actv.emtnActvType,
-                actv.calUnitCode,
-                actv.inputUnitCode,
-                actv.unitConvCoef
-            ));
-            setActves(filteredActves);
+            setActves(response.data);
         }
     };
 
@@ -96,24 +87,13 @@ export default function Fad() {
 
                 const response = await axiosInstance.post("/equip/libmap", requestBody);
 
-                const filteredData = response.data.map(actv => new Actv(
-                    actv.id,
-                    actv.actvDataName,
-                    actv.actvDataDvs,
-                    actv.emtnActvType,
-                    actv.calUnitCode,
-                    actv.inputUnitCode,
-                    actv.unitConvCoef
-                ));
-
-                console.log("response", response);
                 // 기존 활동자료에서 placeholderActv를 제거하고 새 데이터를 병합
                 setActves(prevActves => {
                     // placeholderProject 제거
                     const cleanedActves = prevActves.filter(actv => actv.id !== '');
 
                     // 새로 추가된 설비LIB을 병합
-                    return [...cleanedActves, ...filteredData];
+                    return [...cleanedActves, ...response.data];
                 });
 
                 swalOptions.title = '성공!',
@@ -174,12 +154,14 @@ export default function Fad() {
                     <div className={tableStyles.table_title}>조회결과</div>
                     <Table 
                         data={[searchResult]}
+                        columns={equipLibColumns}
                         key={JSON.stringify(searchResult.id)} 
                     />                    
 
                     <TableCustom 
                         title='활동자료목록' 
-                        data={actves}                   
+                        data={actves}
+                        columns={equipActvColumns}   
                         buttons={['Delete', 'Add']}
                         onClicks={[onDeleteClick, onAddClick]}
                         onRowClick={handleActvClick}

@@ -24,8 +24,9 @@ export default function SearchAtModal({ name, label, required = false, modalType
     };
     const searchProject = (data) => {
         setIsModalOpen(false);
-        form.setFieldsValue({ [name]: data  });
-        setInputValue(data.프로젝트코드 + '/' + data.프로젝트명); // SearchProjectModal.js 에서 [pjt.pjtCode, pjt.pjtName]을 pjt로 넘겨주어 변경
+        const selectedData = data;
+        form.setFieldsValue({ [name]: selectedData  });
+        setInputValue(selectedData.pjtCode + '/' + selectedData.pjtName); // SearchProjectModal.js 에서 [pjt.pjtCode, pjt.pjtName]을 pjt로 넘겨주어 변경
 
         if (onProjectSelect) {  // onProjectSelect 콜백이 존재하는 경우 호출
             onProjectSelect(data);
@@ -34,7 +35,7 @@ export default function SearchAtModal({ name, label, required = false, modalType
     const searchEqLib = (data) => {
         setIsModalOpen(false);
         form.setFieldsValue({ [name]: data  });
-        setInputValue(data.설비라이브러리명); // SearchProjectModal.js 에서 [pjt.pjtCode, pjt.pjtName]을 pjt로 넘겨주어 변경
+        setInputValue(data.equipLibName); // SearchProjectModal.js 에서 [pjt.pjtCode, pjt.pjtName]을 pjt로 넘겨주어 변경
 
         if (onProjectSelect) {  // onProjectSelect 콜백이 존재하는 경우 호출
             onProjectSelect(data);

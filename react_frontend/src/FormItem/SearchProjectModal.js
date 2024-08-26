@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Modal } from 'antd';
 import * as pjtModalStyles from "../assets/css/pjtModal.css";
+import { pjtColumns } from '../assets/json/tableColumn';
 import Table from "../Table";
 import axiosInstance from '../utils/AxiosInstance.js';
  
@@ -15,22 +16,7 @@ export default function ModalComponent({ isModalOpen, handleOk, handleCancel}) {
           try {
               const response = await axiosInstance.get(`/pjt?pgmsYn=y`);
 
-              const filteredPjts = response.data.map(project => ({
-                id: project.id,
-                프로젝트코드: project.pjtCode,
-                프로젝트명: project.pjtName,
-                프로젝트유형: project.pjtType,
-                지역: project.regCode,
-                프로젝트시작년: project.ctrtFrYear,
-                프로젝트시작월: project.ctrtFrMth,
-                프로젝트종료년: project.ctrtToYear,
-                프로젝트종료월: project.ctrtToMth,
-                본부: project.divCode,
-                '연면적(m²)': project.bldArea,
-                프로젝트진행상태: project.pjtProgStus
-              }));
-
-              setSearchedPjts(filteredPjts);
+              setSearchedPjts(response.data);
           } catch (error) {
               console.log(error);
           }
@@ -52,22 +38,7 @@ export default function ModalComponent({ isModalOpen, handleOk, handleCancel}) {
     try {
       const response = await axiosInstance.get(`/pjt?pgmsYn=y&pjtCode=${inputPjtCode}&pjtName=${inputPjtName}`);
 
-      const filteredPjts = response.data.map(project => ({
-        id: project.id,
-        프로젝트코드: project.pjtCode,
-        프로젝트명: project.pjtName,
-        프로젝트유형: project.pjtType,
-        지역: project.regCode,
-        프로젝트시작년: project.ctrtFrYear,
-        프로젝트시작월: project.ctrtFrMth,
-        프로젝트종료년: project.ctrtToYear,
-        프로젝트종료월: project.ctrtToMth,
-        본부: project.divCode,
-        '연면적(m²)': project.bldArea,
-        프로젝트진행상태: project.pjtProgStus
-      }));
-
-      setSearchedPjts(filteredPjts);
+      setSearchedPjts(response.data);
     } catch (error) {
         console.log(error);
     }
@@ -117,7 +88,8 @@ export default function ModalComponent({ isModalOpen, handleOk, handleCancel}) {
       </div>
 
       <div className={pjtModalStyles.result_container}>
-        <Table data={searchedPjts} onRowClick={handlePjtClick} />
+
+        <Table data={searchedPjts} columns={pjtColumns} onRowClick={handlePjtClick} />
       </div>
 
       <button className={pjtModalStyles.select_button} onClick={handleSelect}>선택</button>
