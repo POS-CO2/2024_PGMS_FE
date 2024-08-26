@@ -218,6 +218,7 @@ export default function Esm() {
                                         isModalOpen={isModalOpen.SdAdd}
                                         handleOk={handleOk('SdAdd')}
                                         handleCancel={handleCancel('SdAdd')}
+                                        rowData={selectedEmtn}
                                     />
                                     <DeleteModal
                                         isModalOpen={isModalOpen.DeleteB}

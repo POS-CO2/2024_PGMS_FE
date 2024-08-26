@@ -1837,29 +1837,80 @@ export function EsmAddModal({ isModalOpen, handleOk, handleCancel, rowData }) {
     )
 }
 
-export function SdAddModal({ isModalOpen, handleOk, handleCancel }) {
-    const [name, setName] = useState('');
-    const [note, setNote] = useState('');
-    const fileInputRef = useRef(null);
-    const [fileList, setFileList] = useState([]);
+export function SdAddModal({ isModalOpen, handleOk, handleCancel, rowData }) {
+    const [formData, setFormData] = useState({
+        actvYear: new Date().getFullYear().toString(),
+        actvMth: ("00" + (new Date().getMonth() + 1)).slice(-2),
+        name: '',
+        fileList: []
+    });
 
-    const onUploadClick = () => {
-        if (fileInputRef.current) {
-            fileInputRef.current.click();
-        }
-    };
     const handleFileChange = (event) => {
         const newFiles = Array.from(event.target.files);
-        setFileList(prevFiles => {
-            const existingFileNames = new Set(prevFiles.map(file => file.name));
+        setFormData(prevData => {
+            const existingFileNames = new Set(prevData.fileList.map(file => file.name));
             const filteredNewFiles = newFiles.filter(file => !existingFileNames.has(file.name));
-            return [...prevFiles, ...filteredNewFiles];
+            return {
+                ...prevData,
+                fileList: [...prevData.fileList, ...filteredNewFiles]
+            };
         });
-        // Clear the input value to handle the same file being selected again
+        // 동일한 파일을 다시 선택할 수 있도록 input의 값을 초기화
         event.target.value = null;
     };
+
     const handleFileRemove = (fileName) => {
-        setFileList(prevFiles => prevFiles.filter(file => file.name !== fileName));
+        setFormData(prevData => ({
+            ...prevData,
+            fileList: prevData.fileList.filter(file => file.name !== fileName)
+        }));
+    };
+
+    const uploadFiles = async () => {
+        try {
+            /*
+            const regData = {
+                files: formData.fileList
+            };
+            const response = await axiosInstance.post('/s3/upload', regData);
+            */
+            const formDataForUpload = new FormData();
+            formData.fileList.forEach(file => {
+                formDataForUpload.append('files', file);
+            });
+            const response = await axiosInstance.post('/s3/upload', formDataForUpload, {
+                headers: {
+                    'Content-Type': 'multipart/form-data'
+                }
+            });
+
+            console.log(response);
+            console.log(response.data);
+            return response.data; // 파일 업로드 후 S3에서 반환된 파일 정보 배열
+        } catch (error) {
+            console.error('Error uploading files to S3:', error);
+            throw error; // 에러 발생 시 처리할 수 있도록 throw
+        }
+    };
+
+    const onSaveClick = async () => {
+        try {
+            const uploadedFiles = await uploadFiles();
+
+            const documentData = {
+                emissionId: rowData.id,
+                actvYear: parseInt(formData.actvYear, 10),
+                actvMth: parseInt(formData.actvMth, 10),
+                name: formData.name,
+                files: uploadedFiles
+            };
+            
+            await axiosInstance.post('/equip/document', documentData);
+
+            handleOk(formData, true);  // 새로 입력된 데이터를 handleOk 함수로 전달, 두번째 인자-closeModal=true
+        } catch (error) {
+            console.error('Error saving document:', error);
+        }
     };
 
     return (
@@ -1878,7 +1929,11 @@ export function SdAddModal({ isModalOpen, handleOk, handleCancel }) {
                         <span className={sdStyles.requiredAsterisk}>*</span>
                     </div>
                     <div className={sdStyles.select_item}>
-                        <Select defaultValue={new Date().getFullYear().toString()}>
+                        <Select
+                            id="actvYear"
+                            value={formData.actvYear}
+                            onChange={(value) => setFormData(prevData => ({ ...prevData, actvYear: value }))}
+                        >
                             {selectYear.map(option => (
                                 <Select.Option key={option.value} value={option.value}>
                                     {option.label}
@@ -1886,7 +1941,11 @@ export function SdAddModal({ isModalOpen, handleOk, handleCancel }) {
                             ))}
                         </Select>
                         <div>년</div>
-                        <Select defaultValue={("00" + (new Date().getMonth() + 1)).slice(-2)}>
+                        <Select
+                            id="actvMth"
+                            value={formData.actvMth}
+                            onChange={(value) => setFormData(prevData => ({ ...prevData, actvMth: value }))}
+                        >
                             {selectMonth.map(option => (
                                 <Select.Option key={option.value} value={option.value}>
                                     {option.label}
@@ -1903,16 +1962,9 @@ export function SdAddModal({ isModalOpen, handleOk, handleCancel }) {
                     </div>
                     <input
                         className={sdStyles.search}
-                        value={name}
-                        onChange={(e) => setName(e.target.value)}
-                    />
-                </div>
-                <div className={sdStyles.input_item}>
-                    <div className={sdStyles.input_title}>비고</div>
-                    <input
-                        className={sdStyles.search}
-                        value={note}
-                        onChange={(e) => setNote(e.target.value)}
+                        id="name"
+                        value={formData.name}
+                        onChange={(e) => setFormData(prevData => ({ ...prevData, name: e.target.value }))}
                     />
                 </div>
                 <div className={sdStyles.upload_item}>
@@ -1921,24 +1973,27 @@ export function SdAddModal({ isModalOpen, handleOk, handleCancel }) {
                         <div>
                             <input
                                 type="file"
-                                id="file"
-                                name="file"
+                                id="fileList"
+                                name="fileList"
                                 multiple
                                 style={{ display: 'none' }} // 숨김 처리
-                                ref={fileInputRef} // useRef로 참조
                                 onChange={handleFileChange} // 파일 선택 시 호출
                             />
-                            <button type="button" onClick={onUploadClick} className={ps12Styles.upload_button}>
+                            <button
+                                type="button"
+                                onClick={() => document.getElementById('fileList').click()}
+                                className={ps12Styles.upload_button}
+                            >
                                 파일선택 <PaperClipOutlined />
                             </button>
                         </div>
                     </div>
                     <div className={sdStyles.file_list_container}>
                         <div className={sdStyles.file_list}>
-                            {fileList.length === 0 ? (
+                            {formData.fileList.length === 0 ? (
                                 <></>
                             ) : (
-                                fileList.map((file, index) => (
+                                formData.fileList.map((file, index) => (
                                     <div key={index} className={sdStyles.file_item}>
                                         {file.name}
                                         <button
@@ -1956,7 +2011,7 @@ export function SdAddModal({ isModalOpen, handleOk, handleCancel }) {
                 </div>
             </div>
 
-            <button className={ps12Styles.select_button} onClick={handleOk}>저장</button>
+            <button className={ps12Styles.select_button} onClick={onSaveClick}>저장</button>
         </Modal>
     )
 }
@@ -1967,7 +2022,7 @@ export function SdShowDetailsModal({ selectedSd, isModalOpen, handleOk, handleCa
 
     const [formData, setFormData] = useState({
         actvYear: '',
-        actvMonth: '',
+        actvMth: '',
         name: '',
         note: '',
         fileList: []
@@ -1979,7 +2034,7 @@ export function SdShowDetailsModal({ selectedSd, isModalOpen, handleOk, handleCa
         if (selectedSd) {
             setFormData({
                 actvYear: selectedSd.actvYear || new Date().getFullYear().toString(),
-                actvMonth: selectedSd.actvMonth || ("00" + (new Date().getMonth() + 1)).slice(-2),
+                actvMth: selectedSd.actvMth || ("00" + (new Date().getMonth() + 1)).slice(-2),
                 name: selectedSd.name || '',
                 note: selectedSd.note || '',
                 fileList: Array.isArray(selectedSd.fileList) ? selectedSd.fileList : [] // 배열인지 확인
@@ -2054,9 +2109,9 @@ export function SdShowDetailsModal({ selectedSd, isModalOpen, handleOk, handleCa
                         </Select>
                         <div>년</div>
                         <Select
-                            id="actvMonth"
-                            value={formData.actvMonth}
-                            onChange={(value) => setFormData(prevData => ({ ...prevData, actvMonth: value }))}
+                            id="actvMth"
+                            value={formData.actvMth}
+                            onChange={(value) => setFormData(prevData => ({ ...prevData, actvMth: value }))}
                             disabled={!isEditing} // 편집 모드가 아닐 때 비활성화
                         >
                             {selectMonth.map(option => (
