@@ -234,6 +234,7 @@ export function TableCustomDoubleClickEdit({
                 handleInputChange={handleInputChange} 
                 handleBlur={handleBlur}
                 editingCell={editingCell}
+                pagination={pagination}
             />
             ) : (<></>)}
             
