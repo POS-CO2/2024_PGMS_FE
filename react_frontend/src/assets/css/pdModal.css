@@ -31,7 +31,6 @@
     align-items: center;
     gap: 10px;
     flex-wrap: wrap;
-    margin: 40px 0;
 }
 
 .input_with_btn {
@@ -86,12 +85,11 @@
 }
 
 .result_container {
-    height: 500px;          /* 모달 창 높이 조절 */
+    height: 400px;          /* 모달 창 높이 조절 */
     background: #FFFFFF;
     margin-top: 20px;
-    margin-bottom: 20px;
-    margin-left: -22px;     /* ant design default margin 무시 */
-    margin-right: -22px;
+    margin-bottom: 120px;
+    margin-left: -22px;
 }
 
 .select_button {

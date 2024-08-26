@@ -195,7 +195,7 @@ export function PdAddModal({ isModalOpen, handleOk, handleCancel }) {
 
             <div className={modalStyles.result_container}>
                 {(!formData || Object.keys(formData).length === 0) ? 
-                <></> : <Table data={formData} columns={userColumns} variant='checkbox' onRowClick={handleEmpClick} pagination={true} modalPagination={true}/>
+                <></> : <Table data={formData} columns={userColumns} variant='checkbox' onRowClick={handleEmpClick} modalPagination={true} />
                 }
             </div>
 
@@ -844,7 +844,7 @@ export function FadAddModal({ isModalOpen, handleOk, handleCancel, rowData }) {
   
         <div className={pjtModalStyles.result_container}>
             {(!actves || Object.keys(actves).length === 0) ?
-                <></> : ( <Table data={actves} columns={equipActvColumns} variant='checkbox' onRowClick={handleActvClick} /> )}
+                <></> : ( <Table data={actves} columns={equipActvColumns} variant='checkbox' onRowClick={handleActvClick} modalPagination={true} /> )}
         </div>
   
         {(!selectedActves || selectedActves.length === 0) ?

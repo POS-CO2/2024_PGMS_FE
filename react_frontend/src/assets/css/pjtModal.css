@@ -79,12 +79,12 @@
     height: 400px;          /* 모달 창 높이 조절 */
     background: #FFFFFF;
     margin-top: 20px;
-    margin-bottom: 80px;
+    margin-bottom: 120px;
     margin-left: -22px;
 }
 
 .select_button {
-    width: 100%;            /* 모달 창의 전체 너비로 확장 */
+    width: 97%;            /* 모달 창의 전체 너비로 확장 */
     height: 41px;
     padding: 5px 10px;
     background: rgb(56, 117, 247); /* #9284dc */
