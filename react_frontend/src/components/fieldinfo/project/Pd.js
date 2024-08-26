@@ -12,10 +12,10 @@ import axiosInstance from '../../../utils/AxiosInstance';
 export default function Pd() {
     const [formData, setFormData] = useState([]);                       // 검색 데이터(프로젝트 조회 결과)
     const [managers, setManagers] = useState([]);                       // 조회 결과(담당자 목록 리스트)
-    const [selectedManager, setSelectedManager] = useState(null);       // 선택된 담당자(PK column only)
+    const [selectedManager, setSelectedManager] = useState({});       // 선택된 담당자(PK column only)
     const [isModalOpen, setIsModalOpen] = useState({
         PdAdd: false,
-        Del: false
+        Delete: false
     });
 
     // selectedManager가 변경될 때마다 실행될 useEffect
@@ -58,7 +58,7 @@ export default function Pd() {
     
     // 담당자 row 클릭 시 호출될 함수
     const handleManagerClick = (manager) => {
-        setSelectedManager(manager?.id ?? null);
+        setSelectedManager(manager ?? {});
     };
 
     // 모달 열기
@@ -70,13 +70,13 @@ export default function Pd() {
     const handleOk = (modalType) => async (data) => {
         setIsModalOpen(prevState => ({ ...prevState, [modalType]: false })); //모달 닫기
 
-        // modalType에 따른 SweetAlert2 설정
         let swalOptions = {
             confirmButtonText: '확인'
         };
 
         if (modalType === 'PdAdd') {
             try {
+
                 // data 배열을 순회하며 requestBody 배열 생성
                 const requestBody = data.map(user => ({
                     pjtId: formData[0].id,
@@ -104,26 +104,16 @@ export default function Pd() {
                 swalOptions.text = '담당자 지정에 실패하였습니다.';
                 swalOptions.icon = 'fail';
             }
-        } else if (modalType === 'Del') {
+            Swal.fire(swalOptions);
+        } else if (modalType === 'Delete') {
             try {
-                const response = await axiosInstance.delete(`/pjt/manager?id=${selectedManager}`);
-
                 // 선택된 담당자를 managers 리스트에서 제거
-                setManagers(prevManagers => prevManagers.filter(manager => manager.id !== selectedManager));
-                setSelectedManager(null);
-
-                swalOptions.title = '성공!',
-                swalOptions.text = '담당자가 성공적으로 삭제되었습니다.';
-                swalOptions.icon = 'success';
+                setManagers(prevManagers => prevManagers.filter(manager => manager.id !== selectedManager.id));
+                setSelectedManager({});
             } catch (error) {
                 console.log(error);
-
-                swalOptions.title = '실패!',
-                swalOptions.text = '담당자 삭제에 실패하였습니다.';
-                swalOptions.icon = 'success';
             }
         } 
-        Swal.fire(swalOptions);
     };
 
     // 모달 닫기
@@ -137,7 +127,7 @@ export default function Pd() {
     };
 
     const onDeleteClick = () => {
-        showModal('Del');
+        showModal('Delete');
     };
 
     return (
@@ -164,11 +154,13 @@ export default function Pd() {
                         selectedRows={[selectedManager]}
                         modals={[
                             {
-                                'modalType': 'Del',
-                                'isModalOpen': isModalOpen.Del,
-                                'handleOk': handleOk('Del'),
-                                'handleCancel': handleCancel('Del'),
-                                'rowData': selectedManager
+                                'modalType': 'Delete',
+                                'isModalOpen': isModalOpen.Delete,
+                                'handleOk': handleOk('Delete'),
+                                'handleCancel': handleCancel('Delete'),
+                                'rowData': selectedManager,
+                                'rowDataName': 'userName',
+                                'url': '/pjt/manager'
                             },
                             {
                                 'modalType': 'PdAdd',

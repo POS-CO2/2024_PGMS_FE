@@ -62,7 +62,7 @@ export default function ModalComponent({ isModalOpen, handleOk, handleCancel }) 
       <div className={pjtModalStyles.title}>설비LIB 찾기</div>
       <div className={pjtModalStyles.search_container}>
         <div className={pjtModalStyles.search_item}>
-          <div className={pjtModalStyles.search_title}>설비LIB명</div>
+          <div className={pjtModalStyles.search_title}>설비라이브러리명</div>
           <div className={pjtModalStyles.search_container}>
             <input 
               value={inputValue}

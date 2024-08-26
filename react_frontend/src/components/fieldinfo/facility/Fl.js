@@ -15,7 +15,7 @@ export default function Fl() {
     const [isModalOpen, setIsModalOpen] = useState({
         FlAdd: false,
         FlEdit: false,
-        Del: false
+        Delete: false
     });
 
     class EqLib {
@@ -158,23 +158,14 @@ export default function Fl() {
                 swalOptions.text = '설비LIB 등록에 실패하였습니다.';
                 swalOptions.icon = 'error';
             }
-        } else if (modalType === 'Del') {
+            Swal.fire(swalOptions);
+        } else if (modalType === 'Delete') {
             try {
-                const response = await axiosInstance.delete(`/equip/lib?id=${selectedEqLib.id}`);
-
                 // 선택된 설비LIB를 eqLib 리스트에서 제거
                 setEqLibs(prevEqLibs => prevEqLibs.filter(eqLib => eqLib.id !== selectedEqLib.id));
                 setSelectedEqLib({});
-
-                swalOptions.title = '성공!',
-                swalOptions.text = '설비LIB이 성공적으로 삭제되었습니다.';
-                swalOptions.icon = 'success';
             } catch (error) {
                 console.log(error);
-
-                swalOptions.title = '실패!',
-                swalOptions.text = '설비LIB 삭제에 실패하였습니다.';
-                swalOptions.icon = 'success';
             }
         } else if (modalType === 'FlEdit') {
             try {
@@ -206,8 +197,8 @@ export default function Fl() {
                 swalOptions.text = '설비LIB 수정에 실패하였습니다.';
                 swalOptions.icon = 'success';
             }
+            Swal.fire(swalOptions);
         } 
-        Swal.fire(swalOptions);
     };
 
     // 모달 닫기
@@ -225,7 +216,7 @@ export default function Fl() {
     };
 
     const onDeleteClick = () => {
-        showModal('Del');
+        showModal('Delete');
     };
 
     return (
@@ -243,10 +234,13 @@ export default function Fl() {
                 selectedRows={[selectedEqLib.id]}
                 modals={[
                     {
-                        'modalType': 'Del',
-                        'isModalOpen': isModalOpen.Del,
-                        'handleOk': handleOk('Del'),
-                        'handleCancel': handleCancel('Del')
+                        'modalType': 'Delete',
+                        'isModalOpen': isModalOpen.Delete,
+                        'handleOk': handleOk('Delete'),
+                        'handleCancel': handleCancel('Delete'),
+                        'rowData': selectedEqLib,
+                        'rowDataName': 'equipLibName',
+                        'url': '/equip'
                     },
                     {
                         'modalType': 'FlEdit',

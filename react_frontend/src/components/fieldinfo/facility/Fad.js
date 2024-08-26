@@ -16,7 +16,7 @@ export default function Fad() {
     const [selectedActv, setSelectedActv] = useState({});             // 선택된 활동자료
     const [isModalOpen, setIsModalOpen] = useState({
         FadAdd: false,
-        Del: false
+        Delete: false
     });
 
     class Actv {
@@ -48,6 +48,7 @@ export default function Fad() {
 
         // 선택한 lib에 매핑된 활동자료 목록 조회
         const response = await axiosInstance.get(`/equip/actv/${data.searchLib.id}`);
+        console.log("response", response);
 
         // data가 빈 배열인지 확인
         if (response.data.length === 0) {
@@ -106,23 +107,13 @@ export default function Fad() {
                 swalOptions.text = '활동자료 지정에 실패하였습니다.';
                 swalOptions.icon = 'error';
             }
-        } else if (modalType === 'Del') {
+        } else if (modalType === 'Delete') {
             try {
-                const response = await axiosInstance.delete(`/equip/libmap?equipLibId=${searchResult.id}&actvDataId=${selectedActv.id}`);
-
                 // 선택된 활동자료를 actves 리스트에서 제거
                 setActves(prevActves => prevActves.filter(actv => actv.id !== selectedActv.id));
                 setSelectedActv({});
-
-                swalOptions.title = '성공!',
-                swalOptions.text = '활동자료가 성공적으로 삭제되었습니다.';
-                swalOptions.icon = 'success';
             } catch (error) {
                 console.log(error);
-
-                swalOptions.title = '실패!',
-                swalOptions.text = '활동자료 삭제에 실패하였습니다.';
-                swalOptions.icon = 'error';
             }
         }
         Swal.fire(swalOptions);
@@ -139,7 +130,7 @@ export default function Fad() {
     };
 
     const onDeleteClick = () => {
-        showModal('Del');
+        showModal('Delete');
     };
 
     return (
@@ -168,10 +159,16 @@ export default function Fad() {
                         selectedRows={[selectedActv.id]}
                         modals={[
                             {
-                                'modalType': 'Del',
-                                'isModalOpen': isModalOpen.Del,
-                                'handleOk': handleOk('Del'),
-                                'handleCancel': handleCancel('Del')
+                                'modalType': 'Delete',
+                                'isModalOpen': isModalOpen.Delete,
+                                'handleOk': handleOk('Delete'),
+                                'handleCancel': handleCancel('Delete'),
+                                'rowData': {
+                                    ...selectedActv,
+                                    equipLibId: searchResult.id
+                                },
+                                'rowDataName': 'actvDataName',
+                                'url': '/equip/libmap'
                             },
                             {
                                 'modalType': 'FadAdd',
