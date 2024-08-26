@@ -14,6 +14,7 @@ import { RichTreeView } from '@mui/x-tree-view/RichTreeView';
 import { treeItemClasses } from '@mui/x-tree-view/TreeItem';
 import { unstable_useTreeItem2 as useTreeItem2 } from '@mui/x-tree-view/useTreeItem2';
 import {
+    TreeItem2,
     TreeItem2Checkbox,
     TreeItem2Content,
     TreeItem2IconContainer,
@@ -51,6 +52,10 @@ function DotIcon() {
         />
     );
 }
+
+const StyledTreeItem = styled(TreeItem2)(({theme}) => ({
+    overflowY:"auto",
+}));
 
 const StyledTreeItemRoot = styled(TreeItem2Root)(({ theme }) => ({
     color:
@@ -380,6 +385,8 @@ export default function Mm({menus, handleMenuSet}) {
         }
         try {
             const {data} = await axiosInstance.patch('/sys/menu', formData);
+            console.log("form", formData);
+            console.log("patchdata",data);
             swalOptions.title = '성공!',
             swalOptions.text = `${formData.menuName}이 성공적으로 수정되었습니다.`;
             swalOptions.icon = 'success';
@@ -434,28 +441,38 @@ export default function Mm({menus, handleMenuSet}) {
             ...prevState,
             [field]: value
         }));
+        console.log(selectedMenu);
     };
+    const [upperChange, setUpperChange] = useState(false);
 
     const handleInputChange = (field, value) => {
         const par = findNameById(value, upperDir)
         // console.log(par);
         const parName = par.name;
+        // if(par.id !== selectedMenu.parentDirId){
+        //     setUpperChange(true);
+        //     console.log("origin", menuOrderList);
+        
+        //     setMenuOrderList(prev=>[...prev, prev.length + 1]);
+        //     console.log(menuOrderList);
+        // }
+        // else{
+        //     setUpperChange(false);
+        // }
         setSelectedUpperDir(par);
         setSelectedMenu(prevState => ({
             ...prevState,
             [field]: value,
             "parentDir": parName
         }));
-        
+        console.log(selectedMenu);
     };
-
     useEffect(() => {
-        console.log("seud", selectedUpperDir);
         if (selectedUpperDir) {
           // 서버에서 해당 selectedUpperDir에 맞는 menuOrderList를 가져오는 API 호출
             (async () => {
                 const {data} = await axiosInstance.get(`/sys/menu/menu-order?id=${selectedUpperDir.id}&isInsert=false`);
-                console.log("plz", data);
+                data.push(data.length+1);
                 setMenuOrderList(data);
             })();
             
@@ -472,7 +489,7 @@ export default function Mm({menus, handleMenuSet}) {
                 {"시스템관리 > 메뉴 관리"}
             </div>
             <div className={sysStyles.main_grid}>
-                <Card sx={{width:"24%", borderRadius:"15px", height:"88vh"}}>
+                <Card sx={{width:"24%", borderRadius:"15px", height:"88vh", overflowY:"auto"}}>
                 <TableCustom title='' className={sysStyles.btn_group} buttons={['Add', 'Delete', 'Edit']} 
                 onClicks={[handleAddClick,handleDeleteClick, handleEditClick]} 
                 table={false} 

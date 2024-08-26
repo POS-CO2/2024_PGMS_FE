@@ -43,7 +43,8 @@ export default function TableCustom({
     table = true,
     selectedRows = [],       // 테이블에서 선택된 row 리스트
     pagination = true,        // 테이블 페이지네이션 디폴트는 페이지네이션 하는걸로.
-    columns = []
+    columns = [],
+    modalPagination = false
 }) {
     // 버튼 활성화 상태 결정
     
@@ -82,7 +83,7 @@ export default function TableCustom({
                 })}
             </div>
             {table ? (
-            <Table key={JSON.stringify(data)} data={data} variant={variant} onRowClick={onRowClick} pagination={pagination} columns={columns}/>
+            <Table key={JSON.stringify(data)} data={data} variant={variant} onRowClick={onRowClick} pagination={pagination} modalPagination={modalPagination} columns={columns}/>
             ) : (<></>)}
             
         </>
@@ -100,7 +101,9 @@ export function TableCustomDoubleClickEdit({
     rowData = {},
     modals = [],
     table = true,
-    columns = []
+    columns = [],
+    pagination = true,
+    modalPagination = false,
 }) {
     const [isEditing, setIsEditing] = useState(false); // 'Edit' 모드 상태 관리
     const [editableData, setEditableData] = useState(data); // 수정된 데이터 저장
@@ -231,6 +234,7 @@ export function TableCustomDoubleClickEdit({
                 handleInputChange={handleInputChange} 
                 handleBlur={handleBlur}
                 editingCell={editingCell}
+                pagination={pagination}
             />
             ) : (<></>)}
             

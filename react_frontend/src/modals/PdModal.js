@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Modal, Button, Upload, Select } from 'antd';
+import { Modal, Button, Upload, Select, Input } from 'antd';
 import { PaperClipOutlined, CloseOutlined } from '@ant-design/icons';
 import * as modalStyles from "../assets/css/pdModal.css";
 import * as rmStyles from "../assets/css/rmModal.css";
@@ -8,6 +8,7 @@ import * as pjtModalStyles from "../assets/css/pjtModal.css";
 import * as sysStyles from "../assets/css/sysmng.css"
 import * as sdStyles from "../assets/css/sdModal.css";
 import * as ps12Styles from "../assets/css/ps12UploadExcelModal.css";
+import * as formStyles from "../assets/css/formItem.css"
 import { EditButton } from "../Button";
 import Table from "../Table";
 import { actv } from "../assets/json/selectedPjt";
@@ -198,7 +199,7 @@ export function PdAddModal({ isModalOpen, handleOk, handleCancel }) {
 
             <div className={modalStyles.result_container}>
                 {(!formData || Object.keys(formData).length === 0) ? 
-                <></> : <Table data={formData} columns={userColumns} variant='checkbox' onRowClick={handleEmpClick} />
+                <></> : <Table data={formData} columns={userColumns} variant='checkbox' onRowClick={handleEmpClick} pagination={true} modalPagination={true}/>
                 }
             </div>
 
@@ -1213,23 +1214,27 @@ export function CmAddModal({ isModalOpen, handleOk, handleCancel }) {
                     <div className={sysStyles.text}>
                         {"코드 그룹 ID"}
                     </div>
-                    <TextField size="small" id='codeGrpNo' value={codeGrpNo} onChange={(e) => setCodeGrpNo(e.target.value)} label="코드 그룹 번호" variant='outlined' sx={{ width: "20rem" }} />
+                    {/* <TextField size="small" id='codeGrpNo' value={codeGrpNo} onChange={(e) => setCodeGrpNo(e.target.value)} label="코드 그룹 번호" variant='outlined' sx={{ width: "20rem" }} /> */}
+                    <Input id='codeGrpNo' value={codeGrpNo} onChange={(e) => setCodeGrpNo(e.target.value)} label="코드 그룹 번호" style={{width:"18rem"}} />
                 </div>
                 <div className={sysStyles.text_field}>
                     <div className={sysStyles.text}>{"코드 그룹 명"}</div>
-                    <TextField size="small" id='codeGrpName' value={codeGrpName} onChange={(e) => setCodeGrpName(e.target.value)} label="코드 그룹 명" variant='outlined' sx={{ width: "20rem" }} />
+                    {/* <TextField size="small" id='codeGrpName' value={codeGrpName} onChange={(e) => setCodeGrpName(e.target.value)} label="코드 그룹 명" variant='outlined' sx={{ width: "20rem" }} /> */}
+                    <Input id='codeGrpNo' value={codeGrpName} onChange={(e) => setCodeGrpName(e.target.value)} label="코드 그룹 명" style={{width:"18rem"}} />
                 </div>
                 <div className={sysStyles.text_field}>
                     <div className={sysStyles.text}>{"영문 명"}</div>
-                    <TextField size="small" id='codeGrpNameEn' value={codeGrpNameEn} onChange={(e) => setCodeGrpNameEn(e.target.value)} label="영문 명" variant='outlined' sx={{ width: "20rem" }} />
+                    {/* <TextField size="small" id='codeGrpNameEn' value={codeGrpNameEn} onChange={(e) => setCodeGrpNameEn(e.target.value)} label="영문 명" variant='outlined' sx={{ width: "20rem" }} /> */}
+                    <Input id='codeGrpNoEn' value={codeGrpNameEn} onChange={(e) => setCodeGrpNameEn(e.target.value)} label="영문 명" style={{width:"18rem"}} />
                 </div>
                 <div className={sysStyles.text_field}>
                     <div className={sysStyles.text}>{"노트"}</div>
-                    <TextField size="small" id='note' value={note} onChange={(e) => setNote(e.target.value)} label="노트" variant='outlined' sx={{ width: "20rem" }} />
+                    {/* <TextField size="small" id='note' value={note} onChange={(e) => setNote(e.target.value)} label="노트" variant='outlined' sx={{ width: "20rem" }} /> */}
+                    <Input id='note' value={note} onChange={(e) => setNote(e.target.value)} label="노트" style={{width:"18rem"}} />
                 </div>
             </div>
             <div style={{display:"flex", justifyContent:"center", alignContent:"center"}}>
-                <button style={{width:"20rem"}} className={modalStyles.select_button} onClick={handleSelect}>등록</button>
+                <button style={{width:"18rem"}} className={modalStyles.select_button} onClick={handleSelect}>등록</button>
             </div>
             
         </Modal>
@@ -1258,7 +1263,6 @@ export function CmEditModal({ isModalOpen, handleOk, handleCancel, rowData }) {
             codeGrpNameEn,
             note,
         };
-        console.log("formData",formData);
         try {
             const {data} = await axiosInstance.patch('/sys/codegroup', formData);
             // handleOk을 호출하여 모달을 닫고 상위 컴포넌트에 알림
@@ -1289,19 +1293,19 @@ export function CmEditModal({ isModalOpen, handleOk, handleCancel, rowData }) {
                     <div className={sysStyles.text}>
                         {"코드 그룹 ID"}
                     </div>
-                    <TextField size='small' id='codeGrpNo' value={codeGrpNo} onChange={(e) => setCodeGrpNo(e.target.value)} label="코드 그룹 번호" variant='outlined' sx={{ width: "20rem" }} />
+                    <Input id='codeGrpNo' value={codeGrpNo} onChange={(e) => setCodeGrpNo(e.target.value)} label="코드 그룹 번호" style={{width:"18rem"}} />
                 </div>
                 <div className={sysStyles.text_field}>
                     <div className={sysStyles.text}>{"코드 그룹 명"}</div>
-                    <TextField size='small' id='codeGrpName' value={codeGrpName} onChange={(e) => setCodeGrpName(e.target.value)} label="코드 그룹 명" variant='outlined' sx={{ width: "20rem" }} />
+                    <Input id='codeGrpNo' value={codeGrpName} onChange={(e) => setCodeGrpName(e.target.value)} label="코드 그룹 명" style={{width:"18rem"}} />
                 </div>
                 <div className={sysStyles.text_field}>
                     <div className={sysStyles.text}>{"영문 명"}</div>
-                    <TextField size='small' id='codeGrpNameEn' value={codeGrpNameEn} onChange={(e) => setCodeGrpNameEn(e.target.value)} label="영문 명" variant='outlined' sx={{ width: "20rem" }} />
+                    <Input id='codeGrpNoEn' value={codeGrpNameEn} onChange={(e) => setCodeGrpNameEn(e.target.value)} label="영문 명" style={{width:"18rem"}} />
                 </div>
                 <div className={sysStyles.text_field}>
                     <div className={sysStyles.text}>{"노트"}</div>
-                    <TextField size='small' id='note' value={note} onChange={(e) => setNote(e.target.value)} label="노트" variant='outlined' sx={{ width: "20rem" }} />
+                    <Input id='note' value={note} onChange={(e) => setNote(e.target.value)} label="노트" style={{width:"18rem"}} />
                 </div>
             </div>
             <div style={{display:"flex", justifyContent:"center", alignContent:"center"}}>
@@ -1379,8 +1383,8 @@ export function DeleteModal({ isModalOpen, handleOk, handleCancel, rowData, rowD
 export function CmListAddModal({ isModalOpen, handleOk, handleCancel, rowData }) {
     const [code, setCode] = useState('');
     const [codeName, setCodeName] = useState('');
-    const [attr1, setAttr1] = useState('');
-    const [attr2, setAttr2] = useState('');
+    const [attri1, setAttri1] = useState('');
+    const [attri2, setAttri2] = useState('');
     const [note, setNote] = useState('');
     const handleSelect = async() => {
         let swalOptions = {
@@ -1392,8 +1396,8 @@ export function CmListAddModal({ isModalOpen, handleOk, handleCancel, rowData })
             codeGrpName: rowData.codeGrpName,
             code,
             codeName,
-            attr1,
-            attr2,
+            attri1,
+            attri2,
             note,
         };
         try {
@@ -1427,35 +1431,42 @@ export function CmListAddModal({ isModalOpen, handleOk, handleCancel, rowData })
                     <div className={sysStyles.text}>
                         {"코드 그룹 ID"}
                     </div>
-                    <TextField size='small' id='codeGrpNo' value={rowData.codeGrpNo} disabled label="코드 그룹 번호" variant='outlined' sx={{ width: "20rem" }} />
+                    {/* <TextField size='small' id='codeGrpNo' value={rowData.codeGrpNo} disabled label="코드 그룹 번호" variant='outlined' sx={{ width: "20rem" }} /> */}
+                    <Input id='codeGrpNo' disabled value={rowData.codeGrpNo} label="코드 그룹 번호" style={{width:"18rem"}} />
                 </div>
                 <div className={sysStyles.text_field}>
                     <div className={sysStyles.text}>{"코드 그룹 이름"}</div>
-                    <TextField size='small' id='codeName' value={rowData.codeGrpName} disabled label="코드 그룹 이름" variant='outlined' sx={{ width: "20rem" }} />
+                    {/* <TextField size='small' id='codeName' value={rowData.codeGrpName} disabled label="코드 그룹 이름" variant='outlined' sx={{ width: "20rem" }} /> */}
+                    <Input id='codeName' disabled value={rowData.codeGrpName} label="코드 그룹 이름" style={{width:"18rem"}} />
                 </div>
                 <div className={sysStyles.text_field}>
                     <div className={sysStyles.text}>{"코드"}</div>
-                    <TextField size='small' id='code' value={code} onChange={(e) => setCode(e.target.value)} label="코드" variant='outlined' sx={{ width: "20rem" }} />
+                    {/* <TextField size='small' id='code' value={code} onChange={(e) => setCode(e.target.value)} label="코드" variant='outlined' sx={{ width: "20rem" }} /> */}
+                    <Input id='code' value={code} onChange={(e) => setCode(e.target.value)} label="코드" style={{width:"18rem"}} />
                 </div>
                 <div className={sysStyles.text_field}>
                     <div className={sysStyles.text}>{"코드 명"}</div>
-                    <TextField size='small' id='codeName' value={codeName} onChange={(e) => setCodeName(e.target.value)} label="코드 명" variant='outlined' sx={{ width: "20rem" }} />
+                    {/* <TextField size='small' id='codeName' value={codeName} onChange={(e) => setCodeName(e.target.value)} label="코드 명" variant='outlined' sx={{ width: "20rem" }} /> */}
+                    <Input id='codeName' value={codeName} onChange={(e) => setCodeName(e.target.value)} label="코드 명" style={{width:"18rem"}} />
                 </div>
                 <div className={sysStyles.text_field}>
                     <div className={sysStyles.text}>{"속성1"}</div>
-                    <TextField size='small' id='attr1' value={attr1} onChange={(e) => setAttr1(e.target.value)} label="속성1" variant='outlined' sx={{ width: "20rem" }} />
+                    {/* <TextField size='small' id='attri1' value={attri1} onChange={(e) => setAttri1(e.target.value)} label="속성1" variant='outlined' sx={{ width: "20rem" }} /> */}
+                    <Input id='attri1' value={attri1} onChange={(e) => setAttri1(e.target.value)} label="속성1" style={{width:"18rem"}} />
                 </div>
                 <div className={sysStyles.text_field}>
                     <div className={sysStyles.text}>{"속성2"}</div>
-                    <TextField size='small' id='attr2' value={attr2} onChange={(e) => setAttr2(e.target.value)} label="속성2" variant='outlined' sx={{ width: "20rem" }} />
+                    {/* <TextField size='small' id='attri2' value={attri2} onChange={(e) => setAttri2(e.target.value)} label="속성2" variant='outlined' sx={{ width: "20rem" }} /> */}
+                    <Input id='attri2' value={attri2} onChange={(e) => setAttri2(e.target.value)} label="속성2" style={{width:"18rem"}} />
                 </div>
                 <div className={sysStyles.text_field}>
                     <div className={sysStyles.text}>{"노트"}</div>
-                    <TextField size='small' id='note' value={note} onChange={(e) => setNote(e.target.value)} label="노트" variant='outlined' sx={{ width: "20rem" }} />
+                    {/* <TextField size='small' id='note' value={note} onChange={(e) => setNote(e.target.value)} label="노트" variant='outlined' sx={{ width: "20rem" }} /> */}
+                    <Input id='note' value={note} onChange={(e) => setNote(e.target.value)} label="노트" style={{width:"18rem"}} />
                 </div>
             </div>
             <div style={{display:"flex", justifyContent:"center", alignContent:"center"}}>
-            <button style={{width:"20rem"}} className={modalStyles.select_button} onClick={handleSelect}>등록</button>
+            <button style={{width:"18rem"}} className={modalStyles.select_button} onClick={handleSelect}>등록</button>
             </div>
         </Modal>
     )
@@ -1468,9 +1479,10 @@ export function CmListEditModal({ isModalOpen, handleOk, handleCancel, rowData }
 
     const [code, setCode] = useState(rowData.code);
     const [codeName, setCodeName] = useState(rowData.codeName);
-    const [attr1, setAttr1] = useState(rowData.attr1);
-    const [attr2, setAttr2] = useState(rowData.attr2);
+    const [attri1, setAttri1] = useState(rowData.attri1);
+    const [attri2, setAttri2] = useState(rowData.attri2);
     const [note, setNote] = useState(rowData.note);
+    console.log(rowData);
     const handleSelect = async() => {
         let swalOptions = {
             confirmButtonText: '확인'
@@ -1481,8 +1493,8 @@ export function CmListEditModal({ isModalOpen, handleOk, handleCancel, rowData }
             codeGrpName: rowData.codeGrpName,
             code,
             codeName,
-            attr1,
-            attr2,
+            attri1,
+            attri2,
             note,
         };
         try {
@@ -1515,35 +1527,43 @@ export function CmListEditModal({ isModalOpen, handleOk, handleCancel, rowData }
                     <div className={sysStyles.text}>
                         {"코드 그룹 ID"}
                     </div>
-                    <TextField size='small' id='codeGrpNo' value={rowData.codeGrpNo} disabled label="코드 그룹 번호" variant='outlined' sx={{ width: "20rem" }} />
+                    {/* <TextField size='small' id='codeGrpNo' value={rowData.codeGrpNo} disabled label="코드 그룹 번호" variant='outlined' sx={{ width: "20rem" }} /> */}
+                    <Input id='codeGrpNo' disabled value={rowData.codeGrpNo} label="코드 그룹 번호" style={{width:"18rem"}} />
                 </div>
                 <div className={sysStyles.text_field}>
                     <div className={sysStyles.text}>{"코드 그룹 이름"}</div>
-                    <TextField size='small' id='codeName' value={rowData.codeGrpName} disabled label="코드 그룹 이름" variant='outlined' sx={{ width: "20rem" }} />
+                    {/* <TextField size='small' id='codeName' value={rowData.codeGrpName} disabled label="코드 그룹 이름" variant='outlined' sx={{ width: "20rem" }} /> */}
+                    <Input id='codeName' disabled value={rowData.codeGrpName} label="코드 그룹 이름" style={{width:"18rem"}} />
                 </div>
                 <div className={sysStyles.text_field}>
                     <div className={sysStyles.text}>{"코드"}</div>
-                    <TextField size='small' id='code' value={code} onChange={(e) => setCode(e.target.value)} label="코드" variant='outlined' sx={{ width: "20rem" }} />
+                    {/* <TextField size='small' id='code' value={code} onChange={(e) => setCode(e.target.value)} label="코드" variant='outlined' sx={{ width: "20rem" }} /> */}
+                    <Input id='code' value={code} onChange={(e) => setCode(e.target.value)} label="코드" style={{width:"18rem"}} />
                 </div>
                 <div className={sysStyles.text_field}>
                     <div className={sysStyles.text}>{"코드 명"}</div>
-                    <TextField size='small' id='codeName' value={codeName} onChange={(e) => setCodeName(e.target.value)} label="코드 명" variant='outlined' sx={{ width: "20rem" }} />
+                    {/* <TextField size='small' id='codeName' value={codeName} onChange={(e) => setCodeName(e.target.value)} label="코드 명" variant='outlined' sx={{ width: "20rem" }} /
+                    > */}
+                    <Input id='codeName' value={codeName} onChange={(e) => setCodeName(e.target.value)} label="코드 명" style={{width:"18rem"}} />
                 </div>
                 <div className={sysStyles.text_field}>
                     <div className={sysStyles.text}>{"속성1"}</div>
-                    <TextField size='small' id='attr1' value={attr1} onChange={(e) => setAttr1(e.target.value)} label="속성1" variant='outlined' sx={{ width: "20rem" }} />
+                    {/* <TextField size='small' id='attri1' value={attri1} onChange={(e) => setAttri1(e.target.value)} label="속성1" variant='outlined' sx={{ width: "20rem" }} /> */}
+                    <Input id='attri1' value={attri1} onChange={(e) => setAttri1(e.target.value)} label="속성1" style={{width:"18rem"}} />
                 </div>
                 <div className={sysStyles.text_field}>
                     <div className={sysStyles.text}>{"속성2"}</div>
-                    <TextField size='small' id='attr2' value={attr2} onChange={(e) => setAttr2(e.target.value)} label="속성2" variant='outlined' sx={{ width: "20rem" }} />
+                    {/* <TextField size='small' id='attri2' value={attri2} onChange={(e) => setAttri2(e.target.value)} label="속성2" variant='outlined' sx={{ width: "20rem" }} /> */}
+                    <Input id='attri2' value={attri2} onChange={(e) => setAttri2(e.target.value)} label="속성2" style={{width:"18rem"}} />
                 </div>
                 <div className={sysStyles.text_field}>
                     <div className={sysStyles.text}>{"노트"}</div>
-                    <TextField size='small' id='note' value={note} onChange={(e) => setNote(e.target.value)} label="노트" variant='outlined' sx={{ width: "20rem" }} />
+                    {/* <TextField size='small' id='note' value={note} onChange={(e) => setNote(e.target.value)} label="노트" variant='outlined' sx={{ width: "20rem" }} /> */}
+                    <Input id='note' value={note} onChange={(e) => setNote(e.target.value)} label="노트" style={{width:"18rem"}} />
                 </div>
             </div>
             <div style={{display:"flex", justifyContent:"center", alignContent:"center"}}>
-            <button className={modalStyles.select_button} onClick={handleSelect}>수정</button>
+            <button style={{width:"18rem"}} className={modalStyles.select_button} onClick={handleSelect}>수정</button>
             </div>
         </Modal>
     )
@@ -2259,3 +2279,4 @@ export function SdShowDetailsModal({ selectedSd, isModalOpen, handleOk, handleCa
         </Modal>
     )
 }
+

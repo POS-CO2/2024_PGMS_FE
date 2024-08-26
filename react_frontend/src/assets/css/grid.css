@@ -5,14 +5,14 @@
     box-sizing: border-box;
     margin: 1rem auto;
     width: 96%;
-    height: 200vh;
+    height: 95vh;
 }
 
 .box1{
     display: flex;
     flex-direction: column;
     width: 100%;
-    height: 23%;
+    height: 45%;
     background-color: rgb(6, 10, 18);
     align-items: center;
     justify-content: center;
@@ -80,7 +80,7 @@
     justify-content: center;
     flex-direction: row;
     width: 100%;
-    height: 32%;
+    height: 50%;
 }
 /* 좌측 첫 그리드 */
 .box2_1{
@@ -94,7 +94,7 @@
 /* 그리드 */
 .box2_1_1{
     width: 100%;
-    height: 50%;
+    height: 48.2%;
 }
 
 .box2_1_1_card{
@@ -119,12 +119,12 @@
 .box2_1_1_1_1 {
     padding: 1rem;
     width: 100%;
-    height: 20%;
+    height: 10%;
 }
 /* 월 선택 */
 .box2_1_1_1_2 {
     width: 100%;
-    height: 50%;
+    height: 30%;
 }
 
 .box2_year{
@@ -150,7 +150,7 @@
 .box2_1_1_1_3 {
     padding: 1rem;
     width: 100%;
-    height: 30%;
+    height: 20%;
 }
 
 /* 게이지 영역 */
@@ -162,7 +162,7 @@
 
 .box2_1_2{
     width: 100%;
-    height: 50%;
+    height: 48.2%;
 }
 
 .box2_2 {
@@ -180,13 +180,13 @@
 
 .box2_3_1{
     width: 100%;
-    height: 50%;
+    height: 100%;
 }
 
-.box2_3_2{
+/* .box2_3_2{
     width: 100%;
-    height: 50%;
-}
+    height: 48.2%;
+} */
 
 
 

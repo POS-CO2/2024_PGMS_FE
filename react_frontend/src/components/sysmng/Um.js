@@ -177,7 +177,7 @@ export default function Um() {
                 setDept(options);
                 const updateFormFields = formField_mal.map(field => 
                 field.name === 'deptCode' ? {...field, options } : field);
-
+                
                 setFormFields(updateFormFields);
             } catch (error) {
                 console.error(error);

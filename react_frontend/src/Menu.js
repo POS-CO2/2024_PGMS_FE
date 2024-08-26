@@ -33,11 +33,11 @@ export default function Menu({menu, onMenuClick, activeTab}){
                 menu.menu.length == 0 ? menuStyles.can_hover : ""
             } ${
                 (activeTab === menu.url || getLocalStorageActiveTab() === menu.url)  && menu.url != null ? menuStyles.active : ""
-            }
+            } 
             `
         }>
             {
-                menu.url ? <NavLink to={menu.url} onClick={() => {onMenuClick(menu)}}>{menu.name}</NavLink> : <span>{menu.name}</span>
+                menu.url ? (menu.accessUser == 'FP' ? <NavLink to={menu.url} onClick={() => {onMenuClick(menu)}}>{menu.name}*</NavLink> : <NavLink to={menu.url} onClick={() => {onMenuClick(menu)}}>{menu.name}</NavLink>) : <span>{menu.name}</span>
             } 
             {
                 menu.menu.length != 0 && !isOpen 

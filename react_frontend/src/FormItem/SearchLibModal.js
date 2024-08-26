@@ -76,7 +76,7 @@ export default function ModalComponent({ isModalOpen, handleOk, handleCancel }) 
       </div>
 
       <div className={pjtModalStyles.result_container}>
-          <Table data={searchedEqLibs} columns={equipLibColumns} onRowClick={handleEqClick} />
+          <Table data={searchedEqLibs} columns={equipLibColumns} modalPagination={true} pagination={true} onRowClick={handleEqClick} />
       </div>
 
       <button className={pjtModalStyles.select_button} onClick={handleSelect}>선택</button>
