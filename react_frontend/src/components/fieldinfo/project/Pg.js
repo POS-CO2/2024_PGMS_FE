@@ -4,14 +4,15 @@ import { Card } from '@mui/material';
 import * as mainStyles from "../../../assets/css/main.css"
 import TableCustom from "../../../TableCustom";
 import SearchForms from "../../../SearchForms"
-import {formField_pg} from "../../../assets/json/searchFormData.js"
+import {formField_pg} from "../../../assets/json/searchFormData"
+import { pjtColumns } from '../../../assets/json/tableColumn';
 import axiosInstance from '../../../utils/AxiosInstance';
 import dayjs from 'dayjs';
 
 export default function Pg() {
     const [formFields, setFormFields] = useState(formField_pg);
-    const [projects, setProjects] = useState([]);           // 검색 데이터(프로젝트 목록)
-    const [selectedPjt, setSelectedPjt] = useState(null);   // 선택된 프로젝트(PK column only)
+    const [projects, setProjects] = useState([]);                   // 검색 데이터(프로젝트 목록)
+    const [selectedPjt, setSelectedPjt] = useState(null);           // 선택된 프로젝트(PK column only)
     const [isModalOpen, setIsModalOpen] = useState({
         PgAdd: false,
         Del: false
@@ -30,22 +31,7 @@ export default function Pg() {
             try {
                 const response = await axiosInstance.get(`/pjt?pgmsYn=y`);
 
-                const filteredPjts = response.data.map(project => ({
-                    id: project.id,
-                    프로젝트코드: project.pjtCode,
-                    프로젝트명: project.pjtName,
-                    프로젝트유형: project.pjtType,
-                    지역: project.regCode,
-                    프로젝트시작년: project.ctrtFrYear,
-                    프로젝트시작월: project.ctrtFrMth,
-                    프로젝트종료년: project.ctrtToYear,
-                    프로젝트종료월: project.ctrtToMth,
-                    본부: project.divCode,
-                    '연면적(m²)': project.bldArea,
-                    프로젝트진행상태: project.pjtProgStus
-                }));
-
-                setProjects(filteredPjts);
+                setProjects(response.data);
             } catch (error) {
                 console.log(error);
             }
@@ -91,17 +77,17 @@ export default function Pg() {
         if (projects.length === 0) {
             const placeholderPjt = {
                 id: '',
-                프로젝트코드: '',
-                프로젝트명: '',
-                프로젝트유형: '',
-                지역: '',
-                프로젝트시작년: '',
-                프로젝트시작월: '',
-                프로젝트종료년: '',
-                프로젝트종료월: '',
-                본부: '',
-                '연면적(m²)': '',
-                프로젝트진행상태: ''
+                pjtCode: '',
+                pjtName: '',
+                pjtName: '',
+                reg: '',
+                ctrtFrYear: '',
+                ctrtFrMth: '',
+                ctrtToYear: '',
+                ctrtToMnt: '',
+                div: '',
+                bldArea: '',
+                pjtProgStus: ''
             };
             setProjects([placeholderPjt]);
         }
@@ -133,37 +119,21 @@ export default function Pg() {
             // 빈 데이터인 경우, 기본 형태의 객체를 생성
             const placeholderPjt = {
                 id: '',
-                프로젝트코드: '',
-                프로젝트명: '',
-                프로젝트유형: '',
-                지역: '',
-                프로젝트시작년: '',
-                프로젝트시작월: '',
-                프로젝트종료년: '',
-                프로젝트종료월: '',
-                본부: '',
-                '연면적(m²)': '',
-                프로젝트진행상태: ''
+                pjtCode: '',
+                pjtName: '',
+                pjtName: '',
+                reg: '',
+                ctrtFrYear: '',
+                ctrtFrMth: '',
+                ctrtToYear: '',
+                ctrtToMnt: '',
+                div: '',
+                bldArea: '',
+                pjtProgStus: ''
             };
             setProjects([placeholderPjt]);
         } else {
-            // 필요한 필드만 추출하여 projects 설정
-            const filteredPjts = response.data.map(project => ({
-                id: project.id,
-                프로젝트코드: project.pjtCode,
-                프로젝트명: project.pjtName,
-                프로젝트유형: project.pjtType,
-                지역: project.regCode,
-                프로젝트시작년: project.ctrtFrYear,
-                프로젝트시작월: project.ctrtFrMth,
-                프로젝트종료년: project.ctrtToYear,
-                프로젝트종료월: project.ctrtToMth,
-                본부: project.divCode,
-                연면적: project.bldArea,
-                프로젝트진행상태: project.pjtProgStus
-            }));
-
-            setProjects(filteredPjts);
+            setProjects(response.data);
         }
     };
 
@@ -192,22 +162,6 @@ export default function Pg() {
                 }));
 
                 const response = await axiosInstance.post("/pjt", requestBody);
-                
-                // 데이터가 객체인 경우 처리 방법
-                const filteredData = response.data.map(project => ({
-                    id: project.id,
-                    프로젝트코드: project.pjtCode,
-                    프로젝트명: project.pjtName,
-                    프로젝트유형: project.pjtType,
-                    지역: project.regCode,
-                    프로젝트시작년: project.ctrtFrYear,
-                    프로젝트시작월: project.ctrtFrMth,
-                    프로젝트종료년: project.ctrtToYear,
-                    프로젝트종료월: project.ctrtToMth,
-                    본부: project.divCode,
-                    '연면적(m²)': project.bldArea,
-                    프로젝트진행상태: project.pjtProgStus
-                }));
 
                 // 기존 프로젝트에서 placeholderPjt를 제거하고 새 데이터를 병합
                 setProjects(prevPjts => {
@@ -215,7 +169,7 @@ export default function Pg() {
                     const cleanedPjts = prevPjts.filter(pjt => pjt.id !== '');
 
                     // 새로 추가된 프로젝트를 병합
-                    return [...cleanedPjts, ...filteredData];
+                    return [...cleanedPjts, ...response.data];
                 });
 
                 swalOptions.title = '성공!',
@@ -274,7 +228,8 @@ export default function Pg() {
                 <>
                     <TableCustom 
                         title='프로젝트목록' 
-                        data={projects}                   
+                        data={projects}
+                        columns={pjtColumns}            
                         buttons={['Delete', 'Add']}
                         onClicks={[onDeleteClick, onAddClick]}
                         onRowClick={handlePjtClick}

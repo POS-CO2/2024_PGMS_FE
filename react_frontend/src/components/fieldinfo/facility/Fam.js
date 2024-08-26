@@ -4,7 +4,8 @@ import { Card } from '@mui/material';
 import * as mainStyles from "../../../assets/css/main.css"
 import TableCustom from "../../../TableCustom";
 import SearchForms from "../../../SearchForms";
-import {formField_fam} from "../../../assets/json/searchFormData.js";
+import { formField_fam } from "../../../assets/json/searchFormData";
+import { equipActvColumns } from '../../../assets/json/tableColumn';
 import axiosInstance from '../../../utils/AxiosInstance';
 
 export default function Fam() {
@@ -20,12 +21,12 @@ export default function Fam() {
     class Actv {
         constructor(id = '', actvDataName = '', actvDataDvs = '', emtnActvType = '', calUnitCode = '', inputUnitCode = '', unitConvCoef = '') {
             this.id = id;
-            this.활동자료명 = actvDataName;
-            this.활동자료구분 = actvDataDvs;
-            this.배출활동유형 = emtnActvType;
-            this.산정단위 = calUnitCode;
-            this.입력단위 = inputUnitCode;
-            this.단위환산계수 = unitConvCoef;            ;
+            this.actvDataName = actvDataName;
+            this.actvDataDvs = actvDataDvs;
+            this.emtnActvType = emtnActvType;
+            this.calUnitCode = calUnitCode;
+            this.inputUnitCode = inputUnitCode;
+            this.unitConvCoef = unitConvCoef;            ;
         }
     }
 
@@ -41,18 +42,7 @@ export default function Fam() {
         const fetchActv = async () => {
             try {
                 const response = await axiosInstance.get(`/equip/actv`);
-
-                const filteredActves = response.data.map(actv => new Actv(
-                    actv.id,
-                    actv.actvDataName,
-                    actv.actvDataDvs,
-                    actv.emtnActvType,
-                    actv.calUnitCode,
-                    actv.inputUnitCode,
-                    actv.unitConvCoef
-                ));
-
-                setActves(filteredActves);
+                setActves(response.data);
             } catch (error) {
                 console.log(error);
             }
@@ -120,17 +110,7 @@ export default function Fam() {
             const placeholderActv = new Actv();
             setActves([placeholderActv]);
         } else {
-            // 필요한 필드만 추출하여 managers에 설정
-            const filteredActves = response.data.map(actv => new Actv(
-                actv.id,
-                actv.actvDataName,
-                actv.actvDataDvs,
-                actv.emtnActvType,
-                actv.calUnitCode,
-                actv.inputUnitCode,
-                actv.unitConvCoef,
-            ));
-            setActves(filteredActves);
+            setActves(response.data);
         }
     };
 
@@ -164,16 +144,6 @@ export default function Fam() {
                 };
 
                 const response = await axiosInstance.post("/equip/actv", requestBody);
-                
-                const filteredData = new Actv(
-                    response.data.id,
-                    response.data.actvDataName,
-                    response.data.actvDataDvs,
-                    response.data.emtnActvType,
-                    response.data.calUnitCode,
-                    response.data.inputUnitCode,
-                    response.data.unitConvCoef
-                );
 
                 // 기존 프로젝트에서 placeholderPjt를 제거하고 새 데이터를 병합
                 setActves(prevActves => {
@@ -181,7 +151,7 @@ export default function Fam() {
                     const cleanedActves = prevActves.filter(actv => actv.id !== '');
 
                     // 새로 추가된 활동자료를 병합
-                    return [...cleanedActves, filteredData];
+                    return [...cleanedActves, response.data];
                 });
 
                 swalOptions.title = '성공!',
@@ -226,20 +196,10 @@ export default function Fam() {
 
                 const response = await axiosInstance.patch("/equip/actv", requestBody);
 
-                const filteredActv = new Actv(
-                    selectedActv.id, 
-                    response.data.actvDataName, 
-                    response.data.actvDataDvs, 
-                    response.data.emtnActvType, 
-                    response.data.calUnitCode, 
-                    response.data.inputUnitCode, 
-                    response.data.unitConvCoef
-                );
-
                 // 서버로부터 받은 수정된 데이터를 사용하여 리스트 업데이트
                 setActves(prevActves => 
                     prevActves.map(actv => 
-                        actv.id === selectedActv.id ? filteredActv : actv
+                        actv.id === selectedActv.id ? response.data : actv
                     )
                 );
                 setSelectedActv({});
@@ -284,6 +244,7 @@ export default function Fam() {
             <TableCustom 
                 title='활동자료목록' 
                 data={actves} 
+                columns={equipActvColumns}
                 buttons={['Delete', 'Edit', 'Add']}
                 onClicks={[onDeleteClick, onEditClick, onAddClick]}
                 onRowClick={handleActvClick}

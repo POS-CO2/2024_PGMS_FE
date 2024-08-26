@@ -70,7 +70,7 @@ export default function CustomizedTables({
     const [selectedRow, setSelectedRow] = useState({});       // default variant의 선택 상태
     const [selectedRows, setSelectedRows] = useState([]); 
     const [page, setPage] = useState(0);
-    const [rowsPerPage, setRowsPerPage] = useState(10);             // default page row length
+    const [rowsPerPage, setRowsPerPage] = useState(modalPagination ? 5 : 10);             // default page row length
     const handleChangePage = (event, newPage) => {
         setPage(newPage);
     };
@@ -207,7 +207,8 @@ export default function CustomizedTables({
                 page={page}
                 onPageChange={handleChangePage}
                 onRowsPerPageChange={handleChangeRowsPerPage}
-            />) : (
+            />
+            ) : (
                 <TablePagination 
                 rowsPerPageOptions={[5, 10, 25]} // page row length custom
                 component="div"
