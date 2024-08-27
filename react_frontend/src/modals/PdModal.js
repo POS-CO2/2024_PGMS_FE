@@ -1884,8 +1884,6 @@ export function SdAddModal({ isModalOpen, handleOk, handleCancel, rowData }) {
                 }
             });
 
-            console.log(response);
-            console.log(response.data);
             return response.data; // 파일 업로드 후 S3에서 반환된 파일 정보 배열
         } catch (error) {
             console.error('Error uploading files to S3:', error);
@@ -1902,11 +1900,21 @@ export function SdAddModal({ isModalOpen, handleOk, handleCancel, rowData }) {
                 actvYear: parseInt(formData.actvYear, 10),
                 actvMth: parseInt(formData.actvMth, 10),
                 name: formData.name,
-                files: uploadedFiles
+                files: uploadedFiles.map(file => ({
+                    name: file.name,
+                    url: file.url
+                }))
             };
             
-            await axiosInstance.post('/equip/document', documentData);
+            console.log(documentData);
+            // 데이터 전송
+            const response = await axiosInstance.post('/equip/document', documentData, {
+                headers: {
+                    'Content-Type': 'application/json', // JSON 형식으로 전송
+                }
+            });
 
+            console.log('Document saved successfully:', response.data);
             handleOk(formData, true);  // 새로 입력된 데이터를 handleOk 함수로 전달, 두번째 인자-closeModal=true
         } catch (error) {
             console.error('Error saving document:', error);
@@ -2017,14 +2025,10 @@ export function SdAddModal({ isModalOpen, handleOk, handleCancel, rowData }) {
 }
 
 export function SdShowDetailsModal({ selectedSd, isModalOpen, handleOk, handleCancel }) {
-    const fileInputRef = useRef(null);
-    const [fileList, setFileList] = useState([]);
-
     const [formData, setFormData] = useState({
         actvYear: '',
         actvMth: '',
         name: '',
-        note: '',
         fileList: []
     });
 
@@ -2039,25 +2043,85 @@ export function SdShowDetailsModal({ selectedSd, isModalOpen, handleOk, handleCa
                 note: selectedSd.note || '',
                 fileList: Array.isArray(selectedSd.fileList) ? selectedSd.fileList : [] // 배열인지 확인
             });
-            setFileList(Array.isArray(selectedSd.fileList) ? selectedSd.fileList : []); // 배열인지 확인
         }
     }, [selectedSd]);
 
     const handleFileChange = (event) => {
         const newFiles = Array.from(event.target.files);
-        setFileList(prevFiles => {
-            const existingFileNames = new Set(prevFiles.map(file => file.name));
+        setFormData(prevData => {
+            const existingFileNames = new Set(prevData.fileList.map(file => file.name));
             const filteredNewFiles = newFiles.filter(file => !existingFileNames.has(file.name));
-            return [...prevFiles, ...filteredNewFiles];
+            return {
+                ...prevData,
+                fileList: [...prevData.fileList, ...filteredNewFiles]
+            };
         });
-        // Clear the input value to handle the same file being selected again
+        // 동일한 파일을 다시 선택할 수 있도록 input의 값을 초기화
         event.target.value = null;
     };
+
     const handleFileRemove = (fileName) => {
-        setFileList(prevFiles => prevFiles.filter(file => file.name !== fileName));
+        setFormData(prevData => ({
+            ...prevData,
+            fileList: prevData.fileList.filter(file => file.name !== fileName)
+        }));
     };
 
-    const onSaveClick = () => {
+    const uploadFiles = async () => {
+        try {
+            /*
+            const regData = {
+                files: formData.fileList
+            };
+            const response = await axiosInstance.post('/s3/upload', regData);
+            */
+            const formDataForUpload = new FormData();
+            formData.fileList.forEach(file => {
+                formDataForUpload.append('files', file);
+            });
+            const response = await axiosInstance.post('/s3/upload', formDataForUpload, {
+                headers: {
+                    'Content-Type': 'multipart/form-data'
+                }
+            });
+
+            return response.data; // 파일 업로드 후 S3에서 반환된 파일 정보 배열
+        } catch (error) {
+            console.error('Error uploading files to S3:', error);
+            throw error; // 에러 발생 시 처리할 수 있도록 throw
+        }
+    };
+
+    const onSaveClick = async () => {
+        // 새로 추가된 파일만 업로드 ㄱㄴ?
+        try {
+            const uploadedFiles = await uploadFiles();
+
+            const documentData = {
+                emissionId: rowData.id,
+                actvYear: parseInt(formData.actvYear, 10),
+                actvMth: parseInt(formData.actvMth, 10),
+                name: formData.name,
+                files: uploadedFiles.map(file => ({
+                    name: file.name,
+                    url: file.url
+                }))
+            };
+            
+            console.log(documentData);
+            // 데이터 전송
+            const response = await axiosInstance.post('/equip/document', documentData, {
+                headers: {
+                    'Content-Type': 'application/json', // JSON 형식으로 전송
+                }
+            });
+
+            console.log('Document saved successfully:', response.data);
+            handleOk(formData, true);  // 새로 입력된 데이터를 handleOk 함수로 전달, 두번째 인자-closeModal=true
+        } catch (error) {
+            console.error('Error saving document:', error);
+        }
+        
         const updatedFormData = {
             ...formData,
             fileList // 현재 상태의 파일 목록을 추가
