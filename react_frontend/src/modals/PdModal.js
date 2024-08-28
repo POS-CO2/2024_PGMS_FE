@@ -1905,17 +1905,21 @@ export function SdAddModal({ isModalOpen, handleOk, handleCancel, rowData }) {
                     url: file.url
                 }))
             };
+
+            // JSON 문자열로 변환
+            const jsonString = JSON.stringify(documentData);
             
             console.log(documentData);
             // 데이터 전송
-            const response = await axiosInstance.post('/equip/document', documentData, {
+            const response = await axiosInstance.post('/equip/document', jsonString, {
                 headers: {
                     'Content-Type': 'application/json', // JSON 형식으로 전송
                 }
             });
 
+            console.log(jsonString);
             console.log('Document saved successfully:', response.data);
-            handleOk(formData, true);  // 새로 입력된 데이터를 handleOk 함수로 전달, 두번째 인자-closeModal=true
+            handleOk(response.data, true);  // 새로 입력된 데이터를 handleOk 함수로 전달, 두번째 인자-closeModal=true
         } catch (error) {
             console.error('Error saving document:', error);
         }
@@ -2217,13 +2221,12 @@ export function SdShowDetailsModal({ selectedSd, isModalOpen, handleOk, handleCa
                                 name="fileList"
                                 multiple
                                 style={{ display: 'none' }} // 숨김 처리
-                                ref={fileInputRef} // useRef로 참조
                                 onChange={handleFileChange} // 파일 선택 시 호출
                                 disabled={!isEditing} // 편집 모드가 아닐 때 비활성화
                             />
                             <button
                                 type="button"
-                                onClick={() => fileInputRef.current.click()}
+                                //onClick={() => fileInputRef.current.click()}
                                 className={ps12Styles.upload_button}
                                 disabled={!isEditing} // 편집 모드가 아닐 때 비활성화
                             >
@@ -2233,10 +2236,10 @@ export function SdShowDetailsModal({ selectedSd, isModalOpen, handleOk, handleCa
                     </div>
                     <div className={sdStyles.file_list_container}>
                         <div className={sdStyles.file_list}>
-                            {fileList.length === 0 ? (
+                            {formData.fileList.length === 0 ? (
                                 <></>
                             ) : (
-                                fileList.map((file, index) => (
+                                formData.fileList.map((file, index) => (
                                     <div key={index} className={sdStyles.file_item}>
                                         {file.name}
                                         <button

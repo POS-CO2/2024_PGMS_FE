@@ -107,6 +107,13 @@ export default function Esm() {
             setSelectedEmtn(null);
         }
 
+        else if (modalType === 'SdAdd') {
+            console.log(data);
+            // 선택된 프로젝트 데이터를 상태로 저장, data가 배열이 아닌 경우 배열로 변환하여 추가
+            setSds(prevList => [...prevList, ...(Array.isArray(data) ? data : [data])]);
+            console.log(sds);
+        }
+
         else if (modalType === 'DeleteB') {
             setSds(prevList => prevList.filter(sd => sd.id !== data.id));
             setSelectedSd(null);
