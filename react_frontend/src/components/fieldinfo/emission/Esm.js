@@ -31,13 +31,12 @@ export default function Esm() {
     const [selectedEmtn, setSelectedEmtn] = useState(null);           // 선택된 배출원
     const [showSds, setShowSds] = useState(false);                    // 증빙자료 목록을 표시할지 여부
     const [sds, setSds] = useState([]);                               // 증빙자료 목록
-    const [selectedSd, setSelectedSd] = useState(null);               // 선택된 증빙자료
+    const [selectedSd, setSelectedSd] = useState({});               // 선택된 증빙자료
     const [selectedYear, setSelectedYear] = useState(new Date().getFullYear().toString()); // 선택된 연도
 
     const [buttonStatus, setButtonStatus] = useState([false, false, false]);
     useEffect(() => {
-        // selectedSd가 null인지 여부에 따라 버튼 상태를 설정
-        if (selectedSd === null) {
+        if (Object.keys(selectedSd).length === 0) {
             setButtonStatus([false, false, true]); // Add만 활성화
         } else {
             setButtonStatus([true, true, true]); // 모든 버튼 활성화
@@ -81,9 +80,10 @@ export default function Esm() {
 
     // 증빙자료 row 클릭 시 호출될 함수
     const handleSdClick = (row) => {
-        setSelectedSd(row);
-        if(!row) {
-            setSelectedSd(null);
+        if (row) {
+            setSelectedSd(row);
+        } else {
+            setSelectedSd({});
         }
     };
 
@@ -111,12 +111,23 @@ export default function Esm() {
             console.log(data);
             // 선택된 프로젝트 데이터를 상태로 저장, data가 배열이 아닌 경우 배열로 변환하여 추가
             setSds(prevList => [...prevList, ...(Array.isArray(data) ? data : [data])]);
-            console.log(sds);
+        }
+
+        else if (modalType === 'SdShowDetails') {
+            console.log(data);
+            // 선택된 프로젝트 데이터를 상태로 저장, data가 배열이 아닌 경우 배열로 변환하여 추가
+            /////////// 기존 데이터 빼고 새로운거 넣기?
+            //setSds(prevList => [...prevList, ...(Array.isArray(data) ? data : [data])]);
+            //console.log(sds);
         }
 
         else if (modalType === 'DeleteB') {
-            setSds(prevList => prevList.filter(sd => sd.id !== data.id));
-            setSelectedSd(null);
+            setSds(prevList => {
+                const updatedList = prevList.filter(sd => sd.id !== data.id);
+                console.log("bbbbb");
+                setSelectedSd({}); // 선택된 증빙자료 해제
+                return updatedList;
+            });
         }
         
     };
@@ -219,7 +230,7 @@ export default function Esm() {
                                             onClicks={[onSdShowDetailsClick, onSdDeleteClick, onSdAddClick]}
                                             buttonStatus={buttonStatus} />
                                     </div>
-                                    <Table data={sds} onRowClick={handleSdClick} columns={equipDocumentColumns} />
+                                    <Table data={sds} onRowClick={handleSdClick} columns={equipDocumentColumns} key={JSON.stringify(sds)}/>
 
                                     <SdAddModal
                                         isModalOpen={isModalOpen.SdAdd}

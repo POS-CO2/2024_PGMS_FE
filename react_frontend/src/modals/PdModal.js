@@ -1840,10 +1840,21 @@ export function EsmAddModal({ isModalOpen, handleOk, handleCancel, rowData }) {
 export function SdAddModal({ isModalOpen, handleOk, handleCancel, rowData }) {
     const [formData, setFormData] = useState({
         actvYear: new Date().getFullYear().toString(),
-        actvMth: ("00" + (new Date().getMonth() + 1)).slice(-2),
+        actvMth: (new Date().getMonth() + 1).toString(),
         name: '',
         fileList: []
     });
+
+    useEffect(() => {
+        if (isModalOpen) {
+            setFormData({
+                actvYear: new Date().getFullYear().toString(),
+                actvMth: (new Date().getMonth() + 1).toString(),
+                name: '',
+                fileList: []
+            });
+        }
+    }, [isModalOpen]);
 
     const handleFileChange = (event) => {
         const newFiles = Array.from(event.target.files);
@@ -1917,16 +1928,8 @@ export function SdAddModal({ isModalOpen, handleOk, handleCancel, rowData }) {
                 }))
             };
 
-            // JSON 문자열로 변환
-            const jsonString = JSON.stringify(documentData);
-            
-            console.log(documentData);
             // 데이터 전송
-            const response = await axiosInstance.post('/equip/document', jsonString, {
-                headers: {
-                    'Content-Type': 'application/json', // JSON 형식으로 전송
-                }
-            });
+            const response = await axiosInstance.post('/equip/document', documentData);
 
             handleOk(response.data, true); // 새로 입력된 데이터를 handleOk 함수로 전달, 두번째 인자-closeModal=true
             swalOptions.title = '성공!',
@@ -2057,17 +2060,27 @@ export function SdShowDetailsModal({ selectedSd, isModalOpen, handleOk, handleCa
     useEffect(() => {
         if (selectedSd) {
             setFormData({
-                actvYear: selectedSd.actvYear || new Date().getFullYear().toString(),
-                actvMth: selectedSd.actvMth || ("00" + (new Date().getMonth() + 1)).slice(-2),
+                actvYear: String(selectedSd.actvYear || new Date().getFullYear()),
+                actvMth: String(selectedSd.actvMth || (new Date().getMonth() + 1)),
                 name: selectedSd.name || '',
-                note: selectedSd.note || '',
-                fileList: Array.isArray(selectedSd.fileList) ? selectedSd.fileList : [] // 배열인지 확인
+                fileList: Array.isArray(selectedSd.files) ? selectedSd.files.map(file => ({
+                    name: file.name,
+                    status: 'done',
+                    url: file.url
+                })) : []
             });
         }
     }, [selectedSd]);
 
     const handleFileChange = (event) => {
-        const newFiles = Array.from(event.target.files);
+        console.log(event);
+        console.log(event.target.files);
+        const newFiles = Array.from(event.target.files).map(file => ({
+            name: file.name,
+            status: 'new',
+            originFileObj: file
+        }));
+
         setFormData(prevData => {
             const existingFileNames = new Set(prevData.fileList.map(file => file.name));
             const filteredNewFiles = newFiles.filter(file => !existingFileNames.has(file.name));
@@ -2087,67 +2100,84 @@ export function SdShowDetailsModal({ selectedSd, isModalOpen, handleOk, handleCa
         }));
     };
 
-    const uploadFiles = async () => {
+    const uploadFiles = async () => { // 새로 추가된 파일만 업로드
+        let swalOptions = {
+            confirmButtonText: '확인'
+        };
+
+        // formData.fileList가 null이거나 비어있는지 확인
+        if (!formData.fileList || formData.fileList.length === 0) {
+            swalOptions.title = '실패!';
+            swalOptions.text = '첨부된 증빙파일이 없습니다.';
+            swalOptions.icon = 'error';
+            Swal.fire(swalOptions);
+            return; // 더 이상 진행하지 않도록 함수 종료
+        }
+
         try {
-            /*
-            const regData = {
-                files: formData.fileList
-            };
-            const response = await axiosInstance.post('/s3/upload', regData);
-            */
             const formDataForUpload = new FormData();
             formData.fileList.forEach(file => {
-                formDataForUpload.append('files', file);
-            });
-            const response = await axiosInstance.post('/s3/upload', formDataForUpload, {
-                headers: {
-                    'Content-Type': 'multipart/form-data'
+                if (file.status === 'new') {
+                    formDataForUpload.append('files', file.originFileObj); // 실제 File 객체를 추가
                 }
             });
+            if (formDataForUpload.getAll('files').length > 0) {
+                const response = await axiosInstance.post('/s3/upload', formDataForUpload, {
+                    headers: {
+                        'Content-Type': 'multipart/form-data'
+                    }
+                });
 
-            return response.data; // 파일 업로드 후 S3에서 반환된 파일 정보 배열
+                return response.data; // 파일 업로드 후 S3에서 반환된 파일 정보 배열
+            }
         } catch (error) {
             console.error('Error uploading files to S3:', error);
-            throw error; // 에러 발생 시 처리할 수 있도록 throw
+            swalOptions.title = '실패!',
+            swalOptions.text = `증빙자료 등록에 실패하였습니다.`;
+            swalOptions.icon = 'error';
         }
+        Swal.fire(swalOptions);
     };
 
     const onSaveClick = async () => {
-        // 새로 추가된 파일만 업로드 ㄱㄴ?
+        let swalOptions = {
+            confirmButtonText: '확인'
+        };
+
         try {
-            const uploadedFiles = await uploadFiles();
+            const uploadedFiles = await uploadFiles() || []; // uploadFiles가 null 또는 undefined일 경우 빈 배열로 처리
+            
+            const existingFiles = (formData.fileList || []).filter(file => file.status === 'done').map(file => ({
+                name: file.name,
+                url: file.url
+            }));
+            const newFiles = uploadedFiles.map(file => ({ // 기존 파일들 + uploadFiles
+                name: file.name,
+                url: file.url
+            }));
 
             const documentData = {
-                emissionId: rowData.id,
-                actvYear: parseInt(formData.actvYear, 10),
-                actvMth: parseInt(formData.actvMth, 10),
+                id: selectedSd.id,
                 name: formData.name,
-                files: uploadedFiles.map(file => ({
-                    name: file.name,
-                    url: file.url
-                }))
+                files: [...existingFiles, ...newFiles]
             };
             
-            console.log(documentData);
             // 데이터 전송
-            const response = await axiosInstance.post('/equip/document', documentData, {
-                headers: {
-                    'Content-Type': 'application/json', // JSON 형식으로 전송
-                }
-            });
+            const response = await axiosInstance.patch('/equip/document', documentData);
 
-            console.log('Document saved successfully:', response.data);
-            handleOk(formData, true);  // 새로 입력된 데이터를 handleOk 함수로 전달, 두번째 인자-closeModal=true
+            handleOk(response.data, false);  // 새로 입력된 데이터를 handleOk 함수로 전달, 두번째 인자-closeModal=false
+            setIsEditing(false); // 저장 후 편집 모드 종료
+            
+            swalOptions.title = '성공!',
+            swalOptions.text = `성공적으로 수정되었습니다.`;
+            swalOptions.icon = 'success';
         } catch (error) {
             console.error('Error saving document:', error);
+            swalOptions.title = '실패!',
+            swalOptions.text = `수정에 실패하였습니다.`;
+            swalOptions.icon = 'error';
         }
-        
-        const updatedFormData = {
-            ...formData,
-            fileList // 현재 상태의 파일 목록을 추가
-        };
-        handleOk(updatedFormData, false);  // 입력된 데이터를 handleOk 함수로 전달, 두번째 인자-closeModal=false
-        setIsEditing(false); // 저장 후 편집 모드 종료
+        Swal.fire(swalOptions);
     };
 
     const onEditClick = () => {
@@ -2183,7 +2213,7 @@ export function SdShowDetailsModal({ selectedSd, isModalOpen, handleOk, handleCa
                             id="actvYear"
                             value={formData.actvYear}
                             onChange={(value) => setFormData(prevData => ({ ...prevData, actvYear: value }))}
-                            disabled={!isEditing} // 편집 모드가 아닐 때 비활성화
+                            disabled={true} // 항상 비활성화
                         >
                             {selectYear.map(option => (
                                 <Select.Option key={option.value} value={option.value}>
@@ -2196,7 +2226,7 @@ export function SdShowDetailsModal({ selectedSd, isModalOpen, handleOk, handleCa
                             id="actvMth"
                             value={formData.actvMth}
                             onChange={(value) => setFormData(prevData => ({ ...prevData, actvMth: value }))}
-                            disabled={!isEditing} // 편집 모드가 아닐 때 비활성화
+                            disabled={true} // 항상 비활성화
                         >
                             {selectMonth.map(option => (
                                 <Select.Option key={option.value} value={option.value}>
@@ -2218,15 +2248,6 @@ export function SdShowDetailsModal({ selectedSd, isModalOpen, handleOk, handleCa
                         disabled={!isEditing} // 편집 모드가 아닐 때 비활성화
                     />
                 </div>
-                <div className={sdStyles.input_item}>
-                    <div className={sdStyles.input_title}>비고</div>
-                    <input
-                        className={sdStyles.search} id="note"
-                        value={formData.note}
-                        onChange={(e) => setFormData(prevData => ({ ...prevData, note: e.target.value }))}
-                        disabled={!isEditing} // 편집 모드가 아닐 때 비활성화
-                    />
-                </div>
                 <div className={sdStyles.upload_item}>
                     <div className={sdStyles.upload_header}>
                         <div className={sdStyles.input_title}>첨부파일</div>
@@ -2242,7 +2263,7 @@ export function SdShowDetailsModal({ selectedSd, isModalOpen, handleOk, handleCa
                             />
                             <button
                                 type="button"
-                                //onClick={() => fileInputRef.current.click()}
+                                onClick={() => document.getElementById('fileList').click()}
                                 className={ps12Styles.upload_button}
                                 disabled={!isEditing} // 편집 모드가 아닐 때 비활성화
                             >
@@ -2255,17 +2276,24 @@ export function SdShowDetailsModal({ selectedSd, isModalOpen, handleOk, handleCa
                             {formData.fileList.length === 0 ? (
                                 <></>
                             ) : (
-                                formData.fileList.map((file, index) => (
+                                formData.fileList.map((file, index) => ( // file.name 편집모드 아닐 때는 클릭시 다운
                                     <div key={index} className={sdStyles.file_item}>
-                                        {file.name}
-                                        <button
-                                            type="button"
-                                            className={sdStyles.remove_button}
-                                            onClick={() => handleFileRemove(file.name)}
-                                            disabled={!isEditing} // 편집 모드가 아닐 때 비활성화
-                                        >
-                                            <CloseOutlined />
-                                        </button>
+                                        {isEditing ? (
+                                            file.name
+                                        ) : (
+                                            <a href={file.url} target="_blank" rel="noopener noreferrer">
+                                                {file.name}
+                                            </a>
+                                        )}
+                                        {isEditing && (
+                                            <button
+                                                type="button"
+                                                className={sdStyles.remove_button}
+                                                onClick={() => handleFileRemove(file.name)}
+                                            >
+                                                <CloseOutlined />
+                                            </button>
+                                        )}
                                     </div>
                                 ))
                             )}
