@@ -1867,6 +1867,10 @@ export function SdAddModal({ isModalOpen, handleOk, handleCancel, rowData }) {
     };
 
     const uploadFiles = async () => {
+        let swalOptions = {
+            confirmButtonText: '확인'
+        };
+
         try {
             /*
             const regData = {
@@ -1887,11 +1891,18 @@ export function SdAddModal({ isModalOpen, handleOk, handleCancel, rowData }) {
             return response.data; // 파일 업로드 후 S3에서 반환된 파일 정보 배열
         } catch (error) {
             console.error('Error uploading files to S3:', error);
-            throw error; // 에러 발생 시 처리할 수 있도록 throw
+            swalOptions.title = '실패!',
+            swalOptions.text = `증빙자료 등록에 실패하였습니다.`;
+            swalOptions.icon = 'error';
         }
+        Swal.fire(swalOptions);
     };
 
     const onSaveClick = async () => {
+        let swalOptions = {
+            confirmButtonText: '확인'
+        };
+        
         try {
             const uploadedFiles = await uploadFiles();
 
@@ -1917,12 +1928,17 @@ export function SdAddModal({ isModalOpen, handleOk, handleCancel, rowData }) {
                 }
             });
 
-            console.log(jsonString);
-            console.log('Document saved successfully:', response.data);
-            handleOk(response.data, true);  // 새로 입력된 데이터를 handleOk 함수로 전달, 두번째 인자-closeModal=true
+            handleOk(response.data, true); // 새로 입력된 데이터를 handleOk 함수로 전달, 두번째 인자-closeModal=true
+            swalOptions.title = '성공!',
+            swalOptions.text = `성공적으로 등록되었습니다.`;
+            swalOptions.icon = 'success';
         } catch (error) {
             console.error('Error saving document:', error);
+            swalOptions.title = '실패!',
+            swalOptions.text = `등록에 실패하였습니다.`;
+            swalOptions.icon = 'error';
         }
+        Swal.fire(swalOptions);
     };
 
     return (
