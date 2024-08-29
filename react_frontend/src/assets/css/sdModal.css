@@ -19,10 +19,27 @@
     display: flex;
     align-items: center;
     /* 수직 정렬을 중앙에 맞춤 */
-    gap: 0 20px;
+    gap: 0 10px;
 }
 .edit_button {
     margin-bottom: 20px;
+}
+
+.customButton {
+    font-size: 16px;
+    margin-left: 3px;
+    background-color: rgb(56, 117, 247); /* #3875f7 */
+    color: #fff;
+    border-radius: 8px;
+    padding: 3px 12px;
+    gap: 3px; /* 아이콘과 텍스트 사이의 간격 */
+
+    border: none;
+    height: 34px;
+    box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.1); /* 그림자 추가 */
+}
+.customButton:hover {
+    background-color: rgb(85, 146, 248); /* #5592f8 */
 }
 
 .input_item {

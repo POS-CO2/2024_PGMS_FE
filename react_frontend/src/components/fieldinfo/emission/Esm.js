@@ -115,16 +115,19 @@ export default function Esm() {
 
         else if (modalType === 'SdShowDetails') {
             console.log(data);
-            // 선택된 프로젝트 데이터를 상태로 저장, data가 배열이 아닌 경우 배열로 변환하여 추가
-            /////////// 기존 데이터 빼고 새로운거 넣기?
-            //setSds(prevList => [...prevList, ...(Array.isArray(data) ? data : [data])]);
-            //console.log(sds);
+            // 기존 데이터 중 선택된 Sd를 업데이트
+            setSds(prevList => prevList.map(sd => sd.id === data.id ? data : sd));
+
+            // 선택된 증빙자료 업데이트
+            const updatedSd = sds.find(sd => sd.id === data.id);
+            if (updatedSd) {
+                setSelectedSd(updatedSd);
+            }
         }
 
         else if (modalType === 'DeleteB') {
             setSds(prevList => {
                 const updatedList = prevList.filter(sd => sd.id !== data.id);
-                console.log("bbbbb");
                 setSelectedSd({}); // 선택된 증빙자료 해제
                 return updatedList;
             });

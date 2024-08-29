@@ -161,7 +161,7 @@ export const equipEmissionColumns = [
 
 export const equipDocumentColumns = [
     { key: 'id', label: 'id', hidden: true },
-    { key: 'actvYear', label: '활동년도', hidden: false },
+    { key: 'actvYear', label: '활동년도', hidden: true },
     { key: 'actvMth', label: '활동월', hidden: false },
     { key: 'name', label: '이름', hidden: false },
 ]

@@ -2135,8 +2135,8 @@ export function SdShowDetailsModal({ selectedSd, isModalOpen, handleOk, handleCa
             swalOptions.title = '실패!',
             swalOptions.text = `증빙자료 등록에 실패하였습니다.`;
             swalOptions.icon = 'error';
+            Swal.fire(swalOptions);
         }
-        Swal.fire(swalOptions);
     };
 
     const onSaveClick = async () => {
@@ -2181,11 +2181,23 @@ export function SdShowDetailsModal({ selectedSd, isModalOpen, handleOk, handleCa
     };
 
     const onEditClick = () => {
-        if (isEditing) {
-            onSaveClick(); // 편집 모드일 때 저장 기능 호출
-        } else {
-            setIsEditing(true); // 비편집 모드일 때 편집 모드로 전환
+        setIsEditing(true); // 비편집 모드일 때 편집 모드로 전환
+    };
+    const onCancelClick = () => {
+        if (selectedSd) {
+            setFormData({
+                actvYear: String(selectedSd.actvYear || new Date().getFullYear()),
+                actvMth: String(selectedSd.actvMth || (new Date().getMonth() + 1)),
+                name: selectedSd.name || '',
+                fileList: Array.isArray(selectedSd.files) ? selectedSd.files.map(file => ({
+                    name: file.name,
+                    status: 'done',
+                    url: file.url
+                })) : []
+            });
         }
+        handleOk(selectedSd, false);
+        setIsEditing(false);
     };
 
     return (
@@ -2198,7 +2210,14 @@ export function SdShowDetailsModal({ selectedSd, isModalOpen, handleOk, handleCa
             <div className={sdStyles.modal_header}>
                 <div className={modalStyles.title}>증빙서류 상세보기</div>
                 <div  className={sdStyles.edit_button}>
-                <EditButton onClick={onEditClick} isEditing={isEditing} />
+                    {!isEditing ? (
+                        <EditButton onClick={onEditClick} isEditing={false} />
+                    ) : (
+                        <>
+                            <button onClick={onCancelClick} className={sdStyles.customButton}>취소</button>
+                            <button onClick={onSaveClick} className={sdStyles.customButton}>저장</button>
+                        </>
+                    )}
                 </div>
             </div>
 
