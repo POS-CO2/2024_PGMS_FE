@@ -11,7 +11,7 @@ import { perfTotalColumns } from '../../../assets/json/tableColumn';
 
 export default function Tep() {
     const [formData, setFormData] = useState(); // 검색 데이터
-    const [tablePerfs, setTablePerfs] = useState([]);
+    const [perfsData, setPerfsData] = useState([]);
     const [chartPerfs, setChartPerfs] = useState([]);
 
     // 조회 버튼 클릭시 호출될 함수
@@ -20,27 +20,17 @@ export default function Tep() {
 
         let url = `/perf/total?year=${data.year}`;
         const response = await axiosInstance.get(url);
+        setPerfsData(response.data);
 
         // data가 빈 배열인지 확인
         if (response.data.length === 0) {
             // 빈 데이터인 경우, 배열의 필드를 유지하면서 빈 값으로 채운 배열 생성
-            setTablePerfs([{ 월: '', Scope1배출량: '', Scope2배출량: '', 총배출량: '' }]);
             setChartPerfs([
                 { data: Array(12).fill(null), stack: 'A', label: 'Scope 1' },
                 { data: Array(12).fill(null), stack: 'A', label: 'Scope 2' }
             ]);
 
         } else {
-            // 필요한 필드만 추출하여 설정
-            // 표
-            const filteredTablePerfs = response.data.map(perf => ({
-                actvMth: perf.actvMth,
-                scope1: perf.scope1,
-                scope2: perf.scope2,
-                total: perf.total
-            }));
-            setTablePerfs(filteredTablePerfs);
-
             //차트
             const scope1Data = response.data.map(perf => perf.scope1 || null);
             const scope2Data = response.data.map(perf => perf.scope2 || null);
@@ -63,7 +53,7 @@ export default function Tep() {
                 <></> : (
                     <InnerTabs items={[
                         { label: '차트', key: '1', children: <ChartTab data={chartPerfs} />, },
-                        { label: '표', key: '2', children: <TableTab data={tablePerfs} />, },
+                        { label: '표', key: '2', children: <TableTab data={perfsData} />, },
                     ]} />
                 )}
         </div>
