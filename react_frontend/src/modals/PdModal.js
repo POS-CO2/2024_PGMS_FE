@@ -2157,17 +2157,28 @@ export function SdShowDetailsModal({ selectedSd, isModalOpen, handleOk, handleCa
                 name: file.name,
                 url: file.url
             }));
+            // 최종 파일 목록
+            const allFiles = [...existingFiles, ...newFiles];
 
             const documentData = {
                 id: selectedSd.id,
                 name: formData.name,
-                files: [...existingFiles, ...newFiles]
+                files: allFiles
             };
             
             // 데이터 전송
             const response = await axiosInstance.patch('/equip/document', documentData);
 
             setInnerSelectedSd(response.data); // innerSelectedSd 상태 업데이트
+            setFormData(prevData => ({
+                ...prevData,
+                fileList: allFiles.map(file => ({
+                    name: file.name,
+                    status: 'done',
+                    url: file.url
+                }))
+            }));
+
             handleOk(response.data, false);  // 새로 입력된 데이터를 handleOk 함수로 전달, 두번째 인자-closeModal=false
             setIsEditing(false); // 저장 후 편집 모드 종료
             
@@ -2317,10 +2328,10 @@ export function SdShowDetailsModal({ selectedSd, isModalOpen, handleOk, handleCa
                                     return (
                                         <div key={index} className={sdStyles.file_item}>
                                             {isEditing ? (
-                                                file.name
+                                                displayName
                                             ) : (
                                                 <a href={file.url} target="_blank" rel="noopener noreferrer">
-                                                    {file.name}
+                                                    {displayName}
                                                 </a>
                                             )}
                                             {isEditing && (
