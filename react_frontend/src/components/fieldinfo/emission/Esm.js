@@ -14,14 +14,6 @@ import { SdAddModal, DeleteModal, SdShowDetailsModal } from "../../../modals/PdM
 import axiosInstance from '../../../utils/AxiosInstance';
 import { pjtColumns, equipEmissionColumns, equipDocumentColumns } from '../../../assets/json/tableColumn';
 
-const selectOptions = [
-    { value: '2024', label: '2024' },
-    { value: '2023', label: '2023' },
-    { value: '2022', label: '2022' },
-    { value: '2021', label: '2021' },
-    { value: '2020', label: '2020' }
-];
-
 export default function Esm() {
     const [formData, setFormData] = useState({});
 
@@ -32,7 +24,24 @@ export default function Esm() {
     const [showSds, setShowSds] = useState(false);                    // 증빙자료 목록을 표시할지 여부
     const [sds, setSds] = useState([]);                               // 증빙자료 목록
     const [selectedSd, setSelectedSd] = useState({});               // 선택된 증빙자료
-    const [selectedYear, setSelectedYear] = useState(new Date().getFullYear().toString()); // 선택된 연도
+    const [selectedYear, setSelectedYear] = useState(null); // 선택된 연도
+
+    const [yearSelectOptions, setYearSelectOptions] = useState([]);
+    useEffect(() => {
+        if (selectedPjt.length > 0) {
+            const yearOptions = [];
+            const currentYear = new Date().getFullYear();
+            const ctrtFrYear = selectedPjt[0].ctrtFrYear;
+            const ctrtToYear = Math.min(selectedPjt[0].ctrtToYear, currentYear);
+    
+            for (let year = ctrtToYear; year >= ctrtFrYear; year--) {
+                yearOptions.push({ value: year.toString(), label: year.toString() });
+            }
+    
+            setYearSelectOptions(yearOptions);
+            setSelectedYear(yearOptions[0].value);
+        }
+    }, [selectedPjt]);
 
     const [buttonStatus, setButtonStatus] = useState([false, false, false]);
     useEffect(() => {
@@ -222,7 +231,7 @@ export default function Esm() {
                                 <>
                                     <div className={esmStyles.select_button_container}>
                                         <Select defaultValue={selectedYear} onChange={handleYearChange}>
-                                            {selectOptions.map(option => (
+                                            {yearSelectOptions.map(option => (
                                                 <Select.Option key={option.value} value={option.value}>
                                                     {option.label}
                                                 </Select.Option>
