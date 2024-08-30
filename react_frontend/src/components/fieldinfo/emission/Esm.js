@@ -233,7 +233,7 @@ export default function Esm() {
                                             onClicks={[onSdShowDetailsClick, onSdDeleteClick, onSdAddClick]}
                                             buttonStatus={buttonStatus} />
                                     </div>
-                                    <Table data={sds} onRowClick={handleSdClick} columns={equipDocumentColumns} key={JSON.stringify(sds)}/>
+                                    <Table data={sds} onRowClick={handleSdClick} columns={equipDocumentColumns} key={sds.length}/>
 
                                     <SdAddModal
                                         isModalOpen={isModalOpen.SdAdd}
