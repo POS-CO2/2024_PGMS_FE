@@ -2111,7 +2111,7 @@ export function SdShowDetailsModal({ selectedSd, isModalOpen, handleOk, handleCa
             swalOptions.text = '첨부된 증빙파일이 없습니다.';
             swalOptions.icon = 'error';
             Swal.fire(swalOptions);
-            return; // 더 이상 진행하지 않도록 함수 종료
+            return []; // 더 이상 진행하지 않도록 함수 종료
         }
 
         try {
@@ -2130,12 +2130,14 @@ export function SdShowDetailsModal({ selectedSd, isModalOpen, handleOk, handleCa
 
                 return response.data; // 파일 업로드 후 S3에서 반환된 파일 정보 배열
             }
+            return []; // 파일이 없으면 빈 배열 반환
         } catch (error) {
             console.error('Error uploading files to S3:', error);
             swalOptions.title = '실패!',
             swalOptions.text = `증빙자료 등록에 실패하였습니다.`;
             swalOptions.icon = 'error';
             Swal.fire(swalOptions);
+            return []; // 실패 시 빈 배열 반환
         }
     };
 
@@ -2165,8 +2167,8 @@ export function SdShowDetailsModal({ selectedSd, isModalOpen, handleOk, handleCa
             // 데이터 전송
             const response = await axiosInstance.patch('/equip/document', documentData);
 
-            handleOk(response.data, false);  // 새로 입력된 데이터를 handleOk 함수로 전달, 두번째 인자-closeModal=false
             setInnerSelectedSd(response.data); // innerSelectedSd 상태 업데이트
+            handleOk(response.data, false);  // 새로 입력된 데이터를 handleOk 함수로 전달, 두번째 인자-closeModal=false
             setIsEditing(false); // 저장 후 편집 모드 종료
             
             swalOptions.title = '성공!',
@@ -2303,26 +2305,36 @@ export function SdShowDetailsModal({ selectedSd, isModalOpen, handleOk, handleCa
                             {formData.fileList.length === 0 ? (
                                 <></>
                             ) : (
-                                formData.fileList.map((file, index) => ( // file.name 편집모드 아닐 때는 클릭시 다운
-                                    <div key={index} className={sdStyles.file_item}>
-                                        {isEditing ? (
-                                            file.name
-                                        ) : (
-                                            <a href={file.url} target="_blank" rel="noopener noreferrer">
-                                                {file.name}
-                                            </a>
-                                        )}
-                                        {isEditing && (
-                                            <button
-                                                type="button"
-                                                className={sdStyles.remove_button}
-                                                onClick={() => handleFileRemove(file.name)}
-                                            >
-                                                <CloseOutlined />
-                                            </button>
-                                        )}
-                                    </div>
-                                ))
+                                formData.fileList.map((file, index) => { // file.name 편집모드 아닐 때는 클릭시 다운
+                                    let displayName = file.name;
+                                    if (file.status === 'done') {
+                                        const underscoreIndex = file.name.indexOf('_');
+                                        if (underscoreIndex !== -1) {
+                                            displayName = file.name.substring(underscoreIndex + 1);
+                                        }
+                                    }
+                                    
+                                    return (
+                                        <div key={index} className={sdStyles.file_item}>
+                                            {isEditing ? (
+                                                file.name
+                                            ) : (
+                                                <a href={file.url} target="_blank" rel="noopener noreferrer">
+                                                    {file.name}
+                                                </a>
+                                            )}
+                                            {isEditing && (
+                                                <button
+                                                    type="button"
+                                                    className={sdStyles.remove_button}
+                                                    onClick={() => handleFileRemove(file.name)}
+                                                >
+                                                    <CloseOutlined />
+                                                </button>
+                                            )}
+                                        </div>
+                                    )
+                                })
                             )}
                         </div>
                     </div>
