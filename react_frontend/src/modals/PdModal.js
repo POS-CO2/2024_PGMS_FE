@@ -2056,6 +2056,7 @@ export function SdShowDetailsModal({ selectedSd, isModalOpen, handleOk, handleCa
     });
 
     const [isEditing, setIsEditing] = useState(false);
+    const [innerSelectedSd, setInnerSelectedSd] = useState(selectedSd);
 
     useEffect(() => {
         if (selectedSd) {
@@ -2069,12 +2070,11 @@ export function SdShowDetailsModal({ selectedSd, isModalOpen, handleOk, handleCa
                     url: file.url
                 })) : []
             });
+            setInnerSelectedSd(selectedSd);
         }
     }, [selectedSd]);
 
     const handleFileChange = (event) => {
-        console.log(event);
-        console.log(event.target.files);
         const newFiles = Array.from(event.target.files).map(file => ({
             name: file.name,
             status: 'new',
@@ -2166,6 +2166,7 @@ export function SdShowDetailsModal({ selectedSd, isModalOpen, handleOk, handleCa
             const response = await axiosInstance.patch('/equip/document', documentData);
 
             handleOk(response.data, false);  // 새로 입력된 데이터를 handleOk 함수로 전달, 두번째 인자-closeModal=false
+            setInnerSelectedSd(response.data); // innerSelectedSd 상태 업데이트
             setIsEditing(false); // 저장 후 편집 모드 종료
             
             swalOptions.title = '성공!',
@@ -2184,41 +2185,48 @@ export function SdShowDetailsModal({ selectedSd, isModalOpen, handleOk, handleCa
         setIsEditing(true); // 비편집 모드일 때 편집 모드로 전환
     };
     const onCancelClick = () => {
-        if (selectedSd) {
+        if (innerSelectedSd) {
             setFormData({
-                actvYear: String(selectedSd.actvYear || new Date().getFullYear()),
-                actvMth: String(selectedSd.actvMth || (new Date().getMonth() + 1)),
-                name: selectedSd.name || '',
-                fileList: Array.isArray(selectedSd.files) ? selectedSd.files.map(file => ({
+                actvYear: String(innerSelectedSd.actvYear || new Date().getFullYear()),
+                actvMth: String(innerSelectedSd.actvMth || (new Date().getMonth() + 1)),
+                name: innerSelectedSd.name || '',
+                fileList: Array.isArray(innerSelectedSd.files) ? innerSelectedSd.files.map(file => ({
                     name: file.name,
                     status: 'done',
                     url: file.url
                 })) : []
             });
         }
-        handleOk(selectedSd, false);
+        handleOk(innerSelectedSd, false);
         setIsEditing(false);
+    };
+
+    const showEditingAlert = () => {
+        Swal.fire({
+            icon: 'warning',
+            title: '저장되지 않았습니다',
+            text: '변경사항이 저장되지 않았습니다. 정말로 닫으시겠습니까?',
+            showCancelButton: true,
+            cancelButtonText: '취소',
+            confirmButtonText: '확인'
+        }).then(result => {
+            if (result.isConfirmed) {
+                onCancelClick(); // 변경사항 취소 및 폼 데이터 복원
+                handleCancel(); // 모달 닫기 처리
+            }
+        });
     };
 
     return (
         <Modal
             open={isModalOpen}
-            onCancel={handleCancel}
+            onCancel={isEditing ? showEditingAlert : handleCancel} // 수정 중일 때 닫기 시도 시 경고 알림
             width={400}
-            footer={null}             //Ant Design의 기본 footer 제거(Cancel, OK 버튼)
+            footer={null} //Ant Design의 기본 footer 제거(Cancel, OK 버튼)
+            maskClosable={!isEditing} // 모달 밖을 클릭해도 닫히지 않게 설정
         >
             <div className={sdStyles.modal_header}>
                 <div className={modalStyles.title}>증빙서류 상세보기</div>
-                <div  className={sdStyles.edit_button}>
-                    {!isEditing ? (
-                        <EditButton onClick={onEditClick} isEditing={false} />
-                    ) : (
-                        <>
-                            <button onClick={onCancelClick} className={sdStyles.customButton}>취소</button>
-                            <button onClick={onSaveClick} className={sdStyles.customButton}>저장</button>
-                        </>
-                    )}
-                </div>
             </div>
 
             <div className={sdStyles.input_container}>
@@ -2321,8 +2329,14 @@ export function SdShowDetailsModal({ selectedSd, isModalOpen, handleOk, handleCa
                 </div>
             </div>
 
-            <button className={ps12Styles.select_button} onClick={handleOk}>확인</button>
+            {!isEditing ? (
+                <button onClick={onEditClick} className={sdStyles.edit_button}>수정</button>
+            ) : (
+                <div className={sdStyles.button_group}>
+                    <button onClick={onCancelClick} className={sdStyles.cancel_button}>취소</button>
+                    <button onClick={onSaveClick} className={sdStyles.save_button}>저장</button>
+                </div>
+            )}
         </Modal>
     )
 }
-

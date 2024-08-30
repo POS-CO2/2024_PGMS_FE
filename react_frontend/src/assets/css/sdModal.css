@@ -21,9 +21,6 @@
     /* 수직 정렬을 중앙에 맞춤 */
     gap: 0 10px;
 }
-.edit_button {
-    margin-bottom: 20px;
-}
 
 .customButton {
     font-size: 16px;
@@ -183,15 +180,74 @@
     /* 버튼과 파일 이름 사이의 여백 */
 }
 
-.select_button {
-    width: 100%;
-    /* 모달 창의 전체 너비로 확장 */
+.edit_button {
+    width: 100%; /* 모달 창의 전체 너비로 확장 */
     height: 41px;
     padding: 5px 10px;
-    background: #9284DC;
+    background: #3875f7;
     color: white;
     border: none;
     border-radius: 5px;
     cursor: pointer;
     margin: 2rem auto 0;
+    box-sizing: border-box; /* 패딩과 테두리를 포함하여 너비와 높이를 설정합니다. */
+}
+/* 버튼에 호버 효과 추가 */
+.edit_button:hover {
+    background-color: #5592f8; /* 호버 시 배경 색상 변화 */
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3); /* 호버 시 그림자 변화 */
+}
+/* 버튼에 클릭 시 효과 추가 */
+.edit_button:active {
+    background-color: #3459a8; /* 클릭 시 배경 색상 변화 */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); /* 클릭 시 그림자 변화 */
+}
+
+.button_group {
+    display: flex;
+    justify-content: space-between; /* 버튼 사이의 간격을 조정 */
+    gap: 10px; /* 버튼 사이에 간격을 줍니다. */
+    margin: 2rem auto 0;
+}
+.cancel_button, .save_button {
+    width: 48%; /* 버튼 너비를 수정 버튼의 절반으로 설정 */
+    height: 41px;
+    padding: 5px 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    box-sizing: border-box; /* 패딩과 테두리를 포함하여 너비와 높이를 설정합니다. */
+}
+
+/* 취소 버튼 기본 스타일 */
+.cancel_button {
+    background: white; /* 기본 배경 색상 */
+    color: #3875f7; /* 글씨 색상 */
+    border: 2px solid #3875f7; /* 테두리 색상 */
+}
+/* 취소 버튼에 호버 효과 추가 */
+.cancel_button:hover {
+    background-color: #f7f7f7; /* 호버 시 배경 색상 변화 */
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3); /* 호버 시 그림자 변화 */
+}
+/* 취소 버튼에 클릭 시 효과 추가 */
+.cancel_button:active {
+    background-color: #e0e0e0; /* 클릭 시 배경 색상 변화 */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); /* 클릭 시 그림자 변화 */
+}
+
+/* 저장 버튼 스타일 */
+.save_button {
+    background: #3875f7; /* 기본 배경 색상 */
+    color: white;
+    border: none;
+}
+/* 저장 버튼에 호버 효과 추가 */
+.save_button:hover {
+    background-color: #5592f8; /* 호버 시 배경 색상 변화 */
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3); /* 호버 시 그림자 변화 */
+}
+/* 저장 버튼에 클릭 시 효과 추가 */
+.save_button:active {
+    background-color: #3459a8; /* 클릭 시 배경 색상 변화 */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); /* 클릭 시 그림자 변화 */
 }
