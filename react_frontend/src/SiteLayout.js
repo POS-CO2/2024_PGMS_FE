@@ -3,17 +3,16 @@ import Navigation from './Navigation';
 import  * as mainStyles from './assets/css/main.css';
 import  * as headerStyles from './assets/css/header.css';
 import AppContainer from './AppContainer';
-import { Outlet, useLocation, useNavigate } from 'react-router';
-import Tabbar from './Tabbar';
+import { Outlet, useNavigate } from 'react-router';
 import axiosInstance from './utils/AxiosInstance';
 
 
 export default function SiteLayout({handleLogout, menus, user}){
-
     const [tabs, setTabs] = useState(() => {
         const savedTabs = localStorage.getItem('tabs');
         return savedTabs ? JSON.parse(savedTabs) : [];
     });
+
     const [activeTab, setActiveTab] = useState(() => {
         const savedActiveTab = localStorage.getItem('activeTab');
         return savedActiveTab || null;
@@ -135,7 +134,7 @@ export default function SiteLayout({handleLogout, menus, user}){
     if (loading) {
         return (
         <div id={mainStyles.root}>
-            <Navigation menus={menus} onMenuClick={handleMenuClick} activeTab={activeTab}/>
+            <Navigation />
             <AppContainer 
                 tabs = {tabs} 
                 handleMenuClick={handleMenuClick} 
