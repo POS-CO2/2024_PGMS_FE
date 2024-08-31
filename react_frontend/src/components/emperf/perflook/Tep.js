@@ -69,13 +69,42 @@ function ChartTab({ data }) {
 }
 
 function TableTab({ data }) {
-    const onDownloadExcelClick = () => {
-        console.log("onDownloadExcelClick");
+    const onDownloadExcelClick = (csvData) => {
+        const year = csvData[0].actvYear;
+        const fileName = `총량실적_${year}`;
+
+        // CSV 변환 함수
+        const csvRows = [];
+        
+        // 헤더 생성
+        const headers = Object.keys(csvData[0]);
+        csvRows.push(headers.join(','));
+        
+        // 데이터 생성
+        for (const row of csvData) {
+            const values = headers.map(header => {
+                const escaped = ('' + row[header]).replace(/"/g, '\\"');
+                return `"${escaped}"`;
+            });
+            csvRows.push(values.join(','));
+        }
+        
+        // CSV 파일 생성
+        const csvString = csvRows.join('\n');
+        const blob = new Blob([csvString], { type: 'text/csv' });
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.setAttribute('hidden', '');
+        a.setAttribute('href', url);
+        a.setAttribute('download', `${fileName}.csv`);
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
     };
 
     return (
         <Card sx={{ width: "100%", height: "100%", borderRadius: "15px" }}>
-            <TableCustom columns={perfTotalColumns} title="총량실적표" data={data} buttons={['DownloadExcel']} onClicks={[onDownloadExcelClick]} />
+            <TableCustom columns={perfTotalColumns} title="총량실적표" data={data} buttons={['DownloadExcel']} onClicks={[() => onDownloadExcelClick(data)]} />
         </Card>
     )
 }
