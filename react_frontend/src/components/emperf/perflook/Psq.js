@@ -18,13 +18,14 @@ export default function Psq() {
 
     // 프로젝트 선택 후 대상년도 드롭다운 옵션 설정
     const onProjectSelect = (selectedData, form) => {
-        const ctrtFrYear = selectedData.ctrtFrYear;
-        if (ctrtFrYear) {
-            const currentYear = new Date().getFullYear();
+        if (selectedData) {
             const yearOptions = [];
+            const currentYear = new Date().getFullYear();
+            const ctrtFrYear = selectedData.ctrtFrYear;
+            const ctrtToYear = Math.min(selectedData.ctrtToYear, currentYear);
 
             // 계약년도부터 현재년도까지의 옵션 생성
-            for (let year = currentYear; year > ctrtFrYear; year--) {
+            for (let year = ctrtToYear; year >= ctrtFrYear; year--) {
                 yearOptions.push({ value: year.toString(), label: year.toString() });
             }
 
@@ -110,13 +111,43 @@ function ChartTab({ data }) {
 }
 
 function TableTab({ data }) {
-    const onDownloadExcelClick = () => {
-        console.log("onDownloadExcelClick");
+    const onDownloadExcelClick = (csvData) => {
+        console.log(csvData[0]);
+        const year = csvData[0].actvYear;
+        const fileName = `_실적_${year}`;
+
+        // CSV 변환 함수
+        const csvRows = [];
+        
+        // 헤더 생성
+        const headers = Object.keys(csvData[0]);
+        csvRows.push(headers.join(','));
+        
+        // 데이터 생성
+        for (const row of csvData) {
+            const values = headers.map(header => {
+                const escaped = ('' + row[header]).replace(/"/g, '\\"');
+                return `"${escaped}"`;
+            });
+            csvRows.push(values.join(','));
+        }
+        
+        // CSV 파일 생성
+        const csvString = csvRows.join('\n');
+        const blob = new Blob([csvString], { type: 'text/csv' });
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.setAttribute('hidden', '');
+        a.setAttribute('href', url);
+        a.setAttribute('download', `${fileName}.csv`);
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
     };
 
     return (
         <Card sx={{ width: "100%", height: "100%", borderRadius: "15px" }}>
-            <TableCustom columns={perfPjtColumns} title="프로젝트 실적 표" data={data} buttons={['DownloadExcel']} onClicks={[onDownloadExcelClick]} />
+            <TableCustom columns={perfPjtColumns} title="프로젝트 실적 표" data={data} buttons={['DownloadExcel']} onClicks={[() => onDownloadExcelClick(data)]} />
         </Card>
     )
 }
