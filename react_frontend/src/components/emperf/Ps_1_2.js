@@ -42,13 +42,14 @@ export default function Ps_1_2() {
 
     // 프로젝트 선택 후 대상년도 드롭다운 옵션 설정
     const onProjectSelect = (selectedData, form) => {
-        const ctrtFrYear = selectedData.ctrtFrYear;
-        if (ctrtFrYear) {
-            const currentYear = new Date().getFullYear();
+        if (selectedData) {
             const yearOptions = [];
+            const currentYear = new Date().getFullYear();
+            const ctrtFrYear = selectedData.ctrtFrYear;
+            const ctrtToYear = Math.min(selectedData.ctrtToYear, currentYear);
 
             // 계약년도부터 현재년도까지의 옵션 생성
-            for (let year = currentYear; year > ctrtFrYear; year--) {
+            for (let year = ctrtToYear; year >= ctrtFrYear; year--) {
                 yearOptions.push({ value: year.toString(), label: year.toString() });
             }
 
