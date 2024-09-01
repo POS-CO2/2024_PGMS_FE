@@ -2218,7 +2218,7 @@ export function SdShowDetailsModal({ selectedSd, isModalOpen, handleOk, handleCa
         Swal.fire({
             icon: 'warning',
             title: '저장되지 않았습니다',
-            text: '변경사항이 저장되지 않았습니다. 정말로 닫으시겠습니까?',
+            text: '변경사항이 저장되지 않았습니다. 정말 닫으시겠습니까?',
             showCancelButton: true,
             cancelButtonText: '취소',
             confirmButtonText: '확인'

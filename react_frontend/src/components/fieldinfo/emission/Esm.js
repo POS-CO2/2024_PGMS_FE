@@ -40,6 +40,11 @@ export default function Esm() {
     
             setYearSelectOptions(yearOptions);
             setSelectedYear(yearOptions[0].value);
+
+            setSelectedEmtn(null);
+            setSds([]);
+            setShowSds(false);
+            setSelectedSd({});
         }
     }, [selectedPjt]);
 
