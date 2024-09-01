@@ -9,7 +9,6 @@ import {
 } from '@ant-design/icons';
 import { Button, ConfigProvider, Menu } from 'antd';
 import styled from 'styled-components';
-import { useNavigate } from 'react-router-dom';
 import Logo from './assets/logo.svg';
 
 const StyledLeftOutlined = styled(LeftOutlined)`
@@ -29,6 +28,7 @@ const StyledMenu = styled(Menu)`
   display: flex;
   flex-direction: column;
   gap: 3rem;
+  flex-grow: 1;
 
   .ant-menu-item,
   .ant-menu-submenu-title {
@@ -54,7 +54,10 @@ const StyledMenu = styled(Menu)`
   }
 `;
 
-const SidebarContainer = styled.div`
+const SidebarContainer = styled.div.attrs((props) => ({
+  // DOM 요소에 전달하지 않도록 처리
+  collapsed: undefined,
+}))`
   width: ${props => (props.collapsed ? '5rem' : '12.5rem')};
   background-color: #FFFFFF;
   height: 100vh;
@@ -64,7 +67,9 @@ const SidebarContainer = styled.div`
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 `;
 
-const LogoContainer = styled.div`
+const LogoContainer = styled.div.attrs((props) => ({
+  collapsed: undefined,
+}))`
   display: flex;
   flex-direction: row
   align-items: center;
@@ -79,12 +84,16 @@ const LogoImage = styled.img`
   margin-top: 0.8125rem;
 `;
 
-const LogoTextContainer = styled.div`
+const LogoTextContainer = styled.div.attrs((props) => ({
+  collapsed: undefined,
+}))`
   display: ${props => (props.collapsed ? 'none' : 'block')};
   margin-left: ${props => (props.collapsed ? '0.625rem' : '1.25rem')};
 `;
 
-const ToggleButton = styled(Button)`
+const ToggleButton = styled(Button).attrs((props) => ({
+  collapsed: undefined,
+}))`
   position: absolute;
   right: 0;
   transform: none;
@@ -94,6 +103,12 @@ const ToggleButton = styled(Button)`
   padding-right: 0;
   margin-right: ${props => (props.collapsed ? '0.75rem' : '1.5625rem')};
   margin-top: 0.625rem !important;
+`;
+
+const FooterContainer = styled.div`
+  position: relative;
+  margin-top: auto; /* Footer를 하단에 고정 */
+  padding: 1rem;
 `;
 
 const theme = {
@@ -108,77 +123,10 @@ const theme = {
   }
 }
 
-const mapMenuDataToItems = (menuData) => {
-    return menuData.map((menuItem, index) => {
-      const icon = index === 0 ? <PieChartOutlined /> : index === 1 ? <MailOutlined /> : <AppstoreOutlined />;
-  
-      // 하위 메뉴를 재귀적으로 매핑
-      const mapChildren = (children) => {
-        return children.map(childItem => {
-          if (childItem.menu && childItem.menu.length > 0) {
-            return {
-              key: `${childItem.id}`,
-              label: childItem.name,
-              children: mapChildren(childItem.menu),  // 하위 메뉴가 있을 때만 children 추가
-            };
-          } else {
-            return {
-              key: `${childItem.id}`,
-              label: childItem.name,
-              path: childItem.url,  // 하위 메뉴가 없을 경우 path를 직접 설정
-            };
-          }
-        });
-    };
-        return {
-            key: `sub${menuItem.id}`,
-            label: menuItem.name,
-            icon: icon,
-            children: mapChildren(menuItem.menu),
-        };
-    });
-};
-
-export default function Navigation({ menus, onMenuClick, activeTab }) {
-  const [collapsed, setCollapsed] = useState(false);
-  const [openKeys, setOpenKeys] = useState([]);
-  const navigate = useNavigate(); // useNavigate 훅을 사용하여 네비게이션 처리
-  const items = mapMenuDataToItems(menus);
-
-  const toggleCollapsed = () => {
-    setCollapsed(!collapsed);
-  };
-
-  const handleMenuClick = (e) => {
-    const item = findItemByKey(items, e.key);
-    if (item && item.path) {
-      navigate(item.path);
-    }
-  };
-
-  const handleOpenChange = (keys) => {
-    const latestOpenKey = keys.find(key => !openKeys.includes(key));
-    if (items.map(item => item.key).includes(latestOpenKey)) {
-      setOpenKeys(latestOpenKey ? [latestOpenKey] : []);
-    } else {
-      setOpenKeys(keys);
-    }
-  };
-
-  const findItemByKey = (items, key) => {
-    for (const item of items) {
-      if (item.key === key) return item;
-      if (item.children) {
-        const found = findItemByKey(item.children, key);
-        if (found) return found;
-      }
-    }
-    return null;
-  };
-
+export default function Sidebar({ collapsed, toggleCollapsed, items, onMenuClick, openKeys, onOpenChange }) {
   return (
     <SidebarContainer collapsed={collapsed}>
-      <LogoContainer>
+      <LogoContainer collapsed={collapsed}>
         <LogoImage src={Logo} alt="로고" />
         <LogoTextContainer collapsed={collapsed}>
           <div style={{ fontSize: '1.75rem', fontWeight: 'bold', color: '#0EAA00' }}>PGMS</div>
@@ -194,13 +142,14 @@ export default function Navigation({ menus, onMenuClick, activeTab }) {
           theme="light"
           inlineCollapsed={collapsed}
           items={items}
-          onClick={handleMenuClick}
+          onClick={onMenuClick}
           openKeys={openKeys}
-          onOpenChange={handleOpenChange}
-          style={{ flex: 1 }} // 메뉴가 공간을 차지하도록 설정
+          onOpenChange={onOpenChange}
         />
       </ConfigProvider>
-      <Footer />
+      <FooterContainer>
+        <Footer />
+      </FooterContainer>
     </SidebarContainer>
   );
 };
