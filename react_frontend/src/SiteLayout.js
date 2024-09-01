@@ -1,4 +1,4 @@
-import React, {useState, useEffect, useRef} from 'react';
+import React, {useState, useRef} from 'react';
 import { useNavigate, Outlet } from 'react-router-dom';
 import styled from 'styled-components';
 import Sidebar from './Sidebar';
@@ -24,7 +24,7 @@ const ContentContainer = styled.div`
   flex-direction: column;
   overflow-y: auto;
   max-width: 100%;
-  padding-left: 16px;
+  background-color: #F5F5F5;
 `;
 
 const mapMenuDataToItems = (menuData) => {
@@ -123,7 +123,7 @@ export default function SiteLayout({handleLogout, menus, user}){
                     user={user} 
                     ref={tabsContainerRef} 
                 />
-                <div style={{ padding: '16px', overflowY: 'auto' }}>
+                <div style={{ padding: '2px', overflowY: 'auto' }}>
                     <Outlet />
                 </div>
                 <Favorite handleFavClick={handleFavClick} fav={fav}/>
@@ -144,14 +144,14 @@ export default function SiteLayout({handleLogout, menus, user}){
             />
             <ContentContainer>
             <TabsContainer 
-                    handleLogout={handleLogout} 
-                    user={user} 
-                    ref={tabsContainerRef} 
-                />
-                <div style={{ padding: '16px', overflowY: 'auto' }}>
-                    <Outlet />
-                </div>
-                <Favorite handleFavClick={handleFavClick} fav={fav}/>
+                handleLogout={handleLogout} 
+                user={user} 
+                ref={tabsContainerRef} 
+            />
+            <div style={{ padding: '2px', overflowY: 'auto' }}>
+                <Outlet />
+            </div>
+            <Favorite handleFavClick={handleFavClick} fav={fav}/>
             </ContentContainer>
         </LayoutContainer>
     );

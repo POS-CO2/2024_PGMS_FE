@@ -14,7 +14,10 @@ const TabsWrapper = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-between;
+  margin-top: 18px;
+  margin-left: 28px;
   padding-right: 16px; /* 탭과 유저 정보 사이의 간격 */
+  overflow: hidden; /* 탭이 영역을 벗어나지 않도록 설정 */
 `;
 
 const UserInfo = styled.div`
@@ -97,15 +100,30 @@ const TabsContainer = forwardRef(({ handleLogout, user }, ref) => {
   };
 
   const removeTab = targetKey => {
-    // 홈 탭은 삭제할 수 없도록 설정
-    if (targetKey === '') return;
-    
-    setTabs(prevTabs => prevTabs.filter(tab => tab.key !== targetKey));
-    if (activeKey === targetKey && tabs.length > 1) {
-      const nextTabKey = tabs.filter(tab => tab.key !== targetKey)[0].key;
-      setActiveKey(nextTabKey);
-      navigate(nextTabKey); // 첫 번째 탭으로 이동
+    if (targetKey === '') return; // 홈 탭은 삭제할 수 없도록 설정
+
+    let newActiveKey = activeKey;
+    let lastIndex = -1;
+
+    tabs.forEach((tab, i) => {
+      if (tab.key === targetKey) {
+        lastIndex = i - 1;
+      }
+    });
+
+    const newTabs = tabs.filter(tab => tab.key !== targetKey);
+
+    if (newTabs.length && newActiveKey === targetKey) {
+      if (lastIndex >= 0) {
+        newActiveKey = newTabs[lastIndex].key;
+      } else {
+        newActiveKey = newTabs[0].key;
+      }
     }
+
+    setTabs(newTabs);
+    setActiveKey(newActiveKey);
+    navigate(newActiveKey); // 선택된 탭으로 이동
   };
 
   const moveTabNode = (dragIndex, hoverIndex) => {
