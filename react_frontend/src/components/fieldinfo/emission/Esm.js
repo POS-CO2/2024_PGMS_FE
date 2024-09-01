@@ -105,7 +105,7 @@ export default function Esm() {
         setIsModalOpen(prevState => ({ ...prevState, [modalType]: true }));
     };
     // modalType에 따라 결과 처리 해주기
-    const handleOk = (modalType) => (data, closeModal = true) => {
+    const handleOk = (modalType) => async (data, closeModal = true) => {
         if (closeModal) {
             setIsModalOpen(prevState => ({ ...prevState, [modalType]: false })); //모달 닫기
         }
@@ -122,13 +122,16 @@ export default function Esm() {
         }
 
         else if (modalType === 'SdAdd') {
-            console.log(data);
             // 선택된 프로젝트 데이터를 상태로 저장, data가 배열이 아닌 경우 배열로 변환하여 추가
             setSds(prevList => [...prevList, ...(Array.isArray(data) ? data : [data])]);
+
+            let url = `/equip/emission?projectId=${selectedPjt[0].id}`;
+            const emtnData = await axiosInstance.get(url);
+            setEmtns(emtnData.data);
+            setShowResults(true);
         }
 
         else if (modalType === 'SdShowDetails') {
-            console.log(data);
             // 기존 데이터 중 선택된 Sd를 업데이트
             setSds(prevList => prevList.map(sd => sd.id === data.id ? data : sd));
 
@@ -145,6 +148,11 @@ export default function Esm() {
                 setSelectedSd({}); // 선택된 증빙자료 해제
                 return updatedList;
             });
+
+            let url = `/equip/emission?projectId=${selectedPjt[0].id}`;
+            const emtnData = await axiosInstance.get(url);
+            setEmtns(emtnData.data);
+            setShowResults(true);
         }
         
     };
