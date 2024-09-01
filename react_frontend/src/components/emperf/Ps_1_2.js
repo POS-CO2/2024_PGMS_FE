@@ -109,30 +109,8 @@ export default function Ps_1_2() {
 
         // data가 빈 배열인지 확인
         if (response.data.length === 0) {
-            // 빈 데이터인 경우, 기본 형태의 객체를 생성
-            const placeholderPerf = {
-                emissionId: '',
-                설비명: '',
-                배출활동유형: '',
-                활동자료명: '',
-                단위: '',
-                '1월': '',
-                '2월': '',
-                '3월': '',
-                '4월': '',
-                '5월': '',
-                '6월': '',
-                '7월': '',
-                '8월': '',
-                '9월': '',
-                '10월': '',
-                '11월': '',
-                '12월': ''
-            };
-
-            // 배열의 필드를 유지하면서 빈 값으로 채운 배열 생성
-            setUsagePerfs([placeholderPerf]);
-            setAmountUsedPerfs([placeholderPerf]);
+            setUsagePerfs([]);
+            setAmountUsedPerfs([]);
         } else {
             // 필요한 필드만 추출하여 설정
             const usageFilteredPerfs = response.data.map(perf => createPerfData(perf, 'actvQty'));
@@ -185,7 +163,26 @@ function Usage({ data }) {
         showModal();
     };
     const onDownloadExcelFormClick = () => {
-        console.log("onDownloadExcelFormClick");
+        const fileName = '활동량 엑셀 양식';
+
+        // CSV 변환 함수
+        const csvRows = [];
+        
+        // 헤더 설정
+        const headers = ['설비명', '배출활동유형', '활동자료명', '단위', '활동연도', '활동월', '비용', '활동량'];
+        csvRows.push(headers.join(','));
+
+        // CSV 파일 생성
+        const csvString = csvRows.join('\n');
+        const blob = new Blob([csvString], { type: 'text/csv' });
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.setAttribute('hidden', '');
+        a.setAttribute('href', url);
+        a.setAttribute('download', `${fileName}.csv`);
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
     };
 
     return (
