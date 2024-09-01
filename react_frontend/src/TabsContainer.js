@@ -26,6 +26,20 @@ const UserInfo = styled.div`
   cursor: pointer;
 `;
 
+const StyledTabs = styled(Tabs)`
+  .ant-tabs-tab {
+    font-weight: bold; /* Make the tab label bold */
+  }
+
+  .ant-tabs-tab.ant-tabs-tab-active .ant-tabs-tab-btn {
+    color: #0EAA00; /* Change the color of the active tab label */
+  }
+
+  .ant-tabs-ink-bar {
+    background-color: #0EAA00 !important; /* Change the color of the underline */
+  }
+`;
+
 const DraggableTabNode = ({ index, moveTabNode, children }) => {
   const ref = useRef();
 
@@ -168,7 +182,7 @@ const TabsContainer = forwardRef(({ handleLogout, user }, ref) => {
   return (
     <DndProvider backend={HTML5Backend}>
       <TabsWrapper>
-        <Tabs
+        <StyledTabs
           activeKey={activeKey}
           onChange={onTabChange}
           items={tabsData}

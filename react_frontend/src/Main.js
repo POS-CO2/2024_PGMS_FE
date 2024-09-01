@@ -125,8 +125,8 @@ export default function Main() {
             chosen: i % 2 === 0,
             };
             if (data.chosen) {
-                console.log(data.chosen);
-                console.log(data.key);
+                //console.log(data.chosen);
+                //console.log(data.key);
             tempTargetKeys.push(data.key);
             }
             tempMockData.push(data);

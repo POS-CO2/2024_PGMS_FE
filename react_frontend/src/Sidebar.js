@@ -29,6 +29,13 @@ const StyledMenu = styled(Menu)`
   flex-direction: column;
   gap: 3rem;
   flex-grow: 1;
+  overflow-y: auto;
+
+  /* 스크롤바 숨기기 */
+  &::-webkit-scrollbar {
+    width: 0;
+    height: 0;
+  }
 
   .ant-menu-item,
   .ant-menu-submenu-title {
@@ -106,9 +113,7 @@ const ToggleButton = styled(Button).attrs((props) => ({
 `;
 
 const FooterContainer = styled.div`
-  position: relative;
-  margin-top: auto; /* Footer를 하단에 고정 */
-  padding: 1rem;
+  margin-top: auto;
 `;
 
 const theme = {

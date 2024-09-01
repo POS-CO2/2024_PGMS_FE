@@ -16,6 +16,15 @@ import axiosInstance from './utils/AxiosInstance';
 const LayoutContainer = styled.div`
   display: flex;
   height: 100vh;
+  overflow: hidden; /* 스크롤 숨기기 */
+
+  /* 웹킷 브라우저 (Chrome, Safari 등)에서 스크롤바 숨기기 */
+  &::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* Firefox에서 스크롤바 숨기기 */
+  scrollbar-width: none; /* Firefox 64 이후 버전 */
 `;
 
 const ContentContainer = styled.div`
@@ -148,7 +157,7 @@ export default function SiteLayout({handleLogout, menus, user}){
                 user={user} 
                 ref={tabsContainerRef} 
             />
-            <div style={{ padding: '2px', overflowY: 'auto' }}>
+            <div style={{ padding: '2px', overflowY: 'auto', marginTop: '-12px' }}>
                 <Outlet />
             </div>
             <Favorite handleFavClick={handleFavClick} fav={fav}/>

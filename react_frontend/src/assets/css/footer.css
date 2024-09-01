@@ -5,7 +5,7 @@ footer {
     justify-content: flex-end;
     width: 100%; /* 사이드바의 전체 너비에 맞게 설정 */
     height: 50px; /* 적절한 높이 설정 */
-    border-top: 2px solid #0EAA00;
+    border-top: 3px solid #0EAA00;
     font-size: 6px; /* 사이드바에 맞는 글꼴 크기 설정 */
     box-sizing: border-box; /* 패딩과 테두리 포함 */
 }
