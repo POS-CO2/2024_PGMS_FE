@@ -898,7 +898,7 @@ export function Ps12UploadExcelModal({ isModalOpen, handleOk, handleCancel }) { 
                         id="file"
                         name="file"
                         multiple
-                        accept=".xlt,.xls,.xlsx"
+                        accept=".xlt,.xls,.xlsx,.csv"
                         style={{ display: 'none' }} // 숨김 처리
                         ref={fileInputRef} // useRef로 참조
                         onChange={handleFileChange} // 파일 선택 시 호출
