@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import SearchForms from "../../SearchForms";
 import { formField_ps12 } from "../../assets/json/searchFormData";
-import InnerTabs from "../../InnerTabs";
+// import InnerTabs from "../../InnerTabs";
+import { Radio } from 'antd';
 import TableCustom from "../../TableCustom.js";
 import { Card } from '@mui/material';
 import * as mainStyle from '../../assets/css/main.css';
@@ -15,6 +16,11 @@ export default function Ps_1_2() {
     const [usagePerfs, setUsagePerfs] = useState([]);
     const [amountUsedPerfs, setAmountUsedPerfs] = useState([]);
     const [actvYearDisabled, setActvYearDisabled] = useState(true);  // 드롭다운 비활성화 상태 관리
+
+    const [content, setContent] = useState('actvQty'); // actvQty || fee
+    const onRadioChange = (e) => {
+        setContent(e.target.value);
+    };
 
     // 배출활동유형 드롭다운 옵션 설정
     const [emtnActvType, setEmtnActvType] = useState([]);
@@ -131,14 +137,26 @@ export default function Ps_1_2() {
                 //formFields={formFields} 
                 formFields={formFields.map(field => field.name === 'actvYear' ? { ...field, disabled: actvYearDisabled, placeholder: actvYearDisabled ? '프로젝트를 선택하세요.' : '' } : field)} // actvYear 필드의 disabled 상태 반영
                 onProjectSelect={onProjectSelect} />
+            
+            {(!formData || Object.keys(formData).length === 0) ? (
+                <></>
+             ) : (
+                <>
+                    <Radio.Group
+                        value={content}
+                        onChange={onRadioChange}
+                        style={{
+                        marginBottom: 16,
+                        }}
+                    >
+                        <Radio.Button value="actvQty">사용량</Radio.Button>
+                        <Radio.Button value="fee">사용금액</Radio.Button>
+                    </Radio.Group>
 
-            {(!formData || Object.keys(formData).length === 0) ?
-                <></> : (
-                    <InnerTabs items={[
-                        { label: '사용량', key: '1', children: <Usage data={usagePerfs} />, },
-                        { label: '사용금액', key: '2', children: <AmountUsed data={amountUsedPerfs} />, },
-                    ]} />
-                )}
+                    {content === 'actvQty' && <Usage data={usagePerfs} />}
+                    {content === 'fee' && <AmountUsed data={amountUsedPerfs} />}
+                </>
+            )}
         </div>
     );
 }
