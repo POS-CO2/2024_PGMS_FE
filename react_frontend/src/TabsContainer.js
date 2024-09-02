@@ -28,15 +28,19 @@ const UserInfo = styled.div`
 
 const StyledTabs = styled(Tabs)`
   .ant-tabs-tab {
-    font-weight: bold; /* Make the tab label bold */
+    font-weight: bold;
   }
 
   .ant-tabs-tab.ant-tabs-tab-active .ant-tabs-tab-btn {
-    color: #0EAA00; /* Change the color of the active tab label */
+    color: #0EAA00; /* 활성화된 탭 레이블의 색상 변경 */
   }
 
   .ant-tabs-ink-bar {
-    background-color: #0EAA00 !important; /* Change the color of the underline */
+    background-color: #0EAA00 !important; /* 밑줄 색상 변경 */
+  }
+
+  .ant-tabs-nav-more {
+    display: none !important; /* ...을 숨기기 위해 설정 */
   }
 `;
 
@@ -187,6 +191,7 @@ const TabsContainer = forwardRef(({ handleLogout, user }, ref) => {
           onChange={onTabChange}
           items={tabsData}
           hideAdd
+          moreIcon={null}
         />
         <Dropdown overlay={menu} trigger={['click']} placement="bottomRight">
           <UserInfo>
