@@ -128,7 +128,6 @@ export default function Esm() {
             let url = `/equip/emission?projectId=${selectedPjt[0].id}`;
             const emtnData = await axiosInstance.get(url);
             setEmtns(emtnData.data);
-            setShowResults(true);
         }
 
         else if (modalType === 'SdShowDetails') {
@@ -152,7 +151,6 @@ export default function Esm() {
             let url = `/equip/emission?projectId=${selectedPjt[0].id}`;
             const emtnData = await axiosInstance.get(url);
             setEmtns(emtnData.data);
-            setShowResults(true);
         }
         
     };
@@ -232,6 +230,7 @@ export default function Esm() {
                                     }
                                 ]}
                                 selectedRows={[selectedEmtn]}
+                                keyProp={emtns.length}
                             />
                         </Card>
                         

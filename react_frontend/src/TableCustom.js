@@ -43,7 +43,8 @@ export default function TableCustom({
     selectedRows = [],       // 테이블에서 선택된 row 리스트
     columns = [],
     pagination = true,        // 테이블 페이지네이션 디폴트는 페이지네이션 하는걸로.
-    modalPagination = false
+    modalPagination = false,
+    keyProp = undefined
 }) {modalPagination
     // 버튼 활성화 상태 결정
     
@@ -57,6 +58,9 @@ export default function TableCustom({
         }
         return true;  // 'Add' 버튼은 항상 활성화
     });
+
+    // key 설정
+    const tableKey = (keyProp === undefined) ? JSON.stringify(data) : JSON.stringify(keyProp);
 
     return (
         <>
@@ -82,7 +86,7 @@ export default function TableCustom({
                 })}
             </div>
             {table ? (
-            <Table key={JSON.stringify(data)} data={data} variant={variant} onRowClick={onRowClick} pagination={pagination} modalPagination={modalPagination} columns={columns}/>
+            <Table key={tableKey} data={data} variant={variant} onRowClick={onRowClick} pagination={pagination} modalPagination={modalPagination} columns={columns}/>
             ) : (<></>)}
             
         </>
