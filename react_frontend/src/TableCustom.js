@@ -102,6 +102,7 @@ export function TableCustomDoubleClickEdit({
     table = true,
     columns = [],
     modalPagination = false,
+    pageType
 }) {
     const [isEditing, setIsEditing] = useState(false); // 'Edit' 모드 상태 관리
     const [editableData, setEditableData] = useState(data); // 수정된 데이터 저장
@@ -126,7 +127,46 @@ export function TableCustomDoubleClickEdit({
     });
 
     // Edit 버튼 클릭 핸들러
-    const handleEditButtonClick = async () => {
+    const handleEditButtonClickRm = async () => {
+        let swalOptions = {
+            confirmButtonText: '확인'
+        };
+
+        if (isEditing) {    // 저장 버튼 클릭 시
+            const updatedRows = editedRows.map(index => editableData[index]);
+            try {
+                const requestBody = updatedRows.map(row => ({
+                    id: row.id,
+                    pjtId: row.pjtId,
+                    year: row.year,
+                    mth: row.mth,
+                    salesAmt: row.salesAmt
+                }));
+
+                const response = await axiosInstance.put("/pjt/sales", requestBody);
+
+                swalOptions.title = '성공!',
+                swalOptions.text = '매출액이 성공적으로 수정되었습니다.';
+                swalOptions.icon = 'success';
+            } catch (error) {
+                swalOptions.title = '실패!',
+                swalOptions.text = '매출액 수정에 실패하였습니다.';
+                swalOptions.icon = 'error';
+
+                // if(error.response.status === 400) {
+                //     swalOptions.text = `이미 ${error.config.data}에 등록된 매출액이 존재합니다.`;
+                // }
+            }
+            setIsEditing(false);
+            setEditedRows([]);
+            Swal.fire(swalOptions);
+        } else {
+            setIsEditing(true);
+        }
+    };
+
+    // Edit 버튼 클릭 핸들러
+    const handleEditButtonClickPs12 = async () => {
         let swalOptions = {
             confirmButtonText: '확인'
         };
@@ -165,9 +205,13 @@ export function TableCustomDoubleClickEdit({
     };
 
     // 버튼 클릭 핸들러 수정
-    const updatedOnClicks = onClicks.map((clickHandler, index) => 
-        buttons[index] === 'Edit' ? handleEditButtonClick : clickHandler
-    );
+    const updatedOnClicks = onClicks.map((clickHandler, index) => {
+        if (buttons[index] === 'Edit') {
+            return pageType === 'rm' ? handleEditButtonClickRm : handleEditButtonClickPs12;
+        }
+        return clickHandler;
+    });
+    
 
     const handleDoubleClick = (rowIndex, colIndex) => {
         if (isEditing) {

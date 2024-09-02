@@ -3,7 +3,7 @@ import SearchForms from "../../SearchForms";
 import { formField_ps12 } from "../../assets/json/searchFormData";
 // import InnerTabs from "../../InnerTabs";
 import { Radio } from 'antd';
-import TableCustom from "../../TableCustom.js";
+import {TableCustomDoubleClickEdit} from "../../TableCustom.js";
 import { Card } from '@mui/material';
 import * as mainStyle from '../../assets/css/main.css';
 // import * as ps12Style from '../../assets/css/ps12.css';
@@ -21,6 +21,15 @@ export default function Ps_1_2() {
     const onRadioChange = (e) => {
         setContent(e.target.value);
     };
+
+    // usagePerfs 상태가 변경될 때 실행될 useEffect
+    useEffect(() => {
+        console.log("usagePerfs");
+    }, [usagePerfs]);
+    // amountUsedPerfs 상태가 변경될 때 실행될 useEffect
+    useEffect(() => {
+        console.log("amountUsedPerfs");
+    }, [amountUsedPerfs]);
 
     // 배출활동유형 드롭다운 옵션 설정
     const [emtnActvType, setEmtnActvType] = useState([]);
@@ -205,12 +214,12 @@ function Usage({ data }) {
 
     return (
         <Card sx={{ width: "100%", height: "100%", borderRadius: "15px" }}>
-            <TableCustom
+            <TableCustomDoubleClickEdit
                 columns={perfColumns}
                 title="실적목록"
                 data={data}
-                buttons={['UploadExcel', 'DownloadExcelForm']}
-                onClicks={[onUploadExcelClick, onDownloadExcelFormClick]}
+                buttons={['Edit', 'UploadExcel', 'DownloadExcelForm']}
+                onClicks={[() => {}, onUploadExcelClick, onDownloadExcelFormClick]}
                 modals={[
                     {
                         modalType: 'Ps12UploadExcel',
@@ -248,12 +257,12 @@ function AmountUsed({ data }) {
 
     return (
         <Card sx={{ width: "100%", height: "100%", borderRadius: "15px" }}>
-            <TableCustom
+            <TableCustomDoubleClickEdit
                 columns={perfColumns}
                 title="실적목록"
                 data={data}
-                buttons={['UploadExcel', 'DownloadExcelForm']}
-                onClicks={[onUploadExcelClick, onDownloadExcelFormClick]}
+                buttons={['Edit', 'UploadExcel', 'DownloadExcelForm']}
+                onClicks={[() => {}, onUploadExcelClick, onDownloadExcelFormClick]}
                 modals={[
                     {
                         modalType: 'Ps12UploadExcel',
@@ -262,6 +271,7 @@ function AmountUsed({ data }) {
                         handleCancel: handleCancel
                     }
                 ]}
+                pageType="ps12"
             />
         </Card>
     )
