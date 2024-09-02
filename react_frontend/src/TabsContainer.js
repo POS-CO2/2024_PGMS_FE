@@ -1,10 +1,12 @@
 import React, { useState, useEffect, useRef, forwardRef, useImperativeHandle } from 'react';
 import { Tabs, Dropdown, Menu, Button } from 'antd';
 import { CloseOutlined } from '@ant-design/icons';
+import GTranslateIcon from '@mui/icons-material/GTranslate';
 import { useNavigate } from 'react-router-dom';
 import { useDrag, useDrop, DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import Main from './Main';
+import Language from './Language';
 import styled from 'styled-components';
 import * as headerStyles from "./assets/css/header.css";
 //cal(100%-140px)
@@ -19,6 +21,12 @@ const TabsWrapper = styled.div`
   margin-left: 28px;
   padding-right: 16px; /* 탭과 유저 정보 사이의 간격 */
   overflow: hidden; /* 탭이 영역을 벗어나지 않도록 설정 */
+`;
+
+const TopRightWrapper = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 2px; /* 언어 선택기와 유저 정보 사이의 간격 */
 `;
 
 const UserInfo = styled.div`
@@ -236,6 +244,13 @@ const TabsContainer = forwardRef(({ handleLogout, user }, ref) => {
     </Menu>
   );
 
+  // 다국어 메뉴
+  const languageMenu = (
+    <div style={{ padding: '10px' }}>
+      <Language />
+    </div>
+  );
+
   return (
     <DndProvider backend={HTML5Backend}>
       <TabsWrapper>
@@ -246,20 +261,19 @@ const TabsContainer = forwardRef(({ handleLogout, user }, ref) => {
           hideAdd
           moreIcon={null}
         />
-        {/* <Dropdown overlay={menu} trigger={['click']} placement="bottomRight">
-          <UserInfo>
-            <div className={headerStyles.photo}>
-              <img src="http://sanriokorea.co.kr/wp-content/themes/sanrio/images/kuromi.png" alt="User" />
-            </div>
-          </UserInfo>
-        </Dropdown> */}
-        <Dropdown overlay={menu} trigger={['click']} placement="bottomRight">
-          <UserInfo>
-            <div className={headerStyles.photo}>
-              <img src="http://sanriokorea.co.kr/wp-content/themes/sanrio/images/kuromi.png" alt="User" />
-            </div>
-          </UserInfo>
-        </Dropdown>
+        <TopRightWrapper>
+          {/* <Language /> */}
+          <Dropdown overlay={languageMenu} trigger={['click']} placement="bottomCenter">
+            <GTranslateIcon style={{ cursor: 'pointer', color: '#0A7800', fontSize: '30px' }} />
+          </Dropdown>
+          <Dropdown overlay={menu} trigger={['click']} placement="bottomRight">
+            <UserInfo>
+              <div className={headerStyles.photo}>
+                <img src="http://sanriokorea.co.kr/wp-content/themes/sanrio/images/kuromi.png" alt="User" />
+              </div>
+            </UserInfo>
+          </Dropdown>
+        </TopRightWrapper>
       </TabsWrapper>
     </DndProvider>
   );

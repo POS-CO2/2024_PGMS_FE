@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import Footer from "./Footer";
 import {
   AppstoreOutlined,
   MailOutlined,
@@ -22,7 +21,7 @@ const StyledMenu = styled(Menu)`
   flex-direction: column;
   gap: 1rem;
   flex-grow: 1;
-  overflow-y: auto;   /* Footer 고정 */
+  overflow-y: auto;
   width: 100%;  /* 부모의 width를 따르도록 설정 */
 
   /* 스크롤바 숨기기 */
@@ -108,12 +107,6 @@ const ToggleButton = styled(Button).attrs((props) => ({
   margin-top: 0.625rem !important;
 `;
 
-const FooterContainer = styled.div`
-  margin-top: auto;
-  text-align: center;
-  width: 100%;
-`;
-
 const theme = {
   components: {
     Menu: {
@@ -149,9 +142,6 @@ export default function Sidebar({ collapsed, toggleCollapsed, items, onMenuClick
           onOpenChange={onOpenChange}
         />
       </ConfigProvider>
-      <FooterContainer>
-        <Footer />
-      </FooterContainer>
     </SidebarContainer>
   );
 };
