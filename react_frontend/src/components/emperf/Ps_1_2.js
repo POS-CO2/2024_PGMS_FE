@@ -231,7 +231,7 @@ function Usage({ data }) {
                         handleCancel: handleCancel
                     }
                 ]}
-                pageType="ps12"
+                pageType="ps12actvQty"
             />
         </Card>
     )
@@ -275,7 +275,7 @@ function AmountUsed({ data }) {
                         handleCancel: handleCancel
                     }
                 ]}
-                pageType="ps12"
+                pageType="ps12fee"
             />
         </Card>
     )

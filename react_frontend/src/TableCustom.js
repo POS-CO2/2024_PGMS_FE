@@ -170,7 +170,65 @@ export function TableCustomDoubleClickEdit({
     };
 
     // Edit 버튼 클릭 핸들러
-    const handleEditButtonClickPs12 = async () => {
+    const handleEditButtonClickPs12ActvQty = async () => {
+        let swalOptions = {
+            confirmButtonText: '확인'
+        };
+
+        if (isEditing) {    // 저장 버튼 클릭 시
+            const updatedRows = editedRows.map(index => editableData[index]);
+            try {
+                const requestBody = updatedRows.map(row => {
+                    // 변경된 활동량만 추출
+                    const updatedQuantities = row.quantityList
+                        .map((item, index) => {
+                            const newActvQty = row[index]; // 인덱스 위치의 새로운 값
+                            return {
+                                ...item,
+                                newActvQty
+                            };
+                        })
+                        .filter(item => item.formattedActvQty !== item.newActvQty)
+                        .map(item => ({
+                            id: item.id,
+                            actvYear: item.actvYear,
+                            actvMth: item.actvMth,
+                            fee: null, // 비용은 null로 설정
+                            actvQty: parseInt((item.newActvQty).replace(/,/g, ''), 10) // 쉼표를 제거하고 정수로 변환
+                        }));
+            
+                    return {
+                        emissionId: row.emissionId,
+                        emtnActvType: row.emtnActvType,
+                        quantityList: updatedQuantities
+                    };
+                });
+
+                console.log(requestBody);
+                const response = await axiosInstance.put("/perf", requestBody);
+
+                swalOptions.title = '성공!',
+                swalOptions.text = '활동량이 성공적으로 수정되었습니다.';
+                swalOptions.icon = 'success';
+            } catch (error) {
+                swalOptions.title = '실패!',
+                swalOptions.text = '활동량 수정에 실패하였습니다.';
+                swalOptions.icon = 'error';
+
+                // if(error.response.status === 400) {
+                //     swalOptions.text = `이미 ${error.config.data}에 등록된 매출액이 존재합니다.`;
+                // }
+            }
+            setIsEditing(false);
+            setEditedRows([]);
+            Swal.fire(swalOptions);
+        } else {
+            setIsEditing(true);
+        }
+    };
+
+    // Edit 버튼 클릭 핸들러
+    /*const handleEditButtonClickPs12Fee = async () => {
         let swalOptions = {
             confirmButtonText: '확인'
         };
@@ -230,7 +288,7 @@ export function TableCustomDoubleClickEdit({
         } else {
             setIsEditing(true);
         }
-    };
+    };*/
 
     // 버튼 클릭 핸들러 수정
     const updatedOnClicks = onClicks.map((clickHandler, index) => {
@@ -239,9 +297,9 @@ export function TableCustomDoubleClickEdit({
                 case 'rm':
                     return handleEditButtonClickRm;
                 case 'ps12actvQty':
-                    return handleEditButtonClickPs12;
-                case 'ps12fee':
-                    return handleEditButtonClickPs12; // 필요한 경우 별도의 핸들러를 정의
+                    return handleEditButtonClickPs12ActvQty;
+                /*case 'ps12fee':
+                    return handleEditButtonClickPs12Fee;*/ // 필요한 경우 별도의 핸들러를 정의
                 default:
                     return clickHandler;
             }
@@ -258,9 +316,10 @@ export function TableCustomDoubleClickEdit({
 
     const handleInputChange = (e, rowIndex, colIndex) => {
         const newData = [...editableData];  // editableData 복사
+        const adjustedColIndex = pageType === 'rm' ? colIndex+3 : colIndex-4; // pageType에 따라 colIndex 조정
         newData[rowIndex] = {
             ...newData[rowIndex],            // 해당 행 복사
-            [Object.keys(newData[rowIndex])[colIndex+3]]: e.target.value // 특정 셀의 데이터만 업데이트(id 컬럼으로 인해 colIndex+1)
+            [Object.keys(newData[rowIndex])[adjustedColIndex]]: e.target.value // 특정 셀의 데이터만 업데이트(id 컬럼으로 인해 colIndex+1)
         };
 
         // 수정된 행의 인덱스를 추가
