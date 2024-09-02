@@ -165,8 +165,8 @@ export default function Ps_1_2() {
                         <Radio.Button value="fee">사용금액</Radio.Button>
                     </Radio.Group>
 
-                    {content === 'actvQty' && <Usage data={usagePerfs} />}
-                    {content === 'fee' && <AmountUsed data={amountUsedPerfs} />}
+                    {content === 'actvQty' && <Usage data={usagePerfs} selectedYear={formData.actvYear} />}
+                    {content === 'fee' && <AmountUsed data={amountUsedPerfs} selectedYear={formData.actvYear} />}
                 </>
             )}
         </div>
@@ -174,7 +174,7 @@ export default function Ps_1_2() {
 }
 
 
-function Usage({ data }) {
+function Usage({ data, selectedYear }) {
 
     const [isModalOpen, setIsModalOpen] = useState(false);
     const showModal = () => {
@@ -192,16 +192,33 @@ function Usage({ data }) {
         console.log("onUploadExcelClick");
         showModal();
     };
-    const onDownloadExcelFormClick = () => {
-        const fileName = '활동량 엑셀 양식';
+
+    const onDownloadExcelFormClick = (csvData) => {
+        const fileName = `사용량 엑셀 양식_${selectedYear}`;
 
         // CSV 변환 함수
         const csvRows = [];
         
-        // 헤더 설정
-        const headers = ['설비명', '배출활동유형', '활동자료명', '단위', '활동연도', '활동월', '비용', '활동량'];
+        // 헤더 생성 (perfColumns 순서대로, quantityList 제외, '년도' 맨앞에 추가)
+        const headers = ['년도'].concat(
+            perfColumns.filter(column => column.key !== 'quantityList')
+                       .map(column => column.label)
+        );
         csvRows.push(headers.join(','));
-
+        
+        // 데이터 생성
+        for (const row of csvData) {
+            const values = [`"${selectedYear}"`].concat(
+                perfColumns.filter(column => column.key !== 'quantityList')
+                           .map(column => {
+                               const value = row[column.key] || '';
+                               const escaped = ('' + value).replace(/"/g, '\\"');
+                               return `"${escaped}"`;
+                           })
+            );
+            csvRows.push(values.join(','));
+        }
+        
         // CSV 파일 생성
         const csvString = csvRows.join('\n');
         const blob = new Blob([csvString], { type: 'text/csv' });
@@ -222,7 +239,7 @@ function Usage({ data }) {
                 title="실적목록"
                 data={data}
                 buttons={['Edit', 'UploadExcel', 'DownloadExcelForm']}
-                onClicks={[() => {}, onUploadExcelClick, onDownloadExcelFormClick]}
+                onClicks={[() => {}, onUploadExcelClick, () => onDownloadExcelFormClick(data)]}
                 modals={[
                     {
                         modalType: 'Ps12UploadExcel',
@@ -237,7 +254,7 @@ function Usage({ data }) {
     )
 }
 
-function AmountUsed({ data }) {
+function AmountUsed({ data, selectedYear }) {
 
     const [isModalOpen, setIsModalOpen] = useState(false);
     const showModal = () => {
@@ -255,8 +272,44 @@ function AmountUsed({ data }) {
         console.log("onUploadExcelClick2");
         showModal();
     };
-    const onDownloadExcelFormClick = () => {
-        console.log("onDownloadExcelFormClick2");
+    
+    const onDownloadExcelFormClick = (csvData) => {
+        const fileName = `사용금액 엑셀 양식_${selectedYear}`;
+
+        // CSV 변환 함수
+        const csvRows = [];
+        
+        // 헤더 생성 (perfColumns 순서대로, quantityList 제외, '년도' 맨앞에 추가)
+        const headers = ['년도'].concat(
+            perfColumns.filter(column => column.key !== 'quantityList')
+                       .map(column => column.label)
+        );
+        csvRows.push(headers.join(','));
+        
+        // 데이터 생성
+        for (const row of csvData) {
+            const values = [`"${selectedYear}"`].concat(
+                perfColumns.filter(column => column.key !== 'quantityList')
+                           .map(column => {
+                               const value = row[column.key] || '';
+                               const escaped = ('' + value).replace(/"/g, '\\"');
+                               return `"${escaped}"`;
+                           })
+            );
+            csvRows.push(values.join(','));
+        }
+        
+        // CSV 파일 생성
+        const csvString = csvRows.join('\n');
+        const blob = new Blob([csvString], { type: 'text/csv' });
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.setAttribute('hidden', '');
+        a.setAttribute('href', url);
+        a.setAttribute('download', `${fileName}.csv`);
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
     };
 
     return (
@@ -266,7 +319,7 @@ function AmountUsed({ data }) {
                 title="실적목록"
                 data={data}
                 buttons={['Edit', 'UploadExcel', 'DownloadExcelForm']}
-                onClicks={[() => {}, onUploadExcelClick, onDownloadExcelFormClick]}
+                onClicks={[() => {}, onUploadExcelClick, () => onDownloadExcelFormClick(data)]}
                 modals={[
                     {
                         modalType: 'Ps12UploadExcel',
