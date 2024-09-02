@@ -16,22 +16,13 @@ import axiosInstance from './utils/AxiosInstance';
 const LayoutContainer = styled.div`
   display: flex;
   height: 100vh;
-  overflow: hidden; /* 스크롤 숨기기 */
-
-  /* 웹킷 브라우저 (Chrome, Safari 등)에서 스크롤바 숨기기 */
-  &::-webkit-scrollbar {
-    display: none;
-  }
-
-  /* Firefox에서 스크롤바 숨기기 */
-  scrollbar-width: none; /* Firefox 64 이후 버전 */
+  overflow-y: auto; 
 `;
 
 const ContentContainer = styled.div`
   flex: 1;
   display: flex;
   flex-direction: column;
-  overflow-y: auto;
   max-width: 100%;
   background-color: #F5F5F5;
 `;
@@ -132,9 +123,7 @@ export default function SiteLayout({handleLogout, menus, user}){
                     user={user} 
                     ref={tabsContainerRef} 
                 />
-                <div style={{ padding: '2px', overflowY: 'auto' }}>
-                    <Outlet />
-                </div>
+                <Outlet />
                 <Favorite handleFavClick={handleFavClick} fav={fav}/>
             </ContentContainer>
         </div>
@@ -152,15 +141,15 @@ export default function SiteLayout({handleLogout, menus, user}){
                 onOpenChange={handleOpenChange}
             />
             <ContentContainer>
-            <TabsContainer 
-                handleLogout={handleLogout} 
-                user={user} 
-                ref={tabsContainerRef} 
-            />
-            <div style={{ padding: '2px', overflowY: 'auto', marginTop: '-12px' }}>
-                <Outlet />
-            </div>
-            <Favorite handleFavClick={handleFavClick} fav={fav}/>
+                <TabsContainer 
+                    handleLogout={handleLogout} 
+                    user={user} 
+                    ref={tabsContainerRef} 
+                />
+                <div style={{ padding: '2px', overflowY: 'auto' }}>
+                    <Outlet />
+                </div>
+                <Favorite handleFavClick={handleFavClick} fav={fav}/>
             </ContentContainer>
         </LayoutContainer>
     );

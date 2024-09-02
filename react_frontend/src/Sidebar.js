@@ -4,7 +4,6 @@ import {
   AppstoreOutlined,
   MailOutlined,
   LeftOutlined,
-  RightOutlined,
   PieChartOutlined,
 } from '@ant-design/icons';
 import { Button, ConfigProvider, Menu } from 'antd';
@@ -17,19 +16,14 @@ const StyledLeftOutlined = styled(LeftOutlined)`
   font-weight: bold;
 `;
 
-const StyledRightOutlined = styled(RightOutlined)`
-  font-size: 1.125rem;
-  color: #777777;
-  font-weight: bold;
-`;
-
 const StyledMenu = styled(Menu)`
   padding: 0 0.625rem;
   display: flex;
   flex-direction: column;
-  gap: 3rem;
+  gap: 1rem;
   flex-grow: 1;
-  overflow-y: auto;
+  overflow-y: auto;   /* Footer 고정 */
+  width: 100%;  /* 부모의 width를 따르도록 설정 */
 
   /* 스크롤바 숨기기 */
   &::-webkit-scrollbar {
@@ -62,10 +56,10 @@ const StyledMenu = styled(Menu)`
 `;
 
 const SidebarContainer = styled.div.attrs((props) => ({
-  // DOM 요소에 전달하지 않도록 처리
+  // 전달되지 않도록 undefined 설정
   collapsed: undefined,
 }))`
-  width: ${props => (props.collapsed ? '5rem' : '12.5rem')};
+  width: ${({ $collapsed }) => ($collapsed ? '3.5rem' : '12.5rem')};
   background-color: #FFFFFF;
   height: 100vh;
   display: flex;
@@ -74,31 +68,33 @@ const SidebarContainer = styled.div.attrs((props) => ({
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 `;
 
-const LogoContainer = styled.div.attrs((props) => ({
-  collapsed: undefined,
-}))`
+const LogoContainer = styled.div`
   display: flex;
   flex-direction: row
   align-items: center;
   padding: 1rem;
   margin-left: 0.25rem;
   margin-top: 0.625rem;
+  cursor: pointer;
 `;
 
 const LogoImage = styled.img`
   width: 0.9375rem; /* 로고 크기 조절 */
   height: 1.875rem;
   margin-top: 0.8125rem;
+  cursor: pointer;
 `;
 
 const LogoTextContainer = styled.div.attrs((props) => ({
+  // 전달되지 않도록 undefined 설정
   collapsed: undefined,
 }))`
-  display: ${props => (props.collapsed ? 'none' : 'block')};
-  margin-left: ${props => (props.collapsed ? '0.625rem' : '1.25rem')};
+  display: ${({ $collapsed }) => ($collapsed ? 'none' : 'block')};
+  margin-left: ${({ $collapsed }) => ($collapsed ? '0.625rem' : '1.25rem')};
 `;
 
 const ToggleButton = styled(Button).attrs((props) => ({
+  // 전달되지 않도록 undefined 설정
   collapsed: undefined,
 }))`
   position: absolute;
@@ -108,12 +104,14 @@ const ToggleButton = styled(Button).attrs((props) => ({
   box-shadow: none;
   padding-left: 0;
   padding-right: 0;
-  margin-right: ${props => (props.collapsed ? '0.75rem' : '1.5625rem')};
+  margin-right: ${({ collapsed }) => (collapsed ? '0.75rem' : '1.5625rem')};
   margin-top: 0.625rem !important;
 `;
 
 const FooterContainer = styled.div`
   margin-top: auto;
+  text-align: center;
+  width: 100%;
 `;
 
 const theme = {
@@ -124,21 +122,20 @@ const theme = {
         itemColor: '#777777',
         itemActiveBg: '#DCF9D9',
       },
-
   }
 }
 
 export default function Sidebar({ collapsed, toggleCollapsed, items, onMenuClick, openKeys, onOpenChange }) {
   return (
-    <SidebarContainer collapsed={collapsed}>
-      <LogoContainer collapsed={collapsed}>
+    <SidebarContainer $collapsed={collapsed}>
+      <LogoContainer onClick={toggleCollapsed}>
         <LogoImage src={Logo} alt="로고" />
-        <LogoTextContainer collapsed={collapsed}>
+        <LogoTextContainer $collapsed={collapsed}>
           <div style={{ fontSize: '1.75rem', fontWeight: 'bold', color: '#0EAA00' }}>PGMS</div>
           <div style={{ fontSize: '0.8125rem', color: '#0EAA00' }}>온실관리시스템</div>
         </LogoTextContainer>
-        <ToggleButton onClick={toggleCollapsed} collapsed={collapsed}>
-          {collapsed ? <StyledRightOutlined /> : <StyledLeftOutlined />}
+        <ToggleButton $collapsed={collapsed} onClick={toggleCollapsed}>
+          {collapsed ? null : <StyledLeftOutlined />}
         </ToggleButton>
       </LogoContainer>
       <ConfigProvider theme={theme}>

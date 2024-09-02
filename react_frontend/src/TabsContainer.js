@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, forwardRef, useImperativeHandle } from 'react';
-import { Tabs, Dropdown, Menu } from 'antd';
+import { Tabs, Dropdown, Menu, Button } from 'antd';
 import { CloseOutlined } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
 import { useDrag, useDrop, DndProvider } from 'react-dnd';
@@ -7,6 +7,7 @@ import { HTML5Backend } from 'react-dnd-html5-backend';
 import Main from './Main';
 import styled from 'styled-components';
 import * as headerStyles from "./assets/css/header.css";
+//cal(100%-140px)
 
 const ITEM_TYPE = 'TAB';
 
@@ -26,9 +27,40 @@ const UserInfo = styled.div`
   cursor: pointer;
 `;
 
+const UserDetails = styled.div`
+  display: flex;
+  flex-direction: column;
+  margin-left: 10px;
+`;
+
+const Row = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: #000;
+`;
+
+const StyledButton = styled(Button)`
+  margin-left: 10px;
+  color: #0A7800; /* 기본 텍스트 색상 */
+  border-color: #777777; /* 기본 보더 색상 */
+  padding: 2px 4px;
+  height: auto; /* 높이를 자동으로 설정하여 텍스트(userName)와 일치시킴 */
+  font-size: 12px;
+
+  &:hover {
+    color: #8AC784 !important; /* 호버 시 텍스트 색상 */
+    border-color: #777777; /* 호버 시 보더 색상 유지 */
+  }
+`;
+
 const StyledTabs = styled(Tabs)`
   .ant-tabs-tab {
     font-weight: bold;
+  }
+
+  .ant-tabs-tab:hover .ant-tabs-tab-btn {
+    color: #66C65E; /* 탭 호버 시 레이블 색상 변경 */
   }
 
   .ant-tabs-tab.ant-tabs-tab-active .ant-tabs-tab-btn {
@@ -172,16 +204,37 @@ const TabsContainer = forwardRef(({ handleLogout, user }, ref) => {
     children: tab.children,
   }));
 
-  // 로그아웃 메뉴 정의
-  const menuItems = [
-    {
-      key: 'logout',
-      label: '로그아웃',
-      onClick: () => handleLogout(),
-    },
-  ];
-
-  const menu = <Menu items={menuItems} />;
+  // 로그아웃 메뉴 정의 및 사용자 정보
+  const menu = (
+    <Menu>
+      <Menu.Item key="userInfo" disabled>
+        <UserDetails>
+          <Row>
+            <div style={{ marginRight: '16px'}}>
+              <img src="http://sanriokorea.co.kr/wp-content/themes/sanrio/images/kuromi.png" alt="User" />
+            </div>
+            <div>
+              <Row>
+                <span style={{ fontWeight: 'bold' }}>{user.userName}님</span>
+                <StyledButton type="link" onClick={handleLogout}>
+                  로그아웃
+                </StyledButton>
+              </Row>
+              <Row>
+                <span>{user.loginId}</span>
+              </Row>
+              <Row>
+                <span>{user.deptCode}부서</span>
+              </Row>
+              <Row>
+                <span>{user.role}</span>
+              </Row>
+            </div>
+          </Row>
+        </UserDetails>
+      </Menu.Item>
+    </Menu>
+  );
 
   return (
     <DndProvider backend={HTML5Backend}>
@@ -193,13 +246,17 @@ const TabsContainer = forwardRef(({ handleLogout, user }, ref) => {
           hideAdd
           moreIcon={null}
         />
+        {/* <Dropdown overlay={menu} trigger={['click']} placement="bottomRight">
+          <UserInfo>
+            <div className={headerStyles.photo}>
+              <img src="http://sanriokorea.co.kr/wp-content/themes/sanrio/images/kuromi.png" alt="User" />
+            </div>
+          </UserInfo>
+        </Dropdown> */}
         <Dropdown overlay={menu} trigger={['click']} placement="bottomRight">
           <UserInfo>
-            <div className={headerStyles.header_profile}>
-              <div className={headerStyles.photo}>
-                <img src="http://sanriokorea.co.kr/wp-content/themes/sanrio/images/kuromi.png" alt="User" />
-              </div>
-              <div className={headerStyles.header_name}>{user.userName}</div>
+            <div className={headerStyles.photo}>
+              <img src="http://sanriokorea.co.kr/wp-content/themes/sanrio/images/kuromi.png" alt="User" />
             </div>
           </UserInfo>
         </Dropdown>

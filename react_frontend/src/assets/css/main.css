@@ -23,5 +23,6 @@ a {
 .breadcrumb {
     font-size: 0.8rem;
     color: gray;
-    margin: 0.8rem 1.5rem;
+    margin-left: 1.5rem;
+    margin-bottom: 0.8rem;
 }
