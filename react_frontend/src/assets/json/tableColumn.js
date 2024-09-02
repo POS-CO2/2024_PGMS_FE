@@ -156,12 +156,13 @@ export const equipEmissionColumns = [
     { key: 'actvDataName', label: '활동자료이름', hidden: false },
     { key: 'inputUnitCode', label: '입력단위코드', hidden: false },
     { key: 'calUnitCode', label: '산정단위코드', hidden: false },
-    { key: 'unitConvCoef', label: '유닛콘브코에프', hidden: false },
+    { key: 'unitConvCoef', label: '단위변환계수', hidden: false },
+    { key: 'fileStatus', label: '증빙자료현황', hidden: false },
 ]
 
 export const equipDocumentColumns = [
     { key: 'id', label: 'id', hidden: true },
-    { key: 'actvYear', label: '활동년도', hidden: false },
+    { key: 'actvYear', label: '활동년도', hidden: true },
     { key: 'actvMth', label: '활동월', hidden: false },
     { key: 'name', label: '이름', hidden: false },
 ]
@@ -180,7 +181,7 @@ export const equipEmissionCandColumns = [
     { key: 'actvDataName', label: '활동자료이름', hidden: false },
     { key: 'inputUnitCode', label: '입력단위코드', hidden: false },
     { key: 'calUnitCode', label: 'cal단위코드', hidden: false },
-    { key: 'unitConvCoef', label: '유닛콘브코에프', hidden: false },
+    { key: 'unitConvCoef', label: '단위변환계수', hidden: false },
 ]
 
 export const equipDocumentDetailColumns = [
