@@ -174,22 +174,49 @@ export function TableCustomDoubleClickEdit({
         if (isEditing) {    // 저장 버튼 클릭 시
             const updatedRows = editedRows.map(index => editableData[index]);
             try {
-                const requestBody = updatedRows.map(row => ({
-                    id: row.id,
-                    pjtId: row.pjtId,
-                    year: row.year,
-                    mth: row.mth,
-                    salesAmt: row.salesAmt
-                }));
+                const requestBody = updatedRows.map(row => {
+                    // 변경된 활동량만 추출
+                    const updatedQuantities = row.quantityList
+                        .map((item, index) => {
+                            const newActvQty = row[index]; // 인덱스 위치의 새로운 값
+                            return {
+                                ...item,
+                                newActvQty
+                            };
+                        })
+                        .filter(item => item.actvQty !== item.newActvQty)
+                        .map(item => ({
+                            id: item.id,
+                            actvYear: item.actvYear,
+                            actvMth: item.actvMth,
+                            fee: null, // 비용은 null로 설정
+                            actvQty: parseInt(item.newActvQty, 10)
+                        }));
+            
+                    return {
+                        emissionId: row.emissionId,
+                        //equipName: row.equipName,
+                        emtnActvType: row.emtnActvType,
+                        //actvDataName: row.actvDataName,
+                        //inputUnitCode: row.inputUnitCode,
+                        quantityList: updatedQuantities
+                    };
+                });
 
-                const response = await axiosInstance.put("/pjt/sales", requestBody);
+                // 각 항목에 대해 개별적으로 요청을 보냄
+                for (const row of requestBody) {
+                    console.log(row);
+                    //await axiosInstance.put("/perf", row);
+                }
+
+                //const response = await axiosInstance.put("/perf", requestBody);
 
                 swalOptions.title = '성공!',
-                swalOptions.text = '매출액이 성공적으로 수정되었습니다.';
+                swalOptions.text = '활동량이 성공적으로 수정되었습니다.';
                 swalOptions.icon = 'success';
             } catch (error) {
                 swalOptions.title = '실패!',
-                swalOptions.text = '매출액 수정에 실패하였습니다.';
+                swalOptions.text = '활동량 수정에 실패하였습니다.';
                 swalOptions.icon = 'error';
 
                 // if(error.response.status === 400) {

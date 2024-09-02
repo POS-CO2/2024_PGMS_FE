@@ -91,18 +91,19 @@ export default function Ps_1_2() {
             emtnActvType: perf.emtnActvType,
             actvDataName: perf.actvDataName,
             inputUnitCode: key === 'actvQty' ? perf.inputUnitCode : '원', // key에 따른 단위 설정
+            quantityList: perf.quantityList,
         };
 
         // quantityList를 순회하며 월별 데이터를 추가
         perf.quantityList.forEach(item => {
             if (item && item.actvMth) {
-                const monthKey = `month${item.actvMth}`; // 'month1', 'month2', ...
+                const monthKey = `${item.actvMth - 1}`;
                 perfData[monthKey] = item[key];
             }
         });
         // 모든 월(1월부터 12월까지)의 데이터가 없을 경우 기본값으로 채워줌
-        for (let month = 1; month <= 12; month++) {
-            const monthKey = `month${month}`;
+        for (let month = 0; month < 12; month++) {
+            const monthKey = `${month}`;
             if (!perfData.hasOwnProperty(monthKey)) {
                 perfData[monthKey] = 0.0; // 데이터가 없는 경우 기본값 0.0 설정
             }
@@ -121,6 +122,7 @@ export default function Ps_1_2() {
             url += `&emtnActvType=${data.emtnActvType}`;
         }
         const response = await axiosInstance.get(url);
+        console.log(response.data);
 
         // data가 빈 배열인지 확인
         if (response.data.length === 0) {

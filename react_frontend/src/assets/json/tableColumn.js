@@ -118,10 +118,10 @@ export const perfColumns = [
     { key: 'quantityList', label: '퀀티티리스트', hidden: true },
 ]
 // 월별 칼럼 추가
-for (let month = 1; month <= 12; month++) {
+for (let month = 0; month < 12; month++) {
     perfColumns.push({
-        key: `month${month}`,
-        label: `${month}월`,
+        key: `${month}`,
+        label: `${month+1}월`,
         hidden: false
     });
 }
