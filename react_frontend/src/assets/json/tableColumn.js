@@ -112,7 +112,8 @@ export const pjtManagerColumns = [
 export const perfColumns = [
     { key: 'emissionId', label: '배출ID', hidden: true },
     { key: 'equipName', label: '설비명', hidden: false },
-    { key: 'emtnActvType', label: '배출활동유형', hidden: false },
+    { key: 'emtnActvType', label: '배출활동유형코드', hidden: true },
+    { key: 'emtnActvTypeName', label: '배출활동유형', hidden: false },
     { key: 'actvDataName', label: '활동자료명', hidden: false },
     { key: 'inputUnitCode', label: '단위', hidden: false },
     { key: 'quantityList', label: '퀀티티리스트', hidden: true },

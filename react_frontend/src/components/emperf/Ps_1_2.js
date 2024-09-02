@@ -89,8 +89,9 @@ export default function Ps_1_2() {
             emissionId: perf.emissionId,
             equipName: perf.equipName,
             emtnActvType: perf.emtnActvType,
+            emtnActvTypeName: perf.emtnActvTypeName,
             actvDataName: perf.actvDataName,
-            inputUnitCode: key === 'actvQty' ? perf.inputUnitCode : '원', // key에 따른 단위 설정
+            inputUnitCode: key === 'formattedActvQty' ? perf.inputUnitCode : '원', // key에 따른 단위 설정
             quantityList: perf.quantityList,
         };
 
@@ -130,8 +131,8 @@ export default function Ps_1_2() {
             setAmountUsedPerfs([]);
         } else {
             // 필요한 필드만 추출하여 설정
-            const usageFilteredPerfs = response.data.map(perf => createPerfData(perf, 'actvQty'));
-            const amountUsedFilteredPerfs = response.data.map(perf => createPerfData(perf, 'fee'));
+            const usageFilteredPerfs = response.data.map(perf => createPerfData(perf, 'formattedActvQty'));
+            const amountUsedFilteredPerfs = response.data.map(perf => createPerfData(perf, 'formattedFee'));
 
             setUsagePerfs(usageFilteredPerfs);
             setAmountUsedPerfs(amountUsedFilteredPerfs);
@@ -230,6 +231,7 @@ function Usage({ data }) {
                         handleCancel: handleCancel
                     }
                 ]}
+                pageType="ps12"
             />
         </Card>
     )

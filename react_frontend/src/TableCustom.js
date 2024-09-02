@@ -195,10 +195,7 @@ export function TableCustomDoubleClickEdit({
             
                     return {
                         emissionId: row.emissionId,
-                        //equipName: row.equipName,
                         emtnActvType: row.emtnActvType,
-                        //actvDataName: row.actvDataName,
-                        //inputUnitCode: row.inputUnitCode,
                         quantityList: updatedQuantities
                     };
                 });
@@ -234,7 +231,16 @@ export function TableCustomDoubleClickEdit({
     // 버튼 클릭 핸들러 수정
     const updatedOnClicks = onClicks.map((clickHandler, index) => {
         if (buttons[index] === 'Edit') {
-            return pageType === 'rm' ? handleEditButtonClickRm : handleEditButtonClickPs12;
+            switch (pageType) {
+                case 'rm':
+                    return handleEditButtonClickRm;
+                case 'ps12actvQty':
+                    return handleEditButtonClickPs12;
+                case 'ps12fee':
+                    return handleEditButtonClickPs12; // 필요한 경우 별도의 핸들러를 정의
+                default:
+                    return clickHandler;
+            }
         }
         return clickHandler;
     });
