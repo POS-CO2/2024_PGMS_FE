@@ -19,7 +19,7 @@ export default function SiteLayout({handleLogout, menus, user}){
         return savedActiveTab || null;
     });
 
-    const [fav, setFav] = useState(true);
+    const [fav, setFav] = useState(false);
     const [loading, setLoading] = useState(false);
 
     const navigate = useNavigate();
