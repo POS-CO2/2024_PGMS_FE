@@ -214,10 +214,6 @@ export function TableCustomDoubleClickEdit({
                 swalOptions.title = '실패!',
                 swalOptions.text = '활동량 수정에 실패하였습니다.';
                 swalOptions.icon = 'error';
-
-                // if(error.response.status === 400) {
-                //     swalOptions.text = `이미 ${error.config.data}에 등록된 매출액이 존재합니다.`;
-                // }
             }
             setIsEditing(false);
             setEditedRows([]);
@@ -228,7 +224,7 @@ export function TableCustomDoubleClickEdit({
     };
 
     // Edit 버튼 클릭 핸들러
-    /*const handleEditButtonClickPs12Fee = async () => {
+    const handleEditButtonClickPs12Fee = async () => {
         let swalOptions = {
             confirmButtonText: '확인'
         };
@@ -240,19 +236,19 @@ export function TableCustomDoubleClickEdit({
                     // 변경된 활동량만 추출
                     const updatedQuantities = row.quantityList
                         .map((item, index) => {
-                            const newActvQty = row[index]; // 인덱스 위치의 새로운 값
+                            const newFee = row[index]; // 인덱스 위치의 새로운 값
                             return {
                                 ...item,
-                                newActvQty
+                                newFee
                             };
                         })
-                        .filter(item => item.actvQty !== item.newActvQty)
+                        .filter(item => item.formattedFee !== item.newFee)
                         .map(item => ({
                             id: item.id,
                             actvYear: item.actvYear,
                             actvMth: item.actvMth,
-                            fee: null, // 비용은 null로 설정
-                            actvQty: parseInt(item.newActvQty, 10)
+                            fee: parseInt((item.newFee).replace(/,/g, ''), 10), // 쉼표를 제거하고 정수로 변환
+                            actvQty: null // 사용량은 null로 설정
                         }));
             
                     return {
@@ -262,13 +258,8 @@ export function TableCustomDoubleClickEdit({
                     };
                 });
 
-                // 각 항목에 대해 개별적으로 요청을 보냄
-                for (const row of requestBody) {
-                    console.log(row);
-                    //await axiosInstance.put("/perf", row);
-                }
-
-                //const response = await axiosInstance.put("/perf", requestBody);
+                console.log(requestBody);
+                const response = await axiosInstance.put("/perf", requestBody);
 
                 swalOptions.title = '성공!',
                 swalOptions.text = '활동량이 성공적으로 수정되었습니다.';
@@ -277,10 +268,6 @@ export function TableCustomDoubleClickEdit({
                 swalOptions.title = '실패!',
                 swalOptions.text = '활동량 수정에 실패하였습니다.';
                 swalOptions.icon = 'error';
-
-                // if(error.response.status === 400) {
-                //     swalOptions.text = `이미 ${error.config.data}에 등록된 매출액이 존재합니다.`;
-                // }
             }
             setIsEditing(false);
             setEditedRows([]);
@@ -288,7 +275,7 @@ export function TableCustomDoubleClickEdit({
         } else {
             setIsEditing(true);
         }
-    };*/
+    };
 
     // 버튼 클릭 핸들러 수정
     const updatedOnClicks = onClicks.map((clickHandler, index) => {
@@ -298,8 +285,8 @@ export function TableCustomDoubleClickEdit({
                     return handleEditButtonClickRm;
                 case 'ps12actvQty':
                     return handleEditButtonClickPs12ActvQty;
-                /*case 'ps12fee':
-                    return handleEditButtonClickPs12Fee;*/ // 필요한 경우 별도의 핸들러를 정의
+                case 'ps12fee':
+                    return handleEditButtonClickPs12Fee;
                 default:
                     return clickHandler;
             }
