@@ -5,9 +5,9 @@ import { SearchOutlined } from '@ant-design/icons';
 
 const theme = {
     token: {
-        colorPrimary: '#3875f7',
-        colorPrimaryHover: '#5592f8',
-        colorPrimaryActive: '#3459a8',
+        colorPrimary: '#0A7800',
+        colorPrimaryHover: '#8AC784',
+        //colorPrimaryActive: '#E5F1E4',
     },
 }
 

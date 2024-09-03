@@ -73,7 +73,7 @@
     width: 80px;
     height: 32px;
     padding: 5px 10px;
-    background: rgb(56, 117, 247);
+    background: #0A7800;
     color: white;
     border: none;
     border-radius: 5px;
@@ -81,7 +81,7 @@
 }
 
 .search_button:hover{
-    background-color: rgb(85, 146, 248);
+    background-color: #8AC784;
 }
 
 .result_container {
@@ -96,7 +96,7 @@
     width: 100%;            /* 모달 창의 전체 너비로 확장 */
     height: 41px;
     padding: 5px 10px;
-    background: rgb(56, 117, 247);
+    background: #0A7800;
     color: white;
     border: none;
     border-radius: 5px;
@@ -105,7 +105,7 @@
 }
 
 .select_button:hover{
-    background-color: rgb(85, 146, 248);
+    background-color: #8AC784;
 }
 
 .cancel_button{
