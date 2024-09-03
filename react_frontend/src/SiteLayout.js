@@ -23,14 +23,16 @@ const StyledTabsContainer = styled(TabsContainer)`
 `;
 
 const ContentContainer = styled.div`
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  max-width: 100%;
-  width: calc(100% - 12.5rem);
-  height: 100vh;
-  background-color: #F5F5F5;
-  overflow: hidden;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    max-width: 100%;
+    width: calc(100% - 12.5rem);
+    min-width: 600px;
+    flex-grow: 1;
+    height:100vh;
+    background-color: #F5F5F5;
+    overflow: hidden;
 `;
 
 const mapMenuDataToItems = (menuData) => {
