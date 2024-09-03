@@ -10,6 +10,7 @@ import Language from './Language';
 import styled from 'styled-components';
 
 const ITEM_TYPE = 'TAB';
+const TABS_STORAGE_KEY = 'tabs'; // 로컬 스토리지 키
 
 const TabsWrapper = styled.div`
   display: flex;
@@ -156,42 +157,63 @@ const DraggableTabNode = ({ index, moveTabNode, children }) => {
 
 const TabsContainer = forwardRef(({ handleLogout, user }, ref) => {
   const [tabs, setTabs] = useState([]);
-  const [activeKey, setActiveKey] = useState('홈');
+  const [activeKey, setActiveKey] = useState('');
   const navigate = useNavigate();
   const homeTabAdded = useRef(false); // 홈 탭이 추가되었는지 추적하는 플래그
 
-  // 홈 탭 추가 (한 번만)
   useEffect(() => {
-    if (!homeTabAdded.current) {
+    const savedTabs = JSON.parse(localStorage.getItem(TABS_STORAGE_KEY)) || [];
+    const savedActiveKey = localStorage.getItem('activeTab');
+
+    if (savedTabs.length > 0) {
+      setTabs(savedTabs);
+      setActiveKey(savedActiveKey || savedTabs[0].key);
+    } else if (!homeTabAdded.current) {
       const homeTab = {
         key: '',
         tab: '홈',
-        path: '', // index path를 지정
-        content: <Main />, // 이 부분을 <Main /> 컴포넌트로 바꿔서 사용
+        path: '',
+        content: <Main />,
       };
       setTabs([homeTab]);
-      navigate(homeTab.path);
-      homeTabAdded.current = true; // 홈 탭이 추가되었음을 표시
+      setActiveKey(homeTab.key);
+      homeTabAdded.current = true;
     }
-  }, [navigate]);
+  }, []);
+
+  useEffect(() => {
+    if (activeKey) {
+      localStorage.setItem('activeTab', activeKey);
+      navigate(activeKey);
+    }
+  }, [activeKey, navigate]);
+
+  // 탭 상태를 로컬 스토리지에 저장
+  useEffect(() => {
+    localStorage.setItem(TABS_STORAGE_KEY, JSON.stringify(tabs));
+  }, [tabs]);
 
   useImperativeHandle(ref, () => ({
     addTab(path, label, content) {
       const newTab = { key: path, tab: label, content };
       setTabs(prevTabs => {
-        if (!prevTabs.find(tab => tab.key === path)) {
+        const existingTab = prevTabs.find(tab => tab.key === path);
+        if (!existingTab) {
           return [...prevTabs, newTab];
         }
         return prevTabs;
       });
       setActiveKey(path);
-      navigate(path);
     },
   }));
 
   const onTabChange = path => {
     setActiveKey(path);
-    navigate(path); // 탭이 선택될 때 해당 경로로 이동
+    if (path === '') {  // 홈 탭을 클릭했을 때 명시적으로 홈 경로로 이동
+      navigate('');
+    } else {
+      navigate(path);
+    }
   };
 
   const removeTab = targetKey => {
@@ -218,7 +240,6 @@ const TabsContainer = forwardRef(({ handleLogout, user }, ref) => {
 
     setTabs(newTabs);
     setActiveKey(newActiveKey);
-    navigate(newActiveKey); // 선택된 탭으로 이동
   };
 
   const moveTabNode = (dragIndex, hoverIndex) => {
