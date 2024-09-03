@@ -6,9 +6,34 @@ import { Radio } from 'antd';
 import {TableCustomDoubleClickEdit} from "../../TableCustom.js";
 import { Card } from '@mui/material';
 import * as mainStyle from '../../assets/css/main.css';
-// import * as ps12Style from '../../assets/css/ps12.css';
+import * as ps12Style from '../../assets/css/ps12.css';
 import axiosInstance from '../../utils/AxiosInstance';
 import { perfColumns } from '../../assets/json/tableColumn';
+import styled from 'styled-components';
+
+const CustomRadioGroup = styled(Radio.Group)`
+    .ant-radio-button-wrapper:hover {
+        background-color: #FFFFFF;
+        color: #0EAA00;
+        border-color: #0EAA00;
+    }
+
+    .ant-radio-button-wrapper:not(:first-child)::before {
+        background-color: #0EAA00; /* Line between buttons */
+    }
+
+    .ant-radio-button-wrapper-checked {
+        background-color: #0EAA00 !important;
+        color: white;
+        border-color: #0EAA00 !important;
+    }
+
+    .ant-radio-button-wrapper-checked:hover {
+        background-color: #FFFFFF;
+        color: white;
+        border-color: #0EAA00 !important;
+    }
+`;
 
 export default function Ps_1_2() {
     const [formFields, setFormFields] = useState(formField_ps12);
@@ -198,26 +223,24 @@ export default function Ps_1_2() {
         };
     
         return (
-            <Card sx={{ width: "100%", height: "100%", borderRadius: "15px" }}>
-                <TableCustomDoubleClickEdit
-                    columns={perfColumns}
-                    title="실적목록"
-                    data={data}
-                    buttons={['Edit', 'UploadExcel', 'DownloadExcelForm']}
-                    onClicks={[() => {}, onUploadExcelClick, () => onDownloadExcelFormClick(data)]}
-                    modals={[
-                        {
-                            modalType: 'Ps12UploadExcel',
-                            isModalOpen: isModalOpen,
-                            handleOk: handleOk,
-                            handleCancel: handleCancel
-                        }
-                    ]}
-                    pageType="ps12actvQty"
-                    handleFormSubmit={handleFormSubmit}
-                    formData={formData}
-                />
-            </Card>
+            <TableCustomDoubleClickEdit
+                columns={perfColumns}
+                title="실적목록"
+                data={data}
+                buttons={['Edit', 'UploadExcel', 'DownloadExcelForm']}
+                onClicks={[() => {}, onUploadExcelClick, () => onDownloadExcelFormClick(data)]}
+                modals={[
+                    {
+                        modalType: 'Ps12UploadExcel',
+                        isModalOpen: isModalOpen,
+                        handleOk: handleOk,
+                        handleCancel: handleCancel
+                    }
+                ]}
+                pageType="ps12actvQty"
+                handleFormSubmit={handleFormSubmit}
+                formData={formData}
+            />
         )
     }
     
@@ -280,26 +303,24 @@ export default function Ps_1_2() {
         };
     
         return (
-            <Card sx={{ width: "100%", height: "100%", borderRadius: "15px" }}>
-                <TableCustomDoubleClickEdit
-                    columns={perfColumns}
-                    title="실적목록"
-                    data={data}
-                    buttons={['Edit', 'UploadExcel', 'DownloadExcelForm']}
-                    onClicks={[() => {}, onUploadExcelClick, () => onDownloadExcelFormClick(data)]}
-                    modals={[
-                        {
-                            modalType: 'Ps12UploadExcel',
-                            isModalOpen: isModalOpen,
-                            handleOk: handleOk,
-                            handleCancel: handleCancel
-                        }
-                    ]}
-                    pageType="ps12fee"
-                    handleFormSubmit={handleFormSubmit}
-                    formData={formData}
-                />
-            </Card>
+            <TableCustomDoubleClickEdit
+                columns={perfColumns}
+                title="실적목록"
+                data={data}
+                buttons={['Edit', 'UploadExcel', 'DownloadExcelForm']}
+                onClicks={[() => {}, onUploadExcelClick, () => onDownloadExcelFormClick(data)]}
+                modals={[
+                    {
+                        modalType: 'Ps12UploadExcel',
+                        isModalOpen: isModalOpen,
+                        handleOk: handleOk,
+                        handleCancel: handleCancel
+                    }
+                ]}
+                pageType="ps12fee"
+                handleFormSubmit={handleFormSubmit}
+                formData={formData}
+            />
         )
     }
 
@@ -317,21 +338,21 @@ export default function Ps_1_2() {
             {(!formData || Object.keys(formData).length === 0) ? (
                 <></>
              ) : (
-                <>
-                    <Radio.Group
-                        value={content}
-                        onChange={onRadioChange}
-                        style={{
-                        marginBottom: 16,
-                        }}
-                    >
-                        <Radio.Button value="actvQty">사용량</Radio.Button>
-                        <Radio.Button value="fee">사용금액</Radio.Button>
-                    </Radio.Group>
+                <div className={ps12Style.main_contents}>
+                    <Card sx={{ width: "100%", height: "100%", borderRadius: "15px" }}>
+                        <CustomRadioGroup
+                            options={[{label: '사용량', value: 'actvQty'}, {label: '사용금액', value: 'fee'}]}
+                            onChange={onRadioChange}
+                            value={content}
+                            optionType="button"
+                            buttonStyle="solid"
+                            className={ps12Style.custom_radio_group}
+                        />
 
-                    {content === 'actvQty' && <Usage data={usagePerfs} />}
-                    {content === 'fee' && <AmountUsed data={amountUsedPerfs} />}
-                </>
+                        {content === 'actvQty' && <Usage data={usagePerfs} />}
+                        {content === 'fee' && <AmountUsed data={amountUsedPerfs} />}
+                    </Card>
+                </div>
             )}
         </div>
     );
