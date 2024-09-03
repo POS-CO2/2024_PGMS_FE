@@ -11,7 +11,7 @@ import { pjtColumns, pjtSalesColumns } from '../../../assets/json/tableColumn';
 import axiosInstance from '../../../utils/AxiosInstance';
 
 export default function Rm() {
-    const [formData, setFormData] = useState([]);         // 검색 데이터(프로젝트 조회 결과)
+    const [formData, setFormData] = useState();           // 검색 데이터(프로젝트 조회 결과)
     const [salesAmts, setSalesAmts] = useState([]);       // 조회 결과(매출액 목록 리스트)
     const [selectedSA, setSelectedSA] = useState(null);   // 선택된 매출액(pk column only)
 
@@ -33,7 +33,7 @@ export default function Rm() {
 
     // 조회 버튼 클릭시 호출될 함수
     const handleFormSubmit = async (data) => {
-        setFormData([data.searchProject]);
+        setFormData(data);
         const response = await axiosInstance.get(`/pjt/sales?pjtId=${data.searchProject.id}&year=${data.searchYear}`);
 
         // data가 빈 배열인지 확인
@@ -66,9 +66,9 @@ export default function Rm() {
                 <Card sx={{ width: "100%", height: "100%", borderRadius: "15px"}}>
                     <div className={tableStyles.table_title}>조회결과</div>
                     <Table 
-                        data={formData}
+                        data={[formData.searchProject]}
                         columns={pjtColumns}
-                        key={JSON.stringify(formData)} // formData 변경 시 key 변경되어 리렌더링
+                        key={JSON.stringify(formData.searchProject)} // formData 변경 시 key 변경되어 리렌더링
                     />                    
                     <TableCustomDoubleClickEdit 
                         title='매출액목록' 
@@ -80,6 +80,8 @@ export default function Rm() {
                         onRowClick={handleSAClick}
                         selectedRows={[selectedSA]}
                         pageType="rm"
+                        handleFormSubmit={handleFormSubmit}
+                        formData={formData}
                     />
                 </Card>
             )}

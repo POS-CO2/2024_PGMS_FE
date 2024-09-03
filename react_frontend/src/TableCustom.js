@@ -106,7 +106,9 @@ export function TableCustomDoubleClickEdit({
     table = true,
     columns = [],
     modalPagination = false,
-    pageType
+    pageType,
+    handleFormSubmit = () => {},
+    formData = []
 }) {
     const [isEditing, setIsEditing] = useState(false); // 'Edit' 모드 상태 관리
     const [editableData, setEditableData] = useState(data); // 수정된 데이터 저장
@@ -144,7 +146,7 @@ export function TableCustomDoubleClickEdit({
                     pjtId: row.pjtId,
                     year: row.year,
                     mth: row.mth,
-                    salesAmt: row.salesAmt
+                    salesAmt: parseInt((row.salesAmt ).replace(/,/g, ''), 10), // 쉼표를 제거하고 정수로 변환
                 }));
 
                 const response = await axiosInstance.put("/pjt/sales", requestBody);
@@ -152,6 +154,10 @@ export function TableCustomDoubleClickEdit({
                 swalOptions.title = '성공!',
                 swalOptions.text = '매출액이 성공적으로 수정되었습니다.';
                 swalOptions.icon = 'success';
+
+                // 수정된 데이터로 테이블 갱신
+                handleFormSubmit(formData);
+
             } catch (error) {
                 swalOptions.title = '실패!',
                 swalOptions.text = '매출액 수정에 실패하였습니다.';
@@ -204,12 +210,15 @@ export function TableCustomDoubleClickEdit({
                     };
                 });
 
-                console.log(requestBody);
                 const response = await axiosInstance.put("/perf", requestBody);
 
                 swalOptions.title = '성공!',
                 swalOptions.text = '활동량이 성공적으로 수정되었습니다.';
                 swalOptions.icon = 'success';
+
+                // 수정된 데이터로 테이블 갱신
+                handleFormSubmit(formData);
+
             } catch (error) {
                 swalOptions.title = '실패!',
                 swalOptions.text = '활동량 수정에 실패하였습니다.';
@@ -258,12 +267,15 @@ export function TableCustomDoubleClickEdit({
                     };
                 });
 
-                console.log(requestBody);
                 const response = await axiosInstance.put("/perf", requestBody);
 
                 swalOptions.title = '성공!',
                 swalOptions.text = '활동량이 성공적으로 수정되었습니다.';
                 swalOptions.icon = 'success';
+
+                // 수정된 데이터로 테이블 갱신
+                handleFormSubmit(formData);
+
             } catch (error) {
                 swalOptions.title = '실패!',
                 swalOptions.text = '활동량 수정에 실패하였습니다.';

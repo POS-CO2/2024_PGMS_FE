@@ -139,6 +139,170 @@ export default function Ps_1_2() {
         }
     };
 
+    function Usage({ data }) {
+
+        const [isModalOpen, setIsModalOpen] = useState(false);
+        const showModal = () => {
+            setIsModalOpen(true);
+        };
+        const handleOk = (data) => {
+            // 결과 처리
+            setIsModalOpen(false);
+        };
+        const handleCancel = () => {
+            setIsModalOpen(false);
+        };
+    
+        const onUploadExcelClick = () => {
+            console.log("onUploadExcelClick");
+            showModal();
+        };
+    
+        const onDownloadExcelFormClick = (csvData) => {
+            const fileName = `사용량 엑셀 양식_${formData.actvYear}`;
+    
+            // CSV 변환 함수
+            const csvRows = [];
+            
+            // 헤더 생성 (perfColumns 순서대로, quantityList 제외, '년도' 맨앞에 추가)
+            const headers = ['년도'].concat(
+                perfColumns.filter(column => column.key !== 'quantityList')
+                           .map(column => column.label)
+            );
+            csvRows.push(headers.join(','));
+            
+            // 데이터 생성
+            for (const row of csvData) {
+                const values = [`"${formData.actvYear}"`].concat(
+                    perfColumns.filter(column => column.key !== 'quantityList')
+                               .map(column => {
+                                   const value = row[column.key] || '';
+                                   const escaped = ('' + value).replace(/"/g, '\\"');
+                                   return `"${escaped}"`;
+                               })
+                );
+                csvRows.push(values.join(','));
+            }
+            
+            // CSV 파일 생성
+            const csvString = csvRows.join('\n');
+            const blob = new Blob([csvString], { type: 'text/csv' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.setAttribute('hidden', '');
+            a.setAttribute('href', url);
+            a.setAttribute('download', `${fileName}.csv`);
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+        };
+    
+        return (
+            <Card sx={{ width: "100%", height: "100%", borderRadius: "15px" }}>
+                <TableCustomDoubleClickEdit
+                    columns={perfColumns}
+                    title="실적목록"
+                    data={data}
+                    buttons={['Edit', 'UploadExcel', 'DownloadExcelForm']}
+                    onClicks={[() => {}, onUploadExcelClick, () => onDownloadExcelFormClick(data)]}
+                    modals={[
+                        {
+                            modalType: 'Ps12UploadExcel',
+                            isModalOpen: isModalOpen,
+                            handleOk: handleOk,
+                            handleCancel: handleCancel
+                        }
+                    ]}
+                    pageType="ps12actvQty"
+                    handleFormSubmit={handleFormSubmit}
+                    formData={formData}
+                />
+            </Card>
+        )
+    }
+    
+    function AmountUsed({ data }) {
+    
+        const [isModalOpen, setIsModalOpen] = useState(false);
+        const showModal = () => {
+            setIsModalOpen(true);
+        };
+        const handleOk = (data) => {
+            // 결과 처리
+            setIsModalOpen(false);
+        };
+        const handleCancel = () => {
+            setIsModalOpen(false);
+        };
+    
+        const onUploadExcelClick = () => {
+            console.log("onUploadExcelClick2");
+            showModal();
+        };
+        
+        const onDownloadExcelFormClick = (csvData) => {
+            const fileName = `사용금액 엑셀 양식_${formData.actvYear}`;
+    
+            // CSV 변환 함수
+            const csvRows = [];
+            
+            // 헤더 생성 (perfColumns 순서대로, quantityList 제외, '년도' 맨앞에 추가)
+            const headers = ['년도'].concat(
+                perfColumns.filter(column => column.key !== 'quantityList')
+                           .map(column => column.label)
+            );
+            csvRows.push(headers.join(','));
+            
+            // 데이터 생성
+            for (const row of csvData) {
+                const values = [`"${formData.actvYear}"`].concat(
+                    perfColumns.filter(column => column.key !== 'quantityList')
+                               .map(column => {
+                                   const value = row[column.key] || '';
+                                   const escaped = ('' + value).replace(/"/g, '\\"');
+                                   return `"${escaped}"`;
+                               })
+                );
+                csvRows.push(values.join(','));
+            }
+            
+            // CSV 파일 생성
+            const csvString = csvRows.join('\n');
+            const blob = new Blob([csvString], { type: 'text/csv' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.setAttribute('hidden', '');
+            a.setAttribute('href', url);
+            a.setAttribute('download', `${fileName}.csv`);
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+        };
+    
+        return (
+            <Card sx={{ width: "100%", height: "100%", borderRadius: "15px" }}>
+                <TableCustomDoubleClickEdit
+                    columns={perfColumns}
+                    title="실적목록"
+                    data={data}
+                    buttons={['Edit', 'UploadExcel', 'DownloadExcelForm']}
+                    onClicks={[() => {}, onUploadExcelClick, () => onDownloadExcelFormClick(data)]}
+                    modals={[
+                        {
+                            modalType: 'Ps12UploadExcel',
+                            isModalOpen: isModalOpen,
+                            handleOk: handleOk,
+                            handleCancel: handleCancel
+                        }
+                    ]}
+                    pageType="ps12fee"
+                    handleFormSubmit={handleFormSubmit}
+                    formData={formData}
+                />
+            </Card>
+        )
+    }
+
     return (
         <div>
             <div className={mainStyle.breadcrumb}>
@@ -165,171 +329,10 @@ export default function Ps_1_2() {
                         <Radio.Button value="fee">사용금액</Radio.Button>
                     </Radio.Group>
 
-                    {content === 'actvQty' && <Usage data={usagePerfs} selectedYear={formData.actvYear} />}
-                    {content === 'fee' && <AmountUsed data={amountUsedPerfs} selectedYear={formData.actvYear} />}
+                    {content === 'actvQty' && <Usage data={usagePerfs} />}
+                    {content === 'fee' && <AmountUsed data={amountUsedPerfs} />}
                 </>
             )}
         </div>
     );
-}
-
-
-function Usage({ data, selectedYear }) {
-
-    const [isModalOpen, setIsModalOpen] = useState(false);
-    const showModal = () => {
-        setIsModalOpen(true);
-    };
-    const handleOk = (data) => {
-        // 결과 처리
-        setIsModalOpen(false);
-    };
-    const handleCancel = () => {
-        setIsModalOpen(false);
-    };
-
-    const onUploadExcelClick = () => {
-        console.log("onUploadExcelClick");
-        showModal();
-    };
-
-    const onDownloadExcelFormClick = (csvData) => {
-        const fileName = `사용량 엑셀 양식_${selectedYear}`;
-
-        // CSV 변환 함수
-        const csvRows = [];
-        
-        // 헤더 생성 (perfColumns 순서대로, quantityList 제외, '년도' 맨앞에 추가)
-        const headers = ['년도'].concat(
-            perfColumns.filter(column => column.key !== 'quantityList')
-                       .map(column => column.label)
-        );
-        csvRows.push(headers.join(','));
-        
-        // 데이터 생성
-        for (const row of csvData) {
-            const values = [`"${selectedYear}"`].concat(
-                perfColumns.filter(column => column.key !== 'quantityList')
-                           .map(column => {
-                               const value = row[column.key] || '';
-                               const escaped = ('' + value).replace(/"/g, '\\"');
-                               return `"${escaped}"`;
-                           })
-            );
-            csvRows.push(values.join(','));
-        }
-        
-        // CSV 파일 생성
-        const csvString = csvRows.join('\n');
-        const blob = new Blob([csvString], { type: 'text/csv' });
-        const url = window.URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.setAttribute('hidden', '');
-        a.setAttribute('href', url);
-        a.setAttribute('download', `${fileName}.csv`);
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-    };
-
-    return (
-        <Card sx={{ width: "100%", height: "100%", borderRadius: "15px" }}>
-            <TableCustomDoubleClickEdit
-                columns={perfColumns}
-                title="실적목록"
-                data={data}
-                buttons={['Edit', 'UploadExcel', 'DownloadExcelForm']}
-                onClicks={[() => {}, onUploadExcelClick, () => onDownloadExcelFormClick(data)]}
-                modals={[
-                    {
-                        modalType: 'Ps12UploadExcel',
-                        isModalOpen: isModalOpen,
-                        handleOk: handleOk,
-                        handleCancel: handleCancel
-                    }
-                ]}
-                pageType="ps12actvQty"
-            />
-        </Card>
-    )
-}
-
-function AmountUsed({ data, selectedYear }) {
-
-    const [isModalOpen, setIsModalOpen] = useState(false);
-    const showModal = () => {
-        setIsModalOpen(true);
-    };
-    const handleOk = (data) => {
-        // 결과 처리
-        setIsModalOpen(false);
-    };
-    const handleCancel = () => {
-        setIsModalOpen(false);
-    };
-
-    const onUploadExcelClick = () => {
-        console.log("onUploadExcelClick2");
-        showModal();
-    };
-    
-    const onDownloadExcelFormClick = (csvData) => {
-        const fileName = `사용금액 엑셀 양식_${selectedYear}`;
-
-        // CSV 변환 함수
-        const csvRows = [];
-        
-        // 헤더 생성 (perfColumns 순서대로, quantityList 제외, '년도' 맨앞에 추가)
-        const headers = ['년도'].concat(
-            perfColumns.filter(column => column.key !== 'quantityList')
-                       .map(column => column.label)
-        );
-        csvRows.push(headers.join(','));
-        
-        // 데이터 생성
-        for (const row of csvData) {
-            const values = [`"${selectedYear}"`].concat(
-                perfColumns.filter(column => column.key !== 'quantityList')
-                           .map(column => {
-                               const value = row[column.key] || '';
-                               const escaped = ('' + value).replace(/"/g, '\\"');
-                               return `"${escaped}"`;
-                           })
-            );
-            csvRows.push(values.join(','));
-        }
-        
-        // CSV 파일 생성
-        const csvString = csvRows.join('\n');
-        const blob = new Blob([csvString], { type: 'text/csv' });
-        const url = window.URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.setAttribute('hidden', '');
-        a.setAttribute('href', url);
-        a.setAttribute('download', `${fileName}.csv`);
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-    };
-
-    return (
-        <Card sx={{ width: "100%", height: "100%", borderRadius: "15px" }}>
-            <TableCustomDoubleClickEdit
-                columns={perfColumns}
-                title="실적목록"
-                data={data}
-                buttons={['Edit', 'UploadExcel', 'DownloadExcelForm']}
-                onClicks={[() => {}, onUploadExcelClick, () => onDownloadExcelFormClick(data)]}
-                modals={[
-                    {
-                        modalType: 'Ps12UploadExcel',
-                        isModalOpen: isModalOpen,
-                        handleOk: handleOk,
-                        handleCancel: handleCancel
-                    }
-                ]}
-                pageType="ps12fee"
-            />
-        </Card>
-    )
 }
