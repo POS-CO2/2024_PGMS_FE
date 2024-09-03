@@ -149,7 +149,7 @@ export default function CustomizedTables({
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                            {
+                            {pagination ? (
                                 // 표에 data 채우기
                                 paginatedData.map((row, rowIndex) => (
                                     <StyledTableRow 
@@ -193,7 +193,38 @@ export default function CustomizedTables({
                                             ))
                                         }
                                     </StyledTableRow>
-                                ))
+                                ))) :
+                                (
+                                    filteredData.map((row, index) => (
+                                        <StyledTableRow 
+                                            key={index}
+                                            selected={
+                                                variant === 'checkbox' 
+                                                ? selectedRows.includes(index) 
+                                                : selectedRow === index
+                                            }
+                                            onClick={(e) => handleRowClick(index, e)}
+                                        >
+                                            {   // checkbox가 있는 테이블이면 체크박스 셀 추가
+                                                variant === 'checkbox' && (
+                                                    <StyledTableCell>
+                                                        <StyledCheckbox 
+                                                            checked={selectedRows.includes(index)}
+                                                            onChange={() => handleCheckboxChange(index)}
+                                                        />
+                                                    </StyledTableCell>
+                                                )
+                                            }
+                                            {   // 데이터 값 채우기
+                                                Object.values(row).map((value, idx) => (
+                                                    <StyledTableCell key={idx} align="left">
+                                                        {value}
+                                                    </StyledTableCell>
+                                                ))
+                                            }
+                                        </StyledTableRow>
+                                    ))
+                                )
                             }
                         </TableBody>
                 </Table>
