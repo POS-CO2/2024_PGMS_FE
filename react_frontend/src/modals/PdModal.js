@@ -857,6 +857,13 @@ export function Ps12UploadExcelModal({ isModalOpen, handleOk, handleCancel }) { 
     const fileInputRef = useRef(null);
     const [fileList, setFileList] = useState([]);
 
+    // 모달 열 때마다 clear
+    useEffect(() => {
+        if (isModalOpen) {
+            setFileList([]);
+        }
+    }, [isModalOpen]);
+
     const onUploadClick = () => {
         if (fileInputRef.current) {
             fileInputRef.current.click();
@@ -1845,6 +1852,7 @@ export function SdAddModal({ isModalOpen, handleOk, handleCancel, rowData, yearS
         fileList: []
     });
 
+    // 모달 열 때마다 clear
     useEffect(() => {
         if (isModalOpen) {
             setFormData({
