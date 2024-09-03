@@ -261,6 +261,7 @@ export default function Esm() {
                                         handleOk={handleOk('SdAdd')}
                                         handleCancel={handleCancel('SdAdd')}
                                         rowData={selectedEmtn}
+                                        yearSelectOptions={yearSelectOptions}
                                     />
                                     <DeleteModal
                                         isModalOpen={isModalOpen.DeleteB}
@@ -275,6 +276,7 @@ export default function Esm() {
                                         isModalOpen={isModalOpen.SdShowDetails}
                                         handleOk={handleOk('SdShowDetails')}
                                         handleCancel={handleCancel('SdShowDetails')}
+                                        yearSelectOptions={yearSelectOptions}
                                     />
                                 </>
                             )

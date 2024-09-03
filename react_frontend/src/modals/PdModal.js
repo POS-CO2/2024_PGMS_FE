@@ -1837,7 +1837,7 @@ export function EsmAddModal({ isModalOpen, handleOk, handleCancel, rowData }) {
     )
 }
 
-export function SdAddModal({ isModalOpen, handleOk, handleCancel, rowData }) {
+export function SdAddModal({ isModalOpen, handleOk, handleCancel, rowData, yearSelectOptions }) {
     const [formData, setFormData] = useState({
         actvYear: new Date().getFullYear().toString(),
         actvMth: (new Date().getMonth() + 1).toString(),
@@ -1965,7 +1965,7 @@ export function SdAddModal({ isModalOpen, handleOk, handleCancel, rowData }) {
                             value={formData.actvYear}
                             onChange={(value) => setFormData(prevData => ({ ...prevData, actvYear: value }))}
                         >
-                            {selectYear.map(option => (
+                            {yearSelectOptions.map(option => (
                                 <Select.Option key={option.value} value={option.value}>
                                     {option.label}
                                 </Select.Option>
@@ -2047,7 +2047,7 @@ export function SdAddModal({ isModalOpen, handleOk, handleCancel, rowData }) {
     )
 }
 
-export function SdShowDetailsModal({ selectedSd, isModalOpen, handleOk, handleCancel }) {
+export function SdShowDetailsModal({ selectedSd, isModalOpen, handleOk, handleCancel, yearSelectOptions }) {
     const [formData, setFormData] = useState({
         actvYear: '',
         actvMth: '',
@@ -2255,7 +2255,7 @@ export function SdShowDetailsModal({ selectedSd, isModalOpen, handleOk, handleCa
                             onChange={(value) => setFormData(prevData => ({ ...prevData, actvYear: value }))}
                             disabled={true} // 항상 비활성화
                         >
-                            {selectYear.map(option => (
+                            {yearSelectOptions.map(option => (
                                 <Select.Option key={option.value} value={option.value}>
                                     {option.label}
                                 </Select.Option>
