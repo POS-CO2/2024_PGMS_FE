@@ -108,7 +108,8 @@ export function TableCustomDoubleClickEdit({
     modalPagination = false,
     pageType = '',
     handleFormSubmit = () => {},
-    formData = []
+    formData = [],
+    startColumnMonth = 1
 }) {
     const [isEditing, setIsEditing] = useState(false); // 'Edit' 모드 상태 관리
     const [editableData, setEditableData] = useState(data); // 수정된 데이터 저장
@@ -315,7 +316,7 @@ export function TableCustomDoubleClickEdit({
 
     const handleInputChange = (e, rowIndex, colIndex) => {
         const newData = [...editableData];  // editableData 복사
-        const adjustedColIndex = pageType === 'rm' ? colIndex+3 : colIndex-4; // pageType에 따라 colIndex 조정
+        const adjustedColIndex = pageType === 'rm' ? colIndex+3 : colIndex-5+startColumnMonth; // pageType에 따라 colIndex 조정
         newData[rowIndex] = {
             ...newData[rowIndex],            // 해당 행 복사
             [Object.keys(newData[rowIndex])[adjustedColIndex]]: e.target.value // 특정 셀의 데이터만 업데이트(id 컬럼으로 인해 colIndex+1)
