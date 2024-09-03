@@ -2000,7 +2000,10 @@ export function SdAddModal({ isModalOpen, handleOk, handleCancel, rowData, yearS
                 </div>
                 <div className={sdStyles.upload_item}>
                     <div className={sdStyles.upload_header}>
-                        <div className={sdStyles.input_title}>첨부파일</div>
+                        <div className={sdStyles.input_title}>
+                            첨부파일
+                            <span className={sdStyles.requiredAsterisk}>*</span>
+                        </div>
                         <div>
                             <input
                                 type="file"
@@ -2279,6 +2282,16 @@ export function SdShowDetailsModal({ selectedSd, isModalOpen, handleOk, handleCa
                 </div>
                 <div className={sdStyles.input_item}>
                     <div className={sdStyles.input_title}>
+                        등록자
+                    </div>
+                    <input className={sdStyles.search} id="creator"
+                        value={selectedSd.creatorDeptCode+" / "+selectedSd.creatorName}
+                        onChange={(e) => setFormData(prevData => ({ ...prevData, name: e.target.value }))}
+                        disabled={true} // 항상 비활성화
+                    />
+                </div>
+                <div className={sdStyles.input_item}>
+                    <div className={sdStyles.input_title}>
                         자료명
                         <span className={sdStyles.requiredAsterisk}>*</span>
                     </div>
@@ -2290,7 +2303,10 @@ export function SdShowDetailsModal({ selectedSd, isModalOpen, handleOk, handleCa
                 </div>
                 <div className={sdStyles.upload_item}>
                     <div className={sdStyles.upload_header}>
-                        <div className={sdStyles.input_title}>첨부파일</div>
+                        <div className={sdStyles.input_title}>
+                            첨부파일
+                            <span className={sdStyles.requiredAsterisk}>*</span>
+                        </div>
                         <div>
                             <input
                                 type="file"

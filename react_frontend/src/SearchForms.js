@@ -92,7 +92,7 @@ export default function SearchForms({ onFormSubmit, formFields, onSearch, autoSu
                     />
                 )
             })}
-            <SearchBtn onClick={onSearch}/>
+            <SearchBtn /*onClick={onSearch}*//>
         </Form>
     );
 };
