@@ -13,8 +13,8 @@ import { ConstructionOutlined } from '@mui/icons-material';
 // TableCell을 스타일링하는 컴포넌트
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
-    backgroundColor: 'rgb(237,245,254)',
-    color: 'rgb(47, 107, 208)',
+    backgroundColor: '#0A7800',
+    color: '#FFFFFF',
     fontSize: '0.75rem',
     whiteSpace: 'nowrap', // 텍스트를 한 줄로 유지
     overflow: 'hidden', // 넘치는 내용을 숨기기
@@ -34,20 +34,20 @@ const StyledTableRow = styled(TableRow)(({ theme, selected, variant }) => ({
         border: 0,
     },
     '&:hover': {
-        backgroundColor: 'rgba(133, 187, 249, 0.4)', // 호버 시 배경색 설정
+        backgroundColor: '#E5F1E4', // 호버 시 배경색 설정
     },
     '&.Mui-selected': {
-        backgroundColor: selected && variant === 'default' ? 'rgba(63, 118, 247, 0.5) !important' : '#FFFFFF', // 선택된 상태에서 배경색 강제 적용 (default variant만)
+        backgroundColor: selected && variant === 'default' ? '#B7E4B3 !important' : '#FFFFFF', // 선택된 상태에서 배경색 강제 적용 (default variant만)
     },
 }));
 
 // Checkbox를 스타일링하는 컴포넌트
 const StyledCheckbox = styled(Checkbox)(({ theme, checked }) => ({
     '& .MuiSvgIcon-root': {
-      color: '#8B83BA',
+      color: '#0EAA00',
     },
     '&.Mui-checked .MuiSvgIcon-root': {
-      color: '#6D5BD0', // 체크된 상태 배경색
+      color: '#0EAA00', // 체크된 상태 배경색
     },
     '& .MuiCheckbox-root': {
       backgroundColor: '#FFFFFF', // 체크박스 배경색

@@ -19,7 +19,6 @@ export default function Fm() {
         
         setSelectedPjt([param.searchProject]);
         
-        console.log([param.searchProject]);
         const {data} = await axiosInstance.get(`/equip?pjtId=${param.searchProject.id}`);
         
         setFac(data);

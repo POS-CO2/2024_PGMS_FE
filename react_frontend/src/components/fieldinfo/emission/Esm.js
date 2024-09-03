@@ -14,14 +14,6 @@ import { SdAddModal, DeleteModal, SdShowDetailsModal } from "../../../modals/PdM
 import axiosInstance from '../../../utils/AxiosInstance';
 import { pjtColumns, equipEmissionColumns, equipDocumentColumns } from '../../../assets/json/tableColumn';
 
-const selectOptions = [
-    { value: '2024', label: '2024' },
-    { value: '2023', label: '2023' },
-    { value: '2022', label: '2022' },
-    { value: '2021', label: '2021' },
-    { value: '2020', label: '2020' }
-];
-
 export default function Esm() {
     const [formData, setFormData] = useState({});
 
@@ -31,13 +23,34 @@ export default function Esm() {
     const [selectedEmtn, setSelectedEmtn] = useState(null);           // 선택된 배출원
     const [showSds, setShowSds] = useState(false);                    // 증빙자료 목록을 표시할지 여부
     const [sds, setSds] = useState([]);                               // 증빙자료 목록
-    const [selectedSd, setSelectedSd] = useState(null);               // 선택된 증빙자료
-    const [selectedYear, setSelectedYear] = useState(new Date().getFullYear().toString()); // 선택된 연도
+    const [selectedSd, setSelectedSd] = useState({});               // 선택된 증빙자료
+    const [selectedYear, setSelectedYear] = useState(null); // 선택된 연도
+
+    const [yearSelectOptions, setYearSelectOptions] = useState([]);
+    useEffect(() => {
+        if (selectedPjt.length > 0) {
+            const yearOptions = [];
+            const currentYear = new Date().getFullYear();
+            const ctrtFrYear = selectedPjt[0].ctrtFrYear;
+            const ctrtToYear = Math.min(selectedPjt[0].ctrtToYear, currentYear);
+    
+            for (let year = ctrtToYear; year >= ctrtFrYear; year--) {
+                yearOptions.push({ value: year.toString(), label: year.toString() });
+            }
+    
+            setYearSelectOptions(yearOptions);
+            setSelectedYear(yearOptions[0].value);
+
+            setSelectedEmtn(null);
+            setSds([]);
+            setShowSds(false);
+            setSelectedSd({});
+        }
+    }, [selectedPjt]);
 
     const [buttonStatus, setButtonStatus] = useState([false, false, false]);
     useEffect(() => {
-        // selectedSd가 null인지 여부에 따라 버튼 상태를 설정
-        if (selectedSd === null) {
+        if (Object.keys(selectedSd).length === 0) {
             setButtonStatus([false, false, true]); // Add만 활성화
         } else {
             setButtonStatus([true, true, true]); // 모든 버튼 활성화
@@ -81,9 +94,10 @@ export default function Esm() {
 
     // 증빙자료 row 클릭 시 호출될 함수
     const handleSdClick = (row) => {
-        setSelectedSd(row);
-        if(!row) {
-            setSelectedSd(null);
+        if (row) {
+            setSelectedSd(row);
+        } else {
+            setSelectedSd({});
         }
     };
 
@@ -91,7 +105,7 @@ export default function Esm() {
         setIsModalOpen(prevState => ({ ...prevState, [modalType]: true }));
     };
     // modalType에 따라 결과 처리 해주기
-    const handleOk = (modalType) => (data, closeModal = true) => {
+    const handleOk = (modalType) => async (data, closeModal = true) => {
         if (closeModal) {
             setIsModalOpen(prevState => ({ ...prevState, [modalType]: false })); //모달 닫기
         }
@@ -107,9 +121,36 @@ export default function Esm() {
             setSelectedEmtn(null);
         }
 
+        else if (modalType === 'SdAdd') {
+            // 선택된 프로젝트 데이터를 상태로 저장, data가 배열이 아닌 경우 배열로 변환하여 추가
+            setSds(prevList => [...prevList, ...(Array.isArray(data) ? data : [data])]);
+
+            let url = `/equip/emission?projectId=${selectedPjt[0].id}`;
+            const emtnData = await axiosInstance.get(url);
+            setEmtns(emtnData.data);
+        }
+
+        else if (modalType === 'SdShowDetails') {
+            // 기존 데이터 중 선택된 Sd를 업데이트
+            setSds(prevList => prevList.map(sd => sd.id === data.id ? data : sd));
+
+            // 선택된 증빙자료 업데이트
+            const updatedSd = sds.find(sd => sd.id === data.id);
+            if (updatedSd) {
+                setSelectedSd(updatedSd);
+            }
+        }
+
         else if (modalType === 'DeleteB') {
-            setSds(prevList => prevList.filter(sd => sd.id !== data.id));
-            setSelectedSd(null);
+            setSds(prevList => {
+                const updatedList = prevList.filter(sd => sd.id !== data.id);
+                setSelectedSd({}); // 선택된 증빙자료 해제
+                return updatedList;
+            });
+
+            let url = `/equip/emission?projectId=${selectedPjt[0].id}`;
+            const emtnData = await axiosInstance.get(url);
+            setEmtns(emtnData.data);
         }
         
     };
@@ -189,6 +230,7 @@ export default function Esm() {
                                     }
                                 ]}
                                 selectedRows={[selectedEmtn]}
+                                keyProp={emtns.length}
                             />
                         </Card>
                         
@@ -201,7 +243,7 @@ export default function Esm() {
                                 <>
                                     <div className={esmStyles.select_button_container}>
                                         <Select defaultValue={selectedYear} onChange={handleYearChange}>
-                                            {selectOptions.map(option => (
+                                            {yearSelectOptions.map(option => (
                                                 <Select.Option key={option.value} value={option.value}>
                                                     {option.label}
                                                 </Select.Option>
@@ -212,12 +254,13 @@ export default function Esm() {
                                             onClicks={[onSdShowDetailsClick, onSdDeleteClick, onSdAddClick]}
                                             buttonStatus={buttonStatus} />
                                     </div>
-                                    <Table data={sds} onRowClick={handleSdClick} columns={equipDocumentColumns} />
+                                    <Table data={sds} onRowClick={handleSdClick} columns={equipDocumentColumns} key={sds.length}/>
 
                                     <SdAddModal
                                         isModalOpen={isModalOpen.SdAdd}
                                         handleOk={handleOk('SdAdd')}
                                         handleCancel={handleCancel('SdAdd')}
+                                        rowData={selectedEmtn}
                                     />
                                     <DeleteModal
                                         isModalOpen={isModalOpen.DeleteB}
