@@ -37,7 +37,7 @@ const CustomRadioGroup = styled(Radio.Group)`
 
 export default function Ps_1_2() {
     const [formFields, setFormFields] = useState(formField_ps12);
-    const [formData, setFormData] = useState(); // 검색 데이터
+    const [formData, setFormData] = useState({}); // 검색 데이터
     const [usagePerfs, setUsagePerfs] = useState([]);
     const [amountUsedPerfs, setAmountUsedPerfs] = useState([]);
     const [actvYearDisabled, setActvYearDisabled] = useState(true);  // 드롭다운 비활성화 상태 관리

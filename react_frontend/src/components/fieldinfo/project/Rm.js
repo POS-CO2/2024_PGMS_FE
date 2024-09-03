@@ -11,7 +11,7 @@ import { pjtColumns, pjtSalesColumns } from '../../../assets/json/tableColumn';
 import axiosInstance from '../../../utils/AxiosInstance';
 
 export default function Rm() {
-    const [formData, setFormData] = useState();           // 검색 데이터(프로젝트 조회 결과)
+    const [formData, setFormData] = useState({});           // 검색 데이터(프로젝트 조회 결과)
     const [salesAmts, setSalesAmts] = useState([]);       // 조회 결과(매출액 목록 리스트)
     const [selectedSA, setSelectedSA] = useState(null);   // 선택된 매출액(pk column only)
 

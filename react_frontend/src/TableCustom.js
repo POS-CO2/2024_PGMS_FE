@@ -106,7 +106,7 @@ export function TableCustomDoubleClickEdit({
     table = true,
     columns = [],
     modalPagination = false,
-    pageType,
+    pageType = '',
     handleFormSubmit = () => {},
     formData = []
 }) {
