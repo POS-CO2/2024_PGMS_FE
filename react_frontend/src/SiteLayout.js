@@ -64,21 +64,7 @@ const mapMenuDataToItems = (menuData) => {
 };
 
 export default function SiteLayout({handleLogout, menus, user}){
-<<<<<<< HEAD
-
-    const [tabs, setTabs] = useState(() => {
-        const savedTabs = localStorage.getItem('tabs');
-        return savedTabs ? JSON.parse(savedTabs) : [];
-    });
-    const [activeTab, setActiveTab] = useState(() => {
-        const savedActiveTab = localStorage.getItem('activeTab');
-        return savedActiveTab || null;
-    });
-
-    const [fav, setFav] = useState(false);
-=======
     const [fav, setFav] = useState(true);
->>>>>>> main
     const [loading, setLoading] = useState(false);
 
     const [collapsed, setCollapsed] = useState(false);

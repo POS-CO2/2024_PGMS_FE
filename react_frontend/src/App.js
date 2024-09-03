@@ -4,6 +4,8 @@ import { Routes, Route } from 'react-router';
 import { login } from './utils/Api';
 import SiteLayout from './SiteLayout';
 import Main from './Main';
+import Main_Hp from './Main_Hp';
+import Main_Admin from './Main_Admin';
 import Efm from './components/fieldinfo/Efm';
 import Ps_1_2 from './components/emperf/Ps_1_2';
 import Psq from './components/emperf/perflook/Psq';
@@ -79,37 +81,118 @@ export default function App() {
     if (loading) {
         return <div>Loading...</div>; // 로딩 상태일 때 표시할 화면
     }
-    console.log(menu);
-    return (
-        <Router>
-            <Routes>
-                {token ? (
-                    <Route path='/' element={<SiteLayout handleLogout={handleLogout} menus={menu} user={user} />}>
-                        <Route index path='' element={<Main />} />
-                        <Route path='/ps_1_2' element={<Ps_1_2 />} />
-                        <Route path='/efm' element={<Efm />} />
-                        <Route path='/psq' element={<Psq />} />
-                        <Route path='/tep' element={<Tep />} />
-                        <Route path='/pmg' element={<Pmg />} />
-                        <Route path='/pd' element={<Pd />} />
-                        <Route path='/pg' element={<Pg />} />
-                        <Route path='/rm' element={<Rm />} />
-                        <Route path='/fm' element={<Fm />} />
-                        <Route path='/fad' element={<Fad />} />
-                        <Route path='/fam' element={<Fam />} />
-                        <Route path='/fl' element={<Fl />} />
-                        <Route path='/esm' element={<Esm />} />
-                        <Route path='/sd' element={<Sd />} />
-                        <Route path='/cm' element={<Cm />} />
-                        <Route path='/um' element={<Um />} />
-                        <Route path='/mm' element={<Mm menus={menu} handleMenuSet={handleMenuSet} />} />
-                        <Route path='/mal' element={<Mal />} />
-                        <Route path='*' element={<Error404 />} />
-                    </Route>
-                ) : (
-                    <Route path='*' element={<Login handleLogin={handleLogin} />} />
-                )}
-            </Routes>
-        </Router>
-    );
+    
+    // if (user.role === 'HP'){
+    //     return (
+    //         <Router>
+    //             <Routes>
+    //                 {token ? (
+    //                     <Route path='/' element={<SiteLayout handleLogout={handleLogout} menus={menu} user={user} />}>
+    //                         <Route index path='' element={<Main_Hp />} />
+    //                         <Route path='/ps_1_2' element={<Ps_1_2 />} />
+    //                         <Route path='/efm' element={<Efm />} />
+    //                         <Route path='/psq' element={<Psq />} />
+    //                         <Route path='/tep' element={<Tep />} />
+    //                         <Route path='/pmg' element={<Pmg />} />
+    //                         <Route path='/pd' element={<Pd />} />
+    //                         <Route path='/pg' element={<Pg />} />
+    //                         <Route path='/rm' element={<Rm />} />
+    //                         <Route path='/fm' element={<Fm />} />
+    //                         <Route path='/fad' element={<Fad />} />
+    //                         <Route path='/fam' element={<Fam />} />
+    //                         <Route path='/fl' element={<Fl />} />
+    //                         <Route path='/esm' element={<Esm />} />
+    //                         <Route path='/sd' element={<Sd />} />
+    //                         <Route path='/cm' element={<Cm />} />
+    //                         <Route path='/um' element={<Um />} />
+    //                         <Route path='/mm' element={<Mm menus={menu} handleMenuSet={handleMenuSet} />} />
+    //                         <Route path='/mal' element={<Mal />} />
+    //                         <Route path='*' element={<Error404 />} />
+    //                     </Route>
+    //                 ) : (
+    //                     <Route path='*' element={<Login handleLogin={handleLogin} />} />
+    //                 )}
+    //             </Routes>
+    //         </Router>
+    //     );
+    // }
+    // else if (user.role === 'ADMIN'){
+    //     return (
+    //         <Router>
+    //             <Routes>
+    //                 {token ? (
+    //                     <Route path='/' element={<SiteLayout handleLogout={handleLogout} menus={menu} user={user} />}>
+    //                         <Route index path='' element={<Main_Admin />} />
+    //                         <Route path='/ps_1_2' element={<Ps_1_2 />} />
+    //                         <Route path='/efm' element={<Efm />} />
+    //                         <Route path='/psq' element={<Psq />} />
+    //                         <Route path='/tep' element={<Tep />} />
+    //                         <Route path='/pmg' element={<Pmg />} />
+    //                         <Route path='/pd' element={<Pd />} />
+    //                         <Route path='/pg' element={<Pg />} />
+    //                         <Route path='/rm' element={<Rm />} />
+    //                         <Route path='/fm' element={<Fm />} />
+    //                         <Route path='/fad' element={<Fad />} />
+    //                         <Route path='/fam' element={<Fam />} />
+    //                         <Route path='/fl' element={<Fl />} />
+    //                         <Route path='/esm' element={<Esm />} />
+    //                         <Route path='/sd' element={<Sd />} />
+    //                         <Route path='/cm' element={<Cm />} />
+    //                         <Route path='/um' element={<Um />} />
+    //                         <Route path='/mm' element={<Mm menus={menu} handleMenuSet={handleMenuSet} />} />
+    //                         <Route path='/mal' element={<Mal />} />
+    //                         <Route path='*' element={<Error404 />} />
+    //                     </Route>
+    //                 ) : (
+    //                     <Route path='*' element={<Login handleLogin={handleLogin} />} />
+    //                 )}
+    //             </Routes>
+    //         </Router>
+    //     );
+    // }
+    // else {
+        return (
+            <Router>
+                <Routes>
+                    {token ? (
+                        <Route path='/' element={<SiteLayout handleLogout={handleLogout} menus={menu} user={user} />}>
+                            {
+                                user.role  === 'ADMIN' 
+                                ? 
+                                <Route index path='' element={<Main_Admin />} /> 
+                                : 
+                                (user.role === 'HP' 
+                                ? 
+                                <Route index path='' element={<Main_Hp />} /> 
+                                : 
+                                <Route index path='' element={<Main />} />)
+                            }
+                            <Route path='/ps_1_2' element={<Ps_1_2 />} />
+                            <Route path='/efm' element={<Efm />} />
+                            <Route path='/psq' element={<Psq />} />
+                            <Route path='/tep' element={<Tep />} />
+                            <Route path='/pmg' element={<Pmg />} />
+                            <Route path='/pd' element={<Pd />} />
+                            <Route path='/pg' element={<Pg />} />
+                            <Route path='/rm' element={<Rm />} />
+                            <Route path='/fm' element={<Fm />} />
+                            <Route path='/fad' element={<Fad />} />
+                            <Route path='/fam' element={<Fam />} />
+                            <Route path='/fl' element={<Fl />} />
+                            <Route path='/esm' element={<Esm />} />
+                            <Route path='/sd' element={<Sd />} />
+                            <Route path='/cm' element={<Cm />} />
+                            <Route path='/um' element={<Um />} />
+                            <Route path='/mm' element={<Mm menus={menu} handleMenuSet={handleMenuSet} />} />
+                            <Route path='/mal' element={<Mal />} />
+                            <Route path='*' element={<Error404 />} />
+                        </Route>
+                    ) : (
+                        <Route path='*' element={<Login handleLogin={handleLogin} />} />
+                    )}
+                </Routes>
+            </Router>
+        );
+    // } 
+    
 }
