@@ -9,7 +9,6 @@ import Main from './Main';
 import Language from './Language';
 import styled from 'styled-components';
 import * as headerStyles from "./assets/css/header.css";
-//cal(100%-140px)
 
 const ITEM_TYPE = 'TAB';
 
@@ -17,10 +16,20 @@ const TabsWrapper = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-top: 18px;
-  margin-left: 28px;
-  padding-right: 16px; /* 탭과 유저 정보 사이의 간격 */
   overflow: hidden; /* 탭이 영역을 벗어나지 않도록 설정 */
+  width: 100%;
+`;
+
+const TabContainer = styled.div`
+  display: flex;
+  flex-wrap: nowrap
+  flex-shrink: 1;
+  max-width: calc(100% - 160px);
+  width: 100%;
+  padding-top: 18px;
+  padding-left: 28px;
+  padding-right: 16px; /* 탭과 유저 정보 사이의 간격 */
+  overflow-x: auto;
 `;
 
 const TopRightWrapper = styled.div`
@@ -65,6 +74,9 @@ const StyledButton = styled(Button)`
 const StyledTabs = styled(Tabs)`
   .ant-tabs-tab {
     font-weight: bold;
+    flex-shrink: 1;
+    min-width: 20px;
+    overflow: hidden;
   }
 
   .ant-tabs-tab:hover .ant-tabs-tab-btn {
@@ -81,6 +93,14 @@ const StyledTabs = styled(Tabs)`
 
   .ant-tabs-nav-more {
     display: none !important; /* ...을 숨기기 위해 설정 */
+  }
+
+  .ant-tabs-nav {
+    display: flex;
+    flex-wrap: nowrap;
+    overflow-x: auto; /* 탭이 많아지면 스크롤 */
+    white-space: nowrap; /* 탭이 한 줄에 나열되도록 설정 */
+    width: 100%;
   }
 `;
 
@@ -254,15 +274,16 @@ const TabsContainer = forwardRef(({ handleLogout, user }, ref) => {
   return (
     <DndProvider backend={HTML5Backend}>
       <TabsWrapper>
-        <StyledTabs
-          activeKey={activeKey}
-          onChange={onTabChange}
-          items={tabsData}
-          hideAdd
-          moreIcon={null}
-        />
+        <TabContainer>
+          <StyledTabs
+            activeKey={activeKey}
+            onChange={onTabChange}
+            items={tabsData}
+            hideAdd
+            moreIcon={null}
+          />
+        </TabContainer>
         <TopRightWrapper>
-          {/* <Language /> */}
           <Dropdown overlay={languageMenu} trigger={['click']} placement="bottomCenter">
             <GTranslateIcon style={{ cursor: 'pointer', color: '#0A7800', fontSize: '30px' }} />
           </Dropdown>

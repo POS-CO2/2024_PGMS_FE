@@ -13,10 +13,13 @@ import {
   } from '@ant-design/icons';
 import axiosInstance from './utils/AxiosInstance';
 
-const LayoutContainer = styled.div`
-  display: flex;
-  height: 100vh;
-  overflow-y: auto; 
+const StyledTabsContainer = styled(TabsContainer)`
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    max-width: 100%;
+    width: 100%;
+    overflow-x: hidden;
 `;
 
 const ContentContainer = styled.div`
@@ -24,7 +27,9 @@ const ContentContainer = styled.div`
   display: flex;
   flex-direction: column;
   max-width: 100%;
+  width: 100%;
   background-color: #F5F5F5;
+  overflow: hidden;
 `;
 
 const mapMenuDataToItems = (menuData) => {
@@ -108,30 +113,30 @@ export default function SiteLayout({handleLogout, menus, user}){
 
     if (loading) {
         return (
-        <div id={mainStyles.root}>
-            <Sidebar
-                collapsed={collapsed}
-                toggleCollapsed={toggleCollapsed}
-                onMenuClick={handleMenuClick}
-                items={items}
-                openKeys={openKeys}
-                onOpenChange={handleOpenChange}
-            />
-            <ContentContainer>
-                <TabsContainer 
-                    handleLogout={handleLogout} 
-                    user={user} 
-                    ref={tabsContainerRef} 
+            <div id={mainStyles.root}>
+                <Sidebar
+                    collapsed={collapsed}
+                    toggleCollapsed={toggleCollapsed}
+                    onMenuClick={handleMenuClick}
+                    items={items}
+                    openKeys={openKeys}
+                    onOpenChange={handleOpenChange}
                 />
-                <Outlet />
-                <Favorite handleFavClick={handleFavClick} fav={fav}/>
-            </ContentContainer>
-        </div>
+                <ContentContainer>
+                    <StyledTabsContainer 
+                        handleLogout={handleLogout} 
+                        user={user} 
+                        ref={tabsContainerRef} 
+                    />
+                    <Outlet />
+                    <Favorite handleFavClick={handleFavClick} fav={fav}/>
+                </ContentContainer>
+            </div>
         );
     }
 
     return (
-        <LayoutContainer>
+        <div id={mainStyles.root}>
             <Sidebar
                 collapsed={collapsed}
                 toggleCollapsed={toggleCollapsed}
@@ -151,6 +156,6 @@ export default function SiteLayout({handleLogout, menus, user}){
                 </div>
                 <Favorite handleFavClick={handleFavClick} fav={fav}/>
             </ContentContainer>
-        </LayoutContainer>
+        </div>
     );
 }

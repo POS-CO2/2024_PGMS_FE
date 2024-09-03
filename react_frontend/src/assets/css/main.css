@@ -3,13 +3,14 @@
 
 }
 
-#root{
-    display:flex;
-    height:100vh;
+#root {
+    display: flex;
+    height: 100vh;
     overflow: hidden;
     font-family: 'Pretendard-Regular';
     font-weight: 400;
     font-style: normal;
+    width: 100%;
 }
 
 a {
