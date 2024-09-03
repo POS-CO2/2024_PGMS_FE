@@ -214,6 +214,7 @@ const TabsContainer = forwardRef(({ handleLogout, user }, ref) => {
     } else {
       navigate(path);
     }
+    localStorage.setItem('activeTab', path);
   };
 
   const removeTab = targetKey => {
@@ -239,7 +240,14 @@ const TabsContainer = forwardRef(({ handleLogout, user }, ref) => {
     }
 
     setTabs(newTabs);
+
+    // If the active tab was the one removed, switch to the home tab
+    if (!newTabs.length || newActiveKey === '') {
+      newActiveKey = '';
+    }
+
     setActiveKey(newActiveKey);
+    navigate(newActiveKey);
   };
 
   const moveTabNode = (dragIndex, hoverIndex) => {
