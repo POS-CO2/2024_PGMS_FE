@@ -5,7 +5,7 @@ import Sidebar from './Sidebar';
 import Favorite from "./Favorite";
 import TabsContainer from './TabsContainer';
 import  * as mainStyles from './assets/css/main.css';
-import  * as headerStyles from './assets/css/header.css';
+
 import {
     AppstoreOutlined,
     MailOutlined,

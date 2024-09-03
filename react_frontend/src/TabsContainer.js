@@ -8,7 +8,6 @@ import { HTML5Backend } from 'react-dnd-html5-backend';
 import Main from './Main';
 import Language from './Language';
 import styled from 'styled-components';
-import * as headerStyles from "./assets/css/header.css";
 
 const ITEM_TYPE = 'TAB';
 
@@ -55,6 +54,11 @@ const Row = styled.div`
   justify-content: space-between;
   align-items: center;
   color: #000;
+
+  img {
+    width: 40px;
+    height: 40px;
+  }
 `;
 
 const StyledButton = styled(Button)`
@@ -68,6 +72,19 @@ const StyledButton = styled(Button)`
   &:hover {
     color: #8AC784 !important; /* 호버 시 텍스트 색상 */
     border-color: #777777; /* 호버 시 보더 색상 유지 */
+  }
+`;
+
+const Photo = styled.div`
+  display: flex;
+  background-color: antiquewhite;
+  border-radius: 70%;
+  margin-left: 10px;
+  margin-right: 10px;
+
+  img {
+    width: 40px;
+    height: 40px;
   }
 `;
 
@@ -289,9 +306,9 @@ const TabsContainer = forwardRef(({ handleLogout, user }, ref) => {
           </Dropdown>
           <Dropdown overlay={menu} trigger={['click']} placement="bottomRight">
             <UserInfo>
-              <div className={headerStyles.photo}>
+              <Photo>
                 <img src="http://sanriokorea.co.kr/wp-content/themes/sanrio/images/kuromi.png" alt="User" />
-              </div>
+              </Photo>
             </UserInfo>
           </Dropdown>
         </TopRightWrapper>
