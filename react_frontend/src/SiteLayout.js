@@ -27,7 +27,8 @@ const ContentContainer = styled.div`
   display: flex;
   flex-direction: column;
   max-width: 100%;
-  width: 100%;
+  width: calc(100% - 12.5rem);
+  height: 100vh;
   background-color: #F5F5F5;
   overflow: hidden;
 `;
@@ -151,7 +152,7 @@ export default function SiteLayout({handleLogout, menus, user}){
                     user={user} 
                     ref={tabsContainerRef} 
                 />
-                <div style={{ padding: '2px', overflowY: 'auto' }}>
+                <div style={{ overflowY: 'auto' }}>
                     <Outlet />
                 </div>
                 <Favorite handleFavClick={handleFavClick} fav={fav}/>
