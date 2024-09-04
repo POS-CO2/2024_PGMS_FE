@@ -320,23 +320,35 @@ export default function Ps_1_2() {
     
             // CSV 변환 함수
             const csvRows = [];
-            
-            // 헤더 생성 (dynamicPerfColumns 순서대로, quantityList 제외, '년도' 맨앞에 추가)
-            const headers = ['년도'].concat(
-                dynamicPerfColumns.filter(column => column.key !== 'quantityList')
-                           .map(column => column.label)
-            );
+
+            // 월 헤더 생성
+            const monthHeaders = Array.from({ length: 12 }, (_, i) => `${i + 1}월`);
+            // perfColumns에서 quantityList를 제외한 나머지 칼럼 필터링
+            const nonQuantityColumns = perfColumns
+                                        .filter(column => column.key !== 'quantityList')
+                                        .map(column => column.label);
+
+            // 헤더 생성 (년도 + non-quantity 칼럼 + 월 칼럼)
+            const headers = ['년도'].concat(nonQuantityColumns, monthHeaders);
             csvRows.push(headers.join(','));
             
             // 데이터 생성
             for (const row of csvData) {
                 const values = [`"${formData.actvYear}"`].concat(
-                    dynamicPerfColumns.filter(column => column.key !== 'quantityList')
-                               .map(column => {
-                                   const value = row[column.key] || '';
-                                   const escaped = ('' + value).replace(/"/g, '\\"');
-                                   return `"${escaped}"`;
-                               })
+                    nonQuantityColumns.map(label => {
+                        const key = perfColumns.find(column => column.label === label)?.key || '';
+                        const value = row[key] || ''; // 데이터에서 해당 값 가져옴
+                        const escaped = ('' + value).replace(/"/g, '\\"');
+                        return `"${escaped}"`;
+                    }),
+                    monthHeaders.map((_, index) => {
+                        // 월별 데이터 추출
+                        const month = (index + 1).toString();
+                        const key = {month}; // 데이터에서 월별 값을 얻기 위한 키
+                        const value = row[key] || ''; // 데이터에서 해당 월의 값을 가져옴
+                        const escaped = ('' + value).replace(/"/g, '\\"');
+                        return `"${escaped}"`;
+                    })
                 );
                 csvRows.push(values.join(','));
             }
