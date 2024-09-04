@@ -339,6 +339,7 @@ export default function Ps_1_2() {
             
             // 데이터 생성
             for (const row of csvData) {
+                // 월별 값을 포함한 데이터 배열
                 const values = [`"${formData.actvYear}"`].concat(
                     nonQuantityColumns.map(label => {
                         const key = perfColumns.find(column => column.label === label)?.key || '';
@@ -349,8 +350,8 @@ export default function Ps_1_2() {
                     monthHeaders.map((_, index) => {
                         // 월별 데이터 추출
                         const month = (index + 1).toString();
-                        const key = {month}; // 데이터에서 월별 값을 얻기 위한 키
-                        const value = row[key] || ''; // 데이터에서 해당 월의 값을 가져옴
+                        const monthData = row.quantityList?.find(item => item.actvMth === month); // quantityList에서 월 데이터를 찾음
+                        const value = monthData ? monthData.formattedFee || '' : ''; // 해당 월의 데이터를 가져옴
                         const escaped = ('' + value).replace(/"/g, '\\"');
                         return `"${escaped}"`;
                     })
