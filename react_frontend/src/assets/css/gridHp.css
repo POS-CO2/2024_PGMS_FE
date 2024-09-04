@@ -1,6 +1,7 @@
 .maingrid {
     display: flex;
-    width: calc(100vw - 12.5rem);
+    /* width: calc(100vw - 12.5rem); */
+    width: 100%;
     height: 93vh;
 }
 
@@ -24,20 +25,23 @@
     display: flex;
     width: 100%;
     height: 50%;
-    background-color: aqua;
 }
 
 .left_box_bottom {
-    display: flex;
-    flex-direction: row;
     width: 100%;
     height: 25%;
     overflow-x: auto;
     white-space: nowrap;
     scrollbar-width: none;
-    gap: 5rem;
+    mask-image: linear-gradient(to right, rgba(0, 0, 0, 1) 90%, rgba(0, 0, 0, 0) 100%);
+    -webkit-mask-image: linear-gradient(to right, rgba(0, 0, 0, 1) 90%, rgba(0, 0, 0, 0) 100%);
 }
 
 .left_box_bottom::-webkit-scrollbar {
     display: none;
+}
+
+.right_box {
+    width: 25%;
+    height: 100%;
 }
