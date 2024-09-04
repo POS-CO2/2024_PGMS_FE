@@ -10,6 +10,7 @@ import 'swiper/css/effect-coverflow';
 import * as gridStyles from './assets/css/gridHp.css'
 import styled from 'styled-components';
 import axiosInstance from './utils/AxiosInstance';
+import { KeyboardArrowDown, KeyboardArrowUp, KeyboardDoubleArrowDown, KeyboardDoubleArrowUp } from '@mui/icons-material';
 
 const StyledChart = styled.div`
     .apexcharts-canvas {
@@ -38,25 +39,10 @@ const StyledRoot = styled.div`
             width: 100%;
             height: 100%;
         },
-        // &-slide-active{
-        // }
-        // &-slide-next {
-        //     width: 100%;
-        //     height: 95%;
-        //     margin: auto 0;
-        // }
-        // &-slide-prev {
-        //     width: 100%;
-        //     height: 95%;
-        //     margin: auto 0;
-        // }
-        // &-button-next {
-        //     z-idnex: 1;
-        // }
     }    
 `;
 
-const chartOptions = (data) => {
+const chartOptions = (title) => {
     const chartOption = {
     chart: {
         type: "line",
@@ -104,7 +90,7 @@ const chartOptions = (data) => {
         horizontalAlign: "right"
     },
     title: {
-        text: "scope1",
+        text: title,
         align: 'left',
         offsetX: 0,
         offsetY: 0,
@@ -119,21 +105,103 @@ const chartOptions = (data) => {
     return chartOption;
 };
 
-const chartSeries = [
-    {
-        name: "올해",
-        data: [31, 40, 28, 51, 42, 109, 100, 92, 87, 65, 59, 80] // 각 달의 데이터 값
+const miniChartOptions = (title, toMonth) => {
+    const chartOption = {
+    chart: {
+        type: "line",
+        toolbar: {
+            show: false // 차트 툴바를 숨김
+        },
+        width: "100%",  // 부모 요소의 100%를 채우도록 설정
+        height: "100%",
+        responsive: [{
+            breakpoint: 600,
+            options: {
+                chart: {
+                    width: '100%',
+                    height: '100%',
+                },
+                legend: {
+                    position: 'bottom'
+                }
+            }
+        }]
     },
-    {
-        name: "작년",
-        data: [11, 32, 45, 32, 34, 52, 41, 55, 45, 60, 70, 75] // 각 달의 데이터 값
+    xaxis: {
+        categories: [toMonth-1, toMonth, toMonth+1]
+    },
+    yaxis: {
+        title: {
+            text: "배출량" // Y축에 표시될 제목
+        },
+        show: false,
+    },
+    stroke: {
+        curve: "smooth", // 라인을 부드럽게 곡선으로 표시
+    },
+    markers: {
+        size: 4, // 각 데이터 포인트에 표시될 원의 크기
+    },
+    dataLabels: {
+        enabled: false // 데이터 라벨 표시 여부
+    },
+    tooltip: {
+        enabled: true, // 툴팁 활성화
+    },
+    colors: ["#FF1654", "#247BA0"], // 차트 라인의 색상 설정
+    legend: {
+        position: "top", // 범례의 위치
+        horizontalAlign: "right",
+        show: false,
+    },
+    title: {
+        text: title,
+        align: 'left',
+        offsetX: 0,
+        offsetY: 0,
+        floating: false,
+        style: {
+            fontSize:  '25px',
+            fontWeight:  'bold',
+            color:  'green'
+        },
     }
-];
+    }
+    return chartOption;
+};
+
+const chartSeries = (data, beforeData, toYear) => {
+    const charData = [
+        {
+            name: `${toYear}년`,
+            data: data.map(e=> e === 0 ? null : e)
+        },
+        {
+            name: `${toYear-1}년`,
+            data: beforeData.map(e=> e === 0 ? null : e)
+        }
+    ];
+    return charData;
+} 
+
+const miniChartSeries = (data, beforeData, toYear, toMonth) => {
+    const charData = [
+        {
+            name: `${toYear}년`,
+            data: data.map(e=> e === 0 ? null : e).slice(toMonth-2, toMonth+1)
+        },
+        {
+            name: `${toYear-1}년`,
+            data: beforeData.map(e=> e === 0 ? null : e).slice(toMonth-2, toMonth+1)
+        }
+    ];
+    return charData;
+} 
 
 export default function Main_Hp() {
     // 각 카드의 상태를 관리
     const [cardStyles, setCardStyles] = useState([
-        { width: '28%', height: '90%', backgroundColor: '#66c65e', isActive: true },
+        { width: '28%', height: '90%', backgroundColor: '#adf8a7', isActive: true },
         { width: '25%', height: '80%', backgroundColor: 'white', isActive: false },
         { width: '25%', height: '80%', backgroundColor: 'white', isActive: false }
     ]);
@@ -147,6 +215,7 @@ export default function Main_Hp() {
     const [showScope1, setShowScope1] = useState(true);
     const [showScope2, setShowScope2] = useState(false);
     const [showTotScope, setShowTotScope] = useState(false);
+    const [showChartIdx, setShowChartIdx] = useState(0);
 
     let today = new Date();
     let toYear = today.getFullYear();
@@ -161,7 +230,7 @@ export default function Main_Hp() {
                         ...style,
                         width: style.isActive ? '25%' : '28%', // 클릭 시 35%로 확대, 다시 클릭 시 원래 크기로 축소
                         height: style.isActive ? '80%' : '90%',
-                        backgroundColor: style.isActive ? style.originalColor : '#66c65e', // 색상을 초록색으로 변경 또는 원래 색으로 복구
+                        backgroundColor: style.isActive ? style.originalColor : '#adf8a7', // 색상을 초록색으로 변경 또는 원래 색으로 복구
                         isActive: !style.isActive // 클릭 상태 토글
                     }
                     : {
@@ -173,6 +242,7 @@ export default function Main_Hp() {
                     }
             )
         );
+        setShowChartIdx(index);
     };
 
     useEffect(() => {
@@ -181,16 +251,16 @@ export default function Main_Hp() {
                 // 올해 스코프
                 const scopeResponse = await axiosInstance.get(`/perf/total?year=${toYear}`);
                 const afterScope = scopeResponse.data;
-                setScope1(prev=>prev.concat(afterScope.map(e=>e.scope1)));
-                setScope2(prev=>prev.concat(afterScope.map(e=>e.scope2)));
-                setTotScope(prev=>prev.concat(afterScope.map(e=>e.total)));
+                setScope1(prev=>prev.concat(afterScope.map(e => e.scope1)));
+                setScope2(prev=>prev.concat(afterScope.map(e => e.scope2)));
+                setTotScope(prev=>prev.concat(afterScope.map(e => e.total)));
 
                 //작년 스코프
                 const beforeScopeResponse = await axiosInstance.get(`/perf/total?year=${toYear-1}`)
                 const beforeScope = beforeScopeResponse.data;
-                setBeforeScope1(prev=>prev.concat(afterScope.map(e=>e.scope1)));
-                setBeforeScope2(prev=>prev.concat(afterScope.map(e=>e.scope2)));
-                setBeforeTotScope(prev=>prev.concat(afterScope.map(e=>e.total)));
+                setBeforeScope1(prev=>prev.concat(beforeScope.map(e=>e.scope1)));
+                setBeforeScope2(prev=>prev.concat(beforeScope.map(e=>e.scope2)));
+                setBeforeTotScope(prev=>prev.concat(beforeScope.map(e=>e.total)));
 
             } catch (error) {
                 
@@ -199,10 +269,24 @@ export default function Main_Hp() {
         fetchChartData();
         
     }, [])
+
+    const topData = [
+        {
+            name: "scope1",
+            value: (scope1[toMonth-1] / scope1[toMonth-2] * 100).toFixed(2) ?? 0,
+        },
+        {
+            name: "scope2",
+            value: (scope2[toMonth-1] / scope2[toMonth-2] * 100).toFixed(2) ?? 0,
+        },
+        {
+            name: "총량실적",
+            value: (totScope[toMonth-1] / totScope[toMonth-2] * 100).toFixed(2) ?? 0,
+        },
+    ]
     
     console.log(scope1);
-    console.log(scope2);
-    console.log(totScope);
+    console.log(topData);
     
 
     return (
@@ -217,16 +301,45 @@ export default function Main_Hp() {
                                     ...style,
                                     cursor: "pointer",
                                     transition:"width 0.5s ease, background-color 0.5s ease",
+                                    borderRadius:"0px 0px 15px 15px"
                                 }}
                                 onClick={() => handleCardClick(index)}
                             >
                                 {style.isActive ? (
-                                    <div>
-                                        차트보여줄거야
+                                    <div style={{display:"flex", justifyContent:"center", alignItems:"center", flexDirection:"column"}}>
+                                        <br/>
+                                        <ApexChart
+                                            options={miniChartOptions("Scope1", toMonth)}
+                                            series={miniChartSeries(scope1, beforeScope1, toYear, toMonth)}
+                                            type="line"
+                                            height="100%"
+                                        />
                                     </div>
                                 ) : (
                                     <div>
-                                        전월대비 퍼센트로 보여줄거야
+                                        <div style={{}}>
+                                        {topData[index].name}
+                                        </div>
+                                        <div>
+                                            {topData[index].value > 0 ? (
+                                                <div style={{color:"red", display:"flex", justifyContent:"center", alignItems:"center"}}>
+                                                    {topData[index].value > 10 ? (<>
+                                                        <KeyboardDoubleArrowUp fontSize='large'/>{topData[index].value}%
+                                                    </>) : (<>
+                                                        <KeyboardArrowUp fontSize="large"/>{topData[index].value}%
+                                                    </>)}
+                                                </div>
+                                            ) : (
+                                                <div style={{color:"green", display:"flex", justifyContent:"center", alignItems:"center"}}>
+                                                    {topData[index].value < -15 ? (<>
+                                                        <KeyboardDoubleArrowDown fontSize='large' />{topData[index].value}%
+                                                    </>) : (<>
+                                                        <KeyboardArrowDown fontSize='large'/>{topData[index].value}%
+                                                    </>)}
+                                                    
+                                                </div>
+                                            )}
+                                        </div>
                                     </div>
                                 )}
                             </Card>
@@ -237,12 +350,31 @@ export default function Main_Hp() {
                     </div>
                     <div className={gridStyles.left_box_chart}>
                         <StyledChart style={{width:"100%", height:"100%"}}>
-                            <ApexChart
-                                options={chartOptions(scope1)}
-                                series={chartSeries}
-                                type="line"
-                                height="100%"
-                            />
+                            {(showChartIdx === 0) ? (
+                                <ApexChart
+                                    options={chartOptions("Scope1")}
+                                    series={chartSeries(scope1, beforeScope1, toYear)}
+                                    type="line"
+                                    height="100%"
+                                />
+                            ) : (
+                                (showChartIdx === 1 ? (
+                                    <ApexChart
+                                        options={chartOptions("Scope2")}
+                                        series={chartSeries(scope2, beforeScope2, toYear)}
+                                        type="line"
+                                        height="100%"
+                                    />
+                                ) : (
+                                    <ApexChart
+                                        options={chartOptions("총량실적")}
+                                        series={chartSeries(totScope, beforeTotScope, toYear)}
+                                        type="line"
+                                        height="100%"
+                                    />
+                                ))
+                            )}
+                            
                         </StyledChart>
                     </div>
                     <div className={gridStyles.left_box_bottom}>
