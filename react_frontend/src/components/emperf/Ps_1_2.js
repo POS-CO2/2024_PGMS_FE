@@ -349,7 +349,7 @@ export default function Ps_1_2() {
                     }),
                     monthHeaders.map((_, index) => {
                         // 월별 데이터 추출
-                        const month = (index + 1).toString();
+                        const month = (index + 1);
                         const monthData = row.quantityList?.find(item => item.actvMth === month); // quantityList에서 월 데이터를 찾음
                         const value = monthData ? monthData.formattedFee || '' : ''; // 해당 월의 데이터를 가져옴
                         const escaped = ('' + value).replace(/"/g, '\\"');
