@@ -126,6 +126,9 @@ export default function CustomizedTables({
     });
     
     const paginatedData = filteredData.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
+
+    console.log(visibleColumns);
+    console.log(filteredData);
     return (
         <Box sx={{ 
             width: '100%', 
@@ -216,9 +219,20 @@ export default function CustomizedTables({
                                                 )
                                             }
                                             {   // 데이터 값 채우기
-                                                Object.values(row).map((value, idx) => (
-                                                    <StyledTableCell key={idx} align="left">
-                                                        {value}
+                                                visibleColumns.map((value, idx) => (
+                                                    <StyledTableCell key={idx} align="left" onDoubleClick={() => {handleDoubleClick(index, idx)}}>
+                                                        {editingCell.row === index && editingCell.col === idx ? (
+                                                            <TextField
+                                                                value={row[value.key]}
+                                                                onChange={(e) => handleInputChange(e, index, idx)}
+                                                                onBlur={handleBlur}
+                                                                autoFocus
+                                                                size="small"
+                                                            />
+                                                        ) : (
+                                                            row[value.key]
+                                                        )}
+                                                        {/* {value} */}
                                                     </StyledTableCell>
                                                 ))
                                             }

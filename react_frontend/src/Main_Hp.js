@@ -216,6 +216,7 @@ export default function Main_Hp() {
     const [showScope2, setShowScope2] = useState(false);
     const [showTotScope, setShowTotScope] = useState(false);
     const [showChartIdx, setShowChartIdx] = useState(0);
+    const [saleAmount, setSaleAmount] = useState([]);
 
     let today = new Date();
     let toYear = today.getFullYear();
@@ -256,11 +257,15 @@ export default function Main_Hp() {
                 setTotScope(prev=>prev.concat(afterScope.map(e => e.total)));
 
                 //작년 스코프
-                const beforeScopeResponse = await axiosInstance.get(`/perf/total?year=${toYear-1}`)
+                const beforeScopeResponse = await axiosInstance.get(`/perf/total?year=${toYear-1}`);
                 const beforeScope = beforeScopeResponse.data;
                 setBeforeScope1(prev=>prev.concat(beforeScope.map(e=>e.scope1)));
                 setBeforeScope2(prev=>prev.concat(beforeScope.map(e=>e.scope2)));
                 setBeforeTotScope(prev=>prev.concat(beforeScope.map(e=>e.total)));
+
+                const salesResponse = await axiosInstance.get(`/pjt/sales-sum`);
+                const sales = salesResponse.data;
+                setSaleAmount(sales);
 
             } catch (error) {
                 
@@ -285,9 +290,7 @@ export default function Main_Hp() {
         },
     ]
     
-    console.log(scope1);
-    console.log(topData);
-    
+    console.log(saleAmount);
 
     return (
         <>
@@ -336,7 +339,6 @@ export default function Main_Hp() {
                                                     </>) : (<>
                                                         <KeyboardArrowDown fontSize='large'/>{topData[index].value}%
                                                     </>)}
-                                                    
                                                 </div>
                                             )}
                                         </div>
