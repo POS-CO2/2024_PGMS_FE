@@ -3,12 +3,14 @@ import SearchForms from "../../SearchForms";
 import { formField_ps12 } from "../../assets/json/searchFormData";
 // import InnerTabs from "../../InnerTabs";
 import { Radio } from 'antd';
-import {TableCustomDoubleClickEdit} from "../../TableCustom.js";
+import TableCustom, {TableCustomDoubleClickEdit} from "../../TableCustom.js";
 import { Card } from '@mui/material';
 import * as mainStyle from '../../assets/css/main.css';
 import * as ps12Style from '../../assets/css/ps12.css';
+import * as sysStyles from '../../assets/css/sysmng.css';
+import * as esmStyles from '../../assets/css/esm.css';
 import axiosInstance from '../../utils/AxiosInstance';
-import { perfColumns } from '../../assets/json/tableColumn';
+import { perfColumns, pjtColumns } from '../../assets/json/tableColumn';
 import styled from 'styled-components';
 
 const CustomRadioGroup = styled(Radio.Group)`
@@ -38,6 +40,7 @@ const CustomRadioGroup = styled(Radio.Group)`
 export default function Ps_1_2() {
     const [formFields, setFormFields] = useState(formField_ps12);
     const [formData, setFormData] = useState({ updateKey: 1 }); // 검색 데이터
+    const [selectedPjt, setSelectedPjt] = useState([]);
     const [usagePerfs, setUsagePerfs] = useState([]);
     const [amountUsedPerfs, setAmountUsedPerfs] = useState([]);
     const [actvYearDisabled, setActvYearDisabled] = useState(true);  // 드롭다운 비활성화 상태 관리
@@ -85,6 +88,8 @@ export default function Ps_1_2() {
     // 기존의 handleFormSubmit (조회 버튼 클릭시 호출될 함수)
     useEffect(() => {
         if (formData && formData.searchProject) {
+            setSelectedPjt([formData.searchProject]);
+
             const handleFormSubmitAsync = async () => {
                 let url = `/perf?pjtId=${formData.searchProject.id}&actvYear=${formData.actvYear}`;
                 // emtnActvType이 존재하는 경우에만 URL에 추가
@@ -403,21 +408,28 @@ export default function Ps_1_2() {
             {(!formData || Object.keys(formData).length === 0 || formData.updateKey === 1) ? (
                 <></>
              ) : (
-                <div className={ps12Style.main_contents}>
-                    <Card sx={{ width: "100%", height: "100%", borderRadius: "15px" }}>
-                        <CustomRadioGroup
-                            options={[{label: '사용량', value: 'actvQty'}, {label: '사용금액', value: 'fee'}]}
-                            onChange={onRadioChange}
-                            value={content}
-                            optionType="button"
-                            buttonStyle="solid"
-                            className={ps12Style.custom_radio_group}
-                        />
-
-                        {content === 'actvQty' && <Usage data={usagePerfs} />}
-                        {content === 'fee' && <AmountUsed data={amountUsedPerfs} />}
-                    </Card>
-                </div>
+                <>
+                    <div className={esmStyles.main_grid}>
+                        <Card sx={{ width: "100%", height: "auto", borderRadius: "15px", marginBottom: "1rem" }}>
+                            <TableCustom title="조회결과" columns={pjtColumns} data={selectedPjt} pagination={false}/>
+                        </Card>
+                    </div>
+                    
+                    <CustomRadioGroup
+                        options={[{label: '사용량', value: 'actvQty'}, {label: '사용금액', value: 'fee'}]}
+                        onChange={onRadioChange}
+                        value={content}
+                        optionType="button"
+                        buttonStyle="solid"
+                        className={ps12Style.custom_radio_group}
+                    />
+                    <div className={sysStyles.main_grid}>
+                        <Card className={sysStyles.card_box} sx={{ width: "100%", height: "100%", borderRadius: "15px" }}>
+                            {content === 'actvQty' && <Usage data={usagePerfs} />}
+                            {content === 'fee' && <AmountUsed data={amountUsedPerfs} />}
+                        </Card>
+                    </div>
+                </>
             )}
         </div>
     );
