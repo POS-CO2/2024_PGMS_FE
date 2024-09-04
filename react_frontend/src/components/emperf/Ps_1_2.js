@@ -39,13 +39,11 @@ const CustomRadioGroup = styled(Radio.Group)`
 
 export default function Ps_1_2() {
     const [formFields, setFormFields] = useState(formField_ps12);
-    const [formData, setFormData] = useState({ updateKey: 1 }); // 검색 데이터
+    const [formData, setFormData] = useState(); // 검색 데이터
     const [selectedPjt, setSelectedPjt] = useState([]);
     const [usagePerfs, setUsagePerfs] = useState([]);
     const [amountUsedPerfs, setAmountUsedPerfs] = useState([]);
     const [actvYearDisabled, setActvYearDisabled] = useState(true);  // 드롭다운 비활성화 상태 관리
-    const [dynamicPerfColumns, setDynamicPerfColumns] = useState([...perfColumns]);
-    const [startColumnMonth, setStartColumnMonth] = useState(1);
 
     const [content, setContent] = useState('actvQty'); // actvQty || fee
     const onRadioChange = (e) => {
@@ -81,67 +79,8 @@ export default function Ps_1_2() {
                 console.error(error);
             }
         };
-
         fetchEmtnActvTypeCode();
     }, []);
-
-    // 기존의 handleFormSubmit (조회 버튼 클릭시 호출될 함수)
-    useEffect(() => {
-        if (formData && formData.searchProject) {
-            setSelectedPjt([formData.searchProject]);
-
-            const handleFormSubmitAsync = async () => {
-                let url = `/perf?pjtId=${formData.searchProject.id}&actvYear=${formData.actvYear}`;
-                // emtnActvType이 존재하는 경우에만 URL에 추가
-                if (formData.emtnActvType) {
-                    url += `&emtnActvType=${formData.emtnActvType}`;
-                }
-                const response = await axiosInstance.get(url);
-                console.log(response.data);
-
-                // 계약 기간에 맞는 월별 컬럼 추가
-                const updatedPerfColumns = [...perfColumns]; // 기본 컬럼 복사
-
-                const { ctrtFrYear, ctrtFrMth, ctrtToYear, ctrtToMth } = formData.searchProject;
-                const actvYear = parseInt(formData.actvYear, 10);
-
-                let startMonth = 1;
-                let endMonth = 12;
-                if (actvYear === ctrtFrYear) {
-                    startMonth = ctrtFrMth;
-                }
-                if (actvYear === ctrtToYear) {
-                    endMonth = ctrtToMth;
-                }
-                setStartColumnMonth(startMonth);
-                
-                for (let month = startMonth; month <= endMonth; month++) {
-                    updatedPerfColumns.push({
-                        key: `${month - 1}`,
-                        label: `${month}월`,
-                        hidden: false
-                    });
-                }
-
-                setDynamicPerfColumns(updatedPerfColumns);
-
-                // data가 빈 배열인지 확인
-                if (response.data.length === 0) {
-                    setUsagePerfs([]);
-                    setAmountUsedPerfs([]);
-                } else {
-                    // 필요한 필드만 추출하여 설정
-                    const usageFilteredPerfs = response.data.map(perf => createPerfData(perf, 'formattedActvQty'));
-                    const amountUsedFilteredPerfs = response.data.map(perf => createPerfData(perf, 'formattedFee'));
-
-                    setUsagePerfs(usageFilteredPerfs);
-                    setAmountUsedPerfs(amountUsedFilteredPerfs);
-                }
-            };
-    
-            handleFormSubmitAsync();
-        }
-    }, [formData]); // formData가 변경될 때마다 실행
 
     // 프로젝트 선택 후 대상년도 드롭다운 옵션 설정
     const onProjectSelect = (selectedData, form) => {
@@ -183,17 +122,6 @@ export default function Ps_1_2() {
             quantityList: perf.quantityList,
         };
 
-        const { ctrtFrYear, ctrtFrMth, ctrtToYear, ctrtToMth } = formData.searchProject;
-        const actvYear = parseInt(formData.actvYear, 10);
-        let startMonth = 1;
-        let endMonth = 12;
-        if (actvYear === ctrtFrYear) {
-            startMonth = ctrtFrMth;
-        }
-        if (actvYear === ctrtToYear) {
-            endMonth = ctrtToMth;
-        }
-
         // quantityList를 순회하며 월별 데이터를 추가
         perf.quantityList.forEach(item => {
             if (item && item.actvMth) {
@@ -202,22 +130,41 @@ export default function Ps_1_2() {
             }
         });
         // 모든 월(1월부터 12월까지)의 데이터가 없을 경우 기본값으로 채워줌
-        for (let month = startMonth; month <= endMonth; month++) {
-            const monthKey = `${month - 1}`;
+        for (let month = 0; month < 12; month++) {
+            const monthKey = `${month}`;
             if (!perfData.hasOwnProperty(monthKey)) {
                 perfData[monthKey] = 0.0; // 데이터가 없는 경우 기본값 0.0 설정
             }
         }
-
+        
         return perfData;
     };
 
     // 조회 버튼 클릭시 호출될 함수
     const handleFormSubmit = async (data) => {
-        setFormData(prevData => ({
-            ...data,
-            updateKey: (prevData.updateKey || 0) + 1 // 기존 updateKey +1
-        }));
+        setFormData(data);
+        setSelectedPjt([data.searchProject]);
+
+        let url = `/perf?pjtId=${data.searchProject.id}&actvYear=${data.actvYear}`;
+        // emtnActvType이 존재하는 경우에만 URL에 추가
+        if (data.emtnActvType) {
+            url += `&emtnActvType=${data.emtnActvType}`;
+        }
+        const response = await axiosInstance.get(url);
+        console.log(response.data);
+
+        // data가 빈 배열인지 확인
+        if (response.data.length === 0) {
+            setUsagePerfs([]);
+            setAmountUsedPerfs([]);
+        } else {
+            // 필요한 필드만 추출하여 설정
+            const usageFilteredPerfs = response.data.map(perf => createPerfData(perf, 'formattedActvQty'));
+            const amountUsedFilteredPerfs = response.data.map(perf => createPerfData(perf, 'formattedFee'));
+
+            setUsagePerfs(usageFilteredPerfs);
+            setAmountUsedPerfs(amountUsedFilteredPerfs);
+        }
     };
 
     function Usage({ data }) {
@@ -245,17 +192,17 @@ export default function Ps_1_2() {
             // CSV 변환 함수
             const csvRows = [];
             
-            // 헤더 생성 (dynamicPerfColumns 순서대로, quantityList 제외, '년도' 맨앞에 추가)
+            // 헤더 생성 (perfColumns 순서대로, quantityList 제외, '년도' 맨앞에 추가)
             const headers = ['년도'].concat(
-                dynamicPerfColumns.filter(column => column.key !== 'quantityList')
-                           .map(column => column.label)
+                perfColumns.filter(column => column.key !== 'quantityList')
+                        .map(column => column.label)
             );
             csvRows.push(headers.join(','));
             
             // 데이터 생성
             for (const row of csvData) {
                 const values = [`"${formData.actvYear}"`].concat(
-                    dynamicPerfColumns.filter(column => column.key !== 'quantityList')
+                    perfColumns.filter(column => column.key !== 'quantityList')
                                .map(column => {
                                    const value = row[column.key] || '';
                                    const escaped = ('' + value).replace(/"/g, '\\"');
@@ -280,7 +227,7 @@ export default function Ps_1_2() {
     
         return (
             <TableCustomDoubleClickEdit
-                columns={dynamicPerfColumns}
+                columns={perfColumns}
                 title="실적목록"
                 data={data}
                 buttons={['Edit', 'UploadExcel', 'DownloadExcelForm']}
@@ -296,7 +243,6 @@ export default function Ps_1_2() {
                 pageType="ps12actvQty"
                 handleFormSubmit={handleFormSubmit}
                 formData={formData}
-                startColumnMonth={startColumnMonth}
             />
         )
     }
@@ -326,35 +272,22 @@ export default function Ps_1_2() {
             // CSV 변환 함수
             const csvRows = [];
 
-            // 월 헤더 생성
-            const monthHeaders = Array.from({ length: 12 }, (_, i) => `${i + 1}월`);
-            // perfColumns에서 quantityList를 제외한 나머지 칼럼 필터링
-            const nonQuantityColumns = perfColumns
-                                        .filter(column => column.key !== 'quantityList')
-                                        .map(column => column.label);
-
-            // 헤더 생성 (년도 + non-quantity 칼럼 + 월 칼럼)
-            const headers = ['년도'].concat(nonQuantityColumns, monthHeaders);
+            // 헤더 생성 (perfColumns 순서대로, quantityList 제외, '년도' 맨앞에 추가)
+            const headers = ['년도'].concat(
+                perfColumns.filter(column => column.key !== 'quantityList')
+                           .map(column => column.label)
+            );
             csvRows.push(headers.join(','));
             
             // 데이터 생성
             for (const row of csvData) {
-                // 월별 값을 포함한 데이터 배열
                 const values = [`"${formData.actvYear}"`].concat(
-                    nonQuantityColumns.map(label => {
-                        const key = perfColumns.find(column => column.label === label)?.key || '';
-                        const value = row[key] || ''; // 데이터에서 해당 값 가져옴
-                        const escaped = ('' + value).replace(/"/g, '\\"');
-                        return `"${escaped}"`;
-                    }),
-                    monthHeaders.map((_, index) => {
-                        // 월별 데이터 추출
-                        const month = (index + 1);
-                        const monthData = row.quantityList?.find(item => item.actvMth === month); // quantityList에서 월 데이터를 찾음
-                        const value = monthData ? monthData.formattedFee || '' : ''; // 해당 월의 데이터를 가져옴
-                        const escaped = ('' + value).replace(/"/g, '\\"');
-                        return `"${escaped}"`;
-                    })
+                    perfColumns.filter(column => column.key !== 'quantityList')
+                            .map(column => {
+                                const value = row[column.key] || '';
+                                const escaped = ('' + value).replace(/"/g, '\\"');
+                                return `"${escaped}"`;
+                            })
                 );
                 csvRows.push(values.join(','));
             }
@@ -374,7 +307,7 @@ export default function Ps_1_2() {
     
         return (
             <TableCustomDoubleClickEdit
-                columns={dynamicPerfColumns}
+                columns={perfColumns}
                 title="실적목록"
                 data={data}
                 buttons={['Edit', 'UploadExcel', 'DownloadExcelForm']}
@@ -390,7 +323,6 @@ export default function Ps_1_2() {
                 pageType="ps12fee"
                 handleFormSubmit={handleFormSubmit}
                 formData={formData}
-                startColumnMonth={startColumnMonth}
             />
         )
     }
@@ -406,7 +338,7 @@ export default function Ps_1_2() {
                 formFields={formFields.map(field => field.name === 'actvYear' ? { ...field, disabled: actvYearDisabled, placeholder: actvYearDisabled ? '프로젝트를 선택하세요.' : '' } : field)} // actvYear 필드의 disabled 상태 반영
                 onProjectSelect={onProjectSelect} />
             
-            {(!formData || Object.keys(formData).length === 0 || formData.updateKey === 1) ? (
+            {(!formData || Object.keys(formData).length === 0) ? (
                 <></>
              ) : (
                 <>
