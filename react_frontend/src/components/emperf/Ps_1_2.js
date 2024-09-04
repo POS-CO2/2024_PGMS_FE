@@ -37,7 +37,7 @@ const CustomRadioGroup = styled(Radio.Group)`
 
 export default function Ps_1_2() {
     const [formFields, setFormFields] = useState(formField_ps12);
-    const [formData, setFormData] = useState({}); // 검색 데이터
+    const [formData, setFormData] = useState({ updateKey: 1 }); // 검색 데이터
     const [usagePerfs, setUsagePerfs] = useState([]);
     const [amountUsedPerfs, setAmountUsedPerfs] = useState([]);
     const [actvYearDisabled, setActvYearDisabled] = useState(true);  // 드롭다운 비활성화 상태 관리
@@ -209,7 +209,10 @@ export default function Ps_1_2() {
 
     // 조회 버튼 클릭시 호출될 함수
     const handleFormSubmit = async (data) => {
-        setFormData(data);
+        setFormData(prevData => ({
+            ...data,
+            updateKey: (prevData.updateKey || 0) + 1 // 기존 updateKey +1
+        }));
     };
 
     function Usage({ data }) {
@@ -385,7 +388,7 @@ export default function Ps_1_2() {
                 formFields={formFields.map(field => field.name === 'actvYear' ? { ...field, disabled: actvYearDisabled, placeholder: actvYearDisabled ? '프로젝트를 선택하세요.' : '' } : field)} // actvYear 필드의 disabled 상태 반영
                 onProjectSelect={onProjectSelect} />
             
-            {(!formData || Object.keys(formData).length === 0) ? (
+            {(!formData || Object.keys(formData).length === 0 || formData.updateKey === 1) ? (
                 <></>
              ) : (
                 <div className={ps12Style.main_contents}>
