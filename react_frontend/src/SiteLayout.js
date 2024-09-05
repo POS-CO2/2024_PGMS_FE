@@ -67,7 +67,7 @@ const mapMenuDataToItems = (menuData) => {
 };
 
 export default function SiteLayout({handleLogout, menus, user}){
-    const [fav, setFav] = useState(true);
+    const [fav, setFav] = useState(false);
     const [loading, setLoading] = useState(false);
 
     const [collapsed, setCollapsed] = useState(false);

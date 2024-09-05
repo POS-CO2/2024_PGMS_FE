@@ -10,7 +10,7 @@ import 'swiper/css/effect-coverflow';
 import * as gridStyles from './assets/css/gridHp.css'
 import styled from 'styled-components';
 import axiosInstance from './utils/AxiosInstance';
-import { KeyboardArrowDown, KeyboardArrowUp, KeyboardDoubleArrowDown, KeyboardDoubleArrowUp } from '@mui/icons-material';
+import { KeyboardArrowDown, KeyboardArrowUp, KeyboardDoubleArrowDown, KeyboardDoubleArrowUp, LeaderboardOutlined, WorkspacePremium } from '@mui/icons-material';
 
 const StyledChart = styled.div`
     .apexcharts-canvas {
@@ -70,13 +70,20 @@ const chartOptions = (title) => {
     yaxis: {
         title: {
             text: "배출량" // Y축에 표시될 제목
+        },
+        labels: {
+            formatter: function (value) {
+                return Math.floor(value);
+            }
         }
     },
     stroke: {
+        width: 3,
         curve: "smooth", // 라인을 부드럽게 곡선으로 표시
     },
     markers: {
-        size: 4, // 각 데이터 포인트에 표시될 원의 크기
+        
+        size: 3, // 각 데이터 포인트에 표시될 원의 크기
     },
     dataLabels: {
         enabled: false // 데이터 라벨 표시 여부
@@ -84,7 +91,7 @@ const chartOptions = (title) => {
     tooltip: {
         enabled: true, // 툴팁 활성화
     },
-    colors: ["#FF1654", "#247BA0"], // 차트 라인의 색상 설정
+    colors: ["rgb(14, 170, 0)", "#fefd48"], // 차트 라인의 색상 설정
     legend: {
         position: "top", // 범례의 위치
         horizontalAlign: "right"
@@ -92,13 +99,13 @@ const chartOptions = (title) => {
     title: {
         text: title,
         align: 'left',
-        offsetX: 0,
+        offsetX: 10,
         offsetY: 0,
         floating: false,
         style: {
             fontSize:  '25px',
             fontWeight:  'bold',
-            color:  '#66c66e'
+            color:  'rgb(14, 170, 0)',
         },
     }
     }
@@ -127,8 +134,14 @@ const miniChartOptions = (title, toMonth) => {
             }
         }]
     },
+    grid: {
+        show: false,
+        xaxis: {
+            show: false,
+        }
+    },
     xaxis: {
-        categories: [toMonth-1, toMonth, toMonth+1]
+        categories: [`${toMonth-1}월`, `${toMonth}월`, `${toMonth+1}월`]
     },
     yaxis: {
         title: {
@@ -137,10 +150,11 @@ const miniChartOptions = (title, toMonth) => {
         show: false,
     },
     stroke: {
+        width: 2,
         curve: "smooth", // 라인을 부드럽게 곡선으로 표시
     },
     markers: {
-        size: 4, // 각 데이터 포인트에 표시될 원의 크기
+        size: 3, // 각 데이터 포인트에 표시될 원의 크기
     },
     dataLabels: {
         enabled: false // 데이터 라벨 표시 여부
@@ -148,7 +162,7 @@ const miniChartOptions = (title, toMonth) => {
     tooltip: {
         enabled: true, // 툴팁 활성화
     },
-    colors: ["#FF1654", "#247BA0"], // 차트 라인의 색상 설정
+    colors: ["#ffffff", "#b6b6b6"], // 차트 라인의 색상 설정
     legend: {
         position: "top", // 범례의 위치
         horizontalAlign: "right",
@@ -163,12 +177,84 @@ const miniChartOptions = (title, toMonth) => {
         style: {
             fontSize:  '25px',
             fontWeight:  'bold',
-            color:  'green'
+            color:  'white'
         },
     }
     }
     return chartOption;
 };
+
+const donutChartOptions = () => {
+    const chartOption = {
+        chart: {
+            type: "polarArea",
+            toolbar: {
+                show: true // 차트 툴바를 숨김
+            },
+            width: "100%",  // 부모 요소의 100%를 채우도록 설정
+            height: "100%",
+            responsive: [{
+                breakpoint: 600,
+                options: {
+                    chart: {
+                        width: '100%',
+                        height: '100%',
+                    },
+                    legend: {
+                        position: 'bottom'
+                    }
+                }
+            }]
+        },
+        // grid: {
+        //     show: false,
+        //     xaxis: {
+        //         show: false,
+        //     }
+        // },
+        // xaxis: {
+        //     categories: [`${toMonth-1}월`, `${toMonth}월`, `${toMonth+1}월`]
+        // },
+        // yaxis: {
+        //     title: {
+        //         text: "배출량" // Y축에 표시될 제목
+        //     },
+        //     show: false,
+        // },
+        // stroke: {
+        //     width: 2,
+        //     curve: "smooth", // 라인을 부드럽게 곡선으로 표시
+        // },
+        // markers: {
+        //     size: 3, // 각 데이터 포인트에 표시될 원의 크기
+        // },
+        // dataLabels: {
+        //     enabled: false // 데이터 라벨 표시 여부
+        // },
+        // tooltip: {
+        //     enabled: true, // 툴팁 활성화
+        // },
+        // colors: ["#ffffff", "#b6b6b6"], // 차트 라인의 색상 설정
+        // legend: {
+        //     position: "top", // 범례의 위치
+        //     horizontalAlign: "right",
+        //     show: false,
+        // },
+        // title: {
+        //     text: title,
+        //     align: 'left',
+        //     offsetX: 0,
+        //     offsetY: 0,
+        //     floating: false,
+        //     style: {
+        //         fontSize:  '25px',
+        //         fontWeight:  'bold',
+        //         color:  'white'
+        //     },
+        // }
+        }
+        return chartOption;
+}
 
 const chartSeries = (data, beforeData, toYear) => {
     const charData = [
@@ -198,12 +284,19 @@ const miniChartSeries = (data, beforeData, toYear, toMonth) => {
     return charData;
 } 
 
+const donutChartSeries = () => {
+    const charData = [
+
+    ];
+    return charData;
+}
+
 export default function Main_Hp() {
     // 각 카드의 상태를 관리
     const [cardStyles, setCardStyles] = useState([
-        { width: '28%', height: '90%', backgroundColor: '#adf8a7', isActive: true },
-        { width: '25%', height: '80%', backgroundColor: 'white', isActive: false },
-        { width: '25%', height: '80%', backgroundColor: 'white', isActive: false }
+        { width: '28%', height: '90%', backgroundColor: '#6cbb66', isActive: true },
+        { width: '20%', height: '70%', backgroundColor: 'white', isActive: false },
+        { width: '20%', height: '70%', backgroundColor: 'white', isActive: false }
     ]);
 
     const [scope1, setScope1] = useState([]);
@@ -212,9 +305,6 @@ export default function Main_Hp() {
     const [beforeScope1, setBeforeScope1] = useState([]);
     const [beforeScope2, setBeforeScope2] = useState([]);
     const [beforeTotScope, setBeforeTotScope] = useState([]);
-    const [showScope1, setShowScope1] = useState(true);
-    const [showScope2, setShowScope2] = useState(false);
-    const [showTotScope, setShowTotScope] = useState(false);
     const [showChartIdx, setShowChartIdx] = useState(0);
     const [saleAmount, setSaleAmount] = useState([]);
 
@@ -229,15 +319,15 @@ export default function Main_Hp() {
                 i === index
                     ? {
                         ...style,
-                        width: style.isActive ? '25%' : '28%', // 클릭 시 35%로 확대, 다시 클릭 시 원래 크기로 축소
-                        height: style.isActive ? '80%' : '90%',
-                        backgroundColor: style.isActive ? style.originalColor : '#adf8a7', // 색상을 초록색으로 변경 또는 원래 색으로 복구
+                        width: style.isActive ? '20%' : '28%', // 클릭 시 35%로 확대, 다시 클릭 시 원래 크기로 축소
+                        height: style.isActive ? '70%' : '90%',
+                        backgroundColor: style.isActive ? style.originalColor : '#6cbb66', // 색상을 초록색으로 변경 또는 원래 색으로 복구
                         isActive: !style.isActive // 클릭 상태 토글
                     }
                     : {
                         ...style,
-                        width: '25%', // 다른 카드는 원래 크기로 축소
-                        height: '80%',
+                        width: '20%', // 다른 카드는 원래 크기로 축소
+                        height: '70%',
                         backgroundColor: style.originalColor, // 다른 카드는 원래 색상으로 복구
                         isActive: false
                     }
@@ -277,11 +367,11 @@ export default function Main_Hp() {
 
     const topData = [
         {
-            name: "scope1",
+            name: "Scope1",
             value: (scope1[toMonth-1] / scope1[toMonth-2] * 100).toFixed(2) ?? 0,
         },
         {
-            name: "scope2",
+            name: "Scope2",
             value: (scope2[toMonth-1] / scope2[toMonth-2] * 100).toFixed(2) ?? 0,
         },
         {
@@ -290,7 +380,6 @@ export default function Main_Hp() {
         },
     ]
     
-    console.log(saleAmount);
 
     return (
         <>
@@ -319,13 +408,13 @@ export default function Main_Hp() {
                                         />
                                     </div>
                                 ) : (
-                                    <div>
-                                        <div style={{}}>
+                                    <div className={gridStyles.top_logo}>
+                                        <div style={{color:"rgb(55, 57, 78)", fontSize:"1.5rem", fontWeight:"bold", margin:"2rem 0 0 2rem"}}>
                                         {topData[index].name}
                                         </div>
-                                        <div>
+                                        <div className={gridStyles.top_box_percentage}>
                                             {topData[index].value > 0 ? (
-                                                <div style={{color:"red", display:"flex", justifyContent:"center", alignItems:"center"}}>
+                                                <div style={{color:"red", display:"flex", justifyContent:"center", alignItems:"center", gap:"0.7rem"}}>
                                                     {topData[index].value > 10 ? (<>
                                                         <KeyboardDoubleArrowUp fontSize='large'/>{topData[index].value}%
                                                     </>) : (<>
@@ -380,6 +469,7 @@ export default function Main_Hp() {
                         </StyledChart>
                     </div>
                     <div className={gridStyles.left_box_bottom}>
+                        <div className={gridStyles.left_bottom_logo}></div>
                         <StyledRoot style={{width:"100%", height:"100%"}}>
                             <Swiper
                                 spaceBetween={30}    // 슬라이드 사이의 간격
@@ -389,31 +479,39 @@ export default function Main_Hp() {
                                 navigation={true}           // 이전/다음 버튼 네비게이션
                                 modules={[Navigation, Pagination]}
                             >
-                                <SwiperSlide style={{width:"100%", height:"100%"}}>
-                                    <Card sx={{backgroundColor:"white", width:"80%", height:"80%", margin:"1rem auto", borderRadius:"10px", display:"flex", justifyContent:"center", alignItems:"center"}}>a</Card>
-                                </SwiperSlide>
-                                <SwiperSlide style={{width:"100%", height:"100%"}}>
-                                    <Card sx={{backgroundColor:"white", width:"80%", height:"80%", margin:"1rem auto", borderRadius:"10px", display:"flex", justifyContent:"center", alignItems:"center"}}>a</Card>
-                                </SwiperSlide>
-                                <SwiperSlide style={{width:"100%", height:"100%"}}>
-                                    <Card sx={{backgroundColor:"white", width:"80%", height:"80%", margin:"1rem auto", borderRadius:"10px", display:"flex", justifyContent:"center", alignItems:"center"}}>a</Card>
-                                </SwiperSlide>
-                                <SwiperSlide style={{width:"100%", height:"100%"}}>
-                                    <Card sx={{backgroundColor:"white", width:"80%", height:"80%", margin:"1rem auto", borderRadius:"10px", display:"flex", justifyContent:"center", alignItems:"center"}}>a</Card>
-                                </SwiperSlide>
-                                <SwiperSlide style={{width:"100%", height:"100%"}}>
-                                    <Card sx={{backgroundColor:"white", width:"80%", height:"80%", margin:"1rem auto", borderRadius:"10px", display:"flex", justifyContent:"center", alignItems:"center"}}>a</Card>
-                                </SwiperSlide>
+                                {saleAmount.map((data, idx) => (
+                                    <SwiperSlide style={{width:"100%", height:"100%"}}>
+                                        <Card sx={{backgroundColor:"white", width:"95%", height:"70%", margin:"1rem auto", borderRadius:"15px", display:"flex", flexDirection:"column"}}>
+                                            <div className={gridStyles.left_bottom_1}>
+                                                <div className={gridStyles.left_bottom_medal}>
+                                                    {idx === 0 ? <WorkspacePremium fontSize='large' sx={{color:"gold"}} /> : (idx === 1 ? <WorkspacePremium fontSize='large' sx={{color:"silver"}} /> : (idx === 2 ? <WorkspacePremium fontSize='large' sx={{color:"#cd7f32"}} /> : <></>))}
+                                                </div>
+                                                <div className={gridStyles.left_bottom_pjtname}>
+                                                    {data.pjtName}
+                                                </div>
+                                            </div>
+                                            <div className={gridStyles.left_bottom_amt}>{`₩ ${data.formattedTotalSalesAmt.substring(0,data.formattedTotalSalesAmt.length-5)}만원`}</div>
+                                        </Card>
+                                    </SwiperSlide>
+                                ))}
                             </Swiper>
                         </StyledRoot>
                     </div>
                 </div>
                 <div className={gridStyles.right_box}>
-                    <Card sx={{backgroundColor:"white", width:"100%", height:"100%"}}/>
-                    {/* <ApexChart/> */}
-                    <div>
+                    <Card sx={{backgroundColor:"white", width:"100%", height:"100%"}}>
+                        <StyledChart style={{width:"100%", height:"100%"}}>
+                            {/* <ApexChart 
+                                options={donutChartOptions}
+                                series={donutChartSeries}
+                                type='donut'
+                                height="100%"
+                            /> */}
+                        </StyledChart>
+                    </Card>
+                    {/* <div>
                         <Swiper/>
-                    </div>
+                    </div> */}
                 </div>
             </div>
         </>
