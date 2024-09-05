@@ -37,7 +37,7 @@ const CustomRadioGroup = styled(Radio.Group)`
     }
 `;
 
-export default function Psq_fp() {
+export default function Psq_Fp() {
     const [formFields, setFormFields] = useState(formField_psq_fp);
     const [formData, setFormData] = useState(); // 검색 데이터
     const [selectedPjt, setSelectedPjt] = useState([]);
