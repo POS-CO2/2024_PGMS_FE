@@ -40,6 +40,7 @@ const CustomRadioGroup = styled(Radio.Group)`
 export default function Psq_Fp() {
     const [formFields, setFormFields] = useState(formField_psq_fp);
     const [formData, setFormData] = useState(); // 검색 데이터
+    const [selectedPjtOption, setSelectedPjtOption] = useState([]);
     const [selectedPjt, setSelectedPjt] = useState([]);
     const [perfsData, setPerfsData] = useState([]);
     const [chartPerfs, setChartPerfs] = useState([]);
@@ -78,7 +79,7 @@ export default function Psq_Fp() {
     // 프로젝트 선택 후 대상년도 드롭다운 옵션 설정
     const onProjectSelect = (selectedData, form) => {
         const selectedProject = projectData.find(pjt => pjt.pjtId === selectedData);
-        setSelectedPjt(selectedProject);
+        setSelectedPjtOption(selectedProject);
 
         if (selectedProject) {
             const yearOptions = [];
@@ -109,6 +110,7 @@ export default function Psq_Fp() {
     // 조회 버튼 클릭시 호출될 함수
     const handleFormSubmit = async (data) => {
         setFormData(data);
+        setSelectedPjt(selectedPjtOption);
 
         let url = `/perf/pjt?pjtId=${data.searchProject}&year=${data.actvYear}`;
         const response = await axiosInstance.get(url);

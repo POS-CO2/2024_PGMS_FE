@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import SearchForms from "../../SearchForms";
-import { formField_ps12 } from "../../assets/json/searchFormData";
-// import InnerTabs from "../../InnerTabs";
+import { formField_ps12_fp } from "../../assets/json/searchFormData";
 import { Radio } from 'antd';
 import TableCustom, {TableCustomDoubleClickEdit} from "../../TableCustom.js";
 import { Card } from '@mui/material';
@@ -12,6 +11,7 @@ import * as esmStyles from '../../assets/css/esm.css';
 import axiosInstance from '../../utils/AxiosInstance';
 import { perfColumns, pjtColumns } from '../../assets/json/tableColumn';
 import styled from 'styled-components';
+import * as XLSX from 'xlsx';
 
 const CustomRadioGroup = styled(Radio.Group)`
     .ant-radio-button-wrapper:hover {
@@ -38,8 +38,9 @@ const CustomRadioGroup = styled(Radio.Group)`
 `;
 
 export default function Ps_1_2_Fp() {
-    const [formFields, setFormFields] = useState(formField_ps12);
+    const [formFields, setFormFields] = useState(formField_ps12_fp);
     const [formData, setFormData] = useState(); // 검색 데이터
+    const [selectedPjtOption, setSelectedPjtOption] = useState([]);
     const [selectedPjt, setSelectedPjt] = useState([]);
     const [usagePerfs, setUsagePerfs] = useState([]);
     const [amountUsedPerfs, setAmountUsedPerfs] = useState([]);
@@ -58,6 +59,31 @@ export default function Ps_1_2_Fp() {
     useEffect(() => {
         console.log("amountUsedPerfs");
     }, [amountUsedPerfs]);
+
+    // 프로젝트 드롭다운 옵션 설정
+    const [pjtOptions, setPjtOptions] = useState([]);
+    const [projectData, setProjectData] = useState([]);  // 전체 프로젝트 데이터를 저장
+    useEffect(() => {
+        const fetchPjtOptions = async () => {
+            try {
+                const res = await axiosInstance.get("/pjt/my");
+                setProjectData(res.data);  // 전체 프로젝트 데이터를 저장
+                const options = res.data.map(pjt => ({
+                    value: pjt.pjtId,  // value에 id만 전달
+                    label: pjt.pjtCode +"/"+ pjt.pjtName,
+                }));
+                setPjtOptions(options);
+                const updateFormFields = formFields.map(field =>
+                    field.name === 'searchProject' ? { ...field, options } : field
+                );
+
+                setFormFields(updateFormFields);
+            } catch (error) {
+                console.error(error);
+            }
+        };
+        fetchPjtOptions();
+    }, []);
 
     // 배출활동유형 드롭다운 옵션 설정
     const [emtnActvType, setEmtnActvType] = useState([]);
@@ -84,11 +110,14 @@ export default function Ps_1_2_Fp() {
 
     // 프로젝트 선택 후 대상년도 드롭다운 옵션 설정
     const onProjectSelect = (selectedData, form) => {
-        if (selectedData) {
+        const selectedProject = projectData.find(pjt => pjt.pjtId === selectedData);
+        setSelectedPjtOption(selectedProject);
+
+        if (selectedProject) {
             const yearOptions = [];
             const currentYear = new Date().getFullYear();
-            const ctrtFrYear = selectedData.ctrtFrYear;
-            const ctrtToYear = Math.min(selectedData.ctrtToYear, currentYear);
+            const ctrtFrYear = selectedProject.ctrtFrYear;
+            const ctrtToYear = Math.min(selectedProject.ctrtToYear, currentYear);
 
             // 계약년도부터 현재년도까지의 옵션 생성
             for (let year = ctrtToYear; year >= ctrtFrYear; year--) {
@@ -143,9 +172,9 @@ export default function Ps_1_2_Fp() {
     // 조회 버튼 클릭시 호출될 함수
     const handleFormSubmit = async (data) => {
         setFormData(data);
-        setSelectedPjt([data.searchProject]);
+        setSelectedPjt(selectedPjtOption);
 
-        let url = `/perf?pjtId=${data.searchProject.id}&actvYear=${data.actvYear}`;
+        let url = `/perf?pjtId=${data.searchProject}&actvYear=${data.actvYear}`;
         // emtnActvType이 존재하는 경우에만 URL에 추가
         if (data.emtnActvType) {
             url += `&emtnActvType=${data.emtnActvType}`;
@@ -189,19 +218,20 @@ export default function Ps_1_2_Fp() {
         const onDownloadExcelFormClick = (csvData) => {
             const fileName = `사용량 엑셀 양식_${formData.searchProject.pjtName}_${formData.actvYear}`;
     
-            // CSV 변환 함수
-            const csvRows = [];
+            // 워크북 및 워크시트 생성
+            const wb = XLSX.utils.book_new();
+            const wsData = [];
             
             // 헤더 생성 (perfColumns 순서대로, quantityList 제외, '년도' 맨앞에 추가)
             const headers = ['년도'].concat(
                 perfColumns.filter(column => column.key !== 'quantityList')
                         .map(column => column.label)
             );
-            csvRows.push(headers.join(','));
+            wsData.push(headers);
             
             // 데이터 생성
             for (const row of csvData) {
-                const values = [`"${formData.actvYear}"`].concat(
+                const values = [formData.actvYear].concat(
                     perfColumns.filter(column => column.key !== 'quantityList')
                                .map(column => {
                                     let value = row[column.key] || '';
@@ -209,24 +239,18 @@ export default function Ps_1_2_Fp() {
                                     if (typeof value === 'string') {
                                         value = value.replace(/,/g, '');
                                     }
-                                   const escaped = ('' + value).replace(/"/g, '\\"');
-                                   return `"${escaped}"`;
+                                    return value;
                                })
                 );
-                csvRows.push(values.join(','));
+                wsData.push(values);
             }
             
-            // CSV 파일 생성
-            const csvString = csvRows.join('\n');
-            const blob = new Blob([csvString], { type: 'text/csv' });
-            const url = window.URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.setAttribute('hidden', '');
-            a.setAttribute('href', url);
-            a.setAttribute('download', `${fileName}.csv`);
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
+            // 워크시트에 데이터 추가
+            const ws = XLSX.utils.aoa_to_sheet(wsData);
+            XLSX.utils.book_append_sheet(wb, ws, 'Sheet1');
+
+            // 파일 다운로드
+            XLSX.writeFile(wb, `${fileName}.xlsx`);
         };
     
         return (
@@ -273,19 +297,20 @@ export default function Ps_1_2_Fp() {
         const onDownloadExcelFormClick = (csvData) => {
             const fileName = `사용금액 엑셀 양식_${formData.searchProject.pjtName}_${formData.actvYear}`;
     
-            // CSV 변환 함수
-            const csvRows = [];
+            // 워크북 및 워크시트 생성
+            const wb = XLSX.utils.book_new();
+            const wsData = [];
 
             // 헤더 생성 (perfColumns 순서대로, quantityList 제외, '년도' 맨앞에 추가)
             const headers = ['년도'].concat(
                 perfColumns.filter(column => column.key !== 'quantityList')
                            .map(column => column.label)
             );
-            csvRows.push(headers.join(','));
+            wsData.push(headers);
             
             // 데이터 생성
             for (const row of csvData) {
-                const values = [`"${formData.actvYear}"`].concat(
+                const values = [formData.actvYear].concat(
                     perfColumns.filter(column => column.key !== 'quantityList')
                             .map(column => {
                                 let value = row[column.key] || '';
@@ -293,24 +318,18 @@ export default function Ps_1_2_Fp() {
                                 if (typeof value === 'string') {
                                     value = value.replace(/,/g, '');
                                 }
-                                const escaped = ('' + value).replace(/"/g, '\\"');
-                                return `"${escaped}"`;
+                                return value;
                             })
                 );
-                csvRows.push(values.join(','));
+                wsData.push(values);
             }
             
-            // CSV 파일 생성
-            const csvString = csvRows.join('\n');
-            const blob = new Blob([csvString], { type: 'text/csv' });
-            const url = window.URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.setAttribute('hidden', '');
-            a.setAttribute('href', url);
-            a.setAttribute('download', `${fileName}.csv`);
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
+            // 워크시트에 데이터 추가
+            const ws = XLSX.utils.aoa_to_sheet(wsData);
+            XLSX.utils.book_append_sheet(wb, ws, 'Sheet1');
+
+            // 파일 다운로드
+            XLSX.writeFile(wb, `${fileName}.xlsx`);
         };
     
         return (
@@ -338,11 +357,11 @@ export default function Ps_1_2_Fp() {
     return (
         <div>
             <div className={mainStyle.breadcrumb}>
-                {"배출실적 > 활동량 관리 현장현장"}
+                {"배출실적 > 활동량 관리"}
             </div>
 
-            <SearchForms onFormSubmit={handleFormSubmit}
-                //formFields={formFields} 
+            <SearchForms
+                onFormSubmit={handleFormSubmit}
                 formFields={formFields.map(field => field.name === 'actvYear' ? { ...field, disabled: actvYearDisabled, placeholder: actvYearDisabled ? '프로젝트를 선택하세요.' : '' } : field)} // actvYear 필드의 disabled 상태 반영
                 onProjectSelect={onProjectSelect} />
             
@@ -352,7 +371,7 @@ export default function Ps_1_2_Fp() {
                 <>
                     <div className={esmStyles.main_grid}>
                         <Card sx={{ width: "100%", height: "auto", borderRadius: "15px", marginBottom: "1rem" }}>
-                            <TableCustom title="조회결과" columns={pjtColumns} data={selectedPjt} pagination={false}/>
+                            <TableCustom title="조회결과" columns={pjtColumns} data={[selectedPjt]} pagination={false}/>
                         </Card>
                     </div>
                     
