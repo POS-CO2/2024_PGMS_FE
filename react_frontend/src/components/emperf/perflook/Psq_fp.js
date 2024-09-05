@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import SearchForms from "../../../SearchForms";
-import { formField_psq_fm } from "../../../assets/json/searchFormData"
+import SearchForms from "../../../SearchForms.js";
+import { formField_psq_fp } from "../../../assets/json/searchFormData.js"
 import { Radio } from 'antd';
 import TableCustom from "../../../TableCustom.js";
 import ChartCustom from "../../../ChartCustom.js";
@@ -9,8 +9,8 @@ import * as ps12Style from '../../../assets/css/ps12.css';
 import * as sysStyles from '../../../assets/css/sysmng.css';
 import * as esmStyles from '../../../assets/css/esm.css';
 import { Card } from '@mui/material';
-import axiosInstance from '../../../utils/AxiosInstance';
-import { perfPjtColumns, pjtColumns } from '../../../assets/json/tableColumn';
+import axiosInstance from '../../../utils/AxiosInstance.js';
+import { perfPjtColumns, pjtColumns } from '../../../assets/json/tableColumn.js';
 import styled from 'styled-components';
 
 const CustomRadioGroup = styled(Radio.Group)`
@@ -37,8 +37,8 @@ const CustomRadioGroup = styled(Radio.Group)`
     }
 `;
 
-export default function Psq_fm() {
-    const [formFields, setFormFields] = useState(formField_psq);
+export default function Psq_fp() {
+    const [formFields, setFormFields] = useState(formField_psq_fp);
     const [formData, setFormData] = useState(); // 검색 데이터
     const [selectedPjt, setSelectedPjt] = useState([]);
     const [perfsData, setPerfsData] = useState([]);
@@ -110,7 +110,7 @@ export default function Psq_fm() {
     return (
         <div>
             <div className={mainStyle.breadcrumb}>
-                {"배출실적 > 실적조회 > 프로젝트별 조회"}
+                {"배출실적 > 실적조회 > 프로젝트별 조회 현장현장"}
             </div>
             <SearchForms onFormSubmit={handleFormSubmit}
                 formFields={formFields.map(field => field.name === 'actvYear' ? { ...field, disabled: actvYearDisabled, placeholder: actvYearDisabled ? '프로젝트를 선택하세요.' : '' } : field)} // actvYear 필드의 disabled 상태 반영

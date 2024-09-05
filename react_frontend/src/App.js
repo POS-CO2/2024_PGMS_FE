@@ -7,6 +7,7 @@ import Main from './Main';
 import Efm from './components/fieldinfo/Efm';
 import Ps_1_2 from './components/emperf/Ps_1_2';
 import Psq from './components/emperf/perflook/Psq';
+import Psq_fp from './components/emperf/perflook/Psq_fp';
 import Tep from './components/emperf/perflook/Tep';
 import Pd from './components/fieldinfo/project/Pd';
 import Pg from './components/fieldinfo/project/Pg';
@@ -85,6 +86,17 @@ export default function App() {
             <Routes>
                 {token ? (
                     <Route path='/' element={<SiteLayout handleLogout={handleLogout} menus={menu} user={user} />}>
+                        {
+                            user.role === 'ADMIN'
+                            ?
+                            <Route path='/psq' element={<Psq />} />
+                            :
+                            (user. role === 'HP'
+                            ?
+                            <Route path='/psq' element={<Psq />} />
+                            :
+                            <Route path='/psq' element={<Psq_fp />} />)
+                        }
                         <Route index path='' element={<Main />} />
                         <Route path='/ps_1_2' element={<Ps_1_2 />} />
                         <Route path='/efm' element={<Efm />} />
