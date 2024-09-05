@@ -218,6 +218,7 @@ export function TableCustomDoubleClickEdit({
                     };
                 });
 
+                console.log(requestBody);
                 const response = await axiosInstance.put("/perf", requestBody);
 
                 swalOptions.title = '성공!',
@@ -229,7 +230,7 @@ export function TableCustomDoubleClickEdit({
 
             } catch (error) {
                 swalOptions.title = '실패!',
-                swalOptions.text = '활동량 수정에 실패하였습니다.';
+                swalOptions.text = error.response.data.message;
                 swalOptions.icon = 'error';
             }
             setIsEditing(false);

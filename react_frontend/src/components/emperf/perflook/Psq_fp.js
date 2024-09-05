@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import SearchForms from "../../../SearchForms.js";
 import { formField_psq_fp } from "../../../assets/json/searchFormData.js"
 import { Radio } from 'antd';
@@ -50,13 +50,41 @@ export default function Psq_fp() {
         setContent(e.target.value);
     };
 
+    // 프로젝트 드롭다운 옵션 설정
+    const [pjtOptions, setPjtOptions] = useState([]);
+    const [projectData, setProjectData] = useState([]);  // 전체 프로젝트 데이터를 저장
+    useEffect(() => {
+        const fetchPjtOptions = async () => {
+            try {
+                const res = await axiosInstance.get("/pjt/my");
+                setProjectData(res.data);  // 전체 프로젝트 데이터를 저장
+                const options = res.data.map(pjt => ({
+                    value: pjt.pjtId,  // value에 id만 전달
+                    label: pjt.pjtCode +"/"+ pjt.pjtName,
+                }));
+                setPjtOptions(options);
+                const updateFormFields = formFields.map(field =>
+                    field.name === 'searchProject' ? { ...field, options } : field
+                );
+
+                setFormFields(updateFormFields);
+            } catch (error) {
+                console.error(error);
+            }
+        };
+        fetchPjtOptions();
+    }, []);
+
     // 프로젝트 선택 후 대상년도 드롭다운 옵션 설정
     const onProjectSelect = (selectedData, form) => {
-        if (selectedData) {
+        const selectedProject = projectData.find(pjt => pjt.pjtId === selectedData);
+        setSelectedPjt(selectedProject);
+
+        if (selectedProject) {
             const yearOptions = [];
             const currentYear = new Date().getFullYear();
-            const ctrtFrYear = selectedData.ctrtFrYear;
-            const ctrtToYear = Math.min(selectedData.ctrtToYear, currentYear);
+            const ctrtFrYear = selectedProject.ctrtFrYear;
+            const ctrtToYear = Math.min(selectedProject.ctrtToYear, currentYear);
 
             // 계약년도부터 현재년도까지의 옵션 생성
             for (let year = ctrtToYear; year >= ctrtFrYear; year--) {
@@ -81,9 +109,8 @@ export default function Psq_fp() {
     // 조회 버튼 클릭시 호출될 함수
     const handleFormSubmit = async (data) => {
         setFormData(data);
-        setSelectedPjt([data.searchProject]);
 
-        let url = `/perf/pjt?pjtId=${data.searchProject.id}&year=${data.actvYear}`;
+        let url = `/perf/pjt?pjtId=${data.searchProject}&year=${data.actvYear}`;
         const response = await axiosInstance.get(url);
         setPerfsData(response.data);
 
@@ -110,19 +137,20 @@ export default function Psq_fp() {
     return (
         <div>
             <div className={mainStyle.breadcrumb}>
-                {"배출실적 > 실적조회 > 프로젝트별 조회 현장현장"}
+                {"배출실적 > 실적조회 > 프로젝트별 조회"}
             </div>
-            <SearchForms onFormSubmit={handleFormSubmit}
+            <SearchForms
+                onFormSubmit={handleFormSubmit}
                 formFields={formFields.map(field => field.name === 'actvYear' ? { ...field, disabled: actvYearDisabled, placeholder: actvYearDisabled ? '프로젝트를 선택하세요.' : '' } : field)} // actvYear 필드의 disabled 상태 반영
                 onProjectSelect={onProjectSelect} />
-            
+           
             {(!formData || Object.keys(formData).length === 0) ? (
                 <></>
              ) : (
                 <>
                     <div className={esmStyles.main_grid}>
                         <Card sx={{ width: "100%", height: "auto", borderRadius: "15px", marginBottom: "1rem" }}>
-                            <TableCustom title="조회결과" columns={pjtColumns} data={selectedPjt} pagination={false}/>
+                            <TableCustom title="조회결과" columns={pjtColumns} data={[selectedPjt]} pagination={false}/>
                         </Card>
                     </div>
 
