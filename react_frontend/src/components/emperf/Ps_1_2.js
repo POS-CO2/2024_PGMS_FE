@@ -174,7 +174,7 @@ export default function Ps_1_2() {
             setIsModalOpen(true);
         };
         const handleOk = (data) => {
-            // 결과 처리
+            handleFormSubmit(formData);
             setIsModalOpen(false);
         };
         const handleCancel = () => {
@@ -204,7 +204,11 @@ export default function Ps_1_2() {
                 const values = [`"${formData.actvYear}"`].concat(
                     perfColumns.filter(column => column.key !== 'quantityList')
                                .map(column => {
-                                   const value = row[column.key] || '';
+                                    let value = row[column.key] || '';
+                                    // value가 문자열인지 확인 후 ',' 제거
+                                    if (typeof value === 'string') {
+                                        value = value.replace(/,/g, '');
+                                    }
                                    const escaped = ('' + value).replace(/"/g, '\\"');
                                    return `"${escaped}"`;
                                })
@@ -254,7 +258,7 @@ export default function Ps_1_2() {
             setIsModalOpen(true);
         };
         const handleOk = (data) => {
-            // 결과 처리
+            handleFormSubmit(formData);
             setIsModalOpen(false);
         };
         const handleCancel = () => {
@@ -284,7 +288,11 @@ export default function Ps_1_2() {
                 const values = [`"${formData.actvYear}"`].concat(
                     perfColumns.filter(column => column.key !== 'quantityList')
                             .map(column => {
-                                const value = row[column.key] || '';
+                                let value = row[column.key] || '';
+                                // value가 문자열인지 확인 후 ',' 제거
+                                if (typeof value === 'string') {
+                                    value = value.replace(/,/g, '');
+                                }
                                 const escaped = ('' + value).replace(/"/g, '\\"');
                                 return `"${escaped}"`;
                             })

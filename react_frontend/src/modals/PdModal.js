@@ -855,12 +855,12 @@ export function FadAddModal({ isModalOpen, handleOk, handleCancel, rowData }) {
 
 export function Ps12UploadExcelModal({ isModalOpen, handleOk, handleCancel }) { // '엑셀 업로드' 모달
     const fileInputRef = useRef(null);
-    const [fileList, setFileList] = useState([]);
+    const [file, setFile] = useState(null);
 
     // 모달 열 때마다 clear
     useEffect(() => {
         if (isModalOpen) {
-            setFileList([]);
+            setFile(null);
         }
     }, [isModalOpen]);
 
@@ -871,18 +871,43 @@ export function Ps12UploadExcelModal({ isModalOpen, handleOk, handleCancel }) { 
     };
 
     const handleFileChange = (event) => {
-        const newFiles = Array.from(event.target.files);
-        setFileList(prevFiles => {
-            const existingFileNames = new Set(prevFiles.map(file => file.name));
-            const filteredNewFiles = newFiles.filter(file => !existingFileNames.has(file.name));
-            return [...prevFiles, ...filteredNewFiles];
-        });
-        // Clear the input value to handle the same file being selected again
+        const newFile = event.target.files[0];
+        setFile(newFile);
+
+        // 동일한 파일을 다시 선택할 수 있도록 input의 값을 초기화
         event.target.value = null;
     };
 
-    const handleFileRemove = (fileName) => {
-        setFileList(prevFiles => prevFiles.filter(file => file.name !== fileName));
+    const handleFileRemove = () => {
+        setFile(null);
+    };
+
+    const onSaveClick = async () => {
+        let swalOptions = {
+            confirmButtonText: '확인'
+        };
+        
+        try {
+            /*const requestBody = {
+                file: file ? file.name : '' // 파일 이름을 requestBody로 전달 (실제 파일 내용은 필요 시 base64 등으로 변환)
+            };*/
+            const formData = new FormData();
+            formData.append('file', file);
+
+            // 데이터 전송
+            const response = await axiosInstance.post('/perf/upload', formData);
+
+            handleOk(response.data, true); // 새로 입력된 데이터를 handleOk 함수로 전달, 두번째 인자-closeModal=true
+            swalOptions.title = '성공!',
+            swalOptions.text = `성공적으로 등록되었습니다.`;
+            swalOptions.icon = 'success';
+        } catch (error) {
+            console.error('Error saving document:', error);
+            swalOptions.title = '실패!',
+            swalOptions.text = `등록에 실패하였습니다.`;
+            swalOptions.icon = 'error';
+        }
+        Swal.fire(swalOptions);
     };
 
     return (
@@ -904,7 +929,6 @@ export function Ps12UploadExcelModal({ isModalOpen, handleOk, handleCancel }) { 
                         type="file"
                         id="file"
                         name="file"
-                        multiple
                         accept=".xlt,.xls,.xlsx,.csv"
                         style={{ display: 'none' }} // 숨김 처리
                         ref={fileInputRef} // useRef로 참조
@@ -918,26 +942,24 @@ export function Ps12UploadExcelModal({ isModalOpen, handleOk, handleCancel }) { 
 
             <div className={ps12Styles.file_list_container}>
                 <div className={ps12Styles.file_list}>
-                    {fileList.length === 0 ? (
-                        <></>
-                    ) : (
-                        fileList.map((file, index) => (
-                            <div key={index} className={ps12Styles.file_item}>
-                                {file.name}
-                                <button
-                                    type="button"
-                                    className={ps12Styles.remove_button}
-                                    onClick={() => handleFileRemove(file.name)}
-                                >
-                                    <CloseOutlined />
-                                </button>
-                            </div>
-                        ))
-                    )}
+                {file ? (
+                    <div className={ps12Styles.file_item}>
+                        {file.name}
+                        <button
+                            type="button"
+                            className={ps12Styles.remove_button}
+                            onClick={handleFileRemove}
+                        >
+                            <CloseOutlined />
+                        </button>
+                    </div>
+                ) : (
+                    <></>
+                )}
                 </div>
             </div>
 
-            <button className={ps12Styles.select_button} onClick={handleOk}>등록</button>
+            <button className={ps12Styles.select_button} onClick={onSaveClick}>등록</button>
         </Modal>
     )
 }
