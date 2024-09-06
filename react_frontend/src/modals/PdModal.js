@@ -856,11 +856,13 @@ export function FadAddModal({ isModalOpen, handleOk, handleCancel, rowData }) {
 export function Ps12UploadExcelModal({ isModalOpen, handleOk, handleCancel }) { // '엑셀 업로드' 모달
     const fileInputRef = useRef(null);
     const [file, setFile] = useState(null);
+    const [errors, setErrors] = useState({});
 
     // 모달 열 때마다 clear
     useEffect(() => {
         if (isModalOpen) {
             setFile(null);
+            setErrors({});
         }
     }, [isModalOpen]);
 
@@ -883,6 +885,18 @@ export function Ps12UploadExcelModal({ isModalOpen, handleOk, handleCancel }) { 
     };
 
     const onSaveClick = async () => {
+        // 입력 값 검증
+        let newErrors = {};
+        if (!file) newErrors.file = '필수 항목입니다.';
+
+        if (Object.keys(newErrors).length > 0) {
+            setErrors(newErrors);
+            return;
+        }
+
+        setErrors({});
+
+        // 입력값 검증 통과하면 등록 수행
         let swalOptions = {
             confirmButtonText: '확인'
         };
@@ -958,6 +972,7 @@ export function Ps12UploadExcelModal({ isModalOpen, handleOk, handleCancel }) { 
                 )}
                 </div>
             </div>
+            {errors.file && <div className={modalStyles.error_message}>{errors.file}</div>}
 
             <button className={ps12Styles.select_button} onClick={onSaveClick}>등록</button>
         </Modal>
