@@ -1179,9 +1179,7 @@ export function DeleteModal({ isModalOpen, handleOk, handleCancel, rowData, rowD
         } catch (error) {
             console.error('Failed to delete user:', error);
             swalOptions.title = '실패!',
-            swalOptions.text = error.response && error.response.data && error.response.data.message
-                ? error.response.data.message
-                : `${rowName} 삭제에 실패하였습니다.`;
+            swalOptions.text = error.response.data.message;
             swalOptions.icon = 'error';
         }
         Swal.fire(swalOptions);
