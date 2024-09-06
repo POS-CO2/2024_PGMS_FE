@@ -12,6 +12,7 @@ import * as esmStyles from '../../assets/css/esm.css';
 import axiosInstance from '../../utils/AxiosInstance';
 import { perfColumns, pjtColumns } from '../../assets/json/tableColumn';
 import styled from 'styled-components';
+import * as XLSX from 'xlsx';
 
 const CustomRadioGroup = styled(Radio.Group)`
     .ant-radio-button-wrapper:hover {
@@ -189,19 +190,20 @@ export default function Ps_1_2() {
         const onDownloadExcelFormClick = (csvData) => {
             const fileName = `사용량 엑셀 양식_${formData.searchProject.pjtName}_${formData.actvYear}`;
     
-            // CSV 변환 함수
-            const csvRows = [];
+            // 워크북 및 워크시트 생성
+            const wb = XLSX.utils.book_new();
+            const wsData = [];
             
             // 헤더 생성 (perfColumns 순서대로, quantityList 제외, '년도' 맨앞에 추가)
             const headers = ['년도'].concat(
                 perfColumns.filter(column => column.key !== 'quantityList')
                         .map(column => column.label)
             );
-            csvRows.push(headers.join(','));
+            wsData.push(headers);
             
             // 데이터 생성
             for (const row of csvData) {
-                const values = [`"${formData.actvYear}"`].concat(
+                const values = [formData.actvYear].concat(
                     perfColumns.filter(column => column.key !== 'quantityList')
                                .map(column => {
                                     let value = row[column.key] || '';
@@ -209,24 +211,18 @@ export default function Ps_1_2() {
                                     if (typeof value === 'string') {
                                         value = value.replace(/,/g, '');
                                     }
-                                   const escaped = ('' + value).replace(/"/g, '\\"');
-                                   return `"${escaped}"`;
+                                    return value;
                                })
                 );
-                csvRows.push(values.join(','));
+                wsData.push(values);
             }
             
-            // CSV 파일 생성
-            const csvString = csvRows.join('\n');
-            const blob = new Blob([csvString], { type: 'text/csv' });
-            const url = window.URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.setAttribute('hidden', '');
-            a.setAttribute('href', url);
-            a.setAttribute('download', `${fileName}.csv`);
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
+            // 워크시트에 데이터 추가
+            const ws = XLSX.utils.aoa_to_sheet(wsData);
+            XLSX.utils.book_append_sheet(wb, ws, 'Sheet1');
+
+            // 파일 다운로드
+            XLSX.writeFile(wb, `${fileName}.xlsx`);
         };
     
         return (
@@ -273,19 +269,20 @@ export default function Ps_1_2() {
         const onDownloadExcelFormClick = (csvData) => {
             const fileName = `사용금액 엑셀 양식_${formData.searchProject.pjtName}_${formData.actvYear}`;
     
-            // CSV 변환 함수
-            const csvRows = [];
+            // 워크북 및 워크시트 생성
+            const wb = XLSX.utils.book_new();
+            const wsData = [];
 
             // 헤더 생성 (perfColumns 순서대로, quantityList 제외, '년도' 맨앞에 추가)
             const headers = ['년도'].concat(
                 perfColumns.filter(column => column.key !== 'quantityList')
                            .map(column => column.label)
             );
-            csvRows.push(headers.join(','));
+            wsData.push(headers);
             
             // 데이터 생성
             for (const row of csvData) {
-                const values = [`"${formData.actvYear}"`].concat(
+                const values = [formData.actvYear].concat(
                     perfColumns.filter(column => column.key !== 'quantityList')
                             .map(column => {
                                 let value = row[column.key] || '';
@@ -293,24 +290,18 @@ export default function Ps_1_2() {
                                 if (typeof value === 'string') {
                                     value = value.replace(/,/g, '');
                                 }
-                                const escaped = ('' + value).replace(/"/g, '\\"');
-                                return `"${escaped}"`;
+                                return value;
                             })
                 );
-                csvRows.push(values.join(','));
+                wsData.push(values);
             }
             
-            // CSV 파일 생성
-            const csvString = csvRows.join('\n');
-            const blob = new Blob([csvString], { type: 'text/csv' });
-            const url = window.URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.setAttribute('hidden', '');
-            a.setAttribute('href', url);
-            a.setAttribute('download', `${fileName}.csv`);
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
+            // 워크시트에 데이터 추가
+            const ws = XLSX.utils.aoa_to_sheet(wsData);
+            XLSX.utils.book_append_sheet(wb, ws, 'Sheet1');
+
+            // 파일 다운로드
+            XLSX.writeFile(wb, `${fileName}.xlsx`);
         };
     
         return (
