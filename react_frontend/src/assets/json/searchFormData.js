@@ -61,12 +61,8 @@ export const formField_esm = [
     { type: 'SearchAtModal', name: 'searchProject', label: '프로젝트코드/명', required: true, modalType: '프로젝트 찾기' },
 ];
 
-export const formField_esm_fm = [
-    { type: 'DropDown', name: 'searchProject', label: '프로젝트코드/명', required: true, options: [
-        { value: 'B80593CA', label: 'B80593CA/양산 석산지역주택조합 공동주택' },
-        { value: 'E00503CA', label: 'E00503CA/포항 6코크스 신설(공사) 1차(사전공사)' },
-        { value: '070687CA', label: '070687CA/삼진태양광' }
-    ] },
+export const formField_esm_fp = [
+    { type: 'DropDown', name: 'searchProject', label: '프로젝트코드/명', required: true, options: [] },
 ];
 
 export const formField_sd = [

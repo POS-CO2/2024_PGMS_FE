@@ -1179,7 +1179,9 @@ export function DeleteModal({ isModalOpen, handleOk, handleCancel, rowData, rowD
         } catch (error) {
             console.error('Failed to delete user:', error);
             swalOptions.title = '실패!',
-            swalOptions.text = `${rowName} 삭제에 실패하였습니다.`;
+            swalOptions.text = error.response && error.response.data && error.response.data.message
+                ? error.response.data.message
+                : `${rowName} 삭제에 실패하였습니다.`;
             swalOptions.icon = 'error';
         }
         Swal.fire(swalOptions);
@@ -1811,13 +1813,10 @@ export function EsmAddModal({ isModalOpen, handleOk, handleCancel, rowData }) {
             confirmButtonText: '확인'
         };
 
-        // selectedEmtnCands가 null이거나 비어있는지 확인
+        // selectedEmtnCands가 null이거나 비었으면 모달 닫고 함수 종료
         if (!selectedEmtnCands || selectedEmtnCands.length === 0) {
-            swalOptions.title = '실패!';
-            swalOptions.text = '선택된 배출원이 없습니다.';
-            swalOptions.icon = 'error';
-            Swal.fire(swalOptions);
-            return; // 더 이상 진행하지 않도록 함수 종료
+            handleCancel();
+            return;
         }
 
         try {
