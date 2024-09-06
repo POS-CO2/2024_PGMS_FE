@@ -18,15 +18,17 @@ const TabsWrapper = styled.div`
   justify-content: space-between;
   overflow: hidden; /* 탭이 영역을 벗어나지 않도록 설정 */
   width: 100%;
+  height: 7vh;
 `;
 
 const TabContainer = styled.div`
   display: flex;
-  flex-wrap: nowrap
+  flex-wrap: nowrap;
   flex-shrink: 1;
   max-width: calc(100% - 160px);
   width: 100%;
-  padding-top: 18px;
+  height: 50px;
+  padding-top: 6px;
   padding-left: 28px;
   padding-right: 16px; /* 탭과 유저 정보 사이의 간격 */
   overflow-x: auto;
@@ -107,6 +109,7 @@ const StyledTabs = styled(Tabs)`
 
   .ant-tabs-ink-bar {
     background-color: #0EAA00 !important; /* 밑줄 색상 변경 */
+    margin-bottom: 8px;
   }
 
   .ant-tabs-nav-more {

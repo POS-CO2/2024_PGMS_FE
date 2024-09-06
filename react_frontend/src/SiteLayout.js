@@ -154,7 +154,7 @@ export default function SiteLayout({handleLogout, menus, user}){
                     user={user} 
                     ref={tabsContainerRef} 
                 />
-                <div style={{ padding: '2px', overflowY: 'auto' }}>
+                <div style={{ overflowY: 'auto' }}>
                     <Outlet />
                 </div>
                 <Favorite handleFavClick={handleFavClick} fav={fav}/>

@@ -48,7 +48,6 @@ export default function Fad() {
 
         // 선택한 lib에 매핑된 활동자료 목록 조회
         const response = await axiosInstance.get(`/equip/actv/${data.searchLib.id}`);
-        console.log("response", response);
 
         // data가 빈 배열인지 확인
         if (response.data.length === 0) {

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router } from 'react-router-dom';
 import { Routes, Route } from 'react-router';
+import { RecoilRoot } from 'recoil';
 import { login } from './utils/Api';
 import SiteLayout from './SiteLayout';
 import Main from './Main';
@@ -81,35 +82,37 @@ export default function App() {
     }
     console.log(menu);
     return (
-        <Router>
-            <Routes>
-                {token ? (
-                    <Route path='/' element={<SiteLayout handleLogout={handleLogout} menus={menu} user={user} />}>
-                        <Route index path='' element={<Main />} />
-                        <Route path='/ps_1_2' element={<Ps_1_2 />} />
-                        <Route path='/efm' element={<Efm />} />
-                        <Route path='/psq' element={<Psq />} />
-                        <Route path='/tep' element={<Tep />} />
-                        <Route path='/pmg' element={<Pmg />} />
-                        <Route path='/pd' element={<Pd />} />
-                        <Route path='/pg' element={<Pg />} />
-                        <Route path='/rm' element={<Rm />} />
-                        <Route path='/fm' element={<Fm />} />
-                        <Route path='/fad' element={<Fad />} />
-                        <Route path='/fam' element={<Fam />} />
-                        <Route path='/fl' element={<Fl />} />
-                        <Route path='/esm' element={<Esm />} />
-                        <Route path='/sd' element={<Sd />} />
-                        <Route path='/cm' element={<Cm />} />
-                        <Route path='/um' element={<Um />} />
-                        <Route path='/mm' element={<Mm menus={menu} handleMenuSet={handleMenuSet} />} />
-                        <Route path='/mal' element={<Mal />} />
-                        <Route path='*' element={<Error404 />} />
-                    </Route>
-                ) : (
-                    <Route path='*' element={<Login handleLogin={handleLogin} />} />
-                )}
-            </Routes>
-        </Router>
+        <RecoilRoot>
+            <Router>
+                <Routes>
+                    {token ? (
+                        <Route path='/' element={<SiteLayout handleLogout={handleLogout} menus={menu} user={user} />}>
+                            <Route index path='' element={<Main />} />
+                            <Route path='/ps_1_2' element={<Ps_1_2 />} />
+                            <Route path='/efm' element={<Efm />} />
+                            <Route path='/psq' element={<Psq />} />
+                            <Route path='/tep' element={<Tep />} />
+                            <Route path='/pmg' element={<Pmg />} />
+                            <Route path='/pd' element={<Pd />} />
+                            <Route path='/pg' element={<Pg />} />
+                            <Route path='/rm' element={<Rm />} />
+                            <Route path='/fm' element={<Fm />} />
+                            <Route path='/fad' element={<Fad />} />
+                            <Route path='/fam' element={<Fam />} />
+                            <Route path='/fl' element={<Fl />} />
+                            <Route path='/esm' element={<Esm />} />
+                            <Route path='/sd' element={<Sd />} />
+                            <Route path='/cm' element={<Cm />} />
+                            <Route path='/um' element={<Um />} />
+                            <Route path='/mm' element={<Mm menus={menu} handleMenuSet={handleMenuSet} />} />
+                            <Route path='/mal' element={<Mal />} />
+                            <Route path='*' element={<Error404 />} />
+                        </Route>
+                    ) : (
+                        <Route path='*' element={<Login handleLogin={handleLogin} />} />
+                    )}
+                </Routes>
+            </Router>
+        </RecoilRoot>
     );
 }

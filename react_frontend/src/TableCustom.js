@@ -5,6 +5,7 @@ import * as tableStyles from "./assets/css/newTable.css"
 import { DelModal, PgAddModal, PdAddModal, FlAddModal, FlEditModal, FamAddModal, FamEditModal, FadAddModal, Ps12UploadExcelModal, CmAddModal, DeleteModal, CmEditModal, CmListAddModal, CmListEditModal, FmAddModal, UmAddModal, MmAddModal, EsmAddModal, SdAddModal, SdShowDetailsModal } from "./modals/PdModal.js";
 import { ButtonGroup } from './Button';
 import axiosInstance from './utils/AxiosInstance';
+import { ContinuousColorLegend } from '@mui/x-charts';
 
 const modalMap = {
     CMAdd: CmAddModal,
@@ -50,10 +51,10 @@ export default function TableCustom({
     
     const buttonStatus = buttons.map((button) => {
         if (button === 'Edit' || button === 'Delete') {
-            if (selectedRows.includes(null) || selectedRows.includes(undefined)) {  // 선택한 row가 없으면 삭제 버튼의 onRowClick 이벤트 비활성화(variant='default')
+            if (selectedRows.includes(null) || selectedRows.includes(undefined) || Object.keys(selectedRows[0]).length === 0) {  // 선택한 row가 없으면 삭제 버튼의 onRowClick 이벤트 비활성화(variant='default')
                 return false;                               
             } else {
-                return selectedRows.length > 0;             // 선택된 row가 있으면 delete 버튼 활성화(variant='checkbox')
+                return selectedRows.length > 0;   // 선택된 row가 있으면 delete 버튼 활성화(variant='checkbox')
             }
         }
         return true;  // 'Add' 버튼은 항상 활성화
@@ -64,31 +65,32 @@ export default function TableCustom({
 
     return (
         <>
-            <div className={tableStyles.container}>
-                <div className={tableStyles.table_title}>{title}</div>
-                <ButtonGroup buttons={buttons} onClicks={onClicks} buttonStatus={buttonStatus} />
-                
-                {modals.map((modal) => {
-                    const ModalComponent = modalMap[modal.modalType];
-                    return ModalComponent ? (
-                        <ModalComponent
-                            key={modal.modalType} // warning 삭제
-                            isModalOpen={modal.isModalOpen}
-                            handleOk={modal.handleOk || (() => {})}
-                            handleCancel={modal.handleCancel || (() => {})}
-                            onRowClick={onRowClick}
-                            rowData={modal.rowData}
-                            dropDown={modal.dropDown || []}
-                            rowDataName={modal.rowDataName}
-                            url={modal.url || ""}
-                        />
-                    ) : null;
-                })}
+            <div className={tableStyles.group_container}>
+                <div className={tableStyles.container}>
+                    <div className={tableStyles.table_title}>{title}</div>
+                    <ButtonGroup buttons={buttons} onClicks={onClicks} buttonStatus={buttonStatus} />
+                    
+                    {modals.map((modal) => {
+                        const ModalComponent = modalMap[modal.modalType];
+                        return ModalComponent ? (
+                            <ModalComponent
+                                key={modal.modalType} // warning 삭제
+                                isModalOpen={modal.isModalOpen}
+                                handleOk={modal.handleOk || (() => {})}
+                                handleCancel={modal.handleCancel || (() => {})}
+                                onRowClick={onRowClick}
+                                rowData={modal.rowData}
+                                dropDown={modal.dropDown || []}
+                                rowDataName={modal.rowDataName}
+                                url={modal.url || ""}
+                            />
+                        ) : null;
+                    })}
+                </div>
+                {table ? (
+                    <Table key={tableKey} data={data} variant={variant} onRowClick={onRowClick} pagination={pagination} modalPagination={modalPagination} columns={columns}/>
+                ) : (<></>)}
             </div>
-            {table ? (
-            <Table key={tableKey} data={data} variant={variant} onRowClick={onRowClick} pagination={pagination} modalPagination={modalPagination} columns={columns}/>
-            ) : (<></>)}
-            
         </>
     );
 }
@@ -336,45 +338,46 @@ export function TableCustomDoubleClickEdit({
 
     return (
         <>
-            <div className={tableStyles.container}>
-                <div className={tableStyles.table_title}>{title}</div>
-                <ButtonGroup 
-                    buttons={buttons} 
-                    onClicks={updatedOnClicks} 
-                    buttonStatus={buttonStatus}
-                    isEditing={isEditing}       //for edit button
-                />
-                
-                {modals.map((modal) => {
-                    const ModalComponent = modalMap[modal.modalType];
-                    return ModalComponent ? (
-                        <ModalComponent
-                            key={modal.modalType}
-                            isModalOpen={modal.isModalOpen}
-                            handleOk={modal.handleOk || (() => {})}
-                            handleCancel={modal.handleCancel || (() => {})}
-                            onRowClick={onRowClick}
-                            rowData={modal.rowData}
-                        />
-                    ) : null;
-                })}
+            <div className={tableStyles.group_container}>
+                <div className={tableStyles.container}>
+                    <div className={tableStyles.table_title}>{title}</div>
+                    <ButtonGroup 
+                        buttons={buttons} 
+                        onClicks={updatedOnClicks} 
+                        buttonStatus={buttonStatus}
+                        isEditing={isEditing}       //for edit button
+                    />
+                    
+                    {modals.map((modal) => {
+                        const ModalComponent = modalMap[modal.modalType];
+                        return ModalComponent ? (
+                            <ModalComponent
+                                key={modal.modalType}
+                                isModalOpen={modal.isModalOpen}
+                                handleOk={modal.handleOk || (() => {})}
+                                handleCancel={modal.handleCancel || (() => {})}
+                                onRowClick={onRowClick}
+                                rowData={modal.rowData}
+                            />
+                        ) : null;
+                    })}
+                </div>
+                {table ? (
+                    <Table 
+                        key={JSON.stringify(data)}
+                        data={editableData} 
+                        columns={columns}
+                        variant={variant} 
+                        onRowClick={onRowClick} 
+                        handleDoubleClick={handleDoubleClick} 
+                        handleInputChange={handleInputChange} 
+                        handleBlur={handleBlur}
+                        editingCell={editingCell}
+                        pagination={pagination}
+                        modalPagination={modalPagination}
+                    />
+                ) : (<></>)}
             </div>
-            {table ? (
-            <Table 
-                key={JSON.stringify(data)}
-                data={editableData} 
-                columns={columns}
-                variant={variant} 
-                onRowClick={onRowClick} 
-                handleDoubleClick={handleDoubleClick} 
-                handleInputChange={handleInputChange} 
-                handleBlur={handleBlur}
-                editingCell={editingCell}
-                pagination={pagination}
-                modalPagination={modalPagination}
-            />
-            ) : (<></>)}
-            
         </>
     );
 }

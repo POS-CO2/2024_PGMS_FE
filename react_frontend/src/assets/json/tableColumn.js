@@ -13,6 +13,11 @@ export const pjtColumns = [
     { key: 'pjtProgStus', label: '프로젝트진행상태', hidden: false },
     { key: 'userLoginId', label: '담당자사번', hidden: true },
     { key: 'userName', label: '담당자이름', hidden: true },
+    { key: 'pgmsYn', label: 'Y/N', hidden: true },
+    { key: 'userLoginId', label: '로그인 아이디', hidden: true },
+    { key: 'userName', label: '유저 명', hidden: true },
+    { key: 'startDate', label: '시작 일', hidden: true },
+    { key: 'endDate', label: '종료 일', hidden: true },
 ]
 
 export const equipColumns = [
@@ -104,7 +109,7 @@ export const pjtSalesColumns = [
 
 export const pjtManagerColumns = [
     { key: 'id', label: 'id', hidden: true },
-    { key: 'userLoginId', label: '사번', hidden: false },
+    { key: 'loginId', label: '사번', hidden: false },
     { key: 'userName', label: '이름', hidden: false },
     { key: 'userDeptCode', label: '부서명', hidden: false },
 ]

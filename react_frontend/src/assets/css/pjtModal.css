@@ -26,6 +26,11 @@
     margin-bottom: 16px;
 }
 
+.group_container {
+    padding-right: 30px;
+    box-sizing: border-box;
+}
+
 .search_container {
     display: flex;
     align-items: center;
@@ -43,6 +48,7 @@
     font-weight: bolder;
     font-size: 16px;
     line-height: 10px;
+    margin-bottom: 5px;
 }
 
 .search_code, .search_name {
@@ -50,50 +56,68 @@
     border-radius: 5px;
     border: none;
     padding: 5px;
-    height: 25px;
-}
-
-.search_code {
-    width: 130px;
-}
-
-.search_name {
-    width: 250px;
+    height: 35px;
 }
 
 .search_button {
     width: 52px;
     height: 35px;
     padding: 5px 10px;
-    background: #0A7800;
+    background: #0EAA00;
     color: white;
-    border: none;
+    border: 'none';
     border-radius: 5px;
     cursor: pointer;        /* hover 시 커서 모양을 포인터(손 모양)로 변환 */
 }
+
 .search_button:hover{
     background-color: #8AC784;
 }
 
 .result_container {
-    height: 400px;          /* 모달 창 높이 조절 */
+    height: 300px;          /* 모달 창 높이 조절 */
     background: #FFFFFF;
     margin-top: 20px;
-    margin-bottom: 120px;
-    margin-left: -22px;
+    margin-bottom: 50px;
+    padding-left: 0;
+}
+
+.button_container {
+    display: flex;
+    justify-content: flex-start;
+    gap: 10px;
 }
 
 .select_button {
-    width: 97%;            /* 모달 창의 전체 너비로 확장 */
-    height: 41px;
-    padding: 5px 10px;
-    background: #0A7800; /* #9284dc */
-    color: white;
-    border: none;
+    display: flex;
+    align-items: center;
+    background: transparent; /* #9284dc */
+    color: #0EAA00;
+    border: 0.03rem, solid #0EAA00;
     border-radius: 5px;
     cursor: pointer;
+    font-size: 20px;
+    width: 8%;
+    height: 100%;
+    padding: 0 !important;
 }
 
 .select_button:hover{
     background-color: #8AC784;
+}
+
+.button_text {
+    flex: 0 0 60%;
+    display: flex;
+    justify-content: center; /* 텍스트 가운데 정렬 */
+    align-items: center;     /* 세로 가운데 정렬 */
+    height: 100%;
+}
+
+.icon {
+    flex: 0 0 40%;
+    display: flex;
+    justify-content: center; /* 아이콘 가운데 정렬 */
+    align-items: center;     /* 세로 가운데 정렬 */
+    height: 100%;
 }
