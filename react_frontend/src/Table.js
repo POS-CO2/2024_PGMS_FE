@@ -127,8 +127,6 @@ export default function CustomizedTables({
     
     const paginatedData = filteredData.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
 
-    console.log(visibleColumns);
-    console.log(filteredData);
     return (
         <Box sx={{ 
             width: '100%', 
@@ -167,8 +165,8 @@ export default function CustomizedTables({
                                             variant === 'checkbox' && (
                                                 <StyledTableCell>
                                                     <StyledCheckbox 
-                                                        checked={selectedRows.includes(rowIndex)}
-                                                        onClick={(e) => handleCheckboxClick(e, rowIndex)}
+                                                        checked={selectedRows.includes(rowIndex + (rowsPerPage * page))}
+                                                        onClick={(e) => handleCheckboxClick(e, rowIndex + (rowsPerPage * page))}
                                                     />
                                                 </StyledTableCell>
                                             )
@@ -258,14 +256,25 @@ export default function CustomizedTables({
                 rowsPerPageOptions={[5, 10, 25]} // page row length custom
                 component="div"
                 count={data.length}
-                rowsPerPage={5}
+                rowsPerPage={rowsPerPage}
                 page={page}
                 onPageChange={handleChangePage}
                 onRowsPerPageChange={handleChangeRowsPerPage}
             />
             )
-            ) : (
+            ) : ( !modalPagination ? (
                 <></>
+            ) : (
+                <TablePagination 
+                rowsPerPageOptions={[5, 10, 25]} // page row length custom
+                component="div"
+                count={data.length}
+                rowsPerPage={rowsPerPage}
+                page={page}
+                onPageChange={handleChangePage}
+                onRowsPerPageChange={handleChangeRowsPerPage}
+            />
+            )
             )
             }
         </Box>

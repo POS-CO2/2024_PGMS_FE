@@ -11,6 +11,7 @@ import * as gridStyles from './assets/css/gridHp.css'
 import styled from 'styled-components';
 import axiosInstance from './utils/AxiosInstance';
 import { KeyboardArrowDown, KeyboardArrowUp, KeyboardDoubleArrowDown, KeyboardDoubleArrowUp, LeaderboardOutlined, WorkspacePremium } from '@mui/icons-material';
+import { PieChart } from '@mui/x-charts';
 
 const StyledChart = styled.div`
     .apexcharts-canvas {
@@ -184,75 +185,27 @@ const miniChartOptions = (title, toMonth) => {
     return chartOption;
 };
 
-const donutChartOptions = () => {
+const donutChartOptions = (label) => {
     const chartOption = {
-        chart: {
-            type: "polarArea",
-            toolbar: {
-                show: true // 차트 툴바를 숨김
+        options: {
+            chart: {
+                width: 380,
+                type: 'polarArea',
             },
-            width: "100%",  // 부모 요소의 100%를 채우도록 설정
-            height: "100%",
+            labels: label,
             responsive: [{
-                breakpoint: 600,
+                breakpoint: 480,
                 options: {
-                    chart: {
-                        width: '100%',
-                        height: '100%',
-                    },
-                    legend: {
-                        position: 'bottom'
-                    }
+                chart: {
+                    width: 200
+                },
+                legend: {
+                    position: 'bottom'
                 }
+            }
             }]
         },
-        // grid: {
-        //     show: false,
-        //     xaxis: {
-        //         show: false,
-        //     }
-        // },
-        // xaxis: {
-        //     categories: [`${toMonth-1}월`, `${toMonth}월`, `${toMonth+1}월`]
-        // },
-        // yaxis: {
-        //     title: {
-        //         text: "배출량" // Y축에 표시될 제목
-        //     },
-        //     show: false,
-        // },
-        // stroke: {
-        //     width: 2,
-        //     curve: "smooth", // 라인을 부드럽게 곡선으로 표시
-        // },
-        // markers: {
-        //     size: 3, // 각 데이터 포인트에 표시될 원의 크기
-        // },
-        // dataLabels: {
-        //     enabled: false // 데이터 라벨 표시 여부
-        // },
-        // tooltip: {
-        //     enabled: true, // 툴팁 활성화
-        // },
-        // colors: ["#ffffff", "#b6b6b6"], // 차트 라인의 색상 설정
-        // legend: {
-        //     position: "top", // 범례의 위치
-        //     horizontalAlign: "right",
-        //     show: false,
-        // },
-        // title: {
-        //     text: title,
-        //     align: 'left',
-        //     offsetX: 0,
-        //     offsetY: 0,
-        //     floating: false,
-        //     style: {
-        //         fontSize:  '25px',
-        //         fontWeight:  'bold',
-        //         color:  'white'
-        //     },
-        // }
-        }
+    }
         return chartOption;
 }
 
@@ -282,14 +235,59 @@ const miniChartSeries = (data, beforeData, toYear, toMonth) => {
         }
     ];
     return charData;
-} 
-
-const donutChartSeries = () => {
-    const charData = [
-
-    ];
-    return charData;
 }
+
+const polarChartSeries = (data) => {
+    // const charData = data.map(e => {
+    //     return {
+    //         name: e.emtnActvType,
+    //         data: e.formattedTotalActvQty ? parseInt(e.formattedTotalActvQty, 10) : 0
+    //     };
+    // });
+    // console.log(data);
+    // console.log(charData);
+    return data;
+}
+
+const polarAreaChartOptions = (labels) => {
+    if (!labels || labels.length === 0) return {};
+    return {
+        width:"100%",
+        height:"100%",
+        chart: {
+            type: 'polarArea',
+            toolbar: {
+            show: false, // 차트 툴바 숨김
+            },
+        },
+        labels: ["a", "b", "c"], // 레이블 설정
+        stroke: {
+            colors: ['#fff'], // 폴라 차트의 경계선 색상
+        },
+        fill: {
+            opacity: 0.8, // 채우기 투명도
+        },
+        responsive: [{
+            breakpoint: 480,
+            options: {
+            chart: {
+                width: 300 // 작은 화면일 때 너비 설정
+            },
+            legend: {
+                position: 'bottom'
+            }
+            }
+        }],
+        title: {
+            text: 'Polar Area Chart Example', // 차트 제목
+            align: 'center',
+            style: {
+            fontSize: '22px',
+            fontWeight: 'bold',
+            },
+        },
+        };
+    };
 
 export default function Main_Hp() {
     // 각 카드의 상태를 관리
@@ -307,6 +305,9 @@ export default function Main_Hp() {
     const [beforeTotScope, setBeforeTotScope] = useState([]);
     const [showChartIdx, setShowChartIdx] = useState(0);
     const [saleAmount, setSaleAmount] = useState([]);
+    const [emtn, setEmtn] = useState([]);
+    const [emtnName, setEmtnName] = useState([]);
+    const [emtnAmt, setEmtnAmt] = useState([]);
 
     let today = new Date();
     let toYear = today.getFullYear();
@@ -342,6 +343,8 @@ export default function Main_Hp() {
                 // 올해 스코프
                 const scopeResponse = await axiosInstance.get(`/perf/total?year=${toYear}`);
                 const afterScope = scopeResponse.data;
+                console.log(afterScope);
+
                 setScope1(prev=>prev.concat(afterScope.map(e => e.scope1)));
                 setScope2(prev=>prev.concat(afterScope.map(e => e.scope2)));
                 setTotScope(prev=>prev.concat(afterScope.map(e => e.total)));
@@ -357,12 +360,20 @@ export default function Main_Hp() {
                 const sales = salesResponse.data;
                 setSaleAmount(sales);
 
+                const emtnResponse = await axiosInstance.get(`/perf/by-emtn`);
+                const emtnData = emtnResponse.data;
+                setEmtn(emtnData);
+                setEmtnName(prev => prev.concat(emtnData.map(e=>e.emtnActvType)));
+                setEmtnAmt(prev => prev.concat(emtnData.map(e=>e.totalActvQty ?? 0)));
+                //parseInt(item.formattedTotalActvQty.replace(/,/g, ''), 10)
+                
+
             } catch (error) {
                 
             }
         }
-        fetchChartData();
-        
+        fetchChartData()
+
     }, [])
 
     const topData = [
@@ -379,8 +390,17 @@ export default function Main_Hp() {
             value: (totScope[toMonth-1] / totScope[toMonth-2] * 100).toFixed(2) ?? 0,
         },
     ]
-    
 
+    console.log(emtnName);
+    console.log(emtnAmt);
+
+    const pieData = (data) => {
+        return data.map(item => ({
+            id: item.emtnActvType,   // 고유 식별자
+            value: item.totalActvQty, // 숫자로 변환
+            label: item.emtnActvType, // 레이블
+        }));
+    };
     return (
         <>
             <div className={gridStyles.maingrid}>
@@ -400,12 +420,31 @@ export default function Main_Hp() {
                                 {style.isActive ? (
                                     <div style={{display:"flex", justifyContent:"center", alignItems:"center", flexDirection:"column"}}>
                                         <br/>
-                                        <ApexChart
-                                            options={miniChartOptions("Scope1", toMonth)}
-                                            series={miniChartSeries(scope1, beforeScope1, toYear, toMonth)}
-                                            type="line"
-                                            height="100%"
-                                        />
+                                        {index === 0 ? (
+                                            <ApexChart
+                                                options={miniChartOptions("Scope1", toMonth)}
+                                                series={miniChartSeries(scope1, beforeScope1, toYear, toMonth)}
+                                                type="line"
+                                                height="100%"
+                                            />
+                                        ) : (
+                                            (index === 1 ? (
+                                                <ApexChart
+                                                    options={miniChartOptions("Scope2", toMonth)}
+                                                    series={miniChartSeries(scope2, beforeScope2, toYear, toMonth)}
+                                                    type="line"
+                                                    height="100%"
+                                                />
+                                            ) : (
+                                                <ApexChart
+                                                    options={miniChartOptions("총량실적", toMonth)}
+                                                    series={miniChartSeries(totScope, beforeTotScope, toYear, toMonth)}
+                                                    type="line"
+                                                    height="100%"
+                                                />
+                                            ))
+                                        )}
+                                        
                                     </div>
                                 ) : (
                                     <div className={gridStyles.top_logo}>
@@ -490,7 +529,7 @@ export default function Main_Hp() {
                                                     {data.pjtName}
                                                 </div>
                                             </div>
-                                            <div className={gridStyles.left_bottom_amt}>{`₩ ${data.formattedTotalSalesAmt.substring(0,data.formattedTotalSalesAmt.length-5)}만원`}</div>
+                                            <div className={gridStyles.left_bottom_amt}>{`₩ ${data.formattedTotalSalesAmt}원`}</div>
                                         </Card>
                                     </SwiperSlide>
                                 ))}
@@ -500,18 +539,26 @@ export default function Main_Hp() {
                 </div>
                 <div className={gridStyles.right_box}>
                     <Card sx={{backgroundColor:"white", width:"100%", height:"100%"}}>
-                        <StyledChart style={{width:"100%", height:"100%"}}>
-                            {/* <ApexChart 
-                                options={donutChartOptions}
-                                series={donutChartSeries}
-                                type='donut'
-                                height="100%"
-                            /> */}
-                        </StyledChart>
+                        {/* <StyledChart style={{width:"100%", height:"100%"}}> */}
+                        <div style={{width:"100%", height:"30%", display:"flex", justifyContent:"center", alignItems:"center"}}>
+                        <PieChart 
+                            series={[
+                                {
+                                    data: pieData(emtn),
+                                    // innerRadius: 30,
+                                    // outerRadius: 100,
+                                    // paddingAngle: 5,
+                                    // cornerRadius: 5,
+                                    // startAngle: -45,
+                                    // endAngle: 225,
+                                    cx: "100%",
+                                    cy: "100%",
+                                }
+                            ]}
+                        />
+                        </div>
+                        {/* </StyledChart> */}
                     </Card>
-                    {/* <div>
-                        <Swiper/>
-                    </div> */}
                 </div>
             </div>
         </>
