@@ -1870,6 +1870,7 @@ export function SdAddModal({ isModalOpen, handleOk, handleCancel, rowData, yearS
         name: '',
         fileList: []
     });
+    const [errors, setErrors] = useState({});
 
     // 모달 열 때마다 clear
     useEffect(() => {
@@ -1880,6 +1881,7 @@ export function SdAddModal({ isModalOpen, handleOk, handleCancel, rowData, yearS
                 name: '',
                 fileList: []
             });
+            setErrors({});
         }
     }, [isModalOpen]);
 
@@ -1937,6 +1939,20 @@ export function SdAddModal({ isModalOpen, handleOk, handleCancel, rowData, yearS
     };
 
     const onSaveClick = async () => {
+        // 입력 값 검증
+        let newErrors = {};
+        if (!formData.actvYear || !formData.actvMth) newErrors.actvYearMth = '대상년월을 선택해 주세요.';
+        if (!formData.name) newErrors.name = '필수 항목입니다.';
+        if (formData.fileList.length === 0) newErrors.fileList = '파일을 선택해 주세요.';
+
+        if (Object.keys(newErrors).length > 0) {
+            setErrors(newErrors);
+            return;
+        }
+
+        setErrors({});
+
+        // 입력값 검증 통과하면 등록 수행
         let swalOptions = {
             confirmButtonText: '확인'
         };
@@ -1981,6 +1997,7 @@ export function SdAddModal({ isModalOpen, handleOk, handleCancel, rowData, yearS
             <div className={modalStyles.title}>증빙서류 등록</div>
 
             <div className={sdStyles.input_container}>
+
                 <div className={sdStyles.input_item}>
                     <div className={sdStyles.input_title}>
                         대상년월
@@ -2012,7 +2029,9 @@ export function SdAddModal({ isModalOpen, handleOk, handleCancel, rowData, yearS
                         </Select>
                         <div>월</div>
                     </div>
+                    {errors.actvYearMth && <div className={modalStyles.error_message}>{errors.actvYearMth}</div>}
                 </div>
+
                 <div className={sdStyles.input_item}>
                     <div className={sdStyles.input_title}>
                         자료명
@@ -2024,7 +2043,9 @@ export function SdAddModal({ isModalOpen, handleOk, handleCancel, rowData, yearS
                         value={formData.name}
                         onChange={(e) => setFormData(prevData => ({ ...prevData, name: e.target.value }))}
                     />
+                    {errors.name && <div className={modalStyles.error_message}>{errors.name}</div>}
                 </div>
+
                 <div className={sdStyles.upload_item}>
                     <div className={sdStyles.upload_header}>
                         <div className={sdStyles.input_title}>
@@ -2069,6 +2090,7 @@ export function SdAddModal({ isModalOpen, handleOk, handleCancel, rowData, yearS
                             )}
                         </div>
                     </div>
+                    {errors.fileList && <div className={modalStyles.error_message}>{errors.fileList}</div>}
                 </div>
             </div>
 
