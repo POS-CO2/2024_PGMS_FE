@@ -26,8 +26,8 @@ const ContentContainer = styled.div`
     flex: 1;
     display: flex;
     flex-direction: column;
-    max-width: 100vw;
-    width: 100%;
+    max-width: 100%;
+    width: calc(100% - 12.5rem);
     min-width: 600px;
     flex-grow: 1;
     height:100vh;
@@ -67,7 +67,7 @@ const mapMenuDataToItems = (menuData) => {
 };
 
 export default function SiteLayout({handleLogout, menus, user}){
-    const [fav, setFav] = useState(true);
+    const [fav, setFav] = useState(false);
     const [loading, setLoading] = useState(false);
 
     const [collapsed, setCollapsed] = useState(false);
@@ -154,7 +154,7 @@ export default function SiteLayout({handleLogout, menus, user}){
                     user={user} 
                     ref={tabsContainerRef} 
                 />
-                <div style={{ padding: '2px', overflowY: 'auto' }}>
+                <div style={{ overflowY: 'auto' }}>
                     <Outlet />
                 </div>
                 <Favorite handleFavClick={handleFavClick} fav={fav}/>

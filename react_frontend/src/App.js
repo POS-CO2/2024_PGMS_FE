@@ -4,6 +4,8 @@ import { Routes, Route } from 'react-router';
 import { login } from './utils/Api';
 import SiteLayout from './SiteLayout';
 import Main from './Main';
+import Main_Hp from './Main_Hp';
+import Main_Admin from './Main_Admin';
 import Efm from './components/fieldinfo/Efm';
 import Ps_1_2 from './components/emperf/Ps_1_2';
 import Ps_1_2_Fp from './components/emperf/Ps_1_2_Fp';
@@ -82,7 +84,7 @@ export default function App() {
     if (loading) {
         return <div>Loading...</div>; // 로딩 상태일 때 표시할 화면
     }
-    console.log(menu);
+
     return (
         <Router>
             <Routes>
@@ -92,6 +94,7 @@ export default function App() {
                             user.role === 'ADMIN'
                             ?
                             <>
+                                <Route index path='' element={<Main_Admin />} />
                                 <Route path='/ps_1_2' element={<Ps_1_2 />} />
                                 <Route path='/psq' element={<Psq />} />
                                 <Route path='/esm' element={<Esm />} />
@@ -100,19 +103,20 @@ export default function App() {
                             (user. role === 'HP'
                             ?
                             <>
+                                <Route index path='' element={<Main_Hp />} /> 
                                 <Route path='/ps_1_2' element={<Ps_1_2 />} />
                                 <Route path='/psq' element={<Psq />} />
                                 <Route path='/esm' element={<Esm />} />
                             </>
                             :
                             <>
+                                <Route index path='' element={<Main />} />
                                 <Route path='/ps_1_2' element={<Ps_1_2_Fp />} />
                                 <Route path='/psq' element={<Psq_Fp />} />
                                 <Route path='/esm' element={<Esm_Fp />} />
                             </>
                             )
                         }
-                        <Route index path='' element={<Main />} />
                         <Route path='/efm' element={<Efm />} />
                         <Route path='/tep' element={<Tep />} />
                         <Route path='/pmg' element={<Pmg />} />

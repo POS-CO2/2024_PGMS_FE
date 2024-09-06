@@ -133,7 +133,7 @@ export default function ModalComponent({ isModalOpen, handleOk, handleCancel}) {
       </div>
 
       <div className={pjtModalStyles.result_container}>
-        <Table columns={pjtColumns} data={project} onRowClick={handlePjtClick} />
+        <Table columns={pjtColumns} data={project} onRowClick={handlePjtClick} pagination={true} modalPagination={true}/>
       </div>
 
       <button className={pjtModalStyles.select_button} onClick={handleSelect}>선택</button>

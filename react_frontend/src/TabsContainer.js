@@ -18,6 +18,7 @@ const TabsWrapper = styled.div`
   justify-content: space-between;
   overflow: hidden; /* 탭이 영역을 벗어나지 않도록 설정 */
   width: 100%;
+  height: 7vh;
 `;
 
 const TabContainer = styled.div`
@@ -103,6 +104,9 @@ const StyledTabs = styled(Tabs)`
 
   .ant-tabs-tab.ant-tabs-tab-active .ant-tabs-tab-btn {
     color: #0EAA00; /* 활성화된 탭 레이블의 색상 변경 */
+    // white-space: nowrap;
+    // overflow: hidden;
+    // text-overflow: ellipsis;
   }
 
   .ant-tabs-ink-bar {
@@ -120,6 +124,10 @@ const StyledTabs = styled(Tabs)`
     white-space: nowrap; /* 탭이 한 줄에 나열되도록 설정 */
     width: 100%;
   }
+
+  // .ant-tabs-nav-list {
+  //   width: 100%;
+  // }
 `;
 
 const DraggableTabNode = ({ index, moveTabNode, children }) => {
