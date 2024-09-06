@@ -1,0 +1,143 @@
+.maingrid {
+    display: flex;
+    /* width: calc(100vw - 12.5rem); */
+    width: 100%;
+    height: 93vh;
+}
+
+.left_box {
+    display: flex;
+    flex-direction: column;
+    width: 66%;
+    height: 100%;
+}
+
+.left_box_top {
+    display: flex;
+    flex-direction: row !important;
+    justify-content: space-around;
+    gap: 1rem;
+    width: 100%;
+    height: 25%;
+}
+
+.top_logo {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.top_box_percentage {
+    display: flex;
+    justify-content: flex-start;
+    font-size: large;
+    font-weight: bold;
+    height: 70%;
+    align-items: flex-end;
+    margin: 0 0 2rem 1rem;
+}
+
+.left_box_chart {
+    display: flex;
+    width: 95%;
+    height: 50%;
+    padding: 1.5rem;
+}
+
+.left_box_bottom {
+    width: 97%;
+    height: 25%;
+    padding-left: 1rem;
+    overflow-x: hidden;
+    overflow-y: hidden;
+    white-space: nowrap;
+    scrollbar-width: none;
+    mask-image: linear-gradient(to right, rgba(0, 0, 0, 1) 90%, rgba(0, 0, 0, 0) 100%);
+    -webkit-mask-image: linear-gradient(to right, rgba(0, 0, 0, 1) 90%, rgba(0, 0, 0, 0) 100%);
+}
+
+.left_box_bottom::-webkit-scrollbar {
+    display: none;
+}
+
+.left_bottom_logo {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    font-size: 1.5rem;
+    font-weight: bold;
+    margin-left: 1rem;
+    gap: 0.5rem;
+    color: rgb(14, 170, 0);
+}
+
+.left_bottom_1 {
+    display: flex;
+    flex-direction: row;
+    height: 50%;
+    align-items: center;
+    margin-left: 1rem;
+    gap: 0.5rem;
+}
+
+.left_bottom_medal {
+    font-size: larger;
+}
+
+.left_bottom_pjtname {
+    font-size: 1rem;
+    font-weight: bold;
+    overflow-x: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    color: rgb(55,57,78);
+}
+
+.left_bottom_amt {
+    display: flex;
+    align-items: flex-end;
+    justify-content: flex-end;
+    height: 50%;
+    font-size: x-large;
+    font-weight: bold;
+    margin-right: 1rem;
+    margin-bottom: 1rem;
+    color: rgb(55,57,78);
+}
+.right_box {
+    width: 34%;
+    height: 100%;
+}
+
+.right_chart_area {
+    width: 100%;
+    height: 40%;
+}
+
+.right_swiper_area {
+    width: 100%;
+    height: 60%;
+    mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 1) 90%, rgba(0, 0, 0, 0) 100%);
+    -webkit-mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 1) 90%, rgba(0, 0, 0, 0) 100%);
+}
+
+.right_swiper_box_logo {
+    display: flex;
+    align-items: center;
+    font-size: large;
+    font-weight: bold;
+    color: rgb(55,57,78);
+    height: 25%;
+    gap: 0.5rem;
+}
+
+.right_swiper_emtn {
+    height: 75%;
+    display: flex;
+    justify-content: flex-end;
+    align-items: flex-end;
+    font-size: x-large;
+    font-weight: bold;
+    margin: 0 2rem 1rem 0;
+    color: rgb(55,57,78);
+}

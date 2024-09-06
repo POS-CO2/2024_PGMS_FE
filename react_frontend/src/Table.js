@@ -126,6 +126,7 @@ export default function CustomizedTables({
     });
     
     const paginatedData = filteredData.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
+
     return (
         <Box sx={{ 
             width: '100%', 
@@ -149,7 +150,7 @@ export default function CustomizedTables({
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                            {
+                            {pagination ? (
                                 // 표에 data 채우기
                                 paginatedData.map((row, rowIndex) => (
                                     <StyledTableRow 
@@ -164,8 +165,8 @@ export default function CustomizedTables({
                                             variant === 'checkbox' && (
                                                 <StyledTableCell>
                                                     <StyledCheckbox 
-                                                        checked={selectedRows.includes(rowIndex)}
-                                                        onClick={(e) => handleCheckboxClick(e, rowIndex)}
+                                                        checked={selectedRows.includes(rowIndex + (rowsPerPage * page))}
+                                                        onClick={(e) => handleCheckboxClick(e, rowIndex + (rowsPerPage * page))}
                                                     />
                                                 </StyledTableCell>
                                             )
@@ -193,7 +194,49 @@ export default function CustomizedTables({
                                             ))
                                         }
                                     </StyledTableRow>
-                                ))
+                                ))) :
+                                (
+                                    filteredData.map((row, index) => (
+                                        <StyledTableRow 
+                                            key={index}
+                                            selected={
+                                                variant === 'checkbox' 
+                                                ? selectedRows.includes(index) 
+                                                : selectedRow === index
+                                            }
+                                            onClick={(e) => handleRowClick(index, e)}
+                                        >
+                                            {   // checkbox가 있는 테이블이면 체크박스 셀 추가
+                                                variant === 'checkbox' && (
+                                                    <StyledTableCell>
+                                                        <StyledCheckbox 
+                                                            checked={selectedRows.includes(index)}
+                                                            onChange={() => handleCheckboxChange(index)}
+                                                        />
+                                                    </StyledTableCell>
+                                                )
+                                            }
+                                            {   // 데이터 값 채우기
+                                                visibleColumns.map((value, idx) => (
+                                                    <StyledTableCell key={idx} align="left" onDoubleClick={() => {handleDoubleClick(index, idx)}}>
+                                                        {editingCell.row === index && editingCell.col === idx ? (
+                                                            <TextField
+                                                                value={row[value.key]}
+                                                                onChange={(e) => handleInputChange(e, index, idx)}
+                                                                onBlur={handleBlur}
+                                                                autoFocus
+                                                                size="small"
+                                                            />
+                                                        ) : (
+                                                            row[value.key]
+                                                        )}
+                                                        {/* {value} */}
+                                                    </StyledTableCell>
+                                                ))
+                                            }
+                                        </StyledTableRow>
+                                    ))
+                                )
                             }
                         </TableBody>
                 </Table>
@@ -213,14 +256,25 @@ export default function CustomizedTables({
                 rowsPerPageOptions={[5, 10, 25]} // page row length custom
                 component="div"
                 count={data.length}
-                rowsPerPage={5}
+                rowsPerPage={rowsPerPage}
                 page={page}
                 onPageChange={handleChangePage}
                 onRowsPerPageChange={handleChangeRowsPerPage}
             />
             )
-            ) : (
+            ) : ( !modalPagination ? (
                 <></>
+            ) : (
+                <TablePagination 
+                rowsPerPageOptions={[5, 10, 25]} // page row length custom
+                component="div"
+                count={data.length}
+                rowsPerPage={rowsPerPage}
+                page={page}
+                onPageChange={handleChangePage}
+                onRowsPerPageChange={handleChangeRowsPerPage}
+            />
+            )
             )
             }
         </Box>
