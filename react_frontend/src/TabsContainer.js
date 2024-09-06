@@ -23,14 +23,13 @@ const TabsWrapper = styled.div`
 
 const TabContainer = styled.div`
   display: flex;
-  flex-wrap: nowrap
-  flex-shrink: 1;
-  max-width: calc(100% - 160px);
-  width: 100%;
+  flex-direction: column;
+  align-items: flex-start;
+  flex-grow: 1;
   padding-top: 18px;
   padding-left: 28px;
   padding-right: 16px; /* 탭과 유저 정보 사이의 간격 */
-  overflow-x: auto;
+  overflow-x: hidden;
 `;
 
 const TopRightWrapper = styled.div`
@@ -91,11 +90,27 @@ const Photo = styled.div`
 `;
 
 const StyledTabs = styled(Tabs)`
+  .ant-tabs {
+    margin: 0 !important;
+    width: 100% !important;
+  }
+
   .ant-tabs-tab {
+    width: auto;
+    margin: 0 !important;
+    justify-content: flex-start;
+    padding: 1rem 0.5rem;
     font-weight: bold;
-    flex-shrink: 1;
-    min-width: 20px;
     overflow: hidden;
+    white-space: nowrap !important;
+    text-overflow: ellipsis !important;
+    min-width: 30px;
+  }
+
+  .ant-tabs-tab-btn {
+    overflow: hidden;
+    white-space: norwap;
+    text-overflow: ellipsis;
   }
 
   .ant-tabs-tab:hover .ant-tabs-tab-btn {
@@ -104,9 +119,6 @@ const StyledTabs = styled(Tabs)`
 
   .ant-tabs-tab.ant-tabs-tab-active .ant-tabs-tab-btn {
     color: #0EAA00; /* 활성화된 탭 레이블의 색상 변경 */
-    // white-space: nowrap;
-    // overflow: hidden;
-    // text-overflow: ellipsis;
   }
 
   .ant-tabs-ink-bar {
@@ -120,14 +132,17 @@ const StyledTabs = styled(Tabs)`
   .ant-tabs-nav {
     display: flex;
     flex-wrap: nowrap;
-    overflow-x: auto; /* 탭이 많아지면 스크롤 */
-    white-space: nowrap; /* 탭이 한 줄에 나열되도록 설정 */
     width: 100%;
   }
 
-  // .ant-tabs-nav-list {
-  //   width: 100%;
-  // }
+  .ant-tabs-nav-list {
+    width: 100%;
+    display: flex;
+    flex-grow: 1;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
 `;
 
 const DraggableTabNode = ({ index, moveTabNode, children }) => {
@@ -268,18 +283,22 @@ const TabsContainer = forwardRef(({ handleLogout, user }, ref) => {
   const tabsData = tabs.map((tab, index) => ({
     label: (
       <DraggableTabNode index={index} moveTabNode={moveTabNode}>
-        <span>
-          {tab.tab}
-          {tab.key !== '' && ( // 홈 탭에는 닫기 버튼을 표시하지 않음
-            <CloseOutlined
-              style={{ marginLeft: 8 }}
-              onClick={(e) => {
-                e.stopPropagation(); // 이벤트 전파를 막아 탭 전환을 방지
-                removeTab(tab.key);
-              }}
-            />
-          )}
-        </span>
+        <div style={{display:"flex", alignContent:"center", cursor:"pointer"}}>
+          <div style={{ textOverflow:"ellipsis", whiteSpace:"nowrap", overflowX:"hidden"}}>
+            {tab.tab}
+          </div>
+          <div>
+            {tab.key !== '' && ( // 홈 탭에는 닫기 버튼을 표시하지 않음
+              <CloseOutlined
+                style={{ color:"red", paddingLeft:"5px"}}
+                onClick={(e) => {
+                  e.stopPropagation(); // 이벤트 전파를 막아 탭 전환을 방지
+                  removeTab(tab.key);
+                }}
+              />
+            )}
+          </div>
+        </div>
       </DraggableTabNode>
     ),
     key: tab.key,
@@ -335,6 +354,7 @@ const TabsContainer = forwardRef(({ handleLogout, user }, ref) => {
             items={tabsData}
             hideAdd
             moreIcon={null}
+            style={{width:"100%", textOverflow:"ellipsis"}}
           />
         </TabContainer>
         <TopRightWrapper>
