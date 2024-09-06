@@ -61,6 +61,8 @@ export default function Efm() {
             setEfm(data ?? {});
         })();
     },[])
+    console.log(efm);
+    console.log(filteredEfm);
 
     return (
         <>
