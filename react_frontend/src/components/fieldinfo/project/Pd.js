@@ -122,8 +122,19 @@ export default function Pd() {
         try {
             const typeResponse = await axiosInstance.get(`/sys/unit?unitType=설비유형`);
             const dvsResponse = await axiosInstance.get(`/sys/unit?unitType=설비구분`);
-            setEqTypeList(typeResponse.data);  // 설비유형 리스트 설정
-            setEqDvsList(dvsResponse.data);    // 설비구분 리스트 설정
+            
+            const optionsType = typeResponse.data.map(item => ({
+                value: item.code,
+                label: item.name,
+            }));
+
+            const optionsDvs = dvsResponse.data.map(item => ({
+                value: item.code,
+                label: item.name,
+            }));
+
+            setEqTypeList(optionsType);  // 설비유형 리스트 설정
+            setEqDvsList(optionsDvs);    // 설비구분 리스트 설정
         } catch (error) {
             console.error("Error fetching dropdown data: ", error);
         }
@@ -203,7 +214,6 @@ export default function Pd() {
         if (button === '담당자 지정') {
             const response = await axiosInstance.get(`/pjt/manager?pjtId=${searchedPjt.id}`);
             setManagers(response.data);
-
         } else if (button === '설비 지정') {
             const response = await axiosInstance.get(`/equip?pjtId=${searchedPjt.id}`);
             setEquips(response.data);
@@ -286,9 +296,18 @@ export default function Pd() {
                 const response = await axiosInstance.get(`/pjt/not-manager?pjtId=${searchedPjt.id}&loginId=${inputEmpId}&userName=${inputEmpName}`);
                 setEmps(response.data);
             } else if (selectedButton === '설비 지정') {
-                const response = await axiosInstance.get(`/equip/lib?equipLibName=${inputEqLib}&equipDvs=${inputEqDvs}&equipType=${inputEqType}`);
+                const params = {
+                    equipLibName: inputEqLib,
+                    equipDvs: inputEqDvs === '' ? null : inputEqDvs,
+                    equipType: inputEqType === '' ? null : inputEqType,
+                };
+
+                const response = await axiosInstance.get("/equip/lib", {params});
                 setNotEqs(response.data);
-                console.log("aa", inputEqLib);
+                console.log("response", response);
+                console.log("params", params);
+                // console.log("params", inputEqType);
+
             } else if (selectedButton === '배출원 관리') {
                 const response = await axiosInstance.get(`/pjt/not-manager?pjtId=${searchedPjt.id}&loginId=${inputEmpId}&userName=${inputEmpName}`);
                 setNotEms(response.data);
@@ -562,11 +581,10 @@ export default function Pd() {
                                                     allowClear={{ clearIcon: <CloseOutlined style={{color: "red"}} /> }}
                                                     onChange={(value) => setInputEqType(value)}
                                                     style={{ width: '12.3rem' }}
-                                                    placeholder="설비유형 선택"
                                                 >
-                                                    {eqTypeList.map((item) => (
-                                                        <Option key={item.code} value={item.name}>
-                                                            {item.name}
+                                                    {eqTypeList.map((option) => (
+                                                        <Option key={option.value} value={option.value}>
+                                                            {option.label}
                                                         </Option>
                                                     ))}
                                                 </CustomSelect>
@@ -579,11 +597,10 @@ export default function Pd() {
                                                         allowClear={{ clearIcon: <CloseOutlined style={{color: "red"}} /> }}
                                                         onChange={(value) => setInputEqDvs(value)}
                                                         style={{ width: '7rem' }}
-                                                        placeholder="설비구분 선택"
                                                     >
-                                                        {eqDvsList.map((item) => (
-                                                            <Option key={item.code} value={item.name}>
-                                                                {item.name}
+                                                        {eqDvsList.map((option) => (
+                                                            <Option key={option.value} value={option.value}>
+                                                                {option.label}
                                                             </Option>
                                                         ))}
                                                     </CustomSelect>
