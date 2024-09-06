@@ -10,10 +10,16 @@ import 'swiper/css/effect-coverflow';
 import * as gridStyles from './assets/css/gridHp.css'
 import styled from 'styled-components';
 import axiosInstance from './utils/AxiosInstance';
-import { KeyboardArrowDown, KeyboardArrowUp, KeyboardDoubleArrowDown, KeyboardDoubleArrowUp, LeaderboardOutlined, WorkspacePremium } from '@mui/icons-material';
-import { PieChart } from '@mui/x-charts';
+import { DataThresholding, Delete, ElectricBolt, KeyboardArrowDown, KeyboardArrowUp, KeyboardDoubleArrowDown, KeyboardDoubleArrowUp, LeaderboardOutlined, LocalFireDepartment, MoreHoriz, MoveDown, OilBarrel, Public, WaterDrop, WorkspacePremium } from '@mui/icons-material';
 
 const StyledChart = styled.div`
+    .apexcharts-canvas {
+        width: 100%;
+        height: 100%;
+    }
+`;
+
+const StyledChart2 = styled.div`
     .apexcharts-canvas {
         width: 100%;
         height: 100%;
@@ -32,6 +38,30 @@ const StyledRoot = styled.div`
         }
         &-wrapper {
             display: flex;
+            width: 100%;
+            height: 100%;
+        }
+        &-slide {
+            flex-shrink: 0; // important
+            width: 100%;
+            height: 100%;
+        },
+    }    
+`;
+
+const StyledRoot2 = styled.div`
+    .swiper {
+        // position: relative;
+        // width: 100%;
+        // height: 100%;
+
+        &.swiper-initialized {
+            width: 100%;
+            height: 100%;
+        }
+        &-wrapper {
+            display: flex;
+            flex-direction: column;
             width: 100%;
             height: 100%;
         }
@@ -255,12 +285,55 @@ const polarAreaChartOptions = (labels) => {
         width:"100%",
         height:"100%",
         chart: {
-            type: 'polarArea',
+            type: 'pie',
             toolbar: {
             show: false, // 차트 툴바 숨김
             },
         },
-        labels: ["a", "b", "c"], // 레이블 설정
+        dataLabels:{
+            enabled: true,
+            enabledOnSeries: undefined,
+            formatter: function (val, opts) {
+                console.log(opts);
+                return `${val.toFixed(2)}%`;
+            },
+            textAnchor: 'middle',
+            distributed: false,
+            offsetX: 0,
+            offsetY: 0,
+            style: {
+                fontSize: "1rem",
+                fontWeight:"bold",
+                color: "rgb(55,57,78)"
+            },
+            dropShadow: {
+                enabled: false,
+            }
+        },
+        labels: labels, // 레이블 설정
+        legend: {
+            show: false,
+            position: "top",
+            onItemClick: {
+                toggleDataSeries: true
+            },
+            onItemHover: {
+                highlightDataSeries: true
+            },
+        },
+        xaxis: {
+            show: false,
+        },
+        yaxis: {
+            show: false,
+        },
+        plotOptions: {
+            polarArea: {
+                rings: {
+                    strokeWidth: 0,
+                },
+            },
+        },
         stroke: {
             colors: ['#fff'], // 폴라 차트의 경계선 색상
         },
@@ -278,12 +351,17 @@ const polarAreaChartOptions = (labels) => {
             }
             }
         }],
+        grid: {
+            show: false
+        },
         title: {
-            text: 'Polar Area Chart Example', // 차트 제목
-            align: 'center',
+            text: ' 배출 현황', // 차트 제목
+            align: 'left',
             style: {
-            fontSize: '22px',
-            fontWeight: 'bold',
+                fontSize: '22px',
+                fontWeight: 'bold',
+                color: "rgb(55,57,78)",
+                margin: "1rem"
             },
         },
         };
@@ -391,16 +469,39 @@ export default function Main_Hp() {
         },
     ]
 
+    const renderIcon = (e) => {
+        switch (e) {
+            case 'T0':  //공통
+                return <Public fontSize='large' sx={{color:"green"}} />;
+            case 'RK':  //참고데이터
+                return <DataThresholding fontSize='large' sx={{color:"blue"}} />;
+            case 'F0':  //연료
+                return <OilBarrel fontSize='large' sx={{color:"orange"}} />;
+            case 'R1':  //원료
+            case 'R2':  //촉매
+            case 'R3':  //환원재
+                return <WaterDrop fontSize='large' sx={{color:"#79edff"}} />;
+            case 'P1':  //최종산출물
+            case 'P2':  //중간산출물
+            case 'P3':  //기타산출물
+                return <MoveDown fontSize='large' sx={{color:"rgb(55, 57, 78)"}} />;
+            case 'S0':  //열
+                return <LocalFireDepartment fontSize='large' sx={{color: "red"}} />;
+            case 'E0':  //전기
+                return <ElectricBolt fontSize='large' sx={{color:"yellow"}} />;
+            case 'W0':  //폐기물
+                return <Delete fontSize='large' sx={{color:"gray"}} />;
+            case 'O0':  //기타부산물
+                return <MoreHoriz fontSize='large' sx={{color:"rgb(55, 57, 78)"}} />;
+            case 'IC':  //지표데이터
+                return <DataThresholding fontSize='large' sx={{color:"blue"}} />;
+            default:
+                return <></>;
+        }
+    };
+
     console.log(emtnName);
     console.log(emtnAmt);
-
-    const pieData = (data) => {
-        return data.map(item => ({
-            id: item.emtnActvType,   // 고유 식별자
-            value: item.totalActvQty, // 숫자로 변환
-            label: item.emtnActvType, // 레이블
-        }));
-    };
     return (
         <>
             <div className={gridStyles.maingrid}>
@@ -529,7 +630,7 @@ export default function Main_Hp() {
                                                     {data.pjtName}
                                                 </div>
                                             </div>
-                                            <div className={gridStyles.left_bottom_amt}>{`₩ ${data.formattedTotalSalesAmt}원`}</div>
+                                            <div className={gridStyles.left_bottom_amt}>{`₩ ${(data.totalSalesAmt/1000000).toFixed(2)}백만원`}</div>
                                         </Card>
                                     </SwiperSlide>
                                 ))}
@@ -539,26 +640,49 @@ export default function Main_Hp() {
                 </div>
                 <div className={gridStyles.right_box}>
                     <Card sx={{backgroundColor:"white", width:"100%", height:"100%"}}>
-                        {/* <StyledChart style={{width:"100%", height:"100%"}}> */}
-                        <div style={{width:"100%", height:"30%", display:"flex", justifyContent:"center", alignItems:"center"}}>
-                        <PieChart 
-                            series={[
-                                {
-                                    data: pieData(emtn),
-                                    // innerRadius: 30,
-                                    // outerRadius: 100,
-                                    // paddingAngle: 5,
-                                    // cornerRadius: 5,
-                                    // startAngle: -45,
-                                    // endAngle: 225,
-                                    cx: "100%",
-                                    cy: "100%",
-                                }
-                            ]}
-                        />
+                        <div className={gridStyles.right_chart_area}>
+                        <StyledChart2 style={{width:"100%", height:"100%"}}>
+                            <ApexChart
+                                options={polarAreaChartOptions(emtnName)}
+                                series={polarChartSeries(emtnAmt)}
+                                type="pie"
+                                width={"100%"}
+                                height={"100%"}
+                            />
+                        </StyledChart2>
                         </div>
-                        {/* </StyledChart> */}
+                        <div className={gridStyles.right_swiper_area}>
+                            <div style={{fontWeight:"bold", fontSize:"1.5rem", marginLeft:"1.5rem", color:"rgb(55, 57, 78)"}}>
+                                배출량
+                            </div>
+                            <StyledRoot2 style={{width:"100%", height:"100%", overflow:"hidden"}}>
+                                <Swiper
+                                    direction='vertical'
+                                    spaceBetween={40}    // 슬라이드 사이의 간격
+                                    slidesPerView={3.5}     // 화면에 보여질 슬라이드 수
+                                    // centeredSlides={true}
+                                    pagination={{ clickable: true }}  // 페이지 네이션 (점으로 표시되는 네비게이션)
+                                    navigation={true}           // 이전/다음 버튼 네비게이션
+                                    modules={[Navigation, Pagination]}
+                                >
+                                    {emtn.map((data) => (
+                                        <SwiperSlide style={{width:"100%", height:"100%"}}>
+                                            <Card sx={{backgroundColor:"white", width:"90%", height:"100%", margin:"1rem auto", borderRadius:"15px", display:"flex", flexDirection:"column", backgroundColor:"rgb(241,244,248)"}}>
+                                                <div className={gridStyles.left_bottom_1}>
+                                                    <div className={gridStyles.right_swiper_box_logo}>
+                                                        {renderIcon(data.actvDataDvs)}
+                                                        {data.emtnActvType}
+                                                    </div>
+                                                </div>
+                                                <div className={gridStyles.right_swiper_emtn}>{`${data.formattedTotalActvQty !== "" ? data.formattedTotalActvQty : 0} ${data.inputUnitCode}`}</div>
+                                            </Card>
+                                        </SwiperSlide>
+                                    ))}
+                                </Swiper>
+                            </StyledRoot2>
+                        </div>
                     </Card>
+                    
                 </div>
             </div>
         </>
