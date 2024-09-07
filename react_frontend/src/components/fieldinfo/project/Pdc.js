@@ -1,40 +1,21 @@
 import React, { useState, useEffect } from "react";
-import Swal from 'sweetalert2';
+import { useRecoilCallback, useRecoilState } from 'recoil';
+import { useSearchAction, useHandleKeyDownAction } from './pdsStateMgr';
 import { Input, Select } from 'antd';
-import { Card, Button } from '@mui/material';
+import { Card } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import { CloseOutlined } from '@ant-design/icons';
+import {
+    managerState, empState, selectedManagerState, selectedEmpState,
+    modalState, useHandleOkAction, 
+    useModalActions, useHandleSubmitAction
+  } from './pdsStateMgr';
 import { pjtManagerColumns, equipColumns, equipEmissionColumns, userColumns } from '../../../assets/json/tableColumn';
-import axiosInstance from '../../../utils/AxiosInstance';
 import Table from "../../../Table";
 import TableCustom from "../../../TableCustom";
-import SearchProjectModal from "../../../FormItem/SearchProjectModal";
 import * as pdsStyles from "../../../assets/css/pds.css";
-import * as mainStyles from "../../../assets/css/main.css";
-import selectedPjt from "../../../assets/json/selectedPjt";
 
 const { Option } = Select;
-
-const CustomButton = styled(Button)(({ theme, selected }) => ({
-    color: selected ? '#000' : '#B6B6B6',
-    border: selected ? '0.1rem solid #0A7800' : 'none',
-    backgroundColor: selected ? '#fff' : 'transparent',
-    fontWeight: selected ? 'bolder' : 'normal',
-    borderRadius: '1.3rem',
-    fontSize: '1rem',
-    paddingTop: '0.1rem',
-    paddingBottom: '0.1rem',
-    paddingLeft: '1rem',
-    paddingRight: '1rem',
-
-    '&:hover': {
-        color: '#000',
-        backgroundColor: '#fff',
-        border: '0.1rem solid #0A7800',
-        borderRadius: '1.3rem',
-        fontWeight: 'bolder',
-    },
-}));
 
 const CustomInput = styled(Input)`
     background-color: transparent !important;
@@ -61,29 +42,56 @@ const CustomInput = styled(Input)`
 
 `;
 
-export default function Pdc(pjtId, selectedButton, onDeleteClick, isModalOpen, handleOk, handleCancel) {
-    const [managers, setManagers] = useState([]);                               // 조회 결과(담당자 목록)
-    const [selectedManager, setSelectedManager] = useState({});                 // 선택된 담당자
-    const [emps, setEmps] = useState([]);                                       // 조회 결과(사원 목록)
-    const [selectedEmps, setSelectedEmps] = useState([]);                       // 선택된 사원의 loginId list
-    const [inputEmpId, setInputEmpId] = useState('');                           // 입력한 사번
-    const [inputEmpName, setInputEmpName] = useState('');                       // 입력한 사원명
+export default function Pdc({pjtId}) {                                                   // 선택된 사원의 loginId list
+    const [managers, setManagers] = useRecoilState(managerState);                               // 조회 결과(담당자 목록)
+    const [selectedManager, setSelectedManager] = useRecoilState(selectedManagerState);;        // 선택된 담당자
+    const [emps, setEmps] = useRecoilState(empState);                                           // 조회 결과(사원 목록)
+    const [selectedEmps, setSelectedEmps] = useRecoilState(selectedEmpState);                   // 선택된 사원의 loginId list
+    const [inputEmpId, setInputEmpId] = useState('');                                     // 입력한 사번
+    const [inputEmpName, setInputEmpName] = useState('');                                       // 입력한 사원명
 
-    useEffect(async () => {
-        const response = await axiosInstance.get(`/pjt/manager?pjtId=${pjtId}`);
-        setManagers(response.data);
-    }, []);
+    const { handleCancel, onDeleteClick, isModalOpen } = useModalActions();
+    const handleOk = useHandleOkAction();
+    const searchAction = useSearchAction();
+    const submitAction = useHandleSubmitAction();
+    const handleKeyDown = useHandleKeyDownAction();
 
-    // 사원 row 클릭 시 호출될 함수
+    const handleSearch = () => {
+        searchAction({
+          url: `/pjt/not-manager?pjtId=${pjtId}&loginId=${inputEmpId}&userName=${inputEmpName}`,
+          setter: setEmps,
+        });
+    };
+
+    const handleSubmit = () => {
+        console.log("selectedEmps at handleSubmit:", selectedEmps);
+        submitAction({
+            data: selectedEmps,
+            setterReg: setManagers,
+            setterNotReg: setEmps,
+            setterSelectedNotReg: setSelectedEmps,
+            requestBody: selectedEmps.map(emp => {
+                console.log("emp:", emp); // 각 emp 객체 확인
+                return {
+                  pjtId: pjtId,
+                  userId: emp.id // 이 부분이 제대로 나오는지 확인
+                }
+              }),
+            url: "/pjt/manager",
+            successMsg: '담당자가 성공적으로 지정되었습니다.'
+        })
+    }
+
+    // 사원 클릭 시 호출될 함수
     const handleEmpClick = (emp) => {
         setSelectedEmps(emp);
     };
 
-    // 담당자 row 클릭 시 호출될 함수
+    // 담당자 클릭 시 호출될 함수
     const handleManagerClick = (manager) => {
         setSelectedManager(manager ?? {});
     };
-
+  
     return (
         <>
             <Card sx={{ width: "50%", height: "auto", borderRadius: "0.5rem" }}>
@@ -99,7 +107,11 @@ export default function Pdc(pjtId, selectedButton, onDeleteClick, isModalOpen, h
                         {
                             'modalType': 'Delete',
                             'isModalOpen': isModalOpen.Delete,
-                            'handleOk': handleOk('Delete', selectedButton),
+                            'handleOk': () => handleOk('Delete') ({
+                                data: selectedManager, 
+                                setter: setManagers, 
+                                setterSelected: setSelectedManager
+                              }),
                             'handleCancel': handleCancel('Delete'),
                             'rowData': selectedManager,
                             'rowDataName': 'userName',
@@ -118,7 +130,7 @@ export default function Pdc(pjtId, selectedButton, onDeleteClick, isModalOpen, h
                                 value={inputEmpId}
                                 allowClear={{ clearIcon: <CloseOutlined style={{color: "red"}} /> }}
                                 onChange={(e) => setInputEmpId(e.target.value)}
-                                onKeyDown={handleKeyDown}
+                                onKeyDown={(e) => handleKeyDown(e, handleSearch)}
                                 style={{ width: '12rem', backgroundColor: '#E5F1E4', outline: 'none', boxShadow: 'none' }}
                             />
                         </div>
@@ -129,7 +141,7 @@ export default function Pdc(pjtId, selectedButton, onDeleteClick, isModalOpen, h
                                     value={inputEmpName}
                                     allowClear={{ clearIcon: <CloseOutlined style={{color: "red"}} /> }}
                                     onChange={(e) => setInputEmpName(e.target.value)}
-                                    onKeyDown={handleKeyDown}
+                                    onKeyDown={(e) => handleKeyDown(e, handleSearch)}
                                     style={{ width: '12rem', backgroundColor: '#E5F1E4', outline: 'none', boxShadow: 'none' }}
                                 />
                                 <button className={pdsStyles.search_button} onClick={handleSearch}>조회</button>
@@ -138,11 +150,11 @@ export default function Pdc(pjtId, selectedButton, onDeleteClick, isModalOpen, h
                     </div>
 
                     <div className={pdsStyles.result_container}>
-                        {(!emps || Object.keys(emps).length === 0) ? 
+                        {(!emps || emps.length === 0) ? 
                         <></> : <Table key={JSON.stringify(managers.length)} data={emps} columns={userColumns} variant='checkbox' onRowClick={handleEmpClick} modalPagination={true} />
                         }
                         {(!selectedEmps || selectedEmps.length === 0) ?
-                        <></> : ( <button className={pdsStyles.select_button} onClick={() => handleSelect(selectedEmps, setManagers, setEmps, setSelectedManager)}>등록</button> )}
+                        <></> : ( <button className={pdsStyles.select_button} onClick={handleSubmit}>등록</button> )}
                     </div>
                 </div>
             </Card>

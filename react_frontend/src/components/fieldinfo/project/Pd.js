@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { RecoilRoot } from 'recoil';
 import Swal from 'sweetalert2';
 import { Input, Select } from 'antd';
 import { Card, Button } from '@mui/material';
@@ -12,6 +13,7 @@ import SearchProjectModal from "../../../FormItem/SearchProjectModal";
 import * as pdsStyles from "../../../assets/css/pds.css";
 import * as mainStyles from "../../../assets/css/main.css";
 import selectedPjt from "../../../assets/json/selectedPjt";
+import PdsStateMgr from "./pdsStateMgr";
 
 const { Option } = Select;
 
@@ -88,18 +90,6 @@ const CustomSelect = styled(Select)`
 export default function Pd() {
     const [searchedPjt, setSearchedPjt] = useState({});                         // 프로젝트 조회 결과
     const [isSearchPjtModalOpen, setIsSearchPjtModalOpen] = useState(false);
-    const [isModalOpen, setIsModalOpen] = useState({
-        SdMgr: false,
-        Delete: false
-    });
-    const [selectedButton, setSelectedButton] = useState('담당자 지정');
-    
-    const [managers, setManagers] = useState([]);                               // 조회 결과(담당자 목록)
-    const [selectedManager, setSelectedManager] = useState({});                 // 선택된 담당자
-    const [emps, setEmps] = useState([]);                                       // 조회 결과(사원 목록)
-    const [selectedEmps, setSelectedEmps] = useState([]);                       // 선택된 사원의 loginId list
-    const [inputEmpId, setInputEmpId] = useState('');                           // 입력한 사번
-    const [inputEmpName, setInputEmpName] = useState('');                       // 입력한 사원명
 
     const [equips, setEquips] = useState([]);                                   
     const [selectedEq, setSelectedEq] = useState({});                           
@@ -140,11 +130,8 @@ export default function Pd() {
         }
     };
 
-    useEffect(async() => {
+    useEffect(() => {
         fetchDropdownOptions();  // 컴포넌트가 마운트될 때 드롭다운 리스트 데이터를 가져옴
-
-        const totalEqLib = await axiosInstance.get(`/equip/lib`);
-        setNotEqs(totalEqLib.data);
     }, []);
 
     useEffect(() => {
@@ -163,36 +150,14 @@ export default function Pd() {
         setIsSearchPjtModalOpen(false);
     };
 
-    // 모달(프로젝트 찾기 모달 제외) 열기
-    const showModal = (modalType) => {
-        setIsModalOpen(prevState => ({ ...prevState, [modalType]: true }));
-    };
-
-    const onDeleteClick = () => {
-        showModal('Delete');
-    };
-
-    // 모달 닫기
-    const handleCancel = (modalType) => () => {
-        setIsModalOpen(prevState => ({ ...prevState, [modalType]: false }));
-    };
-
     // 프로젝트 찾기 모달의 선택 버튼 클릭 시 호출될 함수
     const searchProject = (data) => {
         setIsSearchPjtModalOpen(false);
         setSearchedPjt(data);
     };
 
-    // 사원 row 클릭 시 호출될 함수
-    const handleEmpClick = (emp) => {
-        setSelectedEmps(emp);
-    };
 
-    // 담당자 row 클릭 시 호출될 함수
-    const handleManagerClick = (manager) => {
-        setSelectedManager(manager ?? {});
-    };
-
+    
     // 설비 row 클릭 시 호출될 함수
     const handleEqClick = (eq) => {
         setSelectedEq(eq ?? {});
@@ -217,6 +182,9 @@ export default function Pd() {
         } else if (button === '설비 지정') {
             const response = await axiosInstance.get(`/equip?pjtId=${searchedPjt.id}`);
             setEquips(response.data);
+
+            const totalEqLib = await axiosInstance.get(`/equip/lib`);
+            setNotEqs(totalEqLib.data);
         } else if (button === '배출원 관리') {
             const response = await axiosInstance.get(`/equip/emission?projectId=${searchedPjt.id}`);
             setEmissions(response.data);
@@ -304,10 +272,6 @@ export default function Pd() {
 
                 const response = await axiosInstance.get("/equip/lib", {params});
                 setNotEqs(response.data);
-                console.log("response", response);
-                console.log("params", params);
-                // console.log("params", inputEqType);
-
             } else if (selectedButton === '배출원 관리') {
                 const response = await axiosInstance.get(`/pjt/not-manager?pjtId=${searchedPjt.id}&loginId=${inputEmpId}&userName=${inputEmpName}`);
                 setNotEms(response.data);
@@ -446,7 +410,10 @@ export default function Pd() {
                         </div>
                     </Card>
 
-                    <div className={pdsStyles.button_container}>
+                    <RecoilRoot>
+                        <PdsStateMgr pjtId={searchedPjt.id} />
+                    </RecoilRoot>
+                    {/* <div className={pdsStyles.button_container}>
                         <CustomButton
                             variant="outlined"
                             selected={selectedButton === '담당자 지정'}
@@ -732,7 +699,7 @@ export default function Pd() {
                                 </Card>
                             </>
                         )}
-                    </div>
+                    </div> */}
                 </div>
             )}
 
