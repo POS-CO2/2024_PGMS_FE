@@ -855,12 +855,12 @@ export function FadAddModal({ isModalOpen, handleOk, handleCancel, rowData }) {
 
 export function Ps12UploadExcelModal({ isModalOpen, handleOk, handleCancel }) { // '엑셀 업로드' 모달
     const fileInputRef = useRef(null);
-    const [file, setFile] = useState(null);
+    const [fileList, setFileList] = useState([]);
 
     // 모달 열 때마다 clear
     useEffect(() => {
         if (isModalOpen) {
-            setFile(null);
+            setFileList([]);
         }
     }, [isModalOpen]);
 
@@ -872,30 +872,38 @@ export function Ps12UploadExcelModal({ isModalOpen, handleOk, handleCancel }) { 
 
     const handleFileChange = (event) => {
         const newFile = event.target.files[0];
-        setFile(newFile);
-
-        // 동일한 파일을 다시 선택할 수 있도록 input의 값을 초기화
-        event.target.value = null;
+        setFileList([newFile]);
     };
 
     const handleFileRemove = () => {
-        setFile(null);
+        setFileList([]);
     };
 
     const onSaveClick = async () => {
+        if (fileList.length === 0) {
+            Swal.fire({
+                title: '파일 없음',
+                text: '업로드할 파일을 선택해 주세요.',
+                icon: 'warning',
+                confirmButtonText: '확인'
+            });
+            return;
+        }
+
         let swalOptions = {
             confirmButtonText: '확인'
         };
         
         try {
-            /*const requestBody = {
-                file: file ? file.name : '' // 파일 이름을 requestBody로 전달 (실제 파일 내용은 필요 시 base64 등으로 변환)
-            };*/
             const formData = new FormData();
-            formData.append('file', file);
+            formData.append('file', fileList[0]);
 
             // 데이터 전송
-            const response = await axiosInstance.post('/perf/upload', formData);
+            const response = await axiosInstance.post('/perf/upload', formData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data'
+                }
+            });
 
             handleOk(response.data, true); // 새로 입력된 데이터를 handleOk 함수로 전달, 두번째 인자-closeModal=true
             swalOptions.title = '성공!',
@@ -904,7 +912,7 @@ export function Ps12UploadExcelModal({ isModalOpen, handleOk, handleCancel }) { 
         } catch (error) {
             console.error('Error saving document:', error);
             swalOptions.title = '실패!',
-            swalOptions.text = `등록에 실패하였습니다.`;
+            swalOptions.text = error.response.data.message;
             swalOptions.icon = 'error';
         }
         Swal.fire(swalOptions);
@@ -927,8 +935,8 @@ export function Ps12UploadExcelModal({ isModalOpen, handleOk, handleCancel }) { 
                 <div>
                     <input
                         type="file"
-                        id="file"
-                        name="file"
+                        id="fileList"
+                        name="fileList"
                         accept=".xlsx"
                         style={{ display: 'none' }} // 숨김 처리
                         ref={fileInputRef} // useRef로 참조
@@ -942,9 +950,10 @@ export function Ps12UploadExcelModal({ isModalOpen, handleOk, handleCancel }) { 
 
             <div className={ps12Styles.file_list_container}>
                 <div className={ps12Styles.file_list}>
-                {file ? (
+                {fileList.length !== 0 ? (
                     <div className={ps12Styles.file_item}>
-                        {file.name}
+                        {console.log(fileList[0])}
+                        {fileList[0].name}
                         <button
                             type="button"
                             className={ps12Styles.remove_button}
