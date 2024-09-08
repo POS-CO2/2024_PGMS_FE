@@ -905,6 +905,7 @@ export function Ps12UploadExcelModal({ isModalOpen, handleOk, handleCancel }) { 
                 }
             });
 
+            console.log(response.data);
             handleOk(response.data, true); // 새로 입력된 데이터를 handleOk 함수로 전달, 두번째 인자-closeModal=true
             swalOptions.title = '성공!',
             swalOptions.text = `성공적으로 등록되었습니다.`;
@@ -952,7 +953,6 @@ export function Ps12UploadExcelModal({ isModalOpen, handleOk, handleCancel }) { 
                 <div className={ps12Styles.file_list}>
                 {fileList.length !== 0 ? (
                     <div className={ps12Styles.file_item}>
-                        {console.log(fileList[0])}
                         {fileList[0].name}
                         <button
                             type="button"

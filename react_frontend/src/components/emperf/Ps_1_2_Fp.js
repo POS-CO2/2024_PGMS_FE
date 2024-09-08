@@ -211,12 +211,11 @@ export default function Ps_1_2_Fp() {
         };
     
         const onUploadExcelClick = () => {
-            console.log("onUploadExcelClick");
             showModal();
         };
     
         const onDownloadExcelFormClick = (csvData) => {
-            const fileName = `사용량 엑셀 양식_${formData.searchProject.pjtName}_${formData.actvYear}`;
+            const fileName = `사용량 엑셀 양식_${selectedPjt.pjtName}_${formData.actvYear}`;
     
             // 워크북 및 워크시트 생성
             const wb = XLSX.utils.book_new();
@@ -290,12 +289,11 @@ export default function Ps_1_2_Fp() {
         };
     
         const onUploadExcelClick = () => {
-            console.log("onUploadExcelClick2");
             showModal();
         };
         
         const onDownloadExcelFormClick = (csvData) => {
-            const fileName = `사용금액 엑셀 양식_${formData.searchProject.pjtName}_${formData.actvYear}`;
+            const fileName = `사용금액 엑셀 양식_${selectedPjt.pjtName}_${formData.actvYear}`;
     
             // 워크북 및 워크시트 생성
             const wb = XLSX.utils.book_new();
