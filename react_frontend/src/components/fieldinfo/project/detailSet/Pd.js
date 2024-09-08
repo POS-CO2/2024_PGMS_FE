@@ -4,39 +4,13 @@ import Swal from 'sweetalert2';
 import { Input, Select } from 'antd';
 import { Card, Button } from '@mui/material';
 import { styled } from '@mui/material/styles';
-import { CloseOutlined } from '@ant-design/icons';
-import { pjtManagerColumns, equipColumns, equipEmissionColumns, userColumns } from '../../../assets/json/tableColumn';
-import axiosInstance from '../../../utils/AxiosInstance';
-import Table from "../../../Table";
-import TableCustom from "../../../TableCustom";
-import SearchProjectModal from "../../../FormItem/SearchProjectModal";
-import * as pdsStyles from "../../../assets/css/pds.css";
-import * as mainStyles from "../../../assets/css/main.css";
-import selectedPjt from "../../../assets/json/selectedPjt";
-import PdsStateMgr from "./pdsStateMgr";
+import axiosInstance from '../../../../utils/AxiosInstance';
+import SearchProjectModal from "../../../../FormItem/SearchProjectModal";
+import * as pdsStyles from "../../../../assets/css/pds.css";
+import * as mainStyles from "../../../../assets/css/main.css";
+import PdsStateMgr from "./PdsStateMgr";
 
 const { Option } = Select;
-
-const CustomButton = styled(Button)(({ theme, selected }) => ({
-    color: selected ? '#000' : '#B6B6B6',
-    border: selected ? '0.1rem solid #0A7800' : 'none',
-    backgroundColor: selected ? '#fff' : 'transparent',
-    fontWeight: selected ? 'bolder' : 'normal',
-    borderRadius: '1.3rem',
-    fontSize: '1rem',
-    paddingTop: '0.1rem',
-    paddingBottom: '0.1rem',
-    paddingLeft: '1rem',
-    paddingRight: '1rem',
-
-    '&:hover': {
-        color: '#000',
-        backgroundColor: '#fff',
-        border: '0.1rem solid #0A7800',
-        borderRadius: '1.3rem',
-        fontWeight: 'bolder',
-    },
-}));
 
 const CustomInput = styled(Input)`
     background-color: transparent !important;
@@ -91,56 +65,10 @@ export default function Pd() {
     const [searchedPjt, setSearchedPjt] = useState({});                         // 프로젝트 조회 결과
     const [isSearchPjtModalOpen, setIsSearchPjtModalOpen] = useState(false);
 
-    const [equips, setEquips] = useState([]);                                   
-    const [selectedEq, setSelectedEq] = useState({});                           
-    const [notEqs, setNotEqs] = useState([]);                                   
-    const [selectedNotEq, setSelectedNotEq] = useState({});
-    const [inputEqLib, setInputEqLib] = useState('');
-    const [inputEqType, setInputEqType] = useState('');
-    const [inputEqDvs, setInputEqDvs] = useState('');
-    const [inputEqName, setInputEqName] = useState('');
-    const [eqTypeList, setEqTypeList] = useState([]);                           // 설비유형 리스트
-    const [eqDvsList, setEqDvsList] = useState([]);                             // 설비구분 리스트
-
     const [emissions, setEmissions] = useState([]);                             // 조회 결과(배출원 목록)
     const [selectedEms, setSelectedEms] = useState({});                         // 선택된 배출원
     const [notEms, setNotEms] = useState([]);                                   
     const [selectedNotEm, setSelectedNotEm] = useState({});
-
-    // 설비유형 및 설비구분 데이터를 불러오는 함수
-    const fetchDropdownOptions = async () => {
-        try {
-            const typeResponse = await axiosInstance.get(`/sys/unit?unitType=설비유형`);
-            const dvsResponse = await axiosInstance.get(`/sys/unit?unitType=설비구분`);
-            
-            const optionsType = typeResponse.data.map(item => ({
-                value: item.code,
-                label: item.name,
-            }));
-
-            const optionsDvs = dvsResponse.data.map(item => ({
-                value: item.code,
-                label: item.name,
-            }));
-
-            setEqTypeList(optionsType);  // 설비유형 리스트 설정
-            setEqDvsList(optionsDvs);    // 설비구분 리스트 설정
-        } catch (error) {
-            console.error("Error fetching dropdown data: ", error);
-        }
-    };
-
-    useEffect(() => {
-        fetchDropdownOptions();  // 컴포넌트가 마운트될 때 드롭다운 리스트 데이터를 가져옴
-    }, []);
-
-    useEffect(() => {
-        if(Object.keys(selectedNotEq).length === 0) {
-            setInputEqName('');
-        } else {
-            setInputEqName(selectedNotEq.equipLibName);
-        }
-    }, [selectedNotEq]);
 
     const showSearchPjtModal = () => {
         setIsSearchPjtModalOpen(true);
@@ -154,18 +82,6 @@ export default function Pd() {
     const searchProject = (data) => {
         setIsSearchPjtModalOpen(false);
         setSearchedPjt(data);
-    };
-
-
-    
-    // 설비 row 클릭 시 호출될 함수
-    const handleEqClick = (eq) => {
-        setSelectedEq(eq ?? {});
-    };
-
-    // 지정되지 않은 설비 row 클릭 시 호출될 함수
-    const handleNotEqClick = (eq) => {
-        setSelectedNotEq(eq ?? {});
     };
 
     // 배출원 row 클릭 시 호출될 함수
@@ -188,72 +104,6 @@ export default function Pd() {
         } else if (button === '배출원 관리') {
             const response = await axiosInstance.get(`/equip/emission?projectId=${searchedPjt.id}`);
             setEmissions(response.data);
-        }
-    };
-
-    const handleExcelUploadClick = (csvData, fileName) => {
-        // CSV 변환 함수
-        const csvRows = [];
-        
-        // 헤더 생성
-        const headers = Object.keys(csvData[0]);
-        csvRows.push(headers.join(','));
-        
-        // 데이터 생성
-        for (const row of csvData) {
-            const values = headers.map(header => {
-                const escaped = ('' + row[header]).replace(/"/g, '\\"');
-                return `"${escaped}"`;
-            });
-            csvRows.push(values.join(','));
-        }
-        
-        // CSV 파일 생성
-        const csvString = csvRows.join('\n');
-        const blob = new Blob([csvString], { type: 'text/csv' });
-        const url = window.URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.setAttribute('hidden', '');
-        a.setAttribute('href', url);
-        a.setAttribute('download', `${fileName}.csv`);
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-    };
-
-    // 삭제 모달의 확인 버튼 클릭 시 호출될 함수
-    const handleOk = (modalType, button) => async (data) => {
-        setIsModalOpen(prevState => ({ ...prevState, [modalType]: false })); //모달 닫기
-
-        let swalOptions = {
-            confirmButtonText: '확인'
-        };
-
-        if (modalType === 'Delete') {
-            try {
-                if (button === '담당자 지정') {
-                    // 선택된 담당자를 managers 리스트에서 제거
-                    setManagers(prevManagers => prevManagers.filter(manager => manager.id !== selectedManager.id));
-                    setSelectedManager({});
-                } else if (button === '설비 지정') {
-                    // 선택된 담당자를 managers 리스트에서 제거
-                    setManagers(prevManagers => prevManagers.filter(manager => manager.id !== selectedManager.id));
-                    setSelectedManager({});
-                } else if (button === '담당자 관리') {
-                    // 선택된 담당자를 managers 리스트에서 제거
-                    setManagers(prevManagers => prevManagers.filter(manager => manager.id !== selectedManager.id));
-                    setSelectedManager({});
-                }
-            } catch (error) {
-                console.log(error);
-            }
-        } 
-    };
-
-    const handleKeyDown = (e) => {
-        if (e.key === 'Enter') {
-            e.preventDefault();  // 폼의 기본 제출 동작 방지
-            handleSearch();
         }
     };
     

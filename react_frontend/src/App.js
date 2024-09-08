@@ -9,7 +9,7 @@ import Efm from './components/fieldinfo/Efm';
 import Ps_1_2 from './components/emperf/Ps_1_2';
 import Psq from './components/emperf/perflook/Psq';
 import Tep from './components/emperf/perflook/Tep';
-import Pd from './components/fieldinfo/project/Pd';
+import Pd from './components/fieldinfo/project/detailSet/Pd';
 import Pg from './components/fieldinfo/project/Pg';
 import Rm from './components/fieldinfo/project/Rm';
 import Fm from './components/fieldinfo/facility/Fm';

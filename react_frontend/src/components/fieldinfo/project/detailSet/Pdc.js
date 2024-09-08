@@ -1,19 +1,18 @@
-import React, { useState, useEffect } from "react";
-import { useRecoilCallback, useRecoilState } from 'recoil';
-import { useSearchAction, useHandleKeyDownAction } from './pdsStateMgr';
+import React, { useState } from "react";
+import { useRecoilState } from 'recoil';
+import {
+    managerState, empState, selectedManagerState, selectedEmpState,
+    useHandleOkAction, useModalActions, useHandleSubmitAction,
+    useSearchAction, useHandleKeyDownAction
+  } from './PdsStateMgr';
 import { Input, Select } from 'antd';
 import { Card } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import { CloseOutlined } from '@ant-design/icons';
-import {
-    managerState, empState, selectedManagerState, selectedEmpState,
-    modalState, useHandleOkAction, 
-    useModalActions, useHandleSubmitAction
-  } from './pdsStateMgr';
-import { pjtManagerColumns, equipColumns, equipEmissionColumns, userColumns } from '../../../assets/json/tableColumn';
-import Table from "../../../Table";
-import TableCustom from "../../../TableCustom";
-import * as pdsStyles from "../../../assets/css/pds.css";
+import { pjtManagerColumns, userColumns } from '../../../../assets/json/tableColumn';
+import Table from "../../../../Table";
+import TableCustom from "../../../../TableCustom";
+import * as pdsStyles from "../../../../assets/css/pds.css";
 
 const { Option } = Select;
 
@@ -64,19 +63,15 @@ export default function Pdc({pjtId}) {                                          
     };
 
     const handleSubmit = () => {
-        console.log("selectedEmps at handleSubmit:", selectedEmps);
         submitAction({
             data: selectedEmps,
             setterReg: setManagers,
             setterNotReg: setEmps,
             setterSelectedNotReg: setSelectedEmps,
-            requestBody: selectedEmps.map(emp => {
-                console.log("emp:", emp); // 각 emp 객체 확인
-                return {
-                  pjtId: pjtId,
-                  userId: emp.id // 이 부분이 제대로 나오는지 확인
-                }
-              }),
+            requestBody: selectedEmps.map(emp => ({
+                pjtId: pjtId,
+                userId: emp.id
+            })),
             url: "/pjt/manager",
             successMsg: '담당자가 성공적으로 지정되었습니다.'
         })

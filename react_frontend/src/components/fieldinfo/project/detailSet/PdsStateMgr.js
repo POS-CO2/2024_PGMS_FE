@@ -1,14 +1,25 @@
 import React, { useState, useEffect } from "react";
 import { useRecoilCallback, useSetRecoilState, useRecoilState } from 'recoil';
-import { atom, selector } from 'recoil';
-import axiosInstance from '../../../utils/AxiosInstance';
+import { atom } from 'recoil';
+import axiosInstance from '../../../../utils/AxiosInstance';
+import Swal from 'sweetalert2'
+import Pdc from './Pdc';
+import Fd from './Fd';
 import { Button } from '@mui/material';
 import { styled } from '@mui/material/styles';
-import * as pdsStyles from "../../../assets/css/pds.css";
-import Pdc from './Pdc';
+import * as pdsStyles from "../../../../assets/css/pds.css";
 
 // ### 상태 ###
-// 조회 결과(담당자 목록)
+
+// 모달 상태
+export const modalState = atom({
+  key: 'modalState',
+  default: {
+    Delete: false,
+  },
+});
+
+// 담당자 목록
 export const managerState = atom({
     key: 'managerState',
     default: [],
@@ -20,28 +31,44 @@ export const selectedManagerState = atom({
     default: {},
 });
 
-// 조회 결과(사원 목록)
+// (프로젝트에 지정되지 않은)사원 목록
 export const empState = atom({
     key: 'empState',
     default: [],
 });
 
-// 선택된 사원의 loginId list
+// 선택된 사원들
 export const selectedEmpState = atom({
     key: 'selectedEmpState',
     default: [],
 });
 
-// 모달 상태
-export const modalState = atom({
-    key: 'modalState',
-    default: {
-      SdMgr: false,
-      Delete: false,
-    },
+// 설비 목록
+export const eqState = atom({
+  key: 'eqState',
+  default: [],
+});
+
+// 선택된 설비
+export const selectedEqState = atom({
+  key: 'selectedEqState',
+  default: {},
+});
+
+// 설비LIB 목록
+export const eqLibState = atom({
+  key: 'eqLibState',
+  default: [],
+});
+
+// 선택된 설비LIB
+export const selectedEqLibState = atom({
+  key: 'selectedEqLibState',
+  default: {},
 });
 
 // ### 액션 ###
+
 // 모달 액션
 export const useModalActions = () => {
   const [isModalOpen, setIsModalOpen] = useRecoilState(modalState); // Recoil 상태
@@ -70,9 +97,9 @@ export const useModalActions = () => {
 
 // 조회 액션
 export const useSearchAction = () => {
-    return useRecoilCallback(() => async ({ url, setter }) => {
+    return useRecoilCallback(() => async ({ url, setter, params }) => {
       try {
-        const response = await axiosInstance.get(url);
+        const response = await axiosInstance.get(url, {params});
         setter(response.data);
       } catch (error) {
         console.error(error);
@@ -90,15 +117,11 @@ export const useHandleSubmitAction = () => {
     Array.isArray(data) ? setterSelectedNotReg(data) : setterSelectedNotReg(data);
 
     try {
-      console.log("url", url);
-      console.log("data", data);
-      console.log("requestBody", requestBody);
       const response = await axiosInstance.post(url, requestBody);
-      console.log("response", response);
 
       // 기존 데이터에 등록된 데이터를 병합
       setterReg(prevRegs => [
-        ...response.data,
+        ...(Array.isArray(response.data) ? response.data : [response.data]),  //배열이면 ...response.data, 배열이 아니면 배열로 강제변환
         ...prevRegs
       ]);
 
@@ -127,6 +150,8 @@ export const useHandleSubmitAction = () => {
       //swalOptions.text = response;
       swalOptions.icon = 'error';
     }
+
+    Swal.fire(swalOptions);
   });
 };
 
@@ -181,76 +206,56 @@ export const PdsStateMgr = ({pjtId}) => {
     const [selectedButton, setSelectedButton] = useState('담당자 지정');
 
     const setManagers = useSetRecoilState(managerState);
-    //const setEquips = useSetRecoilState(empState);
+    const setEquips = useSetRecoilState(eqState);
+    const setEqLibs = useSetRecoilState(eqLibState);
 
-    // 설비 지정 탭을 위한 상태관리
-    const [equips, setEquips] = useState([]);                                   
-    const [selectedEq, setSelectedEq] = useState({});                           
-    const [notEqs, setNotEqs] = useState([]);                                   
-    const [selectedNotEq, setSelectedNotEq] = useState({});
-    const [eqTypeList, setEqTypeList] = useState([]);            // 설비유형 드롭다운 리스트
-    const [eqDvsList, setEqDvsList] = useState([]);              // 설비구분 드롭다운 리스트
-    
+    // 프로젝트를 다시 선택하거나 다른 버튼을 클릭했을때 호출
     useEffect(() => {
-      handleOptionBtnClick(`/pjt/manager?pjtId=${pjtId}`, setManagers);
-    }, [pjtId]);
-
-
-    // // 설비유형 및 설비구분 데이터를 불러오는 함수
-    // const fetchDropdownOptions = async () => {
-    //     try {
-    //         const typeResponse = await axiosInstance.get(`/sys/unit?unitType=설비유형`);
-    //         const dvsResponse = await axiosInstance.get(`/sys/unit?unitType=설비구분`);
-            
-    //         const optionsType = typeResponse.data.map(item => ({
-    //             value: item.code,
-    //             label: item.name,
-    //         }));
-
-    //         const optionsDvs = dvsResponse.data.map(item => ({
-    //             value: item.code,
-    //             label: item.name,
-    //         }));
-
-    //         setEqTypeList(optionsType);  // 설비유형 리스트 설정
-    //         setEqDvsList(optionsDvs);    // 설비구분 리스트 설정
-    //     } catch (error) {
-    //         console.error("Error fetching dropdown data: ", error);
-    //     }
-    // };
-
-    // useEffect(async() => {
-    //     fetchDropdownOptions();  // 컴포넌트가 마운트될 때 드롭다운 리스트 데이터를 가져옴
-
-    //     const totalEqLib = await axiosInstance.get(`/equip/lib`);
-    //     setNotEqs(totalEqLib.data);
-    // }, []);
-
-    // useEffect(() => {
-    //     if(Object.keys(selectedNotEq).length === 0) {
-    //         setInputEqName('');
-    //     } else {
-    //         setInputEqName(selectedNotEq.equipLibName);
-    //     }
-    // }, [selectedNotEq]);
-
-    const handleOptionBtnClick = async (url, setter) => {
-        setSelectedButton(selectedButton); // 클릭된 버튼의 상태를 변경
+      const triggerButtonClick = async () => {
+        if (selectedButton === '담당자 지정') {
+          await handleOptionBtnClick([{
+            button: selectedButton,
+            url: `/pjt/manager?pjtId=${pjtId}`,
+            setter: setManagers
+          }]);
+        } else if (selectedButton === '설비 지정') {
+          await handleOptionBtnClick([
+            {
+              button: selectedButton,
+              url: `/equip?pjtId=${pjtId}`,
+              setter: setEquips
+            },
+            {
+              url: "/equip/lib",
+              setter: setEqLibs
+            },
+          ]);
+        }
         
-        // 조회 api 호출
-        const response = await axiosInstance.get(url);
-        setter(response.data);
+      };
+    
+      if (pjtId) {
+        triggerButtonClick();
+      }
+    }, [pjtId, selectedButton]);
+
+    const handleOptionBtnClick = async (actions) => {
+      for (const action of actions) {   // api 호출을 하나 이상 할 수 있음
+        const { button, url, setter } = action;
+    
+        if (button) {
+          setSelectedButton(button); // 버튼이 있을 때만 상태 변경
+        }
+    
+        try {
+          // 각 API 호출 후 setter로 데이터 설정
+          const response = await axiosInstance.get(url);
+          setter(response.data);
+        } catch (error) {
+          console.error(`Error occurred while fetching data from ${url}:`, error);
+        }
+      }
     };
-
-    // // 설비 row 클릭 시 호출될 함수
-    // const handleEqClick = (eq) => {
-    //     setSelectedEq(eq ?? {});
-    // };
-
-    // // 지정되지 않은 설비 row 클릭 시 호출될 함수
-    // const handleNotEqClick = (eq) => {
-    //     setSelectedNotEq(eq ?? {});
-    // };
 
     return (
         <>
@@ -258,14 +263,14 @@ export const PdsStateMgr = ({pjtId}) => {
                 <CustomButton
                     variant="outlined"
                     selected={selectedButton === '담당자 지정'}
-                    onClick={() => handleOptionBtnClick(`/pjt/manager?pjtId=${pjtId}`, setManagers)}
+                    onClick={() => setSelectedButton('담당자 지정')}
                 >
                     담당자 지정
                 </CustomButton>
                 <CustomButton
                     variant="outlined"
                     selected={selectedButton === '설비 지정'}
-                    //onClick={() => handleOptionBtnClick(`/equip?pjtId=${pjtId}`, setEquips)}
+                    onClick={() => setSelectedButton('설비 지정')}
                 >
                     설비 지정
                 </CustomButton>
@@ -281,6 +286,9 @@ export const PdsStateMgr = ({pjtId}) => {
             <div className={pdsStyles.contents_container}>
                 {selectedButton === '담당자 지정' && (
                     <Pdc pjtId={pjtId} selectedButton={selectedButton}/>
+                )}
+                {selectedButton === '설비 지정' && (
+                    <Fd pjtId={pjtId} selectedButton={selectedButton}/>
                 )}
             </div>
         </>

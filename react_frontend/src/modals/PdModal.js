@@ -19,7 +19,7 @@ import WarningAmberIcon from '@mui/icons-material/WarningAmber';
 import { Sledding } from '@mui/icons-material';
 import axiosInstance from '../utils/AxiosInstance.js';
 import { Center } from '@react-three/drei';
-import Swal from 'sweetalert2'
+import Swal from 'sweetalert2';
 import { pjtColumns, userColumns, equipColumns, equipActvColumns, equipLibColumns, equipEmissionColumns } from '../assets/json/tableColumn.js';
 import styled from 'styled-components';
 

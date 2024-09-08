@@ -175,6 +175,7 @@ button:hover {
     border-radius: 5px;
     cursor: pointer;
     float: right;
+    margin-top: 20px;
 }
 
 .select_button:hover{
