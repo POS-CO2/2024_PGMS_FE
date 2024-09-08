@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import SearchForms from "../../SearchForms";
 import { formField_ps12_fp } from "../../assets/json/searchFormData";
-import { Radio } from 'antd';
+import { CustomButton } from './Ps_1_2';
 import TableCustom, {TableCustomDoubleClickEdit} from "../../TableCustom.js";
 import { Card } from '@mui/material';
 import * as mainStyle from '../../assets/css/main.css';
@@ -10,32 +10,7 @@ import * as sysStyles from '../../assets/css/sysmng.css';
 import * as esmStyles from '../../assets/css/esm.css';
 import axiosInstance from '../../utils/AxiosInstance';
 import { perfColumns, pjtColumns } from '../../assets/json/tableColumn';
-import styled from 'styled-components';
 import * as XLSX from 'xlsx';
-
-const CustomRadioGroup = styled(Radio.Group)`
-    .ant-radio-button-wrapper:hover {
-        background-color: #FFFFFF;
-        color: #0EAA00;
-        border-color: #0EAA00;
-    }
-
-    .ant-radio-button-wrapper:not(:first-child)::before {
-        background-color: #0EAA00; /* Line between buttons */
-    }
-
-    .ant-radio-button-wrapper-checked {
-        background-color: #0EAA00 !important;
-        color: white;
-        border-color: #0EAA00 !important;
-    }
-
-    .ant-radio-button-wrapper-checked:hover {
-        background-color: #FFFFFF;
-        color: white;
-        border-color: #0EAA00 !important;
-    }
-`;
 
 export default function Ps_1_2_Fp() {
     const [formFields, setFormFields] = useState(formField_ps12_fp);
@@ -47,8 +22,8 @@ export default function Ps_1_2_Fp() {
     const [actvYearDisabled, setActvYearDisabled] = useState(true);  // 드롭다운 비활성화 상태 관리
 
     const [content, setContent] = useState('actvQty'); // actvQty || fee
-    const onRadioChange = (e) => {
-        setContent(e.target.value);
+    const handleButtonClick = (value) => {
+        setContent(value);
     };
 
     // usagePerfs 상태가 변경될 때 실행될 useEffect
@@ -370,14 +345,20 @@ export default function Ps_1_2_Fp() {
                         </Card>
                     </div>
                     
-                    <CustomRadioGroup
-                        options={[{label: '사용량', value: 'actvQty'}, {label: '사용금액', value: 'fee'}]}
-                        onChange={onRadioChange}
-                        value={content}
-                        optionType="button"
-                        buttonStyle="solid"
-                        className={ps12Style.custom_radio_group}
-                    />
+                    <div className={ps12Style.button_container}>
+                        <CustomButton 
+                            selected={content === 'actvQty'} 
+                            onClick={() => handleButtonClick('actvQty')}
+                        >
+                            사용량
+                        </CustomButton>
+                        <CustomButton 
+                            selected={content === 'fee'} 
+                            onClick={() => handleButtonClick('fee')}
+                        >
+                            사용금액
+                        </CustomButton>
+                    </div>
                     <div className={sysStyles.main_grid}>
                         <Card className={sysStyles.card_box} sx={{ width: "100%", height: "100%", borderRadius: "15px" }}>
                             {content === 'actvQty' && <Usage data={usagePerfs} />}
