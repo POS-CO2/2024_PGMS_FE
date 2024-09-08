@@ -60,52 +60,49 @@ export default function Ps_1_2_Fp() {
         console.log("amountUsedPerfs");
     }, [amountUsedPerfs]);
 
-    // 프로젝트 드롭다운 옵션 설정
     const [pjtOptions, setPjtOptions] = useState([]);
     const [projectData, setProjectData] = useState([]);  // 전체 프로젝트 데이터를 저장
+    const [emtnActvType, setEmtnActvType] = useState([]);
     useEffect(() => {
         const fetchPjtOptions = async () => {
             try {
-                const res = await axiosInstance.get("/pjt/my");
-                setProjectData(res.data);  // 전체 프로젝트 데이터를 저장
-                const options = res.data.map(pjt => ({
-                    value: pjt.pjtId,  // value에 id만 전달
+                const [pjtRes, emtnActvTypeRes] = await Promise.all([
+                    axiosInstance.get("/pjt/my"),
+                    axiosInstance.get("/sys/unit?unitType=배출활동유형")
+                ]);
+    
+                // 프로젝트 드롭다운 옵션 설정
+                setProjectData(pjtRes.data); // 전체 프로젝트 데이터를 저장
+                const pjtOptions = pjtRes.data.map(pjt => ({
+                    value: pjt.pjtId, // value에 id만 전달
                     label: pjt.pjtCode +"/"+ pjt.pjtName,
                 }));
-                setPjtOptions(options);
-                const updateFormFields = formFields.map(field =>
-                    field.name === 'searchProject' ? { ...field, options } : field
-                );
-
-                setFormFields(updateFormFields);
-            } catch (error) {
-                console.error(error);
-            }
-        };
-        fetchPjtOptions();
-    }, []);
-
-    // 배출활동유형 드롭다운 옵션 설정
-    const [emtnActvType, setEmtnActvType] = useState([]);
-    useEffect(() => {
-        const fetchEmtnActvTypeCode = async () => {
-            try {
-                const res = await axiosInstance.get("/sys/unit?unitType=배출활동유형");
-                const options = res.data.map(emtnActvType => ({
+                setPjtOptions(pjtOptions);
+    
+                // 배출활동유형 드롭다운 옵션 설정
+                const emtnActvTypeOptions = emtnActvTypeRes.data.map(emtnActvType => ({
                     value: emtnActvType.code,
                     label: emtnActvType.name,
                 }));
-                setEmtnActvType(options);
-                const updateFormFields = formFields.map(field =>
-                    field.name === 'emtnActvType' ? { ...field, options } : field
-                );
-
+                setEmtnActvType(emtnActvTypeOptions);
+    
+                // formFields 업데이트
+                const updateFormFields = formFields.map(field => {
+                    if (field.name === 'searchProject') {
+                        return { ...field, options: pjtOptions };
+                    } else if (field.name === 'emtnActvType') {
+                        return { ...field, options: emtnActvTypeOptions };
+                    }
+                    return field;
+                });
+    
                 setFormFields(updateFormFields);
             } catch (error) {
                 console.error(error);
             }
         };
-        fetchEmtnActvTypeCode();
+    
+        fetchPjtOptions();
     }, []);
 
     // 프로젝트 선택 후 대상년도 드롭다운 옵션 설정
