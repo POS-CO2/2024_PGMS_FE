@@ -905,6 +905,7 @@ export function Ps12UploadExcelModal({ isModalOpen, handleOk, handleCancel }) { 
                 }
             });
 
+            console.log(response.data);
             handleOk(response.data, true); // 새로 입력된 데이터를 handleOk 함수로 전달, 두번째 인자-closeModal=true
             swalOptions.title = '성공!',
             swalOptions.text = `성공적으로 등록되었습니다.`;
@@ -952,7 +953,6 @@ export function Ps12UploadExcelModal({ isModalOpen, handleOk, handleCancel }) { 
                 <div className={ps12Styles.file_list}>
                 {fileList.length !== 0 ? (
                     <div className={ps12Styles.file_item}>
-                        {console.log(fileList[0])}
                         {fileList[0].name}
                         <button
                             type="button"
@@ -1188,7 +1188,7 @@ export function DeleteModal({ isModalOpen, handleOk, handleCancel, rowData, rowD
         } catch (error) {
             console.error('Failed to delete user:', error);
             swalOptions.title = '실패!',
-            swalOptions.text = `${rowName} 삭제에 실패하였습니다.`;
+            swalOptions.text = error.response.data.message;
             swalOptions.icon = 'error';
         }
         Swal.fire(swalOptions);
@@ -1820,13 +1820,10 @@ export function EsmAddModal({ isModalOpen, handleOk, handleCancel, rowData }) {
             confirmButtonText: '확인'
         };
 
-        // selectedEmtnCands가 null이거나 비어있는지 확인
+        // selectedEmtnCands가 null이거나 비었으면 모달 닫고 함수 종료
         if (!selectedEmtnCands || selectedEmtnCands.length === 0) {
-            swalOptions.title = '실패!';
-            swalOptions.text = '선택된 배출원이 없습니다.';
-            swalOptions.icon = 'error';
-            Swal.fire(swalOptions);
-            return; // 더 이상 진행하지 않도록 함수 종료
+            handleCancel();
+            return;
         }
 
         try {
