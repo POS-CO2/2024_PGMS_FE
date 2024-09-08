@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { useRecoilState } from 'recoil';
 import {
-    eqState, selectedEqState, eqLibState, selectedEqLibState,
-    useHandleOkAction, useModalActions, useHandleSubmitAction,
-    useSearchAction, useHandleKeyDownAction
-  } from './PdsStateMgr';
+    eqState, selectedEqState, eqLibState, selectedEqLibState
+    } from '../../../../atoms/pdsAtoms';
+import {
+        useHandleOkAction, useModalActions, useHandleSubmitAction,
+        useSearchAction, useHandleKeyDownAction
+    } from '../../../../actions/commonActions';
 import axiosInstance from '../../../../utils/AxiosInstance';
 import { Input, Select } from 'antd';
 import { Card } from '@mui/material';

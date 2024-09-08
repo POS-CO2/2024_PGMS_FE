@@ -1,10 +1,12 @@
 import React, { useState } from "react";
 import { useRecoilState } from 'recoil';
 import {
-    managerState, empState, selectedManagerState, selectedEmpState,
-    useHandleOkAction, useModalActions, useHandleSubmitAction,
-    useSearchAction, useHandleKeyDownAction
-  } from './PdsStateMgr';
+        managerState, empState, selectedManagerState, selectedEmpState,
+    } from '../../../../atoms/pdsAtoms';
+import {
+        useHandleOkAction, useModalActions, useHandleSubmitAction,
+        useSearchAction, useHandleKeyDownAction
+    } from '../../../../actions/commonActions';
 import { Input, Select } from 'antd';
 import { Card } from '@mui/material';
 import { styled } from '@mui/material/styles';
