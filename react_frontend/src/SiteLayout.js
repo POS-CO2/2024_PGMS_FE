@@ -12,6 +12,8 @@ import {
     PieChartOutlined,
   } from '@ant-design/icons';
 import axiosInstance from './utils/AxiosInstance';
+import { SpeedDial, SpeedDialAction, SpeedDialIcon } from '@mui/material';
+import { ChatBubble } from '@mui/icons-material';
 
 const StyledTabsContainer = styled(TabsContainer)`
     flex: 1;
@@ -158,6 +160,16 @@ export default function SiteLayout({handleLogout, menus, user}){
                     <Outlet />
                 </div>
                 <Favorite handleFavClick={handleFavClick} fav={fav}/>
+                <SpeedDial
+                    ariaLabel='ChatDial'
+                    sx={{ position:"fixed", bottom: 16, right: 16}}
+                    icon={<SpeedDialIcon />}
+                >
+                    <SpeedDialAction 
+                        icon={<ChatBubble />}
+                        tooltipTitle={"Chat"}
+                    />
+                </SpeedDial>
             </ContentContainer>
         </div>
     );
