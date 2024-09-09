@@ -1676,7 +1676,6 @@ export function MmAddModal({ isModalOpen, handleOk, handleCancel, rowData }) {
     const [url, setUrl] = useState('');
     const [orderMenu, setOrderMenu] = useState('');
     
-    
     // 등록 버튼 클릭 시 호출될 함수
     const handleSelect = async () => {
         let swalOptions = {
@@ -1685,7 +1684,7 @@ export function MmAddModal({ isModalOpen, handleOk, handleCancel, rowData }) {
         const formData = {
             menuName,
             rootId: selectedUpperDir,
-            address: url,
+            address: url === "" ? null : url,
             accessUser: selectedRole,
             menuOrder: orderMenu
         };
@@ -1721,7 +1720,6 @@ export function MmAddModal({ isModalOpen, handleOk, handleCancel, rowData }) {
                 console.error(error);
             }
         };
-
         fetchUpperDir();
     },[])
 
