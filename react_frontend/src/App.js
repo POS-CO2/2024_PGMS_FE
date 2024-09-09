@@ -28,6 +28,9 @@ import Um from './components/sysmng/Um';
 import Mal from './components/sysmng/Mal';
 import Pmg from './components/emperf/Pmg';
 import Login from './components/login/Login';
+import Sa from './components/analfc/Sa';
+import Ea from './components/analfc/Ea';
+import Ca from './components/analfc/Ca';
 import Error404 from './Error404';
 import axiosInstance from './utils/AxiosInstance';
 
@@ -132,6 +135,9 @@ export default function App() {
                         <Route path='/um' element={<Um />} />
                         <Route path='/mm' element={<Mm menus={menu} handleMenuSet={handleMenuSet} />} />
                         <Route path='/mal' element={<Mal />} />
+                        <Route path='/SalesAnal' element={<Sa />} />
+                        <Route path='/EquipAnal' element={<Ea />} />
+                        <Route path='/ClimateAnal' element={<Ca />} />
                         <Route path='*' element={<Error404 />} />
                     </Route>
                 ) : (
