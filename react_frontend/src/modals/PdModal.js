@@ -856,11 +856,13 @@ export function FadAddModal({ isModalOpen, handleOk, handleCancel, rowData }) {
 export function Ps12UploadExcelModal({ isModalOpen, handleOk, handleCancel }) { // '엑셀 업로드' 모달
     const fileInputRef = useRef(null);
     const [fileList, setFileList] = useState([]);
+    const [errors, setErrors] = useState({});
 
     // 모달 열 때마다 clear
     useEffect(() => {
         if (isModalOpen) {
             setFileList([]);
+            setErrors({});
         }
     }, [isModalOpen]);
 
@@ -880,16 +882,18 @@ export function Ps12UploadExcelModal({ isModalOpen, handleOk, handleCancel }) { 
     };
 
     const onSaveClick = async () => {
-        if (fileList.length === 0) {
-            Swal.fire({
-                title: '파일 없음',
-                text: '업로드할 파일을 선택해 주세요.',
-                icon: 'warning',
-                confirmButtonText: '확인'
-            });
+        // 입력 값 검증
+        let newErrors = {};
+        if (fileList.length === 0) newErrors.file = '필수 항목입니다.';
+
+        if (Object.keys(newErrors).length > 0) {
+            setErrors(newErrors);
             return;
         }
 
+        setErrors({});
+
+        // 입력값 검증 통과하면 등록 수행
         let swalOptions = {
             confirmButtonText: '확인'
         };
@@ -967,6 +971,7 @@ export function Ps12UploadExcelModal({ isModalOpen, handleOk, handleCancel }) { 
                 )}
                 </div>
             </div>
+            {errors.file && <div className={modalStyles.error_message}>{errors.file}</div>}
 
             <button className={ps12Styles.select_button} onClick={onSaveClick}>등록</button>
         </Modal>
@@ -1671,7 +1676,6 @@ export function MmAddModal({ isModalOpen, handleOk, handleCancel, rowData }) {
     const [url, setUrl] = useState('');
     const [orderMenu, setOrderMenu] = useState('');
     
-    
     // 등록 버튼 클릭 시 호출될 함수
     const handleSelect = async () => {
         let swalOptions = {
@@ -1680,7 +1684,7 @@ export function MmAddModal({ isModalOpen, handleOk, handleCancel, rowData }) {
         const formData = {
             menuName,
             rootId: selectedUpperDir,
-            address: url,
+            address: url === "" ? null : url,
             accessUser: selectedRole,
             menuOrder: orderMenu
         };
@@ -1716,7 +1720,6 @@ export function MmAddModal({ isModalOpen, handleOk, handleCancel, rowData }) {
                 console.error(error);
             }
         };
-
         fetchUpperDir();
     },[])
 
@@ -1879,6 +1882,7 @@ export function SdAddModal({ isModalOpen, handleOk, handleCancel, rowData, yearS
         name: '',
         fileList: []
     });
+    const [errors, setErrors] = useState({});
 
     // 모달 열 때마다 clear
     useEffect(() => {
@@ -1889,6 +1893,7 @@ export function SdAddModal({ isModalOpen, handleOk, handleCancel, rowData, yearS
                 name: '',
                 fileList: []
             });
+            setErrors({});
         }
     }, [isModalOpen]);
 
@@ -1946,6 +1951,20 @@ export function SdAddModal({ isModalOpen, handleOk, handleCancel, rowData, yearS
     };
 
     const onSaveClick = async () => {
+        // 입력 값 검증
+        let newErrors = {};
+        if (!formData.actvYear || !formData.actvMth) newErrors.actvYearMth = '대상년월을 선택해 주세요.';
+        if (!formData.name) newErrors.name = '필수 항목입니다.';
+        if (formData.fileList.length === 0) newErrors.fileList = '파일을 선택해 주세요.';
+
+        if (Object.keys(newErrors).length > 0) {
+            setErrors(newErrors);
+            return;
+        }
+
+        setErrors({});
+
+        // 입력값 검증 통과하면 등록 수행
         let swalOptions = {
             confirmButtonText: '확인'
         };
@@ -1990,6 +2009,7 @@ export function SdAddModal({ isModalOpen, handleOk, handleCancel, rowData, yearS
             <div className={modalStyles.title}>증빙서류 등록</div>
 
             <div className={sdStyles.input_container}>
+
                 <div className={sdStyles.input_item}>
                     <div className={sdStyles.input_title}>
                         대상년월
@@ -2021,7 +2041,9 @@ export function SdAddModal({ isModalOpen, handleOk, handleCancel, rowData, yearS
                         </Select>
                         <div>월</div>
                     </div>
+                    {errors.actvYearMth && <div className={modalStyles.error_message}>{errors.actvYearMth}</div>}
                 </div>
+
                 <div className={sdStyles.input_item}>
                     <div className={sdStyles.input_title}>
                         자료명
@@ -2033,7 +2055,9 @@ export function SdAddModal({ isModalOpen, handleOk, handleCancel, rowData, yearS
                         value={formData.name}
                         onChange={(e) => setFormData(prevData => ({ ...prevData, name: e.target.value }))}
                     />
+                    {errors.name && <div className={modalStyles.error_message}>{errors.name}</div>}
                 </div>
+
                 <div className={sdStyles.upload_item}>
                     <div className={sdStyles.upload_header}>
                         <div className={sdStyles.input_title}>
@@ -2078,6 +2102,7 @@ export function SdAddModal({ isModalOpen, handleOk, handleCancel, rowData, yearS
                             )}
                         </div>
                     </div>
+                    {errors.fileList && <div className={modalStyles.error_message}>{errors.fileList}</div>}
                 </div>
             </div>
 
@@ -2093,6 +2118,7 @@ export function SdShowDetailsModal({ selectedSd, isModalOpen, handleOk, handleCa
         name: '',
         fileList: []
     });
+    const [errors, setErrors] = useState({});
 
     const [isEditing, setIsEditing] = useState(false);
     const [innerSelectedSd, setInnerSelectedSd] = useState(selectedSd);
@@ -2181,6 +2207,20 @@ export function SdShowDetailsModal({ selectedSd, isModalOpen, handleOk, handleCa
     };
 
     const onSaveClick = async () => {
+        // 입력 값 검증
+        let newErrors = {};
+        if (!formData.actvYear || !formData.actvMth) newErrors.actvYearMth = '대상년월을 선택해 주세요.';
+        if (!formData.name) newErrors.name = '필수 항목입니다.';
+        if (formData.fileList.length === 0) newErrors.fileList = '파일을 선택해 주세요.';
+
+        if (Object.keys(newErrors).length > 0) {
+            setErrors(newErrors);
+            return;
+        }
+
+        setErrors({});
+
+        // 입력값 검증 통과하면 등록 수행
         let swalOptions = {
             confirmButtonText: '확인'
         };
@@ -2234,9 +2274,11 @@ export function SdShowDetailsModal({ selectedSd, isModalOpen, handleOk, handleCa
     };
 
     const onEditClick = () => {
+        setErrors({});
         setIsEditing(true); // 비편집 모드일 때 편집 모드로 전환
     };
     const onCancelClick = () => {
+        setErrors({});
         if (innerSelectedSd) {
             setFormData({
                 actvYear: String(innerSelectedSd.actvYear || new Date().getFullYear()),
@@ -2282,6 +2324,7 @@ export function SdShowDetailsModal({ selectedSd, isModalOpen, handleOk, handleCa
             </div>
 
             <div className={sdStyles.input_container}>
+
                 <div className={sdStyles.input_item}>
                     <div className={sdStyles.input_title}>
                         대상년월
@@ -2315,7 +2358,9 @@ export function SdShowDetailsModal({ selectedSd, isModalOpen, handleOk, handleCa
                         </Select>
                         <div>월</div>
                     </div>
+                    {errors.actvYearMth && <div className={modalStyles.error_message}>{errors.actvYearMth}</div>}
                 </div>
+
                 <div className={sdStyles.input_item}>
                     <div className={sdStyles.input_title}>
                         등록자
@@ -2326,6 +2371,7 @@ export function SdShowDetailsModal({ selectedSd, isModalOpen, handleOk, handleCa
                         disabled={true} // 항상 비활성화
                     />
                 </div>
+
                 <div className={sdStyles.input_item}>
                     <div className={sdStyles.input_title}>
                         자료명
@@ -2336,7 +2382,9 @@ export function SdShowDetailsModal({ selectedSd, isModalOpen, handleOk, handleCa
                         onChange={(e) => setFormData(prevData => ({ ...prevData, name: e.target.value }))}
                         disabled={!isEditing} // 편집 모드가 아닐 때 비활성화
                     />
+                    {errors.name && <div className={modalStyles.error_message}>{errors.name}</div>}
                 </div>
+
                 <div className={sdStyles.upload_item}>
                     <div className={sdStyles.upload_header}>
                         <div className={sdStyles.input_title}>
@@ -2401,6 +2449,7 @@ export function SdShowDetailsModal({ selectedSd, isModalOpen, handleOk, handleCa
                             )}
                         </div>
                     </div>
+                    {errors.fileList && <div className={modalStyles.error_message}>{errors.fileList}</div>}
                 </div>
             </div>
 
