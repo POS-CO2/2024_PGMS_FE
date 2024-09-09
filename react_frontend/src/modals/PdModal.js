@@ -5,6 +5,7 @@ import * as modalStyles from "../assets/css/pdModal.css";
 import * as rmStyles from "../assets/css/rmModal.css";
 import * as delStyle from "../assets/css/delModal.css";
 import * as pjtModalStyles from "../assets/css/pjtModal.css";
+import * as pdsStyles from "../assets/css/pds.css";
 import * as sysStyles from "../assets/css/sysmng.css"
 import * as sdStyles from "../assets/css/sdModal.css";
 import * as ps12Styles from "../assets/css/ps12UploadExcelModal.css";
@@ -818,53 +819,53 @@ export function FadAddModal({ isModalOpen, handleOk, handleCancel, rowData }) {
     };
   
     return (
-      <Modal 
-        open={isModalOpen} 
-        width={800}
-        onCancel={handleCancel} 
-        footer={null}             //Ant Design의 기본 footer 제거(Cancel, OK 버튼)
-      >
-        <div className={pjtModalStyles.title}>활동자료 지정</div>
-        <p className={pjtModalStyles.comment}>* 활동자료명이나 활동자료구분 둘 중에 하나만 입력해도 검색이 가능합니다.</p>
-        <div className={pjtModalStyles.search_container}>
-            <div className={pjtModalStyles.search_item}>
-                <div className={pjtModalStyles.search_title}>활동자료명</div>
-                <Input
-                    value={inputActvName}
-                    allowClear={{ clearIcon: <CloseOutlined style={{color: "red"}} /> }}
-                    onChange={(e) => setInputActvName(e.target.value)}
-                    onKeyDown={handleKeyDown}
-                    style={{ width: '12rem' }}
-                />
-            </div>
-            <div className={pjtModalStyles.search_item}>
-                <div className={pjtModalStyles.search_title}>활동자료구분</div>
-                <div className={modalStyles.input_with_btn}>
-                    <Select
-                        value={inputActvDvs}
+        <Modal 
+            open={isModalOpen} 
+            width={800}
+            onCancel={handleCancel} 
+            footer={null}             //Ant Design의 기본 footer 제거(Cancel, OK 버튼)
+            // bodyStyle={{ maxHeight: '60vh', overflowY: 'auto' }}
+        >
+            <div className={pjtModalStyles.title}>활동자료 지정</div>
+            <p className={pjtModalStyles.comment}>* 활동자료명이나 활동자료구분 둘 중에 하나만 입력해도 검색이 가능합니다.</p>
+            <div className={pjtModalStyles.search_container}>
+                <div className={pjtModalStyles.search_item}>
+                    <div className={pjtModalStyles.search_title}>활동자료명</div>
+                    <Input
+                        value={inputActvName}
                         allowClear={{ clearIcon: <CloseOutlined style={{color: "red"}} /> }}
-                        onChange={(value) => setInputActvDvs(value)}
-                        style={{ width: '15rem' }}
-                    >
-                        {actvDvsList.map(option => (
-                            <Select.Option key={option.value} value={option.value}>
-                                {option.label}
-                            </Select.Option>
-                        ))}
-                    </Select>
-                    <button className={pjtModalStyles.search_button} onClick={handleSearch}>찾기</button>
+                        onChange={(e) => setInputActvName(e.target.value)}
+                        onKeyDown={handleKeyDown}
+                        style={{ width: '12rem' }}
+                    />
+                </div>
+                <div className={pjtModalStyles.search_item}>
+                    <div className={pjtModalStyles.search_title}>활동자료구분</div>
+                    <div className={modalStyles.input_with_btn}>
+                        <Select
+                            value={inputActvDvs}
+                            allowClear={{ clearIcon: <CloseOutlined style={{color: "red"}} /> }}
+                            onChange={(value) => setInputActvDvs(value)}
+                            style={{ width: '15rem' }}
+                        >
+                            {actvDvsList.map(option => (
+                                <Select.Option key={option.value} value={option.value}>
+                                    {option.label}
+                                </Select.Option>
+                            ))}
+                        </Select>
+                        <button className={pjtModalStyles.search_button} onClick={handleSearch}>찾기</button>
+                    </div>
                 </div>
             </div>
-        </div>
-  
-        <div className={pjtModalStyles.result_container}>
-            {(!actves || Object.keys(actves).length === 0) ?
-                <></> : ( <Table data={actves} columns={equipActvColumns} variant='checkbox' onRowClick={handleActvClick} modalPagination={true} /> )}
-        </div>
-  
-        {(!selectedActves || selectedActves.length === 0) ?
-            <></> : ( <button className={pjtModalStyles.select_button} onClick={handleSelect}>등록</button> )}
-      </Modal>
+
+            <div className={pjtModalStyles.result_container}>
+                <Table data={actves} columns={equipActvColumns} variant='checkbox' onRowClick={handleActvClick} modalPagination={true} />
+                {(!selectedActves || selectedActves.length === 0) ?
+                <></> : ( <button className={pdsStyles.select_button} onClick={handleSelect}>등록</button> )}
+            </div>
+
+        </Modal>
     )
 }
 

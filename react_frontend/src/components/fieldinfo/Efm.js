@@ -52,9 +52,10 @@ export default function Efm() {
     const handleYearChange = async (year) => {
         setYear(year.target.value);
         const selectedYear = year.target.value
-        const yearSelectedEfm = selectedEfm.filter((e) => e.applyYear === selectedYear);
-        setFilteredEfm(yearSelectedEfm);
+        const filteredEFs = emissionFactors.filter((e) => e.applyYear === selectedYear);
+        setFilteredEfm(filteredEFs);
     }
+    
     useEffect(() => {
         (async () => {
             const {data} = await axiosInstance.get(`/equip/actv`);
