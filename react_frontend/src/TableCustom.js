@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Swal from 'sweetalert2'
 import Table from "./Table.js";
 import * as tableStyles from "./assets/css/newTable.css"
-import { DelModal, PgAddModal, PdAddModal, FlAddModal, FlEditModal, FamAddModal, FamEditModal, FadAddModal, Ps12UploadExcelModal, CmAddModal, DeleteModal, CmEditModal, CmListAddModal, CmListEditModal, FmAddModal, UmAddModal, MmAddModal, EsmAddModal, SdAddModal, SdShowDetailsModal } from "./modals/PdModal.js";
+import { DelModal, PgAddModal, PdAddModal, FlAddModal, FlEditModal, FamAddModal, FamEditModal, FadAddModal, Ps12UploadExcelModal, CmAddModal, DeleteModal, CmEditModal, CmListAddModal, CmListEditModal, FmAddModal, UmAddModal, MmAddModal, EsmAddModal, SdAddModal, SdShowDetailsModal, EfmAddModal, EfmEditModal } from "./modals/PdModal.js";
 import { ButtonGroup } from './Button';
 import axiosInstance from './utils/AxiosInstance';
 
@@ -28,7 +28,9 @@ const modalMap = {
     MmAdd: MmAddModal,
     EsmAdd: EsmAddModal,
     SdAdd: SdAddModal,
-    SdShowDetails: SdShowDetailsModal
+    SdShowDetails: SdShowDetailsModal,
+    EfmAdd: EfmAddModal,
+    EfmEdit: EfmEditModal,
 }
 
 export default function TableCustom({

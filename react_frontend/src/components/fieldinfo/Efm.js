@@ -14,10 +14,55 @@ import { actvColumns, coefColumns, efmColumns, equipActvColumns, equipCoefColumn
 
 export default function Efm() {
 
-    const [efm, setEfm] = useState([]);
+    const [actv, setActv] = useState([]); // 활동자료 리스트
     const [showEfm, setShowEfm] = useState(true);
-    const [selectedEfm, setSelectedEfm] = useState([]);
-    const [filteredEfm, setFilteredEfm] = useState([]);
+    const [selectedActv, setSelectedActv] = useState([]); // 선택된 활동자료
+    const [selectedActvList, setSelectedActvList] = useState([]); // 선택된 활동자료의 배출계수 리스트..
+    const [filteredEfm, setFilteredEfm] = useState([]); // 년도로 필터링된 배출계수
+    const [selectedEfm, setSelectedEfm] = useState(null); // 선태고딘 배출계수
+
+    const [isModalOpen, setIsModalOpen] = useState({
+        EfmAdd: false,
+        EfmEdit: false,
+        Delete: false,
+    });
+
+    const showModal = (modalType) => {
+        setIsModalOpen(prevState => ({...prevState, [modalType]: true}));
+    };
+
+    // 담당자 지정 등록 버튼 클릭 시 호출될 함수
+    const handleOk = (modalType) => (data) => {
+        setIsModalOpen(prevState => ({ ...prevState, [modalType]: false }));
+        if (modalType === 'EfmAdd') {
+            setFilteredEfm(prevList => [...prevList, data]);
+        }
+        else if (modalType === 'EfmEdit') {
+            setFilteredEfm(prevList =>
+                prevList.map(item =>
+                    item.id === data.id ? { ...item, ...data } : item
+                )
+            );
+        }
+        else if (modalType === 'Delete') {
+            setFilteredEfm(prevList => prevList.filter(item => item.id !== data.id));
+        }
+    };
+    const handleCancel = (modalType) => () => {
+        setIsModalOpen(prevState => ({ ...prevState, [modalType]: false }));
+    }; 
+
+    const handleAddClick = () => {
+        showModal('EfmAdd');
+    }
+
+    const handleEditClick = () => {
+        showModal('EfmEdit');
+    }
+
+    const handleDeleteClick = () => {
+        showModal('Delete');
+    }
     
     const handleFormSubmit = async (e) => {
         setShowEfm(false);
@@ -26,7 +71,7 @@ export default function Efm() {
                 actvDataName: e.actvDataName
             }
         });
-        setEfm(data ?? {});
+        setActv(data ?? {});
         setShowEfm(true);
         setShowSearchResult(false);
     }
@@ -38,31 +83,35 @@ export default function Efm() {
             setShowSearchResult(false);
         }
         else{
+            setSelectedActv(e);
             setShowSearchResult(true);
             const {data} = await axiosInstance.get(`/equip/coef?actvDataId=${e.id}`)
-            setSelectedEfm(data ?? {});
+            setSelectedActvList(data ?? {});
             const firstSetFilteredEfm = data.filter((e) => e.applyYear === 2024);
             setFilteredEfm(firstSetFilteredEfm);
+            
         }
-        
     }   
+
+    const handleEfmRowClick = (e) => {
+        setSelectedEfm(e);
+        console.log(e);
+    }
     
 
     const [year, setYear] = useState(2024);
     const handleYearChange = async (year) => {
         setYear(year.target.value);
         const selectedYear = year.target.value
-        const yearSelectedEfm = selectedEfm.filter((e) => e.applyYear === selectedYear);
-        setFilteredEfm(yearSelectedEfm);
+        const yearSelectedActvList= selectedActvList.filter((e) => e.applyYear === selectedYear);
+        setFilteredEfm(yearSelectedActvList);
     }
     useEffect(() => {
         (async () => {
             const {data} = await axiosInstance.get(`/equip/actv`);
-            setEfm(data ?? {});
+            setActv(data ?? {});
         })();
     },[])
-    console.log(efm);
-    console.log(filteredEfm);
 
     return (
         <>
@@ -72,10 +121,7 @@ export default function Efm() {
             <SearchForms onFormSubmit={handleFormSubmit} formFields={formField_efm}/>
             <div className={sysStyles.main_grid} >
                 <Card className={sysStyles.card_box} sx={{width:"50%", height:"75vh", borderRadius:"15px"}}>
-                    {/* <div className={sysStyles.mid_title}>
-                        {"활동자료"}
-                    </div> */}
-                    <TableCustom title="활동자료" columns={equipActvColumns} data={efm} onRowClick={handleRowClick}/>
+                    <TableCustom title="활동자료" columns={equipActvColumns} data={actv} onRowClick={handleRowClick}/>
                 </Card>
                 {showSearchResult ? (
                     <>
@@ -101,7 +147,33 @@ export default function Efm() {
                                 <MenuItem value={2021}>2021</MenuItem>
                             </Select>
                             </FormControl>
-                            <TableCustom title="" columns={equipCoefColumns} data={filteredEfm} button="AllButton" />
+                            <TableCustom title="" columns={equipCoefColumns} data={filteredEfm} buttons={["Add", "Edit", "Delete"]} selectedRows={[selectedEfm]} onRowClick={handleEfmRowClick} onClicks={[handleAddClick, handleEditClick, handleDeleteClick]} modals={
+                                [
+                                    isModalOpen.EfmAdd && {
+                                        "modalType" : 'EfmAdd',
+                                        'isModalOpen': isModalOpen.EfmAdd,
+                                        'handleOk': handleOk('EfmAdd'),
+                                        'handleCancel': handleCancel('EfmAdd'),
+                                        'rowData': selectedActv,
+                                    },
+                                    isModalOpen.EfmEdit && {
+                                        "modalType" : 'EfmEdit',
+                                        'isModalOpen': isModalOpen.EfmEdit,
+                                        'handleOk': handleOk('EfmEdit'),
+                                        'handleCancel': handleCancel('EfmEdit'),
+                                        'rowData': selectedEfm,
+                                    },
+                                    isModalOpen.Delete && {
+                                        "modalType" : 'Delete',
+                                        'isModalOpen': isModalOpen.Delete,
+                                        'handleOk': handleOk('Delete'),
+                                        'handleCancel': handleCancel('Delete'),
+                                        'rowData': selectedEfm,
+                                        'rowDataName': "ghgCode",
+                                        'url': '/equip/coef',
+                                    },
+                                ].filter(Boolean)
+                            }/>
                         </Card>
                     </>
                 ) : (

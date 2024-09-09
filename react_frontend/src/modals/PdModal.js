@@ -1191,7 +1191,7 @@ export function DeleteModal({ isModalOpen, handleOk, handleCancel, rowData, rowD
             swalOptions.icon = 'success';
             handleOk(rowData);
         } catch (error) {
-            console.error('Failed to delete user:', error);
+            console.error('Failed to delete:', error);
             swalOptions.title = '실패!',
             swalOptions.text = error.response.data.message;
             swalOptions.icon = 'error';
@@ -1407,6 +1407,310 @@ export function CmListEditModal({ isModalOpen, handleOk, handleCancel, rowData }
             </div>
             <div style={{display:"flex", justifyContent:"center", alignContent:"center"}}>
             <button style={{width:"18rem"}} className={modalStyles.select_button} onClick={handleSelect}>수정</button>
+            </div>
+        </Modal>
+    )
+}
+
+export function EfmAddModal({ isModalOpen, handleOk, handleCancel, rowData }) {
+    const [applyYear, setApplyYear] = useState(2024);
+    const [applyDvs, setApplyDvs] = useState([]);
+    const [selectedApplyDvs, setSelectedApplyDvs] = useState([]);
+    const [ghgCode, setGhgCode] = useState([]);
+    const [selectedGhgCode, setSelectedGhgCode] = useState([]);
+    const [coefClassCode, setCoefClassCode] = useState([]);
+    const [selectedCoefClassCode, setSelectedCoefClassCode] = useState([]);
+    const [unitCode, setUnitCode] = useState([]);
+    const [selectedUnitCode, setSelectedUnitCode] = useState([]);
+    const [coef, setCoef] = useState(0);
+
+    console.log(rowData);
+
+    const handleSelect = async() => {
+        let swalOptions = {
+            confirmButtonText: '확인'
+        };
+
+        const formData = {
+            actvDataId: rowData.id,
+            applyYear,
+            applyDvs: selectedApplyDvs,
+            ghgCode: selectedGhgCode.length === 0 ? null : selectedGhgCode,
+            coefClassCode:selectedCoefClassCode,
+            unitCode: selectedUnitCode,
+            coef,
+        };
+        console.log(formData);
+        try {
+            // POST 요청으로 서버에 데이터 전송
+            const {data} = await axiosInstance.post('/equip/coef', formData);
+            // handleOk을 호출하여 모달을 닫고 상위 컴포넌트에 알림
+            handleOk(data);
+            swalOptions.title = '성공!',
+            swalOptions.text = `${formData.ghgCode}가 성공적으로 등록되었습니다.`;
+            swalOptions.icon = 'success';
+        } catch (error) {
+            console.error('Failed to add user:', error);
+            swalOptions.title = '실패!',
+            swalOptions.text = `${formData.ghgCode} 등록에 실패하였습니다.`;
+            swalOptions.icon = 'error';
+        }
+        Swal.fire(swalOptions);
+    };
+
+    useEffect(() => {
+        const fetchData = async () => {
+            const appDvsResponse = await axiosInstance.get(`/sys/unit?unitType=적용구분`);
+            setApplyDvs(appDvsResponse.data);
+
+            const ghgResponse = await axiosInstance.get(`/sys/unit?unitType=온실가스코드`);
+            setGhgCode(ghgResponse.data);
+
+            // const coefResponse = await axiosInstance.get(`/sys/unit?unitType=계수종류코드`);
+            const coefResponse = [
+                {
+                    "code": 1,
+                    "name": "배출계수"
+                },
+                {
+                    "code": 2,
+                    "name": "순발열량"
+                }
+            ]
+            setCoefClassCode(coefResponse);
+
+            // const unitCodeResponse = await axiosInstance.get(``);
+            setUnitCode([
+                {
+                    "code": 1,
+                    "name": "kgGhg"
+                },
+                {
+                    "code": 2,
+                    "name": "TJ"
+                }
+            ])
+        };
+
+        fetchData();
+    }, [])
+
+
+    return (
+        <Modal
+            open={isModalOpen}
+            onCancel={handleCancel}
+            width={400}
+            footer={null}             //Ant Design의 기본 footer 제거(Cancel, OK 버튼)
+        >
+            {/* 모달제목 */}
+            <div className={modalStyles.title}>배출 계수 추가</div>
+            <div className={sysStyles.card_box}>
+                <div className={sysStyles.text_field} style={{ marginTop: "0.5rem" }}>
+                    <div className={sysStyles.text}>
+                        {"적용 년도"}
+                    </div>
+                    <Input id='applyYear' value={applyYear} onChange={e => setApplyYear(e.target.value)} label="적용 년도" style={{width:"18rem"}} />
+                </div>
+                <div className={sysStyles.text_field}>
+                    <div className={sysStyles.text}>{"적용 구분"}</div>
+                    <Select value={selectedApplyDvs} onChange={(value) => setSelectedApplyDvs(value)} style={{width:"18rem", height:"2rem",fontSize:"4rem"}}>
+                    {applyDvs.map(option => (
+                        <Select.Option key={option.code} value={option.code}>
+                            {option.name}
+                        </Select.Option>
+                    ))}
+                    </Select>
+                </div>
+                <div className={sysStyles.text_field}>
+                    <div className={sysStyles.text}>{"계수 구분 코드"}</div>
+                    <Select value={selectedCoefClassCode} onChange={(value) => setSelectedCoefClassCode(value)} style={{width:"18rem", height:"2rem",fontSize:"4rem"}}>
+                    {coefClassCode.map(option => (
+                        <Select.Option key={option.code} value={option.code}>
+                            {option.name}
+                        </Select.Option>
+                    ))}
+                    </Select>
+                </div>
+                <div className={sysStyles.text_field}>
+                    <div className={sysStyles.text}>{"가스 코드"}</div>
+                    <Select value={selectedGhgCode} onChange={(value) => setSelectedGhgCode(value)} style={{width:"18rem", height:"2rem",fontSize:"4rem"}}>
+                    {ghgCode.map(option => (
+                        <Select.Option key={option.code} value={option.code}>
+                            {option.name}
+                        </Select.Option>
+                    ))}
+                    </Select>
+                </div>
+                <div className={sysStyles.text_field}>
+                    <div className={sysStyles.text}>{"단위"}</div>
+                    <Select value={selectedUnitCode} onChange={(value) => setSelectedUnitCode(value)} style={{width:"18rem", height:"2rem",fontSize:"4rem"}}>
+                    {unitCode.map(option => (
+                        <Select.Option key={option.code} value={option.code}>
+                            {option.name}
+                        </Select.Option>
+                    ))}
+                    </Select>
+                </div>
+                <div className={sysStyles.text_field}>
+                    <div className={sysStyles.text}>{"계수"}</div>
+                    <Input id='coef' value={coef} onChange={(e) => setCoef(e.target.value)} label="계수" style={{width:"18rem"}} />
+                </div>
+            </div>
+            <div style={{display:"flex", justifyContent:"center", alignContent:"center"}}>
+            <button style={{width:"18rem"}} className={modalStyles.select_button} onClick={handleSelect}>등록</button>
+            </div>
+        </Modal>
+    )
+}
+
+export function EfmEditModal({ isModalOpen, handleOk, handleCancel, rowData }) {
+    const [applyYear, setApplyYear] = useState(rowData.applyYear);
+    const [applyDvs, setApplyDvs] = useState([]);
+    const [selectedApplyDvs, setSelectedApplyDvs] = useState(rowData.applyDvs);
+    const [ghgCode, setGhgCode] = useState([]);
+    const [selectedGhgCode, setSelectedGhgCode] = useState(rowData.ghgCode);
+    const [coefClassCode, setCoefClassCode] = useState([]);
+    const [selectedCoefClassCode, setSelectedCoefClassCode] = useState(rowData.coefClassCode);
+    const [unitCode, setUnitCode] = useState([]);
+    const [selectedUnitCode, setSelectedUnitCode] = useState(rowData.unitCode);
+    const [coef, setCoef] = useState(rowData.coef);
+
+    console.log(rowData);
+
+    const handleSelect = async() => {
+        let swalOptions = {
+            confirmButtonText: '확인'
+        };
+
+        const formData = {
+            actvDataId: rowData.id,
+            applyYear,
+            applyDvs: selectedApplyDvs,
+            ghgCode: selectedGhgCode,
+            coefClassCode:selectedCoefClassCode,
+            unitCode: selectedUnitCode,
+            coef,
+        };
+        console.log(formData);
+        // try {
+        //     // POST 요청으로 서버에 데이터 전송
+        //     const {data} = await axiosInstance.patch('/equip/coef', formData);
+        //     // handleOk을 호출하여 모달을 닫고 상위 컴포넌트에 알림
+        //     handleOk(data);
+        //     swalOptions.title = '성공!',
+        //     swalOptions.text = `${formData.codeName}가 성공적으로 등록되었습니다.`;
+        //     swalOptions.icon = 'success';
+        // } catch (error) {
+        //     console.error('Failed to add user:', error);
+        //     swalOptions.title = '실패!',
+        //     swalOptions.text = `${formData.codeName} 등록에 실패하였습니다.`;
+        //     swalOptions.icon = 'error';
+        // }
+        // Swal.fire(swalOptions);
+    };
+
+    useEffect(() => {
+        const fetchData = async () => {
+            const appDvsResponse = await axiosInstance.get(`/sys/unit?unitType=적용구분`);
+            setApplyDvs(appDvsResponse.data);
+
+            const ghgResponse = await axiosInstance.get(`/sys/unit?unitType=온실가스코드`);
+            setGhgCode(ghgResponse.data);
+
+            // const coefResponse = await axiosInstance.get(`/sys/unit?unitType=계수종류코드`);
+            const coefResponse = [
+                {
+                    "code": 1,
+                    "name": "배출계수"
+                },
+                {
+                    "code": 2,
+                    "name": "순발열량"
+                }
+            ]
+            setCoefClassCode(coefResponse);
+
+            // const unitCodeResponse = await axiosInstance.get(``);
+            setUnitCode([
+                {
+                    "code": 1,
+                    "name": "kgGhg"
+                },
+                {
+                    "code": 2,
+                    "name": "TJ"
+                }
+            ])
+        };
+
+        fetchData();
+    }, [])
+
+
+    return (
+        <Modal
+            open={isModalOpen}
+            onCancel={handleCancel}
+            width={400}
+            footer={null}             //Ant Design의 기본 footer 제거(Cancel, OK 버튼)
+        >
+            {/* 모달제목 */}
+            <div className={modalStyles.title}>배출 계수 추가</div>
+            <div className={sysStyles.card_box}>
+                <div className={sysStyles.text_field} style={{ marginTop: "0.5rem" }}>
+                    <div className={sysStyles.text}>
+                        {"적용 년도"}
+                    </div>
+                    <Input id='applyYear' value={applyYear} onChange={e => setApplyYear(e.target.value)} label="적용 년도" style={{width:"18rem"}} />
+                </div>
+                <div className={sysStyles.text_field}>
+                    <div className={sysStyles.text}>{"적용 구분"}</div>
+                    <Select value={selectedApplyDvs} onChange={(value) => setSelectedApplyDvs(value)} style={{width:"18rem", height:"2rem", fontSize:"4rem"}}>
+                    {applyDvs.map(option => (
+                        <Select.Option key={option.code} value={option.code}>
+                            {option.name}
+                        </Select.Option>
+                    ))}
+                    </Select>
+                </div>
+                <div className={sysStyles.text_field}>
+                    <div className={sysStyles.text}>{"계수 구분 코드"}</div>
+                    <Select value={selectedCoefClassCode} onChange={(value) => setSelectedCoefClassCode(value)} style={{width:"18rem", height:"2rem",fontSize:"4rem"}}>
+                    {coefClassCode.map(option => (
+                        <Select.Option key={option.code} value={option.code}>
+                            {option.name}
+                        </Select.Option>
+                    ))}
+                    </Select>
+                </div>
+                <div className={sysStyles.text_field}>
+                    <div className={sysStyles.text}>{"가스 코드"}</div>
+                    <Select value={selectedGhgCode} onChange={(value) => setSelectedGhgCode(value)} style={{width:"18rem", height:"2rem",fontSize:"4rem"}}>
+                    {ghgCode.map(option => (
+                        <Select.Option key={option.code} value={option.code}>
+                            {option.name}
+                        </Select.Option>
+                    ))}
+                    </Select>
+                </div>
+                <div className={sysStyles.text_field}>
+                    <div className={sysStyles.text}>{"단위"}</div>
+                    <Select value={selectedUnitCode} onChange={(value) => setSelectedUnitCode(value)} style={{width:"18rem", height:"2rem",fontSize:"4rem"}}>
+                    {unitCode.map(option => (
+                        <Select.Option key={option.code} value={option.code}>
+                            {option.name}
+                        </Select.Option>
+                    ))}
+                    </Select>
+                </div>
+                <div className={sysStyles.text_field}>
+                    <div className={sysStyles.text}>{"계수"}</div>
+                    <Input id='coef' value={coef} onChange={(e) => setCoef(e.target.value)} label="계수" style={{width:"18rem"}} />
+                </div>
+            </div>
+            <div style={{display:"flex", justifyContent:"center", alignContent:"center"}}>
+            <button style={{width:"18rem"}} className={modalStyles.select_button} onClick={handleSelect}>등록</button>
             </div>
         </Modal>
     )
