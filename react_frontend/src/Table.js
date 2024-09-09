@@ -9,6 +9,8 @@ import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import { Box, Checkbox, TablePagination, TextField } from '@mui/material';
 import { ConstructionOutlined } from '@mui/icons-material';
+import InboxIcon from '@mui/icons-material/Inbox';
+import Typography from '@mui/material/Typography';
 
 // TableCell을 스타일링하는 컴포넌트
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
@@ -70,7 +72,7 @@ export default function CustomizedTables({
     const [selectedRow, setSelectedRow] = useState({});       // default variant의 선택 상태
     const [selectedRows, setSelectedRows] = useState([]); 
     const [page, setPage] = useState(0);
-    const [rowsPerPage, setRowsPerPage] = useState(modalPagination ? 5 : 10);             // default page row length
+    const [rowsPerPage, setRowsPerPage] = useState(modalPagination ? 5 : 13);             // default page row length
     const handleChangePage = (event, newPage) => {
         setPage(newPage);
     };
@@ -106,7 +108,23 @@ export default function CustomizedTables({
 
     if (!data.length) {
         // 데이터가 비어 있을 경우 처리
-        return <p>No data available</p>;
+        return (
+            <Box sx={{ 
+                display: 'flex', 
+                flexDirection: 'column', 
+                alignItems: 'center', 
+                justifyContent: 'center', 
+                height: '100%', 
+                textAlign: 'center', 
+                padding: '2rem' 
+            }}>
+                <InboxIcon sx={{ fontSize: 60, color: 'gray' }} />
+                <br/>
+                <Typography variant="body2" color="textSecondary" paragraph>
+                    데이터를 찾을 수 없습니다. 데이터를 다시 불러오거나, 다른 옵션을 시도해보세요.
+                </Typography>
+            </Box>
+        );
     }
 
     // `id` 컬럼을 제외한 데이터 필터링
@@ -126,6 +144,7 @@ export default function CustomizedTables({
     });
     
     const paginatedData = filteredData.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
+
     return (
         <Box sx={{ 
             overflowX: 'auto',
@@ -237,9 +256,9 @@ export default function CustomizedTables({
                         </TableBody>
                 </Table>
             </TableContainer>
-            {pagination && (data.length >= 10) ? ( !modalPagination ? (// 10개 이상이면 자동으로 pagination 활성화, (pagination이 true일때만.)
+            {pagination && (data.length >= 13) ? ( !modalPagination ? (// 10개 이상이면 자동으로 pagination 활성화, (pagination이 true일때만.)
             <TablePagination 
-                rowsPerPageOptions={[10, 25, 100]} // page row length custom
+                rowsPerPageOptions={[13, 25, 100]} // page row length custom
                 component="div"
                 count={data.length}
                 rowsPerPage={rowsPerPage}
@@ -258,8 +277,19 @@ export default function CustomizedTables({
                 onRowsPerPageChange={handleChangeRowsPerPage}
             />
             )
-            ) : (
+            ) : ( !modalPagination ? (
                 <></>
+            ) : (
+                <TablePagination 
+                rowsPerPageOptions={[5, 10, 25]} // page row length custom
+                component="div"
+                count={data.length}
+                rowsPerPage={rowsPerPage}
+                page={page}
+                onPageChange={handleChangePage}
+                onRowsPerPageChange={handleChangeRowsPerPage}
+            />
+            )
             )
             }
         </Box>
