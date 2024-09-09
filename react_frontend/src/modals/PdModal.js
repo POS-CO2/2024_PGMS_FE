@@ -855,22 +855,14 @@ export function FadAddModal({ isModalOpen, handleOk, handleCancel, rowData }) {
 
 export function Ps12UploadExcelModal({ isModalOpen, handleOk, handleCancel }) { // '엑셀 업로드' 모달
     const fileInputRef = useRef(null);
-<<<<<<< HEAD
-    const [file, setFile] = useState(null);
-    const [errors, setErrors] = useState({});
-=======
     const [fileList, setFileList] = useState([]);
->>>>>>> ddab9c2d7c222254355adfe8a3eeb5f81183b8dc
+    const [errors, setErrors] = useState({});
 
     // 모달 열 때마다 clear
     useEffect(() => {
         if (isModalOpen) {
-<<<<<<< HEAD
-            setFile(null);
-            setErrors({});
-=======
             setFileList([]);
->>>>>>> ddab9c2d7c222254355adfe8a3eeb5f81183b8dc
+            setErrors({});
         }
     }, [isModalOpen]);
 
