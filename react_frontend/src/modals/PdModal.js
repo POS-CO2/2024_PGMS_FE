@@ -884,7 +884,7 @@ export function Ps12UploadExcelModal({ isModalOpen, handleOk, handleCancel }) { 
     const onSaveClick = async () => {
         // 입력 값 검증
         let newErrors = {};
-        if (!file) newErrors.file = '필수 항목입니다.';
+        if (fileList.length === 0) newErrors.file = '필수 항목입니다.';
 
         if (Object.keys(newErrors).length > 0) {
             setErrors(newErrors);
