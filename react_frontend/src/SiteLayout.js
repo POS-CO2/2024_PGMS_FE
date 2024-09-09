@@ -10,7 +10,7 @@ import {
     AppstoreOutlined,
     MailOutlined,
     PieChartOutlined,
-  } from '@ant-design/icons';
+} from '@ant-design/icons';
 import axiosInstance from './utils/AxiosInstance';
 
 const StyledTabsContainer = styled(TabsContainer)`
