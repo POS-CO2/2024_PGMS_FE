@@ -183,6 +183,14 @@ export function TableCustomDoubleClickEdit({
 
         if (isEditing) {    // 저장 버튼 클릭 시
             const updatedRows = editedRows.map(index => editableData[index]);
+
+            if (updatedRows.length === 0) {
+                // 업데이트할 데이터가 없는 경우, 상태만 리셋하고 함수 종료
+                setIsEditing(false);
+                setEditedRows([]);
+                return;
+            }
+
             try {
                 const requestBody = updatedRows.map(row => {
                     // 변경된 활동량만 추출
@@ -210,6 +218,7 @@ export function TableCustomDoubleClickEdit({
                     };
                 });
 
+                console.log(requestBody);
                 const response = await axiosInstance.put("/perf", requestBody);
 
                 swalOptions.title = '성공!',
@@ -221,7 +230,7 @@ export function TableCustomDoubleClickEdit({
 
             } catch (error) {
                 swalOptions.title = '실패!',
-                swalOptions.text = '활동량 수정에 실패하였습니다.';
+                swalOptions.text = error.response.data.message;
                 swalOptions.icon = 'error';
             }
             setIsEditing(false);
@@ -240,6 +249,14 @@ export function TableCustomDoubleClickEdit({
 
         if (isEditing) {    // 저장 버튼 클릭 시
             const updatedRows = editedRows.map(index => editableData[index]);
+
+            if (updatedRows.length === 0) {
+                // 업데이트할 데이터가 없는 경우, 상태만 리셋하고 함수 종료
+                setIsEditing(false);
+                setEditedRows([]);
+                return;
+            }
+            
             try {
                 const requestBody = updatedRows.map(row => {
                     // 변경된 활동량만 추출

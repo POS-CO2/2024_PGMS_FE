@@ -41,8 +41,9 @@
     "react-slick": "^0.30.2",
     "styled-components": "^6.1.12",
     "sweetalert2": "^11.12.4",
-    "swiper": "^11.1.11",
-    "three": "^0.167.1"
+    "swiper": "^11.1.12",
+    "three": "^0.167.1",
+    "xlsx": "^0.18.5"
   },
   "devDependencies": {
     "@babel/core": "^7.24.7",

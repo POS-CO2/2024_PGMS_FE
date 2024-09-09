@@ -1,21 +1,22 @@
 import React, { useState, useEffect } from "react";
 import * as tableStyles from "../../../assets/css/newTable.css"
-import Table from "../../../Table";
-import TableCustom from "../../../TableCustom";
-import { ButtonGroup } from "../../../Button";
+import Table from "../../../Table.js";
+import TableCustom from "../../../TableCustom.js";
+import { ButtonGroup } from "../../../Button.js";
 import * as sysStyles from '../../../assets/css/sysmng.css';
 import * as mainStyle from '../../../assets/css/main.css';
 import * as esmStyles from '../../../assets/css/esm.css';
 import { Card } from '@mui/material';
 import { Select } from 'antd';
-import SearchForms from "../../../SearchForms";
-import { formField_esm } from "../../../assets/json/searchFormData.js";
-import { SdAddModal, DeleteModal, SdShowDetailsModal } from "../../../modals/PdModal";
-import axiosInstance from '../../../utils/AxiosInstance';
-import { pjtColumns, equipEmissionColumns, equipDocumentColumns } from '../../../assets/json/tableColumn';
+import SearchForms from "../../../SearchForms.js";
+import { formField_esm_fp } from "../../../assets/json/searchFormData.js";
+import { SdAddModal, DeleteModal, SdShowDetailsModal } from "../../../modals/PdModal.js";
+import axiosInstance from '../../../utils/AxiosInstance.js';
+import { pjtColumns, equipEmissionColumns, equipDocumentColumns } from '../../../assets/json/tableColumn.js';
 
-export default function Esm() {
+export default function Esm_Fp() {
     const [formData, setFormData] = useState({});
+    const [formFields, setFormFields] = useState(formField_esm_fp);
 
     const [showResults, setShowResults] = useState(false);            // 조회결과를 표시할지 여부
     const [selectedPjt, setSelectedPjt] = useState([]);               // 선택된 프로젝트
@@ -26,6 +27,32 @@ export default function Esm() {
     const [selectedSd, setSelectedSd] = useState({});               // 선택된 증빙자료
     const [selectedYear, setSelectedYear] = useState(null); // 선택된 연도
 
+    // 프로젝트 드롭다운 옵션 설정
+    const [pjtOptions, setPjtOptions] = useState([]);
+    const [projectData, setProjectData] = useState([]);  // 전체 프로젝트 데이터를 저장
+    useEffect(() => {
+        const fetchPjtOptions = async () => {
+            try {
+                const res = await axiosInstance.get("/pjt/my");
+                setProjectData(res.data);  // 전체 프로젝트 데이터를 저장
+                const options = res.data.map(pjt => ({
+                    value: pjt.pjtId,  // value에 id만 전달
+                    label: pjt.pjtCode +"/"+ pjt.pjtName,
+                }));
+                setPjtOptions(options);
+                const updateFormFields = formFields.map(field =>
+                    field.name === 'searchProject' ? { ...field, options } : field
+                );
+
+                setFormFields(updateFormFields);
+            } catch (error) {
+                console.error(error);
+            }
+        };
+        fetchPjtOptions();
+    }, []);
+
+    // 프로젝트 선택 후 대상년도 드롭다운 옵션 설정
     const [yearSelectOptions, setYearSelectOptions] = useState([]);
     useEffect(() => {
         if (selectedPjt.length > 0) {
@@ -65,14 +92,16 @@ export default function Esm() {
         DeleteB: false, // 증빙자료 삭제
     });
 
-    const handleFormSubmit = async (param) => {
-        setSelectedPjt([param.searchProject]);
+    // 조회 버튼 클릭시 호출될 함수
+    const handleFormSubmit = async (data) => {
+        const selectedProject = projectData.find(pjt => pjt.pjtId === data.searchProject);
+        setSelectedPjt([selectedProject]);
 
-        let url = `/equip/emission?projectId=${param.searchProject.id}`;
+        let url = `/equip/emission?projectId=${data.searchProject}`;
         const emtnData = await axiosInstance.get(url);
         setEmtns(emtnData.data);
 
-        if (param && Object.keys(param).length !== 0) {
+        if (data && Object.keys(data).length !== 0) {
             setShowResults(true);
         }
     };
@@ -111,9 +140,7 @@ export default function Esm() {
         }
 
         if (modalType === 'EsmAdd') {
-            console.log(data);
             setEmtns(prevList => [...prevList, ...data]); // 선택된 프로젝트 데이터를 상태로 저장
-            console.log(emtns);
         }
         
         else if (modalType === 'DeleteA') {
@@ -184,7 +211,7 @@ export default function Esm() {
                 {"현장정보 > 배출원 > 배출원 관리"}
             </div>
 
-            <SearchForms onFormSubmit={handleFormSubmit} formFields={formField_esm} />
+            <SearchForms onFormSubmit={handleFormSubmit} formFields={formFields} />
 
             {/* showResults 상태가 true일 때만 결과를 표시 */}
             {showResults && (
@@ -196,7 +223,7 @@ export default function Esm() {
                     </div>
 
                     <div className={sysStyles.main_grid}>
-                        <Card className={sysStyles.card_box} sx={{ width: "50%", height: "100vh", borderRadius: "15px" }}>
+                        <Card className={sysStyles.card_box} sx={{ width: "50%", height: "100%", borderRadius: "15px" }}>
                             <TableCustom
                                 title="배출원목록"
                                 columns={equipEmissionColumns}

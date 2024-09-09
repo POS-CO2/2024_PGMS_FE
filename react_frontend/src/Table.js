@@ -9,6 +9,8 @@ import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import { Box, Checkbox, TablePagination, TextField } from '@mui/material';
 import { ConstructionOutlined } from '@mui/icons-material';
+import InboxIcon from '@mui/icons-material/Inbox';
+import Typography from '@mui/material/Typography';
 
 // TableCell을 스타일링하는 컴포넌트
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
@@ -106,7 +108,23 @@ export default function CustomizedTables({
 
     if (!data.length) {
         // 데이터가 비어 있을 경우 처리
-        return <p>No data available</p>;
+        return (
+            <Box sx={{ 
+                display: 'flex', 
+                flexDirection: 'column', 
+                alignItems: 'center', 
+                justifyContent: 'center', 
+                height: '100%', 
+                textAlign: 'center', 
+                padding: '2rem' 
+            }}>
+                <InboxIcon sx={{ fontSize: 60, color: 'gray' }} />
+                <br/>
+                <Typography variant="body2" color="textSecondary" paragraph>
+                    데이터를 찾을 수 없습니다. 데이터를 다시 불러오거나, 다른 옵션을 시도해보세요.
+                </Typography>
+            </Box>
+        );
     }
 
     // `id` 컬럼을 제외한 데이터 필터링
