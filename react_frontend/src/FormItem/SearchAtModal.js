@@ -4,6 +4,20 @@ import { Form, Button, Input } from 'antd';
 import ModalComponent from "./ModalComponent";
 import SearchProjectModal from "./SearchProjectModal";
 import SearchLibModal from "./SearchLibModal";
+import styled from 'styled-components';
+
+const StyledButton = styled.button`
+  background-color: #0A7800; /* 원하는 배경색으로 설정 */
+  color: white; /* 텍스트 색상 */
+  border: none;
+  cursor: pointer;
+  border-radius: 4px;
+  font-size: 16px;
+
+  &:hover {
+    background-color: #8AC784; /* 마우스 오버 시 배경색 */
+  }
+`;
 
 /**
  * 프로젝트 찾기(searchProject), 설비LIB 찾기(searchLib)
@@ -65,9 +79,9 @@ export default function SearchAtModal({ name, label, required = false, modalType
         >
             <div className={formItemStyles.input_button_container}>
                 <Input className={formItemStyles.input_field} disabled={true} value={inputValue} />
-                <Button className={formItemStyles.modal_button} type="primary" onClick={showModal}>
+                <StyledButton className={formItemStyles.modal_button} type="primary" onClick={showModal}>
                     찾기
-                </Button>
+                </StyledButton>
                 {renderModal()}
             </div>
         </Form.Item>

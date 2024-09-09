@@ -85,7 +85,6 @@ export default function Fad() {
                     equipLibId: searchResult.id,
                     actvDataId: actv.id,
                 }));
-
                 const response = await axiosInstance.post("/equip/libmap", requestBody);
 
                 // 기존 활동자료에서 placeholderActv를 제거하고 새 데이터를 병합

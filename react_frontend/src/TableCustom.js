@@ -43,7 +43,8 @@ export default function TableCustom({
     selectedRows = [],       // 테이블에서 선택된 row 리스트
     columns = [],
     pagination = true,        // 테이블 페이지네이션 디폴트는 페이지네이션 하는걸로.
-    modalPagination = false
+    modalPagination = false,
+    keyProp = undefined
 }) {modalPagination
     // 버튼 활성화 상태 결정
     
@@ -57,6 +58,9 @@ export default function TableCustom({
         }
         return true;  // 'Add' 버튼은 항상 활성화
     });
+
+    // key 설정
+    const tableKey = (keyProp === undefined) ? JSON.stringify(data) : JSON.stringify(keyProp);
 
     return (
         <>
@@ -82,7 +86,7 @@ export default function TableCustom({
                 })}
             </div>
             {table ? (
-            <Table key={JSON.stringify(data)} data={data} variant={variant} onRowClick={onRowClick} pagination={pagination} modalPagination={modalPagination} columns={columns}/>
+            <Table key={tableKey} data={data} variant={variant} onRowClick={onRowClick} pagination={pagination} modalPagination={modalPagination} columns={columns}/>
             ) : (<></>)}
             
         </>
@@ -102,6 +106,9 @@ export function TableCustomDoubleClickEdit({
     table = true,
     columns = [],
     modalPagination = false,
+    pageType = '',
+    handleFormSubmit = () => {},
+    formData = []
 }) {
     const [isEditing, setIsEditing] = useState(false); // 'Edit' 모드 상태 관리
     const [editableData, setEditableData] = useState(data); // 수정된 데이터 저장
@@ -126,7 +133,7 @@ export function TableCustomDoubleClickEdit({
     });
 
     // Edit 버튼 클릭 핸들러
-    const handleEditButtonClick = async () => {
+    const handleEditButtonClickRm = async () => {
         let swalOptions = {
             confirmButtonText: '확인'
         };
@@ -139,7 +146,7 @@ export function TableCustomDoubleClickEdit({
                     pjtId: row.pjtId,
                     year: row.year,
                     mth: row.mth,
-                    salesAmt: row.salesAmt
+                    salesAmt: parseInt((row.salesAmt ).replace(/,/g, ''), 10), // 쉼표를 제거하고 정수로 변환
                 }));
 
                 const response = await axiosInstance.put("/pjt/sales", requestBody);
@@ -147,6 +154,10 @@ export function TableCustomDoubleClickEdit({
                 swalOptions.title = '성공!',
                 swalOptions.text = '매출액이 성공적으로 수정되었습니다.';
                 swalOptions.icon = 'success';
+
+                // 수정된 데이터로 테이블 갱신
+                handleFormSubmit(formData);
+
             } catch (error) {
                 swalOptions.title = '실패!',
                 swalOptions.text = '매출액 수정에 실패하였습니다.';
@@ -164,10 +175,154 @@ export function TableCustomDoubleClickEdit({
         }
     };
 
+    // Edit 버튼 클릭 핸들러
+    const handleEditButtonClickPs12ActvQty = async () => {
+        let swalOptions = {
+            confirmButtonText: '확인'
+        };
+
+        if (isEditing) {    // 저장 버튼 클릭 시
+            const updatedRows = editedRows.map(index => editableData[index]);
+
+            if (updatedRows.length === 0) {
+                // 업데이트할 데이터가 없는 경우, 상태만 리셋하고 함수 종료
+                setIsEditing(false);
+                setEditedRows([]);
+                return;
+            }
+
+            try {
+                const requestBody = updatedRows.map(row => {
+                    // 변경된 활동량만 추출
+                    const updatedQuantities = row.quantityList
+                        .map((item, index) => {
+                            const newActvQty = row[index]; // 인덱스 위치의 새로운 값
+                            return {
+                                ...item,
+                                newActvQty
+                            };
+                        })
+                        .filter(item => item.formattedActvQty !== item.newActvQty)
+                        .map(item => ({
+                            id: item.id,
+                            actvYear: item.actvYear,
+                            actvMth: item.actvMth,
+                            fee: null, // 비용은 null로 설정
+                            actvQty: parseInt((item.newActvQty).replace(/,/g, ''), 10) // 쉼표를 제거하고 정수로 변환
+                        }));
+            
+                    return {
+                        emissionId: row.emissionId,
+                        emtnActvType: row.emtnActvType,
+                        quantityList: updatedQuantities
+                    };
+                });
+
+                console.log(requestBody);
+                const response = await axiosInstance.put("/perf", requestBody);
+
+                swalOptions.title = '성공!',
+                swalOptions.text = '활동량이 성공적으로 수정되었습니다.';
+                swalOptions.icon = 'success';
+
+                // 수정된 데이터로 테이블 갱신
+                handleFormSubmit(formData);
+
+            } catch (error) {
+                swalOptions.title = '실패!',
+                swalOptions.text = error.response.data.message;
+                swalOptions.icon = 'error';
+            }
+            setIsEditing(false);
+            setEditedRows([]);
+            Swal.fire(swalOptions);
+        } else {
+            setIsEditing(true);
+        }
+    };
+
+    // Edit 버튼 클릭 핸들러
+    const handleEditButtonClickPs12Fee = async () => {
+        let swalOptions = {
+            confirmButtonText: '확인'
+        };
+
+        if (isEditing) {    // 저장 버튼 클릭 시
+            const updatedRows = editedRows.map(index => editableData[index]);
+
+            if (updatedRows.length === 0) {
+                // 업데이트할 데이터가 없는 경우, 상태만 리셋하고 함수 종료
+                setIsEditing(false);
+                setEditedRows([]);
+                return;
+            }
+            
+            try {
+                const requestBody = updatedRows.map(row => {
+                    // 변경된 활동량만 추출
+                    const updatedQuantities = row.quantityList
+                        .map((item, index) => {
+                            const newFee = row[index]; // 인덱스 위치의 새로운 값
+                            return {
+                                ...item,
+                                newFee
+                            };
+                        })
+                        .filter(item => item.formattedFee !== item.newFee)
+                        .map(item => ({
+                            id: item.id,
+                            actvYear: item.actvYear,
+                            actvMth: item.actvMth,
+                            fee: parseInt((item.newFee).replace(/,/g, ''), 10), // 쉼표를 제거하고 정수로 변환
+                            actvQty: null // 사용량은 null로 설정
+                        }));
+            
+                    return {
+                        emissionId: row.emissionId,
+                        emtnActvType: row.emtnActvType,
+                        quantityList: updatedQuantities
+                    };
+                });
+
+                const response = await axiosInstance.put("/perf", requestBody);
+
+                swalOptions.title = '성공!',
+                swalOptions.text = '활동량이 성공적으로 수정되었습니다.';
+                swalOptions.icon = 'success';
+
+                // 수정된 데이터로 테이블 갱신
+                handleFormSubmit(formData);
+
+            } catch (error) {
+                swalOptions.title = '실패!',
+                swalOptions.text = '활동량 수정에 실패하였습니다.';
+                swalOptions.icon = 'error';
+            }
+            setIsEditing(false);
+            setEditedRows([]);
+            Swal.fire(swalOptions);
+        } else {
+            setIsEditing(true);
+        }
+    };
+
     // 버튼 클릭 핸들러 수정
-    const updatedOnClicks = onClicks.map((clickHandler, index) => 
-        buttons[index] === 'Edit' ? handleEditButtonClick : clickHandler
-    );
+    const updatedOnClicks = onClicks.map((clickHandler, index) => {
+        if (buttons[index] === 'Edit') {
+            switch (pageType) {
+                case 'rm':
+                    return handleEditButtonClickRm;
+                case 'ps12actvQty':
+                    return handleEditButtonClickPs12ActvQty;
+                case 'ps12fee':
+                    return handleEditButtonClickPs12Fee;
+                default:
+                    return clickHandler;
+            }
+        }
+        return clickHandler;
+    });
+    
 
     const handleDoubleClick = (rowIndex, colIndex) => {
         if (isEditing) {
@@ -177,9 +332,10 @@ export function TableCustomDoubleClickEdit({
 
     const handleInputChange = (e, rowIndex, colIndex) => {
         const newData = [...editableData];  // editableData 복사
+        const adjustedColIndex = pageType === 'rm' ? colIndex+3 : colIndex-4; // pageType에 따라 colIndex 조정
         newData[rowIndex] = {
             ...newData[rowIndex],            // 해당 행 복사
-            [Object.keys(newData[rowIndex])[colIndex+3]]: e.target.value // 특정 셀의 데이터만 업데이트(id 컬럼으로 인해 colIndex+1)
+            [Object.keys(newData[rowIndex])[adjustedColIndex]]: e.target.value // 특정 셀의 데이터만 업데이트(id 컬럼으로 인해 colIndex+1)
         };
 
         // 수정된 행의 인덱스를 추가

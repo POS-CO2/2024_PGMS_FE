@@ -3,7 +3,8 @@
 }
 
 .select_dropdown {
-    min-width: 6rem; /* 최소 너비 설정 */
+    min-width: 8rem; /* 최소 너비 설정 */
+    max-width: 16rem; /* 최대 너비 설정 */
 }
 
 .input_button_container {

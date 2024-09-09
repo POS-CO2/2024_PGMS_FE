@@ -9,12 +9,14 @@ import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import { Box, Checkbox, TablePagination, TextField } from '@mui/material';
 import { ConstructionOutlined } from '@mui/icons-material';
+import InboxIcon from '@mui/icons-material/Inbox';
+import Typography from '@mui/material/Typography';
 
 // TableCell을 스타일링하는 컴포넌트
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
-    backgroundColor: 'rgb(237,245,254)',
-    color: 'rgb(47, 107, 208)',
+    backgroundColor: '#0A7800',
+    color: '#FFFFFF',
     fontSize: '0.75rem',
     whiteSpace: 'nowrap', // 텍스트를 한 줄로 유지
     overflow: 'hidden', // 넘치는 내용을 숨기기
@@ -34,20 +36,20 @@ const StyledTableRow = styled(TableRow)(({ theme, selected, variant }) => ({
         border: 0,
     },
     '&:hover': {
-        backgroundColor: 'rgba(133, 187, 249, 0.4)', // 호버 시 배경색 설정
+        backgroundColor: '#E5F1E4', // 호버 시 배경색 설정
     },
     '&.Mui-selected': {
-        backgroundColor: selected && variant === 'default' ? 'rgba(63, 118, 247, 0.5) !important' : '#FFFFFF', // 선택된 상태에서 배경색 강제 적용 (default variant만)
+        backgroundColor: selected && variant === 'default' ? '#B7E4B3 !important' : '#FFFFFF', // 선택된 상태에서 배경색 강제 적용 (default variant만)
     },
 }));
 
 // Checkbox를 스타일링하는 컴포넌트
 const StyledCheckbox = styled(Checkbox)(({ theme, checked }) => ({
     '& .MuiSvgIcon-root': {
-      color: '#8B83BA',
+      color: '#0EAA00',
     },
     '&.Mui-checked .MuiSvgIcon-root': {
-      color: '#6D5BD0', // 체크된 상태 배경색
+      color: '#0EAA00', // 체크된 상태 배경색
     },
     '& .MuiCheckbox-root': {
       backgroundColor: '#FFFFFF', // 체크박스 배경색
@@ -106,7 +108,23 @@ export default function CustomizedTables({
 
     if (!data.length) {
         // 데이터가 비어 있을 경우 처리
-        return <p>No data available</p>;
+        return (
+            <Box sx={{ 
+                display: 'flex', 
+                flexDirection: 'column', 
+                alignItems: 'center', 
+                justifyContent: 'center', 
+                height: '100%', 
+                textAlign: 'center', 
+                padding: '2rem' 
+            }}>
+                <InboxIcon sx={{ fontSize: 60, color: 'gray' }} />
+                <br/>
+                <Typography variant="body2" color="textSecondary" paragraph>
+                    데이터를 찾을 수 없습니다. 데이터를 다시 불러오거나, 다른 옵션을 시도해보세요.
+                </Typography>
+            </Box>
+        );
     }
 
     // `id` 컬럼을 제외한 데이터 필터링
@@ -126,6 +144,7 @@ export default function CustomizedTables({
     });
     
     const paginatedData = filteredData.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
+
     return (
         <Box sx={{ 
             width: '100%', 
@@ -149,7 +168,7 @@ export default function CustomizedTables({
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                            {
+                            {pagination ? (
                                 // 표에 data 채우기
                                 paginatedData.map((row, rowIndex) => (
                                     <StyledTableRow 
@@ -164,8 +183,8 @@ export default function CustomizedTables({
                                             variant === 'checkbox' && (
                                                 <StyledTableCell>
                                                     <StyledCheckbox 
-                                                        checked={selectedRows.includes(rowIndex)}
-                                                        onClick={(e) => handleCheckboxClick(e, rowIndex)}
+                                                        checked={selectedRows.includes(rowIndex + (rowsPerPage * page))}
+                                                        onClick={(e) => handleCheckboxClick(e, rowIndex + (rowsPerPage * page))}
                                                     />
                                                 </StyledTableCell>
                                             )
@@ -193,7 +212,49 @@ export default function CustomizedTables({
                                             ))
                                         }
                                     </StyledTableRow>
-                                ))
+                                ))) :
+                                (
+                                    filteredData.map((row, index) => (
+                                        <StyledTableRow 
+                                            key={index}
+                                            selected={
+                                                variant === 'checkbox' 
+                                                ? selectedRows.includes(index) 
+                                                : selectedRow === index
+                                            }
+                                            onClick={(e) => handleRowClick(index, e)}
+                                        >
+                                            {   // checkbox가 있는 테이블이면 체크박스 셀 추가
+                                                variant === 'checkbox' && (
+                                                    <StyledTableCell>
+                                                        <StyledCheckbox 
+                                                            checked={selectedRows.includes(index)}
+                                                            onChange={() => handleCheckboxChange(index)}
+                                                        />
+                                                    </StyledTableCell>
+                                                )
+                                            }
+                                            {   // 데이터 값 채우기
+                                                visibleColumns.map((value, idx) => (
+                                                    <StyledTableCell key={idx} align="left" onDoubleClick={() => {handleDoubleClick(index, idx)}}>
+                                                        {editingCell.row === index && editingCell.col === idx ? (
+                                                            <TextField
+                                                                value={row[value.key]}
+                                                                onChange={(e) => handleInputChange(e, index, idx)}
+                                                                onBlur={handleBlur}
+                                                                autoFocus
+                                                                size="small"
+                                                            />
+                                                        ) : (
+                                                            row[value.key]
+                                                        )}
+                                                        {/* {value} */}
+                                                    </StyledTableCell>
+                                                ))
+                                            }
+                                        </StyledTableRow>
+                                    ))
+                                )
                             }
                         </TableBody>
                 </Table>
@@ -213,14 +274,25 @@ export default function CustomizedTables({
                 rowsPerPageOptions={[5, 10, 25]} // page row length custom
                 component="div"
                 count={data.length}
-                rowsPerPage={5}
+                rowsPerPage={rowsPerPage}
                 page={page}
                 onPageChange={handleChangePage}
                 onRowsPerPageChange={handleChangeRowsPerPage}
             />
             )
-            ) : (
+            ) : ( !modalPagination ? (
                 <></>
+            ) : (
+                <TablePagination 
+                rowsPerPageOptions={[5, 10, 25]} // page row length custom
+                component="div"
+                count={data.length}
+                rowsPerPage={rowsPerPage}
+                page={page}
+                onPageChange={handleChangePage}
+                onRowsPerPageChange={handleChangeRowsPerPage}
+            />
+            )
             )
             }
         </Box>

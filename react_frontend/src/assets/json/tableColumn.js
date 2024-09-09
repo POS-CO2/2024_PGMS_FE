@@ -112,16 +112,17 @@ export const pjtManagerColumns = [
 export const perfColumns = [
     { key: 'emissionId', label: '배출ID', hidden: true },
     { key: 'equipName', label: '설비명', hidden: false },
-    { key: 'emtnActvType', label: '배출활동유형', hidden: false },
+    { key: 'emtnActvType', label: '배출활동유형코드', hidden: true },
+    { key: 'emtnActvTypeName', label: '배출활동유형', hidden: false },
     { key: 'actvDataName', label: '활동자료명', hidden: false },
     { key: 'inputUnitCode', label: '단위', hidden: false },
     { key: 'quantityList', label: '퀀티티리스트', hidden: true },
 ]
 // 월별 칼럼 추가
-for (let month = 1; month <= 12; month++) {
+for (let month = 0; month < 12; month++) {
     perfColumns.push({
-        key: `month${month}`,
-        label: `${month}월`,
+        key: `${month}`,
+        label: `${month+1}월`,
         hidden: false
     });
 }
@@ -156,14 +157,17 @@ export const equipEmissionColumns = [
     { key: 'actvDataName', label: '활동자료이름', hidden: false },
     { key: 'inputUnitCode', label: '입력단위코드', hidden: false },
     { key: 'calUnitCode', label: '산정단위코드', hidden: false },
-    { key: 'unitConvCoef', label: '유닛콘브코에프', hidden: false },
+    { key: 'unitConvCoef', label: '단위변환계수', hidden: false },
+    { key: 'fileStatus', label: '증빙자료현황', hidden: false },
 ]
 
 export const equipDocumentColumns = [
     { key: 'id', label: 'id', hidden: true },
-    { key: 'actvYear', label: '활동년도', hidden: false },
+    { key: 'actvYear', label: '활동년도', hidden: true },
     { key: 'actvMth', label: '활동월', hidden: false },
     { key: 'name', label: '이름', hidden: false },
+    { key: 'creatorDeptCode', label: '등록자 부서명', hidden: true },
+    { key: 'creatorName', label: '등록자', hidden: false },
 ]
 
 export const equipEmissionCandColumns = [
@@ -180,7 +184,7 @@ export const equipEmissionCandColumns = [
     { key: 'actvDataName', label: '활동자료이름', hidden: false },
     { key: 'inputUnitCode', label: '입력단위코드', hidden: false },
     { key: 'calUnitCode', label: 'cal단위코드', hidden: false },
-    { key: 'unitConvCoef', label: '유닛콘브코에프', hidden: false },
+    { key: 'unitConvCoef', label: '단위변환계수', hidden: false },
 ]
 
 export const equipDocumentDetailColumns = [

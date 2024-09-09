@@ -142,7 +142,7 @@ const StyledRoot = styled.div`
     }    
 `;
 
-export default function Main() {
+export default function Main_Admin() {
 
     const [mockData, setMockData] = useState([]);
     const [targetKeys, setTargetKeys] = useState([]);
@@ -415,7 +415,7 @@ export default function Main() {
                         {/* 로고  */}
                         <div className={gridStyles.box1_logo}>
                             {/* <SsidChartRoundedIcon sx={{width:"2rem",height:"2rem", paddingRight:"0.5rem"}}/> */}
-                            PGMS
+                            PGMSADMIN
                         </div>
                         <Select defaultValue={selectedMyPjt?.pjtName} value={selectedMyPjt?.pjtName} onChange={(e) => handleDropClick(e)} style={{width:"20%", height:"2.5rem", fontSize:"4rem"}}>
                             {myPjt.map(pjt => (
