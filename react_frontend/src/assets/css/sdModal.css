@@ -136,8 +136,8 @@
 
 .file_list_container {
     margin-top: 10px;
-    width: 100%;
-    /* 모달의 전체 너비를 사용하도록 설정 */
+    width: 100%; /* 모달의 전체 너비를 사용하도록 설정 */
+    margin-bottom: 10px;
 }
 
 .file_list {
