@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import SearchForms from "../../../SearchForms.js";
 import { formField_psq_fp } from "../../../assets/json/searchFormData.js"
-import { Radio } from 'antd';
+import { CustomButton } from '../Ps_1_2';
 import TableCustom from "../../../TableCustom.js";
 import ChartCustom from "../../../ChartCustom.js";
 import * as mainStyle from '../../../assets/css/main.css';
@@ -11,31 +11,6 @@ import * as esmStyles from '../../../assets/css/esm.css';
 import { Card } from '@mui/material';
 import axiosInstance from '../../../utils/AxiosInstance.js';
 import { perfPjtColumns, pjtColumns } from '../../../assets/json/tableColumn.js';
-import styled from 'styled-components';
-
-const CustomRadioGroup = styled(Radio.Group)`
-    .ant-radio-button-wrapper:hover {
-        background-color: #FFFFFF;
-        color: #0EAA00;
-        border-color: #0EAA00;
-    }
-
-    .ant-radio-button-wrapper:not(:first-child)::before {
-        background-color: #0EAA00; /* Line between buttons */
-    }
-
-    .ant-radio-button-wrapper-checked {
-        background-color: #0EAA00 !important;
-        color: white;
-        border-color: #0EAA00 !important;
-    }
-
-    .ant-radio-button-wrapper-checked:hover {
-        background-color: #FFFFFF;
-        color: white;
-        border-color: #0EAA00 !important;
-    }
-`;
 
 export default function Psq_Fp() {
     const [formFields, setFormFields] = useState(formField_psq_fp);
@@ -47,8 +22,8 @@ export default function Psq_Fp() {
     const [actvYearDisabled, setActvYearDisabled] = useState(true);  // 드롭다운 비활성화 상태 관리
 
     const [content, setContent] = useState('chart'); // chart || table
-    const onRadioChange = (e) => {
-        setContent(e.target.value);
+    const handleButtonClick = (value) => {
+        setContent(value);
     };
 
     // 프로젝트 드롭다운 옵션 설정
@@ -156,14 +131,20 @@ export default function Psq_Fp() {
                         </Card>
                     </div>
 
-                    <CustomRadioGroup
-                        options={[{label: '차트', value: 'chart'}, {label: '표', value: 'table'}]}
-                        onChange={onRadioChange}
-                        value={content}
-                        optionType="button"
-                        buttonStyle="solid"
-                        className={ps12Style.custom_radio_group}
-                    />
+                    <div className={ps12Style.button_container}>
+                        <CustomButton 
+                            selected={content === 'chart'} 
+                            onClick={() => handleButtonClick('chart')}
+                        >
+                            차트
+                        </CustomButton>
+                        <CustomButton 
+                            selected={content === 'table'} 
+                            onClick={() => handleButtonClick('table')}
+                        >
+                            표
+                        </CustomButton>
+                    </div>
                     <div className={sysStyles.main_grid}>
                         <Card className={sysStyles.card_box} sx={{ width: "100%", height: "100%", borderRadius: "15px" }}>
                             {content === 'chart' && <ChartTab data={chartPerfs} />}
