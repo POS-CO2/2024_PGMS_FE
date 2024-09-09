@@ -26,7 +26,6 @@ const TabContainer = styled.div`
   flex-direction: column;
   align-items: flex-start;
   flex-grow: 1;
-  padding-top: 18px;
   padding-left: 28px;
   padding-right: 16px; /* 탭과 유저 정보 사이의 간격 */
   overflow-x: hidden;
@@ -66,7 +65,7 @@ const StyledButton = styled(Button)`
   margin-left: 10px;
   color: #0A7800; /* 기본 텍스트 색상 */
   border-color: #777777; /* 기본 보더 색상 */
-  padding: 2px 4px;
+  padding: 0px 4px;
   height: auto; /* 높이를 자동으로 설정하여 텍스트(userName)와 일치시킴 */
   font-size: 12px;
 
@@ -99,7 +98,7 @@ const StyledTabs = styled(Tabs)`
     width: auto;
     margin: 0 !important;
     justify-content: flex-start;
-    padding: 1rem 0.5rem;
+    padding: 0.3rem 0.5rem;
     font-weight: bold;
     overflow: hidden;
     white-space: nowrap !important;
@@ -290,7 +289,7 @@ const TabsContainer = forwardRef(({ handleLogout, user }, ref) => {
           <div>
             {tab.key !== '' && ( // 홈 탭에는 닫기 버튼을 표시하지 않음
               <CloseOutlined
-                style={{ color:"red", paddingLeft:"5px"}}
+                style={{ color:"gray", paddingLeft:"5px"}}
                 onClick={(e) => {
                   e.stopPropagation(); // 이벤트 전파를 막아 탭 전환을 방지
                   removeTab(tab.key);
