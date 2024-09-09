@@ -873,6 +873,13 @@ export function Ps12UploadExcelModal({ isModalOpen, handleOk, handleCancel }) { 
     const fileInputRef = useRef(null);
     const [fileList, setFileList] = useState([]);
 
+    // 모달 열 때마다 clear
+    useEffect(() => {
+        if (isModalOpen) {
+            setFileList([]);
+        }
+    }, [isModalOpen]);
+
     const onUploadClick = () => {
         if (fileInputRef.current) {
             fileInputRef.current.click();
@@ -880,18 +887,52 @@ export function Ps12UploadExcelModal({ isModalOpen, handleOk, handleCancel }) { 
     };
 
     const handleFileChange = (event) => {
-        const newFiles = Array.from(event.target.files);
-        setFileList(prevFiles => {
-            const existingFileNames = new Set(prevFiles.map(file => file.name));
-            const filteredNewFiles = newFiles.filter(file => !existingFileNames.has(file.name));
-            return [...prevFiles, ...filteredNewFiles];
-        });
-        // Clear the input value to handle the same file being selected again
-        event.target.value = null;
+        const newFile = event.target.files[0];
+        setFileList([newFile]);
     };
 
-    const handleFileRemove = (fileName) => {
-        setFileList(prevFiles => prevFiles.filter(file => file.name !== fileName));
+    const handleFileRemove = () => {
+        setFileList([]);
+    };
+
+    const onSaveClick = async () => {
+        if (fileList.length === 0) {
+            Swal.fire({
+                title: '파일 없음',
+                text: '업로드할 파일을 선택해 주세요.',
+                icon: 'warning',
+                confirmButtonText: '확인'
+            });
+            return;
+        }
+
+        let swalOptions = {
+            confirmButtonText: '확인'
+        };
+        
+        try {
+            const formData = new FormData();
+            formData.append('file', fileList[0]);
+
+            // 데이터 전송
+            const response = await axiosInstance.post('/perf/upload', formData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data'
+                }
+            });
+
+            console.log(response.data);
+            handleOk(response.data, true); // 새로 입력된 데이터를 handleOk 함수로 전달, 두번째 인자-closeModal=true
+            swalOptions.title = '성공!',
+            swalOptions.text = `성공적으로 등록되었습니다.`;
+            swalOptions.icon = 'success';
+        } catch (error) {
+            console.error('Error saving document:', error);
+            swalOptions.title = '실패!',
+            swalOptions.text = error.response.data.message;
+            swalOptions.icon = 'error';
+        }
+        Swal.fire(swalOptions);
     };
 
     return (
@@ -911,10 +952,9 @@ export function Ps12UploadExcelModal({ isModalOpen, handleOk, handleCancel }) { 
                 <div>
                     <input
                         type="file"
-                        id="file"
-                        name="file"
-                        multiple
-                        accept=".xlt,.xls,.xlsx,.csv"
+                        id="fileList"
+                        name="fileList"
+                        accept=".xlsx"
                         style={{ display: 'none' }} // 숨김 처리
                         ref={fileInputRef} // useRef로 참조
                         onChange={handleFileChange} // 파일 선택 시 호출
@@ -927,26 +967,24 @@ export function Ps12UploadExcelModal({ isModalOpen, handleOk, handleCancel }) { 
 
             <div className={ps12Styles.file_list_container}>
                 <div className={ps12Styles.file_list}>
-                    {fileList.length === 0 ? (
-                        <></>
-                    ) : (
-                        fileList.map((file, index) => (
-                            <div key={index} className={ps12Styles.file_item}>
-                                {file.name}
-                                <button
-                                    type="button"
-                                    className={ps12Styles.remove_button}
-                                    onClick={() => handleFileRemove(file.name)}
-                                >
-                                    <CloseOutlined />
-                                </button>
-                            </div>
-                        ))
-                    )}
+                {fileList.length !== 0 ? (
+                    <div className={ps12Styles.file_item}>
+                        {fileList[0].name}
+                        <button
+                            type="button"
+                            className={ps12Styles.remove_button}
+                            onClick={handleFileRemove}
+                        >
+                            <CloseOutlined />
+                        </button>
+                    </div>
+                ) : (
+                    <></>
+                )}
                 </div>
             </div>
 
-            <button className={ps12Styles.select_button} onClick={handleOk}>등록</button>
+            <button className={ps12Styles.select_button} onClick={onSaveClick}>등록</button>
         </Modal>
     )
 }
@@ -1166,7 +1204,7 @@ export function DeleteModal({ isModalOpen, handleOk, handleCancel, rowData, rowD
         } catch (error) {
             console.error('Failed to delete user:', error);
             swalOptions.title = '실패!',
-            swalOptions.text = `${rowName} 삭제에 실패하였습니다.`;
+            swalOptions.text = error.response.data.message;
             swalOptions.icon = 'error';
         }
         Swal.fire(swalOptions);
@@ -1798,13 +1836,10 @@ export function EsmAddModal({ isModalOpen, handleOk, handleCancel, rowData }) {
             confirmButtonText: '확인'
         };
 
-        // selectedEmtnCands가 null이거나 비어있는지 확인
+        // selectedEmtnCands가 null이거나 비었으면 모달 닫고 함수 종료
         if (!selectedEmtnCands || selectedEmtnCands.length === 0) {
-            swalOptions.title = '실패!';
-            swalOptions.text = '선택된 배출원이 없습니다.';
-            swalOptions.icon = 'error';
-            Swal.fire(swalOptions);
-            return; // 더 이상 진행하지 않도록 함수 종료
+            handleCancel();
+            return;
         }
 
         try {
@@ -1853,7 +1888,7 @@ export function EsmAddModal({ isModalOpen, handleOk, handleCancel, rowData }) {
     )
 }
 
-export function SdAddModal({ isModalOpen, handleOk, handleCancel, rowData }) {
+export function SdAddModal({ isModalOpen, handleOk, handleCancel, rowData, yearSelectOptions }) {
     const [formData, setFormData] = useState({
         actvYear: new Date().getFullYear().toString(),
         actvMth: (new Date().getMonth() + 1).toString(),
@@ -1861,6 +1896,7 @@ export function SdAddModal({ isModalOpen, handleOk, handleCancel, rowData }) {
         fileList: []
     });
 
+    // 모달 열 때마다 clear
     useEffect(() => {
         if (isModalOpen) {
             setFormData({
@@ -1981,7 +2017,7 @@ export function SdAddModal({ isModalOpen, handleOk, handleCancel, rowData }) {
                             value={formData.actvYear}
                             onChange={(value) => setFormData(prevData => ({ ...prevData, actvYear: value }))}
                         >
-                            {selectYear.map(option => (
+                            {yearSelectOptions.map(option => (
                                 <Select.Option key={option.value} value={option.value}>
                                     {option.label}
                                 </Select.Option>
@@ -2016,7 +2052,10 @@ export function SdAddModal({ isModalOpen, handleOk, handleCancel, rowData }) {
                 </div>
                 <div className={sdStyles.upload_item}>
                     <div className={sdStyles.upload_header}>
-                        <div className={sdStyles.input_title}>첨부파일</div>
+                        <div className={sdStyles.input_title}>
+                            첨부파일
+                            <span className={sdStyles.requiredAsterisk}>*</span>
+                        </div>
                         <div>
                             <input
                                 type="file"
@@ -2063,7 +2102,7 @@ export function SdAddModal({ isModalOpen, handleOk, handleCancel, rowData }) {
     )
 }
 
-export function SdShowDetailsModal({ selectedSd, isModalOpen, handleOk, handleCancel }) {
+export function SdShowDetailsModal({ selectedSd, isModalOpen, handleOk, handleCancel, yearSelectOptions }) {
     const [formData, setFormData] = useState({
         actvYear: '',
         actvMth: '',
@@ -2271,7 +2310,7 @@ export function SdShowDetailsModal({ selectedSd, isModalOpen, handleOk, handleCa
                             onChange={(value) => setFormData(prevData => ({ ...prevData, actvYear: value }))}
                             disabled={true} // 항상 비활성화
                         >
-                            {selectYear.map(option => (
+                            {yearSelectOptions.map(option => (
                                 <Select.Option key={option.value} value={option.value}>
                                     {option.label}
                                 </Select.Option>
@@ -2295,6 +2334,16 @@ export function SdShowDetailsModal({ selectedSd, isModalOpen, handleOk, handleCa
                 </div>
                 <div className={sdStyles.input_item}>
                     <div className={sdStyles.input_title}>
+                        등록자
+                    </div>
+                    <input className={sdStyles.search} id="creator"
+                        value={selectedSd.creatorDeptCode+" / "+selectedSd.creatorName}
+                        onChange={(e) => setFormData(prevData => ({ ...prevData, name: e.target.value }))}
+                        disabled={true} // 항상 비활성화
+                    />
+                </div>
+                <div className={sdStyles.input_item}>
+                    <div className={sdStyles.input_title}>
                         자료명
                         <span className={sdStyles.requiredAsterisk}>*</span>
                     </div>
@@ -2306,7 +2355,10 @@ export function SdShowDetailsModal({ selectedSd, isModalOpen, handleOk, handleCa
                 </div>
                 <div className={sdStyles.upload_item}>
                     <div className={sdStyles.upload_header}>
-                        <div className={sdStyles.input_title}>첨부파일</div>
+                        <div className={sdStyles.input_title}>
+                            첨부파일
+                            <span className={sdStyles.requiredAsterisk}>*</span>
+                        </div>
                         <div>
                             <input
                                 type="file"

@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import SearchForms from "../../SearchForms";
-import { formField_ps12 } from "../../assets/json/searchFormData";
+import { formField_ps12_fp } from "../../assets/json/searchFormData";
+import { CustomButton } from './Ps_1_2';
 import TableCustom, {TableCustomDoubleClickEdit} from "../../TableCustom.js";
-import { Card, Button } from '@mui/material';
-import { styled } from '@mui/material/styles';
+import { Card } from '@mui/material';
 import * as mainStyle from '../../assets/css/main.css';
 import * as ps12Style from '../../assets/css/ps12.css';
 import * as sysStyles from '../../assets/css/sysmng.css';
@@ -12,30 +12,10 @@ import axiosInstance from '../../utils/AxiosInstance';
 import { perfColumns, pjtColumns } from '../../assets/json/tableColumn';
 import * as XLSX from 'xlsx';
 
-export const CustomButton = styled(Button)(({ theme, selected }) => ({
-    color: selected ? '#000' : '#B6B6B6',
-    border: selected ? '0.1rem solid #0A7800' : '0.1rem solid transparent', // 기본적으로 테두리 공간을 차지
-    backgroundColor: selected ? '#fff' : 'transparent',
-    fontWeight: selected ? 'bolder' : 'normal',
-    borderRadius: '1.3rem',
-    fontSize: '1rem',
-    paddingTop: '0.1rem',
-    paddingBottom: '0.1rem',
-    paddingLeft: '1rem',
-    paddingRight: '1rem',
-
-    '&:hover': {
-        color: '#000',
-        backgroundColor: '#fff',
-        border: '0.1rem solid #0A7800',
-        borderRadius: '1.3rem',
-        fontWeight: 'bolder',
-    },
-}));
-
-export default function Ps_1_2() {
-    const [formFields, setFormFields] = useState(formField_ps12);
+export default function Ps_1_2_Fp() {
+    const [formFields, setFormFields] = useState(formField_ps12_fp);
     const [formData, setFormData] = useState(); // 검색 데이터
+    const [selectedPjtOption, setSelectedPjtOption] = useState([]);
     const [selectedPjt, setSelectedPjt] = useState([]);
     const [usagePerfs, setUsagePerfs] = useState([]);
     const [amountUsedPerfs, setAmountUsedPerfs] = useState([]);
@@ -55,36 +35,61 @@ export default function Ps_1_2() {
         console.log("amountUsedPerfs");
     }, [amountUsedPerfs]);
 
-    // 배출활동유형 드롭다운 옵션 설정
+    const [pjtOptions, setPjtOptions] = useState([]);
+    const [projectData, setProjectData] = useState([]);  // 전체 프로젝트 데이터를 저장
     const [emtnActvType, setEmtnActvType] = useState([]);
     useEffect(() => {
-        const fetchEmtnActvTypeCode = async () => {
+        const fetchPjtOptions = async () => {
             try {
-                const res = await axiosInstance.get("/sys/unit?unitType=배출활동유형");
-                const options = res.data.map(emtnActvType => ({
+                const [pjtRes, emtnActvTypeRes] = await Promise.all([
+                    axiosInstance.get("/pjt/my"),
+                    axiosInstance.get("/sys/unit?unitType=배출활동유형")
+                ]);
+    
+                // 프로젝트 드롭다운 옵션 설정
+                setProjectData(pjtRes.data); // 전체 프로젝트 데이터를 저장
+                const pjtOptions = pjtRes.data.map(pjt => ({
+                    value: pjt.pjtId, // value에 id만 전달
+                    label: pjt.pjtCode +"/"+ pjt.pjtName,
+                }));
+                setPjtOptions(pjtOptions);
+    
+                // 배출활동유형 드롭다운 옵션 설정
+                const emtnActvTypeOptions = emtnActvTypeRes.data.map(emtnActvType => ({
                     value: emtnActvType.code,
                     label: emtnActvType.name,
                 }));
-                setEmtnActvType(options);
-                const updateFormFields = formFields.map(field =>
-                    field.name === 'emtnActvType' ? { ...field, options } : field
-                );
-
+                setEmtnActvType(emtnActvTypeOptions);
+    
+                // formFields 업데이트
+                const updateFormFields = formFields.map(field => {
+                    if (field.name === 'searchProject') {
+                        return { ...field, options: pjtOptions };
+                    } else if (field.name === 'emtnActvType') {
+                        return { ...field, options: emtnActvTypeOptions };
+                    }
+                    return field;
+                });
+    
                 setFormFields(updateFormFields);
             } catch (error) {
                 console.error(error);
             }
         };
-        fetchEmtnActvTypeCode();
+    
+        fetchPjtOptions();
     }, []);
 
     // 프로젝트 선택 후 대상년도 드롭다운 옵션 설정
     const onProjectSelect = (selectedData, form) => {
-        if (selectedData) {
+        const selectedProject = projectData.find(pjt => pjt.pjtId === selectedData);
+        setSelectedPjtOption(selectedProject);
+
+        if (selectedProject) {
             const yearOptions = [];
             const currentYear = new Date().getFullYear();
-            const ctrtFrYear = selectedData.ctrtFrYear;
-            const ctrtToYear = Math.min(selectedData.ctrtToYear, currentYear);
+            const ctrtFrYear = selectedProject.ctrtFrYear;
+            const ctrtToYear = Math.min(selectedProject.ctrtToYear, currentYear);
 
             // 계약년도부터 현재년도까지의 옵션 생성
             for (let year = ctrtToYear; year >= ctrtFrYear; year--) {
@@ -139,9 +144,9 @@ export default function Ps_1_2() {
     // 조회 버튼 클릭시 호출될 함수
     const handleFormSubmit = async (data) => {
         setFormData(data);
-        setSelectedPjt([data.searchProject]);
+        setSelectedPjt(selectedPjtOption);
 
-        let url = `/perf?pjtId=${data.searchProject.id}&actvYear=${data.actvYear}`;
+        let url = `/perf?pjtId=${data.searchProject}&actvYear=${data.actvYear}`;
         // emtnActvType이 존재하는 경우에만 URL에 추가
         if (data.emtnActvType) {
             url += `&emtnActvType=${data.emtnActvType}`;
@@ -178,12 +183,11 @@ export default function Ps_1_2() {
         };
     
         const onUploadExcelClick = () => {
-            console.log("onUploadExcelClick");
             showModal();
         };
     
         const onDownloadExcelFormClick = (csvData) => {
-            const fileName = `사용량 엑셀 양식_${formData.searchProject.pjtName}_${formData.actvYear}`;
+            const fileName = `사용량 엑셀 양식_${selectedPjt.pjtName}_${formData.actvYear}`;
     
             // 워크북 및 워크시트 생성
             const wb = XLSX.utils.book_new();
@@ -257,12 +261,11 @@ export default function Ps_1_2() {
         };
     
         const onUploadExcelClick = () => {
-            console.log("onUploadExcelClick2");
             showModal();
         };
         
         const onDownloadExcelFormClick = (csvData) => {
-            const fileName = `사용금액 엑셀 양식_${formData.searchProject.pjtName}_${formData.actvYear}`;
+            const fileName = `사용금액 엑셀 양식_${selectedPjt.pjtName}_${formData.actvYear}`;
     
             // 워크북 및 워크시트 생성
             const wb = XLSX.utils.book_new();
@@ -327,8 +330,8 @@ export default function Ps_1_2() {
                 {"배출실적 > 활동량 관리"}
             </div>
 
-            <SearchForms onFormSubmit={handleFormSubmit}
-                //formFields={formFields} 
+            <SearchForms
+                onFormSubmit={handleFormSubmit}
                 formFields={formFields.map(field => field.name === 'actvYear' ? { ...field, disabled: actvYearDisabled, placeholder: actvYearDisabled ? '프로젝트를 선택하세요.' : '' } : field)} // actvYear 필드의 disabled 상태 반영
                 onProjectSelect={onProjectSelect} />
             
@@ -338,7 +341,7 @@ export default function Ps_1_2() {
                 <>
                     <div className={esmStyles.main_grid}>
                         <Card sx={{ width: "100%", height: "auto", borderRadius: "15px", marginBottom: "1rem" }}>
-                            <TableCustom title="조회결과" columns={pjtColumns} data={selectedPjt} pagination={false}/>
+                            <TableCustom title="조회결과" columns={pjtColumns} data={[selectedPjt]} pagination={false}/>
                         </Card>
                     </div>
                     
