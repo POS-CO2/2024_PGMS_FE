@@ -37,24 +37,24 @@ const ContentContainer = styled.div`
 
 const mapMenuDataToItems = (menuData) => {
     return menuData.map((menuItem, index) => {
-      const icon = index === 0 ? <PieChartOutlined /> : index === 1 ? <MailOutlined /> : <AppstoreOutlined />;
-  
+    const icon = index === 0 ? <PieChartOutlined /> : index === 1 ? <MailOutlined /> : <AppstoreOutlined />;
+
       // 하위 메뉴를 재귀적으로 매핑
-      const mapChildren = (children) => {
+    const mapChildren = (children) => {
         return children.map(childItem => {
-          if (childItem.menu && childItem.menu.length > 0) {
+            if (childItem.menu && childItem.menu.length > 0) {
             return {
                 key: `${childItem.id}`,
                 label: childItem.name,
                 children: mapChildren(childItem.menu),  // 하위 메뉴가 있을 때만 children 추가
             };
-          } else {
+            } else {
             return {
                 key: `${childItem.id}`,
                 label: childItem.name,
                 path: childItem.url,  // 하위 메뉴가 없을 경우 path를 직접 설정
             };
-          }
+            }
         });
     };
         return {

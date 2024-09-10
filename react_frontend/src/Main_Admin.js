@@ -113,15 +113,22 @@ const ChartOptions = (title, xdata) => {
 export default function Main_Admin() {
     
     const [showMenuBar, setShowMenuBar] = useState(false);
-
+    const [main, setMain] = useState(1);
     const [dateArray, setDateArray] = useState([]);
 
     const handleMouseOver = () => {
         setShowMenuBar(true);
     }
-
     const handleMouseLeave = () => {
         setShowMenuBar(false);
+    }
+
+    const handleServerClick = () => {
+        setMain(1);
+    }
+
+    const handleErrorLogClick = () => {
+        setMain(2);
     }
 
     const getLast7Days = () => {
@@ -151,17 +158,25 @@ export default function Main_Admin() {
     return (
             <div className={gridStyles.main_grid}>
                 <div className={gridStyles.left_box}>
-                    <Card sx={{width:"90%", height:"25%", borderRadius:"10px"}}>
+                    <Card onClick={handleServerClick} sx={{width:"90%", height:"25%", borderRadius:"10px"}}>
                         서버 관리
                     </Card>
-                    <Card sx={{width:"90%", height:"25%", borderRadius:"10px"}}>
+                    <Card onClick={handleErrorLogClick} sx={{width:"90%", height:"25%", borderRadius:"10px"}}>
                         예외 관리
                     </Card>
                 </div>
                 <div className={gridStyles.mid_box}> 
                     <div className={gridStyles.real_board}>
                         <Card sx={{width:"98%", height:"100%", borderRadius:"10px"}}>
-
+                            {main === 1 ? (
+                                <div>
+                                    1
+                                </div>
+                            ) : (
+                                <div>
+                                    2
+                                </div>
+                            )}
                         </Card>
                         {/* 아래 메뉴 바로가기 구현부 */}
                         <div onMouseEnter={handleMouseOver} onMouseLeave={handleMouseLeave} className={`${gridStyles.menu_bar} ${showMenuBar ? gridStyles.menu_bar_hover : ''}`}>
@@ -175,15 +190,21 @@ export default function Main_Admin() {
                                             <Code fontSize='large' sx={{color:"white"}} />
                                         </Card>
                                         </Link>
+                                        <Link to="/um">
                                         <Card sx={{backgroundColor:"rgb(196,247,254)", width:"4rem", height:"4rem", display:"flex",justifyContent:"center", alignItems:"center", borderRadius:"10px"}}>
                                             <ManageAccounts fontSize='large' sx={{color:"white"}}/>
                                         </Card>
+                                        </Link>
+                                        <Link to="/mm">
                                         <Card sx={{backgroundColor:"rgb(253,241,187)", width:"4rem", height:"4rem", display:"flex",justifyContent:"center", alignItems:"center", borderRadius:"10px"}}>
                                             <Menu fontSize="large" sx={{color:"white"}} />
                                         </Card>
+                                        </Link>
+                                        <Link to="/mal">
                                         <Card sx={{backgroundColor:"rgb(213,212,249)", width:"4rem", height:"4rem", display:"flex",justifyContent:"center", alignItems:"center", borderRadius:"10px"}}>
                                             <Terminal fontSize='large' sx={{color:"white"}} />
                                         </Card>
+                                        </Link>
                                     </div>
                                 </Card>
                             ) : (
@@ -267,7 +288,7 @@ export default function Main_Admin() {
                                                     options={ChartOptions("배출원관리", dateArray)}
                                                     series={[{
                                                         name: "접속자",
-                                                        data: [4, 5, 6, 3, 2, 9, 6] // 차트 데이터
+                                                        data: [4, 10, 6, 1, 5, 6, 6] // 차트 데이터
                                                     }]}
                                                     type="line"
                                                     height="100%"
@@ -282,7 +303,7 @@ export default function Main_Admin() {
                                                     options={ChartOptions("실적조회", dateArray)}
                                                     series={[{
                                                         name: "접속자",
-                                                        data: [4, 5, 6, 3, 2, 9, 6] // 차트 데이터
+                                                        data: [2, 15, 6, 9, 6, 7, 2] // 차트 데이터
                                                     }]}
                                                     type="line"
                                                     height="100%"
