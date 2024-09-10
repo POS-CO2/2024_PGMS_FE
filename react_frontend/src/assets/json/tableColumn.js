@@ -206,3 +206,17 @@ export const equipActvLibColumns = [
     { key: 'unitConvCoef', label: '단위환산계수', hidden: false },
     { key: 'equipLibId', label: '설비LIBID', hidden: true },
 ]
+
+export const salesAnalColumns = [
+    { key: 'pjtCode', label: '프로젝트코드', hidden: false },
+    { key: 'pjtName', label: '프로젝트명', hidden: false },
+    { key: 'regCode', label: '지역', hidden: true },
+    { key: 'divCode', label: '본부', hidden: false },
+    { key: 'prodTypeCode', label: '상품', hidden: false },
+    //{ key: 'totalEmissionQty', label: '총배출량', hidden: true },
+    //{ key: 'totalSales', label: '매출액', hidden: true },
+    //{ key: 'emissionQtyPerSales', label: '원단위', hidden: true },
+    { key: 'formattedTotalEmissionQty', label: '총배출량(tCO2)', hidden: false },
+    { key: 'formattedTotalSales', label: '매출액(백만원)', hidden: false },
+    { key: 'formattedEmissionQtyPerSales', label: '원단위', hidden: false },
+]
