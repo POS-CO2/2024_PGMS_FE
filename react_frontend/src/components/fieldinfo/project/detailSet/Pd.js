@@ -36,7 +36,6 @@ const CustomInput = styled(Input)`
     }
 `;
 
-// Select 컴포넌트 스타일
 const CustomSelect = styled(Select)`
     .ant-select-selector {
         background-color: transparent !important;
@@ -256,7 +255,7 @@ export default function Pd() {
                             <div className={pdsStyles.pjt_data_container}>분류
                                 <div className={pdsStyles.code}>{searchedPjt.prodTypeCode}</div>
                             </div>
-                            <button onClick={showSearchPjtModal}>다시 선택하기</button>
+                            <button style={{ marginLeft: "10px" }} onClick={showSearchPjtModal}>다시 선택하기</button>
                         </div>
                     </Card>
 
