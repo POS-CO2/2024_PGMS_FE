@@ -72,7 +72,7 @@ export default function CustomizedTables({
     const [selectedRow, setSelectedRow] = useState({});       // default variant의 선택 상태
     const [selectedRows, setSelectedRows] = useState([]); 
     const [page, setPage] = useState(0);
-    const [rowsPerPage, setRowsPerPage] = useState(modalPagination ? 5 : 10);             // default page row length
+    const [rowsPerPage, setRowsPerPage] = useState(modalPagination ? 5 : 13);             // default page row length
     const handleChangePage = (event, newPage) => {
         setPage(newPage);
     };
@@ -147,11 +147,8 @@ export default function CustomizedTables({
 
     return (
         <Box sx={{ 
-            width: '100%', 
             overflowX: 'auto',
-            padding: '0 20px',
             boxSizing: 'border-box',
-            margin: '0 auto 2rem',
         }}>
             <TableContainer component={Paper} sx={{ 
                     width: 'calc(100% - 10px)',
@@ -259,9 +256,9 @@ export default function CustomizedTables({
                         </TableBody>
                 </Table>
             </TableContainer>
-            {pagination && (data.length >= 10) ? ( !modalPagination ? (// 10개 이상이면 자동으로 pagination 활성화, (pagination이 true일때만.)
+            {pagination && (data.length >= 13) ? ( !modalPagination ? (// 10개 이상이면 자동으로 pagination 활성화, (pagination이 true일때만.)
             <TablePagination 
-                rowsPerPageOptions={[10, 25, 100]} // page row length custom
+                rowsPerPageOptions={[13, 25, 100]} // page row length custom
                 component="div"
                 count={data.length}
                 rowsPerPage={rowsPerPage}

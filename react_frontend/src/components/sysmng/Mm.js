@@ -187,7 +187,13 @@ const convertMenusToTreeItems = (menus) => {
                 children: traverse(node.menu, id),
             };
             if (node.url) {
+                
                 treeItem.fileType = 'doc'; 
+                treeItem.url = node.url;
+            }
+            else if(!node.url) {
+                console.log("node", node);
+                treeItem.fileType = 'folder';
                 treeItem.url = node.url;
             }
             return treeItem;
@@ -379,7 +385,7 @@ export default function Mm({menus, handleMenuSet}) {
             id: selectedMenu.originId,
             menuName: selectedMenu.name,
             rootId: selectedMenu.parentDirId === undefined ? 1 : selectedMenu.parentDirId,
-            address: selectedMenu.url,
+            address: selectedMenu.url === "" ? null : selectedMenu.url,
             accessUser: selectedMenu.accessUser,
             menuOrder: selectedMenu.menuOrder
         }
@@ -495,14 +501,14 @@ export default function Mm({menus, handleMenuSet}) {
                 table={false} 
                 selectedRows={[selectedMenu]}
                 modals={[
-                    {
+                    isModalOpen.MmAdd && {
                         "modalType" : 'MmAdd',
                         'isModalOpen': isModalOpen.MmAdd,
                         'handleOk': handleOk('MmAdd'),
                         'handleCancel': handleCancel('MmAdd'),
                         'rowData': selectedMenu,
                     },
-                    {
+                    isModalOpen.Delete && {
                         "modalType" : 'Delete',
                         'isModalOpen': isModalOpen.Delete,
                         'handleOk': handleOk('Delete'),
@@ -511,7 +517,7 @@ export default function Mm({menus, handleMenuSet}) {
                         'rowDataName': "name",
                         'url': '/sys/menu',
                     },
-                ]}/>
+                ].filter(Boolean)}/>
                 <RichTreeView
                 items={items}
                 sx={{ height: 'fit-content', flexGrow: 1, maxWidth: 400, overflowY: 'auto', width:"100%"}}

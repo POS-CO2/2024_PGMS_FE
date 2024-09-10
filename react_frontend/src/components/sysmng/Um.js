@@ -195,7 +195,7 @@ export default function Um() {
             </div>
             <SearchForms onFormSubmit={handleFormSubmit} formFields={formFields}/>
             <div className={sysStyles.main_grid}>
-                <Card className={sysStyles.card_box} sx={{width:"50%", height:"75vh", borderRadius:"15px"}}>
+                <Card className={sysStyles.card_box} sx={{width:"50%", height:"80vh", borderRadius:"15px"}}>
                     {userShow && <TableCustom title="사용자 목록" columns={userColumns} data={userList} buttons={['Add']} onClicks={[handleAddClick]} onRowClick={(e) => handleRowClick(e)} modals={
                         [
                             {
