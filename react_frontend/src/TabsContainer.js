@@ -291,7 +291,7 @@ const TabsContainer = forwardRef(({ handleLogout, user }, ref) => {
     label: (
       <DraggableTabNode index={index} moveTabNode={moveTabNode}>
         <div style={{display:"flex", alignContent:"center", cursor:"pointer"}}>
-          <div style={{ textOverflow:"ellipsis", whiteSpace:"nowrap", overflowX:"hidden"}}>
+          <div style={{ textOverflow:"ellipsis", whiteSpace:"nowrap", overflowX:"hidden", fontFamily:'SUITE-Regular'}}>
             {tab.tab}
           </div>
           <div>
