@@ -56,7 +56,7 @@ export const useHandleSubmitAction = () => {
       console.log(error);
 
       swalOptions.title = '실패!',
-      //swalOptions.text = response;
+      swalOptions.text = error.response.data.message;
       swalOptions.icon = 'error';
     }
 
@@ -74,33 +74,74 @@ export const useModalActions = () => {
   };
 
   // 모달 닫기
-  const handleCancel = (modalType) => () => {
+  const closeModal = (modalType) => () => {
     setIsModalOpen((prevState) => ({ ...prevState, [modalType]: false }));
   };
 
-  // 삭제 모달 열기
-  const onDeleteClick = () => {
-    showModal('Delete');
-  };
-
   return {
-    handleCancel,
-    onDeleteClick,
+    showModal,
+    closeModal,
     isModalOpen, // 모달의 상태를 반환하여 컴포넌트에서 사용할 수 있도록 함
   };
 };
 
 // 모달 내의 버튼(등록, 수정, 삭제) 액션
 export const useHandleOkAction = () => {
-  return useRecoilCallback(({ set }) => (modalType) => async ({data, setter, setterSelected}) => {
+  return useRecoilCallback(({ set }) => (modalType) => async ({data, setter, setterSelected, url, requestBody, successMsg}) => {
+
+    let swalOptions = {
+      confirmButtonText: '확인'
+    };
 
     // 모달 닫기
     set(modalState, prevState => ({ ...prevState, [modalType]: false }));
 
-    if (modalType === 'Delete') {
-      // 삭제할 데이터를 목록에서 제거
+    if (modalType.includes('Add')) {
+      try {
+        //const response = await axiosInstance.post(url, requestBody);
+        console.log("handleOk", useHandleOkAction);
+
+        // 등록한 데이터를 목록에 추가
+        // setter(prevRegs => [
+        //   ...(Array.isArray(response.data) ? response.data : [response.data]),  //배열이면 ...response.data, 배열이 아니면 배열로 강제변환
+        //   ...prevRegs
+        // ]);
+
+        swalOptions.title = '성공!',
+        swalOptions.text = successMsg;
+        swalOptions.icon = 'success';
+      } catch (error) {
+        console.log(error);
+
+        swalOptions.title = '실패!',
+        swalOptions.text = error.response.data.message;
+        swalOptions.icon = 'error';
+      }
+      
+    } else if (modalType.includes('Edit')) {
+      try {
+        //const response = await axiosInstance.patch(url, requestBody);
+
+        // 수정한 데이터를 목록에 업데이트
+        setter(originData => 
+          originData.map(od => 
+            od.id === data.id ? response.data : od
+          )
+        );
+
+        swalOptions.title = '성공!',
+        swalOptions.text = successMsg;
+        swalOptions.icon = 'success';
+      } catch (error) {
+        console.log(error);
+
+        swalOptions.title = '실패!',
+        swalOptions.text = error.response.data.message;
+        swalOptions.icon = 'error';
+      }
+    } else if (modalType === 'Delete') {
+      // 삭제한 데이터를 목록에서 제거
       setter(originData => originData.filter(row => row.id !== data.id));
-      setterSelected({});
     }
   });
 };

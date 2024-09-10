@@ -81,7 +81,7 @@ export default function Fd({pjtId}) {
     const [inputEqDvs, setInputEqDvs] = useState('');
     const [inputEqName, setInputEqName] = useState('');
 
-    const { handleCancel, onDeleteClick, isModalOpen } = useModalActions();
+    const { showModal, closeModal, isModalOpen } = useModalActions();
     const handleOk = useHandleOkAction();
     const searchAction = useSearchAction();
     const submitAction = useHandleSubmitAction();
@@ -200,30 +200,29 @@ export default function Fd({pjtId}) {
                     data={equips}
                     columns={equipColumns}                 
                     buttons={['DownloadExcel', 'Delete']}
-                    onClicks={[() => handleExcelUploadClick(equips, 'exported_table'), onDeleteClick]}
+                    onClicks={[() => handleExcelUploadClick(equips, 'exported_table'), () => showModal('Delete')]}
                     onRowClick={handleEqClick}
                     selectedRows={[selectedEq]}
-                    excel={true}
                     modals={[
                         {
-                            'modalType': 'Delete',
-                            'isModalOpen': isModalOpen.Delete,
-                            'handleOk': () => handleOk('Delete') ({
+                            modalType: 'Delete',
+                            isModalOpen: isModalOpen.Delete,
+                            handleOk: () => handleOk('Delete') ({
                                 data: selectedEq, 
                                 setter: setEquips, 
                                 setterSelected: setSelectedEq
-                              }),
-                            'handleCancel': handleCancel('Delete'),
-                            'rowData': selectedEq,
-                            'rowDataName': 'equipName',
-                            'url': '/equip'
+                            }),
+                            handleCancel: closeModal('Delete'),
+                            rowData: selectedEq,
+                            rowDataName: 'equipName',
+                            url: '/equip'
                         },
                     ]}
                 />
             </Card>
             <Card sx={{ width: "50%", height: "auto", borderRadius: "0.5rem", paddingBottom: "20px" }}>
                 <div className={pdsStyles.card_container}>
-                    <div className={pdsStyles.table_title}>설비 등록</div>
+                    <div className={pdsStyles.table_title}>설비등록</div>
                     <div className={pdsStyles.search_container}>
                         <div className={pdsStyles.search_item}>
                             <div className={pdsStyles.search_title}>설비LIB명</div>

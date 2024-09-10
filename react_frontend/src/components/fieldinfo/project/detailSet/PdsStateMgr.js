@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { useSetRecoilState } from 'recoil';
 import {
-    managerState, eqState, eqLibState
+    managerState, eqState, eqLibState, emSourceState, revState
 } from '../../../../atoms/pdsAtoms';
 import axiosInstance from '../../../../utils/AxiosInstance';
 import Pdc from './Pdc';
 import Fd from './Fd';
+import Esd from './Esd';
+import Rm from './Rm';
 import { Button } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import * as pdsStyles from "../../../../assets/css/pds.css";
@@ -37,6 +39,8 @@ export const PdsStateMgr = ({pjtId}) => {
     const setManagers = useSetRecoilState(managerState);
     const setEquips = useSetRecoilState(eqState);
     const setEqLibs = useSetRecoilState(eqLibState);
+    const setEmSources = useSetRecoilState(emSourceState);
+    const setRevState = useSetRecoilState(revState);
 
     // 프로젝트를 다시 선택하거나 다른 버튼을 클릭했을때 호출
     useEffect(() => {
@@ -59,8 +63,19 @@ export const PdsStateMgr = ({pjtId}) => {
               setter: setEqLibs
             },
           ]);
+        } else if (selectedButton === '배출원 관리') {
+          await handleOptionBtnClick([{
+            button: selectedButton,
+            url: `/equip/emission?projectId=${pjtId}`,
+            setter: setEmSources
+          }]);
+        } else if (selectedButton === '매출액 관리') {
+          await handleOptionBtnClick([{
+            button: selectedButton,
+            url: `/pjt/sales?pjtId=${pjtId}&year=${new Date().getFullYear()}`,
+            setter: setRevState
+          }]);
         }
-        
       };
     
       if (pjtId) {
@@ -106,19 +121,34 @@ export const PdsStateMgr = ({pjtId}) => {
                 <CustomButton
                     variant="outlined"
                     selected={selectedButton === '배출원 관리'}
-                    //onClick={() => handleOptionBtnClick(`/equip/emission?projectId=${pjtId}`, setEmissions)}
+                    onClick={() => setSelectedButton('배출원 관리')}
                 >
                     배출원 관리
+                </CustomButton>
+                <CustomButton
+                    variant="outlined"
+                    selected={selectedButton === '매출액 관리'}
+                    onClick={() => setSelectedButton('매출액 관리')}
+                >
+                    매출액 관리
                 </CustomButton>
             </div>
 
             <div className={pdsStyles.contents_container}>
-                {selectedButton === '담당자 지정' && (
-                    <Pdc pjtId={pjtId} selectedButton={selectedButton}/>
-                )}
-                {selectedButton === '설비 지정' && (
-                    <Fd pjtId={pjtId} selectedButton={selectedButton}/>
-                )}
+              {(() => {
+                switch (selectedButton) {
+                    case '담당자 지정':
+                      return <Pdc pjtId={pjtId} />;
+                    case '설비 지정':
+                      return <Fd pjtId={pjtId} />;
+                    case '배출원 관리':
+                      return <Esd pjtId={pjtId} />;
+                    case '매출액 관리':
+                    return <Rm pjtId={pjtId} />;
+                    default:
+                      return <></>;
+                }
+              })()}
             </div>
         </>
     )
