@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router } from 'react-router-dom';
 import { Routes, Route } from 'react-router';
+import { RecoilRoot } from 'recoil';
 import { login } from './utils/Api';
 import SiteLayout from './SiteLayout';
 import Main from './Main';
@@ -12,7 +13,7 @@ import Ps_1_2_Fp from './components/emperf/Ps_1_2_Fp';
 import Psq from './components/emperf/perflook/Psq';
 import Psq_Fp from './components/emperf/perflook/Psq_Fp';
 import Tep from './components/emperf/perflook/Tep';
-import Pd from './components/fieldinfo/project/Pd';
+import Pd from './components/fieldinfo/project/detailSet/Pd';
 import Pg from './components/fieldinfo/project/Pg';
 import Rm from './components/fieldinfo/project/Rm';
 import Fm from './components/fieldinfo/facility/Fm';
@@ -86,58 +87,60 @@ export default function App() {
     }
 
     return (
-        <Router>
-            <Routes>
-                {token ? (
-                    <Route path='/' element={<SiteLayout handleLogout={handleLogout} menus={menu} user={user} />}>
-                        {
-                            user.role === 'ADMIN'
-                            ?
-                            <>
-                                <Route index path='' element={<Main_Admin />} />
-                                <Route path='/ps_1_2' element={<Ps_1_2 />} />
-                                <Route path='/psq' element={<Psq />} />
-                                <Route path='/esm' element={<Esm />} />
-                            </>
-                            :
-                            (user. role === 'HP'
-                            ?
-                            <>
-                                <Route index path='' element={<Main_Hp />} /> 
-                                <Route path='/ps_1_2' element={<Ps_1_2 />} />
-                                <Route path='/psq' element={<Psq />} />
-                                <Route path='/esm' element={<Esm />} />
-                            </>
-                            :
-                            <>
-                                <Route index path='' element={<Main />} />
-                                <Route path='/ps_1_2' element={<Ps_1_2_Fp />} />
-                                <Route path='/psq' element={<Psq_Fp />} />
-                                <Route path='/esm' element={<Esm_Fp />} />
-                            </>
-                            )
-                        }
-                        <Route path='/efm' element={<Efm />} />
-                        <Route path='/tep' element={<Tep />} />
-                        <Route path='/pmg' element={<Pmg />} />
-                        <Route path='/pd' element={<Pd />} />
-                        <Route path='/pg' element={<Pg />} />
-                        <Route path='/rm' element={<Rm />} />
-                        <Route path='/fm' element={<Fm />} />
-                        <Route path='/fad' element={<Fad />} />
-                        <Route path='/fam' element={<Fam />} />
-                        <Route path='/fl' element={<Fl />} />
-                        <Route path='/sd' element={<Sd />} />
-                        <Route path='/cm' element={<Cm />} />
-                        <Route path='/um' element={<Um />} />
-                        <Route path='/mm' element={<Mm menus={menu} handleMenuSet={handleMenuSet} />} />
-                        <Route path='/mal' element={<Mal />} />
-                        <Route path='*' element={<Error404 />} />
-                    </Route>
-                ) : (
-                    <Route path='*' element={<Login handleLogin={handleLogin} />} />
-                )}
-            </Routes>
-        </Router>
+        <RecoilRoot>
+            <Router>
+                <Routes>
+                    {token ? (
+                        <Route path='/' element={<SiteLayout handleLogout={handleLogout} menus={menu} user={user} />}>
+                            {
+                                user.role === 'ADMIN'
+                                ?
+                                <>
+                                    <Route index path='' element={<Main_Admin />} />
+                                    <Route path='/ps_1_2' element={<Ps_1_2 />} />
+                                    <Route path='/psq' element={<Psq />} />
+                                    <Route path='/esm' element={<Esm />} />
+                                </>
+                                :
+                                (user. role === 'HP'
+                                ?
+                                <>
+                                    <Route index path='' element={<Main_Hp />} /> 
+                                    <Route path='/ps_1_2' element={<Ps_1_2 />} />
+                                    <Route path='/psq' element={<Psq />} />
+                                    <Route path='/esm' element={<Esm />} />
+                                </>
+                                :
+                                <>
+                                    <Route index path='' element={<Main />} />
+                                    <Route path='/ps_1_2' element={<Ps_1_2_Fp />} />
+                                    <Route path='/psq' element={<Psq_Fp />} />
+                                    <Route path='/esm' element={<Esm_Fp />} />
+                                </>
+                                )
+                            }
+                            <Route path='/efm' element={<Efm />} />
+                            <Route path='/tep' element={<Tep />} />
+                            <Route path='/pmg' element={<Pmg />} />
+                            <Route path='/pd' element={<Pd />} />
+                            <Route path='/pg' element={<Pg />} />
+                            <Route path='/rm' element={<Rm />} />
+                            <Route path='/fm' element={<Fm />} />
+                            <Route path='/fad' element={<Fad />} />
+                            <Route path='/fam' element={<Fam />} />
+                            <Route path='/fl' element={<Fl />} />
+                            <Route path='/sd' element={<Sd />} />
+                            <Route path='/cm' element={<Cm />} />
+                            <Route path='/um' element={<Um />} />
+                            <Route path='/mm' element={<Mm menus={menu} handleMenuSet={handleMenuSet} />} />
+                            <Route path='/mal' element={<Mal />} />
+                            <Route path='*' element={<Error404 />} />
+                        </Route>
+                    ) : (
+                        <Route path='*' element={<Login handleLogin={handleLogin} />} />
+                    )}
+                </Routes>
+            </Router>
+        </RecoilRoot>
     );
 }

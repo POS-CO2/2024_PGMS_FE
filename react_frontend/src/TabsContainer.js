@@ -23,13 +23,19 @@ const TabsWrapper = styled.div`
 
 const TabContainer = styled.div`
   display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  flex-grow: 1;
-  padding-top: 18px;
+  flex-wrap: nowrap;
+  flex-shrink: 1;
+  max-width: calc(100% - 160px);
+  width: 100%;
+  height: 50px;
+  padding-top: 6px;
+  // flex-direction: column;
+  // align-items: flex-start;
+  // flex-grow: 1;
+  // padding-top: 18px;
   padding-left: 28px;
   padding-right: 16px; /* 탭과 유저 정보 사이의 간격 */
-  overflow-x: hidden;
+  overflow: hidden;
 `;
 
 const TopRightWrapper = styled.div`
@@ -123,6 +129,7 @@ const StyledTabs = styled(Tabs)`
 
   .ant-tabs-ink-bar {
     background-color: #0EAA00 !important; /* 밑줄 색상 변경 */
+    margin-bottom: 8px;
   }
 
   .ant-tabs-nav-more {
