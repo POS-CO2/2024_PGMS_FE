@@ -28,7 +28,7 @@ const TabContainer = styled.div`
   flex-grow: 1;
   padding-left: 28px;
   padding-right: 16px; /* 탭과 유저 정보 사이의 간격 */
-  overflow-x: hidden;
+  overflow: hidden;
 `;
 
 const TopRightWrapper = styled.div`
@@ -122,6 +122,7 @@ const StyledTabs = styled(Tabs)`
 
   .ant-tabs-ink-bar {
     background-color: #0EAA00 !important; /* 밑줄 색상 변경 */
+    margin-bottom: 8px;
   }
 
   .ant-tabs-nav-more {
