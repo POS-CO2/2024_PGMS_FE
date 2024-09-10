@@ -1,0 +1,16 @@
+.main_grid {
+    display: flex;
+    flex-direction: row;
+    width: 97%;
+    margin-right: auto;
+    margin-left: auto;
+    margin-bottom: 1rem;
+    gap: 1rem;
+}
+
+.card_box {
+    display: flex;
+    flex-direction: column;
+    border-radius: 15px;
+    gap: 1rem;
+}

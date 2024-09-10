@@ -67,7 +67,7 @@ export default function CustomizedTables({
         editingCell = {},
         pagination = true,
         modalPagination = false,
-        columns = []
+        columns = [],
     }) {
     const [selectedRow, setSelectedRow] = useState({});       // default variant의 선택 상태
     const [selectedRows, setSelectedRows] = useState([]); 
@@ -147,11 +147,8 @@ export default function CustomizedTables({
 
     return (
         <Box sx={{ 
-            width: '100%', 
             overflowX: 'auto',
-            padding: '0 20px',
             boxSizing: 'border-box',
-            margin: '0 auto 2rem',
         }}>
             <TableContainer component={Paper} sx={{ 
                     width: 'calc(100% - 10px)',

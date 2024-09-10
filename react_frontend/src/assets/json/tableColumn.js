@@ -13,6 +13,11 @@ export const pjtColumns = [
     { key: 'pjtProgStus', label: '프로젝트진행상태', hidden: false },
     { key: 'userLoginId', label: '담당자사번', hidden: true },
     { key: 'userName', label: '담당자이름', hidden: true },
+    { key: 'pgmsYn', label: 'Y/N', hidden: true },
+    { key: 'userLoginId', label: '로그인 아이디', hidden: true },
+    { key: 'userName', label: '유저 명', hidden: true },
+    { key: 'startDate', label: '시작 일', hidden: true },
+    { key: 'endDate', label: '종료 일', hidden: true },
 ]
 
 export const equipColumns = [
@@ -104,7 +109,7 @@ export const pjtSalesColumns = [
 
 export const pjtManagerColumns = [
     { key: 'id', label: 'id', hidden: true },
-    { key: 'userLoginId', label: '사번', hidden: false },
+    { key: 'loginId', label: '사번', hidden: false },
     { key: 'userName', label: '이름', hidden: false },
     { key: 'userDeptCode', label: '부서명', hidden: false },
 ]
@@ -200,4 +205,18 @@ export const equipActvLibColumns = [
     { key: 'calUnitCode', label: '산정단위코드', hidden: false },
     { key: 'unitConvCoef', label: '단위환산계수', hidden: false },
     { key: 'equipLibId', label: '설비LIBID', hidden: true },
+]
+
+export const salesAnalColumns = [
+    { key: 'pjtCode', label: '프로젝트코드', hidden: false },
+    { key: 'pjtName', label: '프로젝트명', hidden: false },
+    { key: 'regCode', label: '지역', hidden: true },
+    { key: 'divCode', label: '본부', hidden: false },
+    { key: 'prodTypeCode', label: '상품', hidden: false },
+    //{ key: 'totalEmissionQty', label: '총배출량', hidden: true },
+    //{ key: 'totalSales', label: '매출액', hidden: true },
+    //{ key: 'emissionQtyPerSales', label: '원단위', hidden: true },
+    { key: 'formattedTotalEmissionQty', label: '총배출량(tCO2)', hidden: false },
+    { key: 'formattedTotalSales', label: '매출액(백만원)', hidden: false },
+    { key: 'formattedEmissionQtyPerSales', label: '원단위', hidden: false },
 ]

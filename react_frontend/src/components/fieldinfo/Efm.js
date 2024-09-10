@@ -106,6 +106,7 @@ export default function Efm() {
         const yearSelectedActvList= selectedActvList.filter((e) => e.applyYear === selectedYear);
         setFilteredEfm(yearSelectedActvList);
     }
+    
     useEffect(() => {
         (async () => {
             const {data} = await axiosInstance.get(`/equip/actv`);

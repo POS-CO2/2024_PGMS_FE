@@ -145,6 +145,10 @@ export const formField_fad = [
     { type: 'SearchAtModal', name: 'searchLib', label: '설비LIB명', required: true, modalType: '설비LIB 찾기' }
 ];
 
+export const formField_sa = [
+    { type: 'SelectCalendar', name: 'calendar', label: '분석기간', required: true }
+];
+
 // 필요한 서치바 여기서 만들어서 데이터 임포트 해서 사용하기
 // import {formField_ps12} from "../../assets/json/searchFormData.js"
 // import { formField_ps12 } from './searchFormData';

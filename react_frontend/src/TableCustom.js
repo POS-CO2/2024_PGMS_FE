@@ -1,10 +1,24 @@
 import React, { useState, useEffect } from 'react';
-import Swal from 'sweetalert2'
+import Swal from 'sweetalert2';
 import Table from "./Table.js";
 import * as tableStyles from "./assets/css/newTable.css"
-import { DelModal, PgAddModal, PdAddModal, FlAddModal, FlEditModal, FamAddModal, FamEditModal, FadAddModal, Ps12UploadExcelModal, CmAddModal, DeleteModal, CmEditModal, CmListAddModal, CmListEditModal, FmAddModal, UmAddModal, MmAddModal, EsmAddModal, SdAddModal, SdShowDetailsModal, EfmAddModal, EfmEditModal } from "./modals/PdModal.js";
+import { DelModal, PgAddModal, PdAddModal, FlAddModal, FlEditModal, FamAddModal, FamEditModal, FadAddModal, Ps12UploadExcelModal, CmAddModal, DeleteModal, DeleteModal2, CmEditModal, CmListAddModal, CmListEditModal, FmAddModal, UmAddModal, MmAddModal, EsmAddModal, SdAddModal, SdShowDetailsModal, EfmAddModal, EfmEditModal } from "./modals/PdModal.js";
 import { ButtonGroup } from './Button';
 import axiosInstance from './utils/AxiosInstance';
+import { styled } from '@mui/material/styles';
+import { Button, Space } from 'antd';
+import { LeftOutlined, RightOutlined } from '@ant-design/icons';
+import * as tableStyles from "./assets/css/newTable.css"
+
+const CustomButton = styled(Button)`
+    border-color: transparent !important;
+
+    &:hover {
+        color: #0EAA00 !important;
+        border-color: #0EAA00 !important;
+        background: #ffffff !important;
+    }
+`;
 
 const modalMap = {
     CMAdd: CmAddModal,
@@ -46,16 +60,17 @@ export default function TableCustom({
     columns = [],
     pagination = true,        // 테이블 페이지네이션 디폴트는 페이지네이션 하는걸로.
     modalPagination = false,
-    keyProp = undefined
+    keyProp = undefined,
+    handleYearChange = () => { },
+    year = undefined,
 }) {modalPagination
     // 버튼 활성화 상태 결정
-    
     const buttonStatus = buttons.map((button) => {
-        if (button === 'Edit' || button === 'Delete') {
-            if (selectedRows.includes(null) || selectedRows.includes(undefined)) {  // 선택한 row가 없으면 삭제 버튼의 onRowClick 이벤트 비활성화(variant='default')
+        if (button === 'Edit' || button === 'Delete' || button === 'ShowDetails') {
+            if (selectedRows.includes(null) || selectedRows.includes(undefined) || Object.keys(selectedRows[0]).length === 0) {  // 선택한 row가 없으면 삭제 버튼의 onRowClick 이벤트 비활성화(variant='default')
                 return false;                               
             } else {
-                return selectedRows.length > 0;             // 선택된 row가 있으면 delete 버튼 활성화(variant='checkbox')
+                return selectedRows.length > 0;   // 선택된 row가 있으면 delete 버튼 활성화(variant='checkbox')
             }
         }
         return true;  // 'Add' 버튼은 항상 활성화
@@ -64,33 +79,50 @@ export default function TableCustom({
     // key 설정
     const tableKey = (keyProp === undefined) ? JSON.stringify(data) : JSON.stringify(keyProp);
 
+    // year 관련 핸들러
+    const handlePrevYear = () => {
+        handleYearChange(year - 1);
+    };
+
+    const handleNextYear = () => {
+        handleYearChange(year + 1);
+    };
+
     return (
         <>
-            <div className={tableStyles.container}>
-                <div className={tableStyles.table_title}>{title}</div>
-                <ButtonGroup buttons={buttons} onClicks={onClicks} buttonStatus={buttonStatus} />
-                
-                {modals.map((modal) => {
-                    const ModalComponent = modalMap[modal.modalType];
-                    return ModalComponent ? (
-                        <ModalComponent
-                            key={modal.modalType} // warning 삭제
-                            isModalOpen={modal.isModalOpen}
-                            handleOk={modal.handleOk || (() => {})}
-                            handleCancel={modal.handleCancel || (() => {})}
-                            onRowClick={onRowClick}
-                            rowData={modal.rowData}
-                            dropDown={modal.dropDown || []}
-                            rowDataName={modal.rowDataName}
-                            url={modal.url || ""}
-                        />
-                    ) : null;
-                })}
+            <div className={tableStyles.group_container}>
+                <div className={tableStyles.container}>
+                    <div className={tableStyles.table_title}>{title}</div>
+                    <ButtonGroup buttons={buttons} onClicks={onClicks} buttonStatus={buttonStatus} />
+                    
+                    {modals.map((modal) => {
+                        const ModalComponent = modalMap[modal.modalType];
+                        return ModalComponent ? (
+                            <ModalComponent
+                                key={modal.modalType} // warning 삭제
+                                isModalOpen={modal.isModalOpen}
+                                handleOk={modal.handleOk || (() => {})}
+                                handleCancel={modal.handleCancel || (() => {})}
+                                onRowClick={onRowClick}
+                                rowData={modal.rowData}
+                                dropDown={modal.dropDown || []}
+                                rowDataName={modal.rowDataName}
+                                url={modal.url || ""}
+                            />
+                        ) : null;
+                    })}
+                </div>
+                {year && (
+                    <Space style={{ marginBottom: '0.5rem' }}>
+                        <CustomButton icon={<LeftOutlined style={{ borderColor: 'transparent' }} />} onClick={handlePrevYear} />
+                        <span>{year}</span>
+                        <CustomButton icon={<RightOutlined style={{ borderColor: 'transparent' }} />} onClick={handleNextYear} />
+                    </Space>
+                )}
+                {table ? (
+                    <Table key={tableKey} data={data} variant={variant} onRowClick={onRowClick} pagination={pagination} modalPagination={modalPagination} columns={columns} handleYearChange={handleYearChange} />
+                ) : (<></>)}
             </div>
-            {table ? (
-            <Table key={tableKey} data={data} variant={variant} onRowClick={onRowClick} pagination={pagination} modalPagination={modalPagination} columns={columns}/>
-            ) : (<></>)}
-            
         </>
     );
 }
@@ -110,7 +142,9 @@ export function TableCustomDoubleClickEdit({
     modalPagination = false,
     pageType = '',
     handleFormSubmit = () => {},
-    formData = []
+    formData = [],
+    handleYearChange = () => { },
+    year = undefined
 }) {
     const [isEditing, setIsEditing] = useState(false); // 'Edit' 모드 상태 관리
     const [editableData, setEditableData] = useState(data); // 수정된 데이터 저장
@@ -133,6 +167,15 @@ export function TableCustomDoubleClickEdit({
         }
         return true;  // 'Add' 버튼은 항상 활성화
     });
+
+    // year 관련 핸들러
+    const handlePrevYear = () => {
+        handleYearChange(year - 1);
+    };
+
+    const handleNextYear = () => {
+        handleYearChange(year + 1);
+    };
 
     // Edit 버튼 클릭 핸들러
     const handleEditButtonClickRm = async () => {
@@ -157,17 +200,12 @@ export function TableCustomDoubleClickEdit({
                 swalOptions.text = '매출액이 성공적으로 수정되었습니다.';
                 swalOptions.icon = 'success';
 
-                // 수정된 데이터로 테이블 갱신
-                handleFormSubmit(formData);
+                handleFormSubmit(response.data);
 
             } catch (error) {
                 swalOptions.title = '실패!',
                 swalOptions.text = '매출액 수정에 실패하였습니다.';
                 swalOptions.icon = 'error';
-
-                // if(error.response.status === 400) {
-                //     swalOptions.text = `이미 ${error.config.data}에 등록된 매출액이 존재합니다.`;
-                // }
             }
             setIsEditing(false);
             setEditedRows([]);
@@ -293,7 +331,7 @@ export function TableCustomDoubleClickEdit({
                 swalOptions.icon = 'success';
 
                 // 수정된 데이터로 테이블 갱신
-                handleFormSubmit(formData);
+                handleFormSubmit(response.data);
 
             } catch (error) {
                 swalOptions.title = '실패!',
@@ -355,45 +393,53 @@ export function TableCustomDoubleClickEdit({
 
     return (
         <>
-            <div className={tableStyles.container}>
-                <div className={tableStyles.table_title}>{title}</div>
-                <ButtonGroup 
-                    buttons={buttons} 
-                    onClicks={updatedOnClicks} 
-                    buttonStatus={buttonStatus}
-                    isEditing={isEditing}       //for edit button
-                />
-                
-                {modals.map((modal) => {
-                    const ModalComponent = modalMap[modal.modalType];
-                    return ModalComponent ? (
-                        <ModalComponent
-                            key={modal.modalType}
-                            isModalOpen={modal.isModalOpen}
-                            handleOk={modal.handleOk || (() => {})}
-                            handleCancel={modal.handleCancel || (() => {})}
-                            onRowClick={onRowClick}
-                            rowData={modal.rowData}
-                        />
-                    ) : null;
-                })}
+            <div className={tableStyles.group_container}>
+                <div className={tableStyles.container}>
+                    <div className={tableStyles.table_title}>{title}</div>
+                    <ButtonGroup 
+                        buttons={buttons} 
+                        onClicks={updatedOnClicks} 
+                        buttonStatus={buttonStatus}
+                        isEditing={isEditing}       //for edit button
+                    />
+                    
+                    {modals.map((modal) => {
+                        const ModalComponent = modalMap[modal.modalType];
+                        return ModalComponent ? (
+                            <ModalComponent
+                                key={modal.modalType}
+                                isModalOpen={modal.isModalOpen}
+                                handleOk={modal.handleOk || (() => {})}
+                                handleCancel={modal.handleCancel || (() => {})}
+                                onRowClick={onRowClick}
+                                rowData={modal.rowData}
+                            />
+                        ) : null;
+                    })}
+                </div>
+                {year && (
+                    <Space style={{ marginBottom: '0.5rem' }}>
+                        <CustomButton icon={<LeftOutlined style={{ borderColor: 'transparent' }} />} onClick={handlePrevYear} />
+                        <span>{year}</span>
+                        <CustomButton icon={<RightOutlined style={{ borderColor: 'transparent' }} />} onClick={handleNextYear} />
+                    </Space>
+                )}
+                {table ? (
+                    <Table 
+                        key={JSON.stringify(data)}
+                        data={editableData} 
+                        columns={columns}
+                        variant={variant} 
+                        onRowClick={onRowClick} 
+                        handleDoubleClick={handleDoubleClick} 
+                        handleInputChange={handleInputChange} 
+                        handleBlur={handleBlur}
+                        editingCell={editingCell}
+                        pagination={pagination}
+                        modalPagination={modalPagination}
+                    />
+                ) : (<></>)}
             </div>
-            {table ? (
-            <Table 
-                key={JSON.stringify(data)}
-                data={editableData} 
-                columns={columns}
-                variant={variant} 
-                onRowClick={onRowClick} 
-                handleDoubleClick={handleDoubleClick} 
-                handleInputChange={handleInputChange} 
-                handleBlur={handleBlur}
-                editingCell={editingCell}
-                pagination={pagination}
-                modalPagination={modalPagination}
-            />
-            ) : (<></>)}
-            
         </>
     );
 }

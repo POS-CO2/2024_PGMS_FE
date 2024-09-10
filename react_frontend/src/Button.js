@@ -19,13 +19,18 @@ const buttonMap = {
 };
 
 const CustomButton = styled(Button)(({ theme }) => ({
-  fontSize: '16px',
+  fontFamily: 'SUITE-Regular',
+  fontSize: '14px',
   marginLeft: '3px',
   backgroundColor: '#0A7800',
   color: '#fff',
-  borderRadius: '8px',
-  padding: '3px 12px',
-  gap: '3px',                     // 아이콘과 텍스트 사이의 간격
+  borderRadius: '16px',
+  padding: '6px 12px',
+  gap: '2px',                     // 아이콘과 텍스트 사이의 간격
+  display: 'flex',
+  alignItems: 'center',            // 텍스트와 아이콘을 세로 중앙 정렬
+  justifyContent: 'center',        // 텍스트와 아이콘을 가로 중앙 정렬
+  lineHeight: 'normal',            // 텍스트 줄 높이를 기본값으로 설정
   '&:hover': {
     backgroundColor: '#8AC784',
   },
@@ -96,7 +101,7 @@ export function ShowDetailsButton({ onClick }) {
 
 export function ButtonGroup({ buttons = [], onClicks = [], buttonStatus = [], isEditing = false }) {
   return (
-    <div style={{ display: 'flex', gap: '8px', marginRight: '23px' }}>
+    <div style={{ display: 'flex', gap: '8px'}}>
       {buttons.map((button, index) => {
         const ButtonComponent = buttonMap[button];
         const onClick = onClicks[index];

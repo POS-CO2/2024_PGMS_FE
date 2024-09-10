@@ -1,34 +1,29 @@
 import React, { useState, useEffect } from "react";
-import Swal from 'sweetalert2'
+import Swal from 'sweetalert2';
 import { Card } from '@mui/material';
-import * as mainStyles from "../../../assets/css/main.css"
 import TableCustom from "../../../TableCustom";
 import SearchForms from "../../../SearchForms";
-import { formField_fam } from "../../../assets/json/searchFormData";
-import { equipActvColumns } from '../../../assets/json/tableColumn';
 import axiosInstance from '../../../utils/AxiosInstance';
+import { formField_fam } from "../../../assets/json/searchFormData";
+import { equipActvColumns, equipCoefColumns } from '../../../assets/json/tableColumn';
+import * as mainStyles from "../../../assets/css/main.css";
+import * as pdsStyles from "../../../assets/css/pds.css";
 
 export default function Fam() {
     const [formFields, setFormFields] = useState(formField_fam);
     const [actves, setActves] = useState([]);                     // 활동자료목록
     const [selectedActv, setSelectedActv] = useState({});         // 선택된 활동자료
+    const [emissionFactors, setEmissionFactors] = useState([]);
+    const [filteredEfs, setFilteredEfs] = useState([]);
+    const [selectedEF, setSelectedEF] = useState({});
+    const [year, setYear] = useState(new Date().getFullYear());
+    const yearProps = { year, setYear };
+    
     const [isModalOpen, setIsModalOpen] = useState({
         FamAdd: false,
         FamEdit: false,
         Delete: false
     });
-
-    class Actv {
-        constructor(id = '', actvDataName = '', actvDataDvs = '', emtnActvType = '', calUnitCode = '', inputUnitCode = '', unitConvCoef = '') {
-            this.id = id;
-            this.actvDataName = actvDataName;
-            this.actvDataDvs = actvDataDvs;
-            this.emtnActvType = emtnActvType;
-            this.calUnitCode = calUnitCode;
-            this.inputUnitCode = inputUnitCode;
-            this.unitConvCoef = unitConvCoef;            ;
-        }
-    }
 
     const fetchOptions = async (unitType) => {
         const response = await axiosInstance.get(`/sys/unit?unitType=${unitType}`);
@@ -79,17 +74,6 @@ export default function Fam() {
         fetchDropDown();
         fetchActv();
     }, []);
-    
-    // selectedActv 변경될 때마다 실행될 useEffect
-    useEffect(() => {}, [selectedActv]);
-
-    // actves 상태가 변경될 때 실행될 useEffect
-    useEffect(() => {
-        if (actves.length === 0) {
-            const placeholderActv = new Actv();
-            setActves([placeholderActv]);
-        }
-    }, [actves]);
 
     //조회 버튼 클릭시 호출될 함수
     const handleFormSubmit = async (data) => {
@@ -102,21 +86,39 @@ export default function Fam() {
             unitConvCoef: data.unitConvCoef
         };
 
-        const response = await axiosInstance.get("/equip/actv", {params});
-
-        // data가 빈 배열인지 확인
-        if (response.data.length === 0) {
-            // 빈 데이터인 경우, 기본 형태의 객체를 생성
-            const placeholderActv = new Actv();
-            setActves([placeholderActv]);
-        } else {
+        try {
+            const response = await axiosInstance.get("/equip/actv", {params});
             setActves(response.data);
+        } catch (error) {
+            console.error("Error fetching actv data:", error);
         }
     };
 
     // 활동자료 row 클릭 시 호출될 함수
-    const handleActvClick = (actv) => {
-        setSelectedActv(actv ?? {});
+    const handleActvClick = async (actv) => {
+        // actv 없으면 setSelectedActv를 빈 객체로 설정하고, 함수 종료
+        if (!actv) {
+            setSelectedActv({});
+            setEmissionFactors([]);
+            return;
+        }
+
+        // actv가 있으면 setSelectedActv를 설정하고 API 호출
+        setSelectedActv(actv);
+
+        try {
+            // 선택한 actv에 매핑된 배출계수 목록 조회
+            const response = await axiosInstance.get(`/equip/coef?actvDataId=${actv.id}`);
+            setEmissionFactors(response.data);
+            setFilteredEfs(response.data);
+        } catch (error) {
+            console.error("Error fetching activity data:", error);
+        }
+    };
+
+    // 배출계수 row 클릭 시 호출될 함수
+    const handleEFClick = (ef) => {
+        setSelectedEF(ef ?? {});
     };
 
     // 모달 열기
@@ -170,16 +172,8 @@ export default function Fam() {
                 // 선택된 활동자료를 actves 리스트에서 제거
                 setActves(prevActves => prevActves.filter(actv => actv.id !== selectedActv.id));
                 setSelectedActv({});
-
-                swalOptions.title = '성공!',
-                swalOptions.text = '활동자료가 성공적으로 삭제되었습니다.';
-                swalOptions.icon = 'success';
             } catch (error) {
                 console.log(error);
-
-                swalOptions.title = '실패!',
-                swalOptions.text = '활동자료 삭제에 실패하였습니다.';
-                swalOptions.icon = 'error';
             }
         } else if (modalType === 'FamEdit') {
             try {
@@ -235,46 +229,73 @@ export default function Fam() {
         showModal('Delete');
     };
 
+    const handleYearChange = (year) => {
+        setYear(year);
+        const filteredResult = emissionFactors.filter((ef) => ef.applyYear === year);
+        setFilteredEfs(filteredResult);
+    };
+
     return (
         <>
             <div className={mainStyles.breadcrumb}>현장정보 &gt; 설비 &gt; 활동자료 관리</div>
             <SearchForms onFormSubmit={handleFormSubmit} formFields={formFields} />
 
-            <TableCustom 
-                title='활동자료목록' 
-                data={actves} 
-                columns={equipActvColumns}
-                buttons={['Delete', 'Edit', 'Add']}
-                onClicks={[onDeleteClick, onEditClick, onAddClick]}
-                onRowClick={handleActvClick}
-                selectedRows={[selectedActv.id]}
-                modals={[
-                    {
-                        'modalType': 'Delete',
-                        'isModalOpen': isModalOpen.Delete,
-                        'handleOk': handleOk('Delete'),
-                        'handleCancel': handleCancel('Delete'),
-                        'rowData': selectedActv,
-                        'rowDataName': 'actvDataName',
-                        'url': '/equip/actv'
-                    },
-                    {
-                        'modalType': 'FamEdit',
-                        'isModalOpen': isModalOpen.FamEdit,
-                        'handleOk': handleOk('FamEdit'),
-                        'handleCancel': handleCancel('FamEdit'),
-                        'rowData': selectedActv,
-                        'dropDown': formFields
-                    },
-                    {
-                        'modalType': 'FamAdd',
-                        'isModalOpen': isModalOpen.FamAdd,
-                        'handleOk': handleOk('FamAdd'),
-                        'handleCancel': handleCancel('FamAdd'),
-                        'dropDown': formFields
-                    }
-                ]}
-            />
+            <div className={pdsStyles.main_grid}>
+                <div className={pdsStyles.contents_container}>
+                    <Card sx={{ width: "50%", height: "auto", borderRadius: "0.5rem" }}>
+                        <TableCustom 
+                            title='활동자료목록' 
+                            data={actves} 
+                            columns={equipActvColumns}
+                            buttons={['Delete', 'Edit', 'Add']}
+                            onClicks={[onDeleteClick, onEditClick, onAddClick]}
+                            onRowClick={handleActvClick}
+                            selectedRows={[selectedActv]}
+                            modals={[
+                                {
+                                    'modalType': 'Delete',
+                                    'isModalOpen': isModalOpen.Delete,
+                                    'handleOk': handleOk('Delete'),
+                                    'handleCancel': handleCancel('Delete'),
+                                    'rowData': selectedActv,
+                                    'rowDataName': 'actvDataName',
+                                    'url': '/equip/actv'
+                                },
+                                {
+                                    'modalType': 'FamEdit',
+                                    'isModalOpen': isModalOpen.FamEdit,
+                                    'handleOk': handleOk('FamEdit'),
+                                    'handleCancel': handleCancel('FamEdit'),
+                                    'rowData': selectedActv,
+                                    'dropDown': formFields
+                                },
+                                {
+                                    'modalType': 'FamAdd',
+                                    'isModalOpen': isModalOpen.FamAdd,
+                                    'handleOk': handleOk('FamAdd'),
+                                    'handleCancel': handleCancel('FamAdd'),
+                                    'dropDown': formFields
+                                }
+                            ]}
+                        />
+                    </Card>
+
+                    <Card sx={{ width: "50%", borderRadius: "0.5rem", paddingBottom: "20px" }}>
+                        {(!emissionFactors || emissionFactors.length === 0) ?
+                        <div className={pdsStyles.card_container}>
+                            <div className={pdsStyles.table_title} style={{ padding: "8px" }}>배출계수목록</div>
+                        </div> : (
+                            <TableCustom 
+                                title="배출계수목록" 
+                                data={filteredEfs}
+                                columns={equipCoefColumns}
+                                handleYearChange={handleYearChange}
+                                year={year}
+                            />
+                        )}
+                    </Card>
+                </div>
+            </div>
         </>
     );
 }

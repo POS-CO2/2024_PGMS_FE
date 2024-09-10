@@ -5,6 +5,7 @@ import * as modalStyles from "../assets/css/pdModal.css";
 import * as rmStyles from "../assets/css/rmModal.css";
 import * as delStyle from "../assets/css/delModal.css";
 import * as pjtModalStyles from "../assets/css/pjtModal.css";
+import * as pdsStyles from "../assets/css/pds.css";
 import * as sysStyles from "../assets/css/sysmng.css"
 import * as sdStyles from "../assets/css/sdModal.css";
 import * as ps12Styles from "../assets/css/ps12UploadExcelModal.css";
@@ -19,14 +20,32 @@ import WarningAmberIcon from '@mui/icons-material/WarningAmber';
 import { Sledding } from '@mui/icons-material';
 import axiosInstance from '../utils/AxiosInstance.js';
 import { Center } from '@react-three/drei';
-import Swal from 'sweetalert2'
+import Swal from 'sweetalert2';
 import { pjtColumns, userColumns, equipColumns, equipActvColumns, equipLibColumns, equipEmissionColumns } from '../assets/json/tableColumn.js';
+import styled from 'styled-components';
+
+const StyledInput = styled(Input)`
+  background: #ECF1F4 !important;
+  border: none !important;
+  padding: 5px !important;
+  height: 32px !important;
+  border-radius: 5px !important;
+
+  &:focus {
+    background: #ECF1F4 !important;
+    border: none !important;
+    outline: none !important;
+    box-shadow: none !important;
+  }
+`;
 
 export function PgAddModal({ isModalOpen, handleOk, handleCancel }) {
-    const [formData, setFormData] = useState({});             // 검색 데이터
     const [selectedPjts, setSelectedPjts] = useState([]);     // 선택된 프로젝트
     const [allProjects, setAllProjects] = useState([]);       // 전체 프로젝트
     const [project, setProject] = useState([]);
+
+    const [pjtCode, setPjtCode] = useState('');
+    const [pjtName, setPjtName] = useState('');
 
     useEffect(() => {
         const fetchProject = async () => {
@@ -43,20 +62,11 @@ export function PgAddModal({ isModalOpen, handleOk, handleCancel }) {
         fetchProject(); // 컴포넌트 마운트 될 때 데이터불러옴
     }, [isModalOpen])
 
-    // input 필드 변경 시 호출될 함수
-    const handleInputChange = (e) => {
-        const { name, value } = e.target;
-        setFormData({
-        ...formData,
-        [name]: value,
-        });
-    };
-
     //찾기 버튼 클릭시 호출될 함수
     const handleFormSubmit = () => {
         const filteredProjects = allProjects.filter(pjt => {
-        const matchesCode = formData.projectCode ? pjt.projectCode?.includes(formData.projectCode) : true;
-        const matchesName = formData.projectName ? pjt.projectName?.includes(formData.projectName) : true;
+        const matchesCode = pjtCode ? pjt.projectCode?.includes(pjtCode) : true;
+        const matchesName = pjtName ? pjt.projectName?.includes(pjtName) : true;
         return matchesCode && matchesName;
         });
         setProject(filteredProjects);
@@ -77,7 +87,8 @@ export function PgAddModal({ isModalOpen, handleOk, handleCancel }) {
 
     // 선택 버튼 클릭 시 호출될 함수
     const handleSelect = () => {
-        setFormData({});
+        setPjtCode('');
+        setPjtName('');
         handleOk(selectedPjts);
     };
   
@@ -93,23 +104,25 @@ export function PgAddModal({ isModalOpen, handleOk, handleCancel }) {
         <div className={pjtModalStyles.search_container}>
           <div className={pjtModalStyles.search_item}>
             <div className={pjtModalStyles.search_title}>프로젝트코드</div>
-            <input 
-                name="projectCode"
-                className={pjtModalStyles.search_code} 
-                onChange={handleInputChange}
-                onKeyDown={handleKeyDown}
+            <StyledInput
+              value={pjtCode}
+              allowClear={{ clearIcon: <CloseOutlined style={{color: "red"}} /> }}
+              onChange={(e) => setPjtCode(e.target.value)}
+              onKeyDown={handleKeyDown}
+              style={{ width: '12rem' }}
             />
           </div>
           <div className={pjtModalStyles.search_item}>
             <div className={pjtModalStyles.search_title}>프로젝트명</div>
             <div className={pjtModalStyles.search_container}>
-                <input 
-                    name="projectName"
-                    className={pjtModalStyles.search_name} 
-                    onChange={handleInputChange}
-                    onKeyDown={handleKeyDown}
+                <StyledInput
+                value={pjtName}
+                allowClear={{ clearIcon: <CloseOutlined style={{color: "red"}} /> }}
+                onChange={(e) => setPjtName(e.target.value)}
+                onKeyDown={handleKeyDown}
+                style={{ width: '12rem' }}
                 />
-              <button className={pjtModalStyles.search_button} onClick={handleFormSubmit}>찾기</button>
+                <button className={pjtModalStyles.search_button} onClick={handleFormSubmit}>찾기</button>
             </div>
           </div>
         </div>
@@ -118,7 +131,11 @@ export function PgAddModal({ isModalOpen, handleOk, handleCancel }) {
             <Table data={project} columns={pjtColumns} variant='checkbox' onRowClick={handlePjtClick} />
         </div>
   
-        <button className={pjtModalStyles.select_button} onClick={handleSelect}>등록</button>
+        <div className={pjtModalStyles.button_container}>
+            {(!selectedPjts || selectedPjts.length === 0) ?
+            <></> : ( <button className={pjtModalStyles.select_button} onClick={handleSelect}>선택</button> )}
+            <button className={pjtModalStyles.select_button} onClick={handleCancel}>취소</button>
+        </div>
       </Modal>
     )
 }
@@ -141,7 +158,6 @@ export function PdAddModal({ isModalOpen, handleOk, handleCancel }) {
     const handleSearch = async() => {
         try {
             const response = await axiosInstance.get(`/pjt/not-manager?loginId=${inputEmpId}&userName=${inputEmpName}`);
-            console.log("response", response);
             setFormData(response.data);
         } catch (error) {
             console.log(error);
@@ -803,53 +819,53 @@ export function FadAddModal({ isModalOpen, handleOk, handleCancel, rowData }) {
     };
   
     return (
-      <Modal 
-        open={isModalOpen} 
-        width={800}
-        onCancel={handleCancel} 
-        footer={null}             //Ant Design의 기본 footer 제거(Cancel, OK 버튼)
-      >
-        <div className={pjtModalStyles.title}>활동자료 지정</div>
-        <p className={pjtModalStyles.comment}>* 활동자료명이나 활동자료구분 둘 중에 하나만 입력해도 검색이 가능합니다.</p>
-        <div className={pjtModalStyles.search_container}>
-            <div className={pjtModalStyles.search_item}>
-                <div className={pjtModalStyles.search_title}>활동자료명</div>
-                <Input
-                    value={inputActvName}
-                    allowClear={{ clearIcon: <CloseOutlined style={{color: "red"}} /> }}
-                    onChange={(e) => setInputActvName(e.target.value)}
-                    onKeyDown={handleKeyDown}
-                    style={{ width: '12rem' }}
-                />
-            </div>
-            <div className={pjtModalStyles.search_item}>
-                <div className={pjtModalStyles.search_title}>활동자료구분</div>
-                <div className={modalStyles.input_with_btn}>
-                    <Select
-                        value={inputActvDvs}
+        <Modal 
+            open={isModalOpen} 
+            width={800}
+            onCancel={handleCancel} 
+            footer={null}             //Ant Design의 기본 footer 제거(Cancel, OK 버튼)
+            // bodyStyle={{ maxHeight: '60vh', overflowY: 'auto' }}
+        >
+            <div className={pjtModalStyles.title}>활동자료 지정</div>
+            <p className={pjtModalStyles.comment}>* 활동자료명이나 활동자료구분 둘 중에 하나만 입력해도 검색이 가능합니다.</p>
+            <div className={pjtModalStyles.search_container}>
+                <div className={pjtModalStyles.search_item}>
+                    <div className={pjtModalStyles.search_title}>활동자료명</div>
+                    <Input
+                        value={inputActvName}
                         allowClear={{ clearIcon: <CloseOutlined style={{color: "red"}} /> }}
-                        onChange={(value) => setInputActvDvs(value)}
-                        style={{ width: '15rem' }}
-                    >
-                        {actvDvsList.map(option => (
-                            <Select.Option key={option.value} value={option.value}>
-                                {option.label}
-                            </Select.Option>
-                        ))}
-                    </Select>
-                    <button className={pjtModalStyles.search_button} onClick={handleSearch}>찾기</button>
+                        onChange={(e) => setInputActvName(e.target.value)}
+                        onKeyDown={handleKeyDown}
+                        style={{ width: '12rem' }}
+                    />
+                </div>
+                <div className={pjtModalStyles.search_item}>
+                    <div className={pjtModalStyles.search_title}>활동자료구분</div>
+                    <div className={modalStyles.input_with_btn}>
+                        <Select
+                            value={inputActvDvs}
+                            allowClear={{ clearIcon: <CloseOutlined style={{color: "red"}} /> }}
+                            onChange={(value) => setInputActvDvs(value)}
+                            style={{ width: '15rem' }}
+                        >
+                            {actvDvsList.map(option => (
+                                <Select.Option key={option.value} value={option.value}>
+                                    {option.label}
+                                </Select.Option>
+                            ))}
+                        </Select>
+                        <button className={pjtModalStyles.search_button} onClick={handleSearch}>찾기</button>
+                    </div>
                 </div>
             </div>
-        </div>
-  
-        <div className={pjtModalStyles.result_container}>
-            {(!actves || Object.keys(actves).length === 0) ?
-                <></> : ( <Table data={actves} columns={equipActvColumns} variant='checkbox' onRowClick={handleActvClick} modalPagination={true} /> )}
-        </div>
-  
-        {(!selectedActves || selectedActves.length === 0) ?
-            <></> : ( <button className={pjtModalStyles.select_button} onClick={handleSelect}>등록</button> )}
-      </Modal>
+
+            <div className={pjtModalStyles.result_container}>
+                <Table data={actves} columns={equipActvColumns} variant='checkbox' onRowClick={handleActvClick} modalPagination={true} />
+                {(!selectedActves || selectedActves.length === 0) ?
+                <></> : ( <button className={pdsStyles.select_button} onClick={handleSelect}>등록</button> )}
+            </div>
+
+        </Modal>
     )
 }
 
@@ -2104,7 +2120,7 @@ export function EsmAddModal({ isModalOpen, handleOk, handleCancel, rowData }) {
     useEffect(() => {
         const fetchEmtnCands = async () => {
             try {
-                let url = `/equip/emission/cand?projectId=${rowData[0].id}`;
+                let url = `/equip/emission/cand?projectId=${rowData}`;
                 const emtnCandData = await axiosInstance.get(url);
                 setEmtnCands(emtnCandData.data);
             } catch (error) {
@@ -2151,6 +2167,7 @@ export function EsmAddModal({ isModalOpen, handleOk, handleCancel, rowData }) {
 
             // handleOk을 호출하여 모달을 닫고 상위 컴포넌트에 알림
             handleOk(responseEmtnCands);
+            console.log("handleOk2", handleOk);
             swalOptions.title = '성공!',
             swalOptions.text = `배출원이 성공적으로 등록되었습니다.`;
             swalOptions.icon = 'success';
@@ -2172,7 +2189,7 @@ export function EsmAddModal({ isModalOpen, handleOk, handleCancel, rowData }) {
         >
             <div className={modalStyles.title}>배출원 등록</div>
 
-            <Table data={emtnCands} variant='checkbox' onRowClick={handleEmtnClick} columns={equipEmissionColumns} />
+            <Table data={emtnCands} variant='checkbox' onRowClick={handleEmtnClick} columns={equipEmissionColumns} modalPagination={true} />
 
             <button className={modalStyles.select_button} onClick={handleSelect}>등록</button>
         </Modal>
@@ -2180,591 +2197,591 @@ export function EsmAddModal({ isModalOpen, handleOk, handleCancel, rowData }) {
 }
 
 export function SdAddModal({ isModalOpen, handleOk, handleCancel, rowData, yearSelectOptions }) {
-    const [formData, setFormData] = useState({
-        actvYear: new Date().getFullYear().toString(),
-        actvMth: (new Date().getMonth() + 1).toString(),
-        name: '',
-        fileList: []
-    });
-    const [errors, setErrors] = useState({});
+    // const [formData, setFormData] = useState({
+    //     actvYear: new Date().getFullYear().toString(),
+    //     actvMth: (new Date().getMonth() + 1).toString(),
+    //     name: '',
+    //     fileList: []
+    // });
+    // const [errors, setErrors] = useState({});
 
-    // 모달 열 때마다 clear
-    useEffect(() => {
-        if (isModalOpen) {
-            setFormData({
-                actvYear: new Date().getFullYear().toString(),
-                actvMth: (new Date().getMonth() + 1).toString(),
-                name: '',
-                fileList: []
-            });
-            setErrors({});
-        }
-    }, [isModalOpen]);
+    // // 모달 열 때마다 clear
+    // useEffect(() => {
+    //     if (isModalOpen) {
+    //         setFormData({
+    //             actvYear: new Date().getFullYear().toString(),
+    //             actvMth: (new Date().getMonth() + 1).toString(),
+    //             name: '',
+    //             fileList: []
+    //         });
+    //         setErrors({});
+    //     }
+    // }, [isModalOpen]);
 
-    const handleFileChange = (event) => {
-        const newFiles = Array.from(event.target.files);
-        setFormData(prevData => {
-            const existingFileNames = new Set(prevData.fileList.map(file => file.name));
-            const filteredNewFiles = newFiles.filter(file => !existingFileNames.has(file.name));
-            return {
-                ...prevData,
-                fileList: [...prevData.fileList, ...filteredNewFiles]
-            };
-        });
-        // 동일한 파일을 다시 선택할 수 있도록 input의 값을 초기화
-        event.target.value = null;
-    };
+    // const handleFileChange = (event) => {
+    //     const newFiles = Array.from(event.target.files);
+    //     setFormData(prevData => {
+    //         const existingFileNames = new Set(prevData.fileList.map(file => file.name));
+    //         const filteredNewFiles = newFiles.filter(file => !existingFileNames.has(file.name));
+    //         return {
+    //             ...prevData,
+    //             fileList: [...prevData.fileList, ...filteredNewFiles]
+    //         };
+    //     });
+    //     // 동일한 파일을 다시 선택할 수 있도록 input의 값을 초기화
+    //     event.target.value = null;
+    // };
 
-    const handleFileRemove = (fileName) => {
-        setFormData(prevData => ({
-            ...prevData,
-            fileList: prevData.fileList.filter(file => file.name !== fileName)
-        }));
-    };
+    // const handleFileRemove = (fileName) => {
+    //     setFormData(prevData => ({
+    //         ...prevData,
+    //         fileList: prevData.fileList.filter(file => file.name !== fileName)
+    //     }));
+    // };
 
-    const uploadFiles = async () => {
-        let swalOptions = {
-            confirmButtonText: '확인'
-        };
+    // const uploadFiles = async () => {
+    //     let swalOptions = {
+    //         confirmButtonText: '확인'
+    //     };
 
-        try {
-            /*
-            const regData = {
-                files: formData.fileList
-            };
-            const response = await axiosInstance.post('/s3/upload', regData);
-            */
-            const formDataForUpload = new FormData();
-            formData.fileList.forEach(file => {
-                formDataForUpload.append('files', file);
-            });
-            const response = await axiosInstance.post('/s3/upload', formDataForUpload, {
-                headers: {
-                    'Content-Type': 'multipart/form-data'
-                }
-            });
+    //     try {
+    //         /*
+    //         const regData = {
+    //             files: formData.fileList
+    //         };
+    //         const response = await axiosInstance.post('/s3/upload', regData);
+    //         */
+    //         const formDataForUpload = new FormData();
+    //         formData.fileList.forEach(file => {
+    //             formDataForUpload.append('files', file);
+    //         });
+    //         const response = await axiosInstance.post('/s3/upload', formDataForUpload, {
+    //             headers: {
+    //                 'Content-Type': 'multipart/form-data'
+    //             }
+    //         });
 
-            return response.data; // 파일 업로드 후 S3에서 반환된 파일 정보 배열
-        } catch (error) {
-            console.error('Error uploading files to S3:', error);
-            swalOptions.title = '실패!',
-            swalOptions.text = `증빙자료 등록에 실패하였습니다.`;
-            swalOptions.icon = 'error';
-        }
-        Swal.fire(swalOptions);
-    };
+    //         return response.data; // 파일 업로드 후 S3에서 반환된 파일 정보 배열
+    //     } catch (error) {
+    //         console.error('Error uploading files to S3:', error);
+    //         swalOptions.title = '실패!',
+    //         swalOptions.text = `증빙자료 등록에 실패하였습니다.`;
+    //         swalOptions.icon = 'error';
+    //     }
+    //     Swal.fire(swalOptions);
+    // };
 
-    const onSaveClick = async () => {
-        // 입력 값 검증
-        let newErrors = {};
-        if (!formData.actvYear || !formData.actvMth) newErrors.actvYearMth = '대상년월을 선택해 주세요.';
-        if (!formData.name) newErrors.name = '필수 항목입니다.';
-        if (formData.fileList.length === 0) newErrors.fileList = '파일을 선택해 주세요.';
+    // const onSaveClick = async () => {
+    //     // 입력 값 검증
+    //     let newErrors = {};
+    //     if (!formData.actvYear || !formData.actvMth) newErrors.actvYearMth = '대상년월을 선택해 주세요.';
+    //     if (!formData.name) newErrors.name = '필수 항목입니다.';
+    //     if (formData.fileList.length === 0) newErrors.fileList = '파일을 선택해 주세요.';
 
-        if (Object.keys(newErrors).length > 0) {
-            setErrors(newErrors);
-            return;
-        }
+    //     if (Object.keys(newErrors).length > 0) {
+    //         setErrors(newErrors);
+    //         return;
+    //     }
 
-        setErrors({});
+    //     setErrors({});
 
-        // 입력값 검증 통과하면 등록 수행
-        let swalOptions = {
-            confirmButtonText: '확인'
-        };
+    //     // 입력값 검증 통과하면 등록 수행
+    //     let swalOptions = {
+    //         confirmButtonText: '확인'
+    //     };
         
-        try {
-            const uploadedFiles = await uploadFiles();
+    //     try {
+    //         const uploadedFiles = await uploadFiles();
 
-            const documentData = {
-                emissionId: rowData.id,
-                actvYear: parseInt(formData.actvYear, 10),
-                actvMth: parseInt(formData.actvMth, 10),
-                name: formData.name,
-                files: uploadedFiles.map(file => ({
-                    name: file.name,
-                    url: file.url
-                }))
-            };
+    //         const documentData = {
+    //             emissionId: rowData.id,
+    //             actvYear: parseInt(formData.actvYear, 10),
+    //             actvMth: parseInt(formData.actvMth, 10),
+    //             name: formData.name,
+    //             files: uploadedFiles.map(file => ({
+    //                 name: file.name,
+    //                 url: file.url
+    //             }))
+    //         };
 
-            // 데이터 전송
-            const response = await axiosInstance.post('/equip/document', documentData);
+    //         // 데이터 전송
+    //         const response = await axiosInstance.post('/equip/document', documentData);
 
-            handleOk(response.data, true); // 새로 입력된 데이터를 handleOk 함수로 전달, 두번째 인자-closeModal=true
-            swalOptions.title = '성공!',
-            swalOptions.text = `성공적으로 등록되었습니다.`;
-            swalOptions.icon = 'success';
-        } catch (error) {
-            console.error('Error saving document:', error);
-            swalOptions.title = '실패!',
-            swalOptions.text = `등록에 실패하였습니다.`;
-            swalOptions.icon = 'error';
-        }
-        Swal.fire(swalOptions);
-    };
+    //         handleOk(response.data, true); // 새로 입력된 데이터를 handleOk 함수로 전달, 두번째 인자-closeModal=true
+    //         swalOptions.title = '성공!',
+    //         swalOptions.text = `성공적으로 등록되었습니다.`;
+    //         swalOptions.icon = 'success';
+    //     } catch (error) {
+    //         console.error('Error saving document:', error);
+    //         swalOptions.title = '실패!',
+    //         swalOptions.text = `등록에 실패하였습니다.`;
+    //         swalOptions.icon = 'error';
+    //     }
+    //     Swal.fire(swalOptions);
+    // };
 
-    return (
-        <Modal
-            open={isModalOpen}
-            onCancel={handleCancel}
-            width={400}
-            footer={null}             //Ant Design의 기본 footer 제거(Cancel, OK 버튼)
-        >
-            <div className={modalStyles.title}>증빙서류 등록</div>
+    // return (
+    //     <Modal
+    //         open={isModalOpen}
+    //         onCancel={handleCancel}
+    //         width={400}
+    //         footer={null}             //Ant Design의 기본 footer 제거(Cancel, OK 버튼)
+    //     >
+    //         <div className={modalStyles.title}>증빙서류 등록</div>
 
-            <div className={sdStyles.input_container}>
+    //         <div className={sdStyles.input_container}>
 
-                <div className={sdStyles.input_item}>
-                    <div className={sdStyles.input_title}>
-                        대상년월
-                        <span className={sdStyles.requiredAsterisk}>*</span>
-                    </div>
-                    <div className={sdStyles.select_item}>
-                        <Select
-                            id="actvYear"
-                            value={formData.actvYear}
-                            onChange={(value) => setFormData(prevData => ({ ...prevData, actvYear: value }))}
-                        >
-                            {yearSelectOptions.map(option => (
-                                <Select.Option key={option.value} value={option.value}>
-                                    {option.label}
-                                </Select.Option>
-                            ))}
-                        </Select>
-                        <div>년</div>
-                        <Select
-                            id="actvMth"
-                            value={formData.actvMth}
-                            onChange={(value) => setFormData(prevData => ({ ...prevData, actvMth: value }))}
-                        >
-                            {selectMonth.map(option => (
-                                <Select.Option key={option.value} value={option.value}>
-                                    {option.label}
-                                </Select.Option>
-                            ))}
-                        </Select>
-                        <div>월</div>
-                    </div>
-                    {errors.actvYearMth && <div className={modalStyles.error_message}>{errors.actvYearMth}</div>}
-                </div>
+    //             <div className={sdStyles.input_item}>
+    //                 <div className={sdStyles.input_title}>
+    //                     대상년월
+    //                     <span className={sdStyles.requiredAsterisk}>*</span>
+    //                 </div>
+    //                 <div className={sdStyles.select_item}>
+    //                     <Select
+    //                         id="actvYear"
+    //                         value={formData.actvYear}
+    //                         onChange={(value) => setFormData(prevData => ({ ...prevData, actvYear: value }))}
+    //                     >
+    //                         {yearSelectOptions.map(option => (
+    //                             <Select.Option key={option.value} value={option.value}>
+    //                                 {option.label}
+    //                             </Select.Option>
+    //                         ))}
+    //                     </Select>
+    //                     <div>년</div>
+    //                     <Select
+    //                         id="actvMth"
+    //                         value={formData.actvMth}
+    //                         onChange={(value) => setFormData(prevData => ({ ...prevData, actvMth: value }))}
+    //                     >
+    //                         {selectMonth.map(option => (
+    //                             <Select.Option key={option.value} value={option.value}>
+    //                                 {option.label}
+    //                             </Select.Option>
+    //                         ))}
+    //                     </Select>
+    //                     <div>월</div>
+    //                 </div>
+    //                 {errors.actvYearMth && <div className={modalStyles.error_message}>{errors.actvYearMth}</div>}
+    //             </div>
 
-                <div className={sdStyles.input_item}>
-                    <div className={sdStyles.input_title}>
-                        자료명
-                        <span className={sdStyles.requiredAsterisk}>*</span>
-                    </div>
-                    <input
-                        className={sdStyles.search}
-                        id="name"
-                        value={formData.name}
-                        onChange={(e) => setFormData(prevData => ({ ...prevData, name: e.target.value }))}
-                    />
-                    {errors.name && <div className={modalStyles.error_message}>{errors.name}</div>}
-                </div>
+    //             <div className={sdStyles.input_item}>
+    //                 <div className={sdStyles.input_title}>
+    //                     자료명
+    //                     <span className={sdStyles.requiredAsterisk}>*</span>
+    //                 </div>
+    //                 <input
+    //                     className={sdStyles.search}
+    //                     id="name"
+    //                     value={formData.name}
+    //                     onChange={(e) => setFormData(prevData => ({ ...prevData, name: e.target.value }))}
+    //                 />
+    //                 {errors.name && <div className={modalStyles.error_message}>{errors.name}</div>}
+    //             </div>
 
-                <div className={sdStyles.upload_item}>
-                    <div className={sdStyles.upload_header}>
-                        <div className={sdStyles.input_title}>
-                            첨부파일
-                            <span className={sdStyles.requiredAsterisk}>*</span>
-                        </div>
-                        <div>
-                            <input
-                                type="file"
-                                id="fileList"
-                                name="fileList"
-                                multiple
-                                style={{ display: 'none' }} // 숨김 처리
-                                onChange={handleFileChange} // 파일 선택 시 호출
-                            />
-                            <button
-                                type="button"
-                                onClick={() => document.getElementById('fileList').click()}
-                                className={ps12Styles.upload_button}
-                            >
-                                파일선택 <PaperClipOutlined />
-                            </button>
-                        </div>
-                    </div>
-                    <div className={sdStyles.file_list_container}>
-                        <div className={sdStyles.file_list}>
-                            {formData.fileList.length === 0 ? (
-                                <></>
-                            ) : (
-                                formData.fileList.map((file, index) => (
-                                    <div key={index} className={sdStyles.file_item}>
-                                        {file.name}
-                                        <button
-                                            type="button"
-                                            className={sdStyles.remove_button}
-                                            onClick={() => handleFileRemove(file.name)}
-                                        >
-                                            <CloseOutlined />
-                                        </button>
-                                    </div>
-                                ))
-                            )}
-                        </div>
-                    </div>
-                    {errors.fileList && <div className={modalStyles.error_message}>{errors.fileList}</div>}
-                </div>
-            </div>
+    //             <div className={sdStyles.upload_item}>
+    //                 <div className={sdStyles.upload_header}>
+    //                     <div className={sdStyles.input_title}>
+    //                         첨부파일
+    //                         <span className={sdStyles.requiredAsterisk}>*</span>
+    //                     </div>
+    //                     <div>
+    //                         <input
+    //                             type="file"
+    //                             id="fileList"
+    //                             name="fileList"
+    //                             multiple
+    //                             style={{ display: 'none' }} // 숨김 처리
+    //                             onChange={handleFileChange} // 파일 선택 시 호출
+    //                         />
+    //                         <button
+    //                             type="button"
+    //                             onClick={() => document.getElementById('fileList').click()}
+    //                             className={ps12Styles.upload_button}
+    //                         >
+    //                             파일선택 <PaperClipOutlined />
+    //                         </button>
+    //                     </div>
+    //                 </div>
+    //                 <div className={sdStyles.file_list_container}>
+    //                     <div className={sdStyles.file_list}>
+    //                         {formData.fileList.length === 0 ? (
+    //                             <></>
+    //                         ) : (
+    //                             formData.fileList.map((file, index) => (
+    //                                 <div key={index} className={sdStyles.file_item}>
+    //                                     {file.name}
+    //                                     <button
+    //                                         type="button"
+    //                                         className={sdStyles.remove_button}
+    //                                         onClick={() => handleFileRemove(file.name)}
+    //                                     >
+    //                                         <CloseOutlined />
+    //                                     </button>
+    //                                 </div>
+    //                             ))
+    //                         )}
+    //                     </div>
+    //                 </div>
+    //                 {errors.fileList && <div className={modalStyles.error_message}>{errors.fileList}</div>}
+    //             </div>
+    //         </div>
 
-            <button className={ps12Styles.select_button} onClick={onSaveClick}>저장</button>
-        </Modal>
-    )
+    //         <button className={ps12Styles.select_button} onClick={onSaveClick}>저장</button>
+    //     </Modal>
+    // )
 }
 
 export function SdShowDetailsModal({ selectedSd, isModalOpen, handleOk, handleCancel, yearSelectOptions }) {
-    const [formData, setFormData] = useState({
-        actvYear: '',
-        actvMth: '',
-        name: '',
-        fileList: []
-    });
-    const [errors, setErrors] = useState({});
+    // const [formData, setFormData] = useState({
+    //     actvYear: '',
+    //     actvMth: '',
+    //     name: '',
+    //     fileList: []
+    // });
+    // const [errors, setErrors] = useState({});
 
-    const [isEditing, setIsEditing] = useState(false);
-    const [innerSelectedSd, setInnerSelectedSd] = useState(selectedSd);
+    // const [isEditing, setIsEditing] = useState(false);
+    // const [innerSelectedSd, setInnerSelectedSd] = useState(selectedSd);
 
-    useEffect(() => {
-        if (selectedSd) {
-            setFormData({
-                actvYear: String(selectedSd.actvYear || new Date().getFullYear()),
-                actvMth: String(selectedSd.actvMth || (new Date().getMonth() + 1)),
-                name: selectedSd.name || '',
-                fileList: Array.isArray(selectedSd.files) ? selectedSd.files.map(file => ({
-                    name: file.name,
-                    status: 'done',
-                    url: file.url
-                })) : []
-            });
-            setInnerSelectedSd(selectedSd);
-        }
-    }, [selectedSd]);
+    // useEffect(() => {
+    //     if (selectedSd) {
+    //         setFormData({
+    //             actvYear: String(selectedSd.actvYear || new Date().getFullYear()),
+    //             actvMth: String(selectedSd.actvMth || (new Date().getMonth() + 1)),
+    //             name: selectedSd.name || '',
+    //             fileList: Array.isArray(selectedSd.files) ? selectedSd.files.map(file => ({
+    //                 name: file.name,
+    //                 status: 'done',
+    //                 url: file.url
+    //             })) : []
+    //         });
+    //         setInnerSelectedSd(selectedSd);
+    //     }
+    // }, [selectedSd]);
 
-    const handleFileChange = (event) => {
-        const newFiles = Array.from(event.target.files).map(file => ({
-            name: file.name,
-            status: 'new',
-            originFileObj: file
-        }));
+    // const handleFileChange = (event) => {
+    //     const newFiles = Array.from(event.target.files).map(file => ({
+    //         name: file.name,
+    //         status: 'new',
+    //         originFileObj: file
+    //     }));
 
-        setFormData(prevData => {
-            const existingFileNames = new Set(prevData.fileList.map(file => file.name));
-            const filteredNewFiles = newFiles.filter(file => !existingFileNames.has(file.name));
-            return {
-                ...prevData,
-                fileList: [...prevData.fileList, ...filteredNewFiles]
-            };
-        });
-        // 동일한 파일을 다시 선택할 수 있도록 input의 값을 초기화
-        event.target.value = null;
-    };
+    //     setFormData(prevData => {
+    //         const existingFileNames = new Set(prevData.fileList.map(file => file.name));
+    //         const filteredNewFiles = newFiles.filter(file => !existingFileNames.has(file.name));
+    //         return {
+    //             ...prevData,
+    //             fileList: [...prevData.fileList, ...filteredNewFiles]
+    //         };
+    //     });
+    //     // 동일한 파일을 다시 선택할 수 있도록 input의 값을 초기화
+    //     event.target.value = null;
+    // };
 
-    const handleFileRemove = (fileName) => {
-        setFormData(prevData => ({
-            ...prevData,
-            fileList: prevData.fileList.filter(file => file.name !== fileName)
-        }));
-    };
+    // const handleFileRemove = (fileName) => {
+    //     setFormData(prevData => ({
+    //         ...prevData,
+    //         fileList: prevData.fileList.filter(file => file.name !== fileName)
+    //     }));
+    // };
 
-    const uploadFiles = async () => { // 새로 추가된 파일만 업로드
-        let swalOptions = {
-            confirmButtonText: '확인'
-        };
+    // const uploadFiles = async () => { // 새로 추가된 파일만 업로드
+    //     let swalOptions = {
+    //         confirmButtonText: '확인'
+    //     };
 
-        // formData.fileList가 null이거나 비어있는지 확인
-        if (!formData.fileList || formData.fileList.length === 0) {
-            swalOptions.title = '실패!';
-            swalOptions.text = '첨부된 증빙파일이 없습니다.';
-            swalOptions.icon = 'error';
-            Swal.fire(swalOptions);
-            return []; // 더 이상 진행하지 않도록 함수 종료
-        }
+    //     // formData.fileList가 null이거나 비어있는지 확인
+    //     if (!formData.fileList || formData.fileList.length === 0) {
+    //         swalOptions.title = '실패!';
+    //         swalOptions.text = '첨부된 증빙파일이 없습니다.';
+    //         swalOptions.icon = 'error';
+    //         Swal.fire(swalOptions);
+    //         return []; // 더 이상 진행하지 않도록 함수 종료
+    //     }
 
-        try {
-            const formDataForUpload = new FormData();
-            formData.fileList.forEach(file => {
-                if (file.status === 'new') {
-                    formDataForUpload.append('files', file.originFileObj); // 실제 File 객체를 추가
-                }
-            });
-            if (formDataForUpload.getAll('files').length > 0) {
-                const response = await axiosInstance.post('/s3/upload', formDataForUpload, {
-                    headers: {
-                        'Content-Type': 'multipart/form-data'
-                    }
-                });
+    //     try {
+    //         const formDataForUpload = new FormData();
+    //         formData.fileList.forEach(file => {
+    //             if (file.status === 'new') {
+    //                 formDataForUpload.append('files', file.originFileObj); // 실제 File 객체를 추가
+    //             }
+    //         });
+    //         if (formDataForUpload.getAll('files').length > 0) {
+    //             const response = await axiosInstance.post('/s3/upload', formDataForUpload, {
+    //                 headers: {
+    //                     'Content-Type': 'multipart/form-data'
+    //                 }
+    //             });
 
-                return response.data; // 파일 업로드 후 S3에서 반환된 파일 정보 배열
-            }
-            return []; // 파일이 없으면 빈 배열 반환
-        } catch (error) {
-            console.error('Error uploading files to S3:', error);
-            swalOptions.title = '실패!',
-            swalOptions.text = `증빙자료 등록에 실패하였습니다.`;
-            swalOptions.icon = 'error';
-            Swal.fire(swalOptions);
-            return []; // 실패 시 빈 배열 반환
-        }
-    };
+    //             return response.data; // 파일 업로드 후 S3에서 반환된 파일 정보 배열
+    //         }
+    //         return []; // 파일이 없으면 빈 배열 반환
+    //     } catch (error) {
+    //         console.error('Error uploading files to S3:', error);
+    //         swalOptions.title = '실패!',
+    //         swalOptions.text = `증빙자료 등록에 실패하였습니다.`;
+    //         swalOptions.icon = 'error';
+    //         Swal.fire(swalOptions);
+    //         return []; // 실패 시 빈 배열 반환
+    //     }
+    // };
 
-    const onSaveClick = async () => {
-        // 입력 값 검증
-        let newErrors = {};
-        if (!formData.actvYear || !formData.actvMth) newErrors.actvYearMth = '대상년월을 선택해 주세요.';
-        if (!formData.name) newErrors.name = '필수 항목입니다.';
-        if (formData.fileList.length === 0) newErrors.fileList = '파일을 선택해 주세요.';
+    // const onSaveClick = async () => {
+    //     // 입력 값 검증
+    //     let newErrors = {};
+    //     if (!formData.actvYear || !formData.actvMth) newErrors.actvYearMth = '대상년월을 선택해 주세요.';
+    //     if (!formData.name) newErrors.name = '필수 항목입니다.';
+    //     if (formData.fileList.length === 0) newErrors.fileList = '파일을 선택해 주세요.';
 
-        if (Object.keys(newErrors).length > 0) {
-            setErrors(newErrors);
-            return;
-        }
+    //     if (Object.keys(newErrors).length > 0) {
+    //         setErrors(newErrors);
+    //         return;
+    //     }
 
-        setErrors({});
+    //     setErrors({});
 
-        // 입력값 검증 통과하면 등록 수행
-        let swalOptions = {
-            confirmButtonText: '확인'
-        };
+    //     // 입력값 검증 통과하면 등록 수행
+    //     let swalOptions = {
+    //         confirmButtonText: '확인'
+    //     };
 
-        try {
-            const uploadedFiles = await uploadFiles() || []; // uploadFiles가 null 또는 undefined일 경우 빈 배열로 처리
+    //     try {
+    //         const uploadedFiles = await uploadFiles() || []; // uploadFiles가 null 또는 undefined일 경우 빈 배열로 처리
             
-            const existingFiles = (formData.fileList || []).filter(file => file.status === 'done').map(file => ({
-                name: file.name,
-                url: file.url
-            }));
-            const newFiles = uploadedFiles.map(file => ({ // 기존 파일들 + uploadFiles
-                name: file.name,
-                url: file.url
-            }));
-            // 최종 파일 목록
-            const allFiles = [...existingFiles, ...newFiles];
+    //         const existingFiles = (formData.fileList || []).filter(file => file.status === 'done').map(file => ({
+    //             name: file.name,
+    //             url: file.url
+    //         }));
+    //         const newFiles = uploadedFiles.map(file => ({ // 기존 파일들 + uploadFiles
+    //             name: file.name,
+    //             url: file.url
+    //         }));
+    //         // 최종 파일 목록
+    //         const allFiles = [...existingFiles, ...newFiles];
 
-            const documentData = {
-                id: selectedSd.id,
-                name: formData.name,
-                files: allFiles
-            };
+    //         const documentData = {
+    //             id: selectedSd.id,
+    //             name: formData.name,
+    //             files: allFiles
+    //         };
             
-            // 데이터 전송
-            const response = await axiosInstance.patch('/equip/document', documentData);
+    //         // 데이터 전송
+    //         const response = await axiosInstance.patch('/equip/document', documentData);
 
-            setInnerSelectedSd(response.data); // innerSelectedSd 상태 업데이트
-            setFormData(prevData => ({
-                ...prevData,
-                fileList: allFiles.map(file => ({
-                    name: file.name,
-                    status: 'done',
-                    url: file.url
-                }))
-            }));
+    //         setInnerSelectedSd(response.data); // innerSelectedSd 상태 업데이트
+    //         setFormData(prevData => ({
+    //             ...prevData,
+    //             fileList: allFiles.map(file => ({
+    //                 name: file.name,
+    //                 status: 'done',
+    //                 url: file.url
+    //             }))
+    //         }));
 
-            handleOk(response.data, false);  // 새로 입력된 데이터를 handleOk 함수로 전달, 두번째 인자-closeModal=false
-            setIsEditing(false); // 저장 후 편집 모드 종료
+    //         handleOk(response.data, false);  // 새로 입력된 데이터를 handleOk 함수로 전달, 두번째 인자-closeModal=false
+    //         setIsEditing(false); // 저장 후 편집 모드 종료
             
-            swalOptions.title = '성공!',
-            swalOptions.text = `성공적으로 수정되었습니다.`;
-            swalOptions.icon = 'success';
-        } catch (error) {
-            console.error('Error saving document:', error);
-            swalOptions.title = '실패!',
-            swalOptions.text = `수정에 실패하였습니다.`;
-            swalOptions.icon = 'error';
-        }
-        Swal.fire(swalOptions);
-    };
+    //         swalOptions.title = '성공!',
+    //         swalOptions.text = `성공적으로 수정되었습니다.`;
+    //         swalOptions.icon = 'success';
+    //     } catch (error) {
+    //         console.error('Error saving document:', error);
+    //         swalOptions.title = '실패!',
+    //         swalOptions.text = `수정에 실패하였습니다.`;
+    //         swalOptions.icon = 'error';
+    //     }
+    //     Swal.fire(swalOptions);
+    // };
 
-    const onEditClick = () => {
-        setErrors({});
-        setIsEditing(true); // 비편집 모드일 때 편집 모드로 전환
-    };
-    const onCancelClick = () => {
-        setErrors({});
-        if (innerSelectedSd) {
-            setFormData({
-                actvYear: String(innerSelectedSd.actvYear || new Date().getFullYear()),
-                actvMth: String(innerSelectedSd.actvMth || (new Date().getMonth() + 1)),
-                name: innerSelectedSd.name || '',
-                fileList: Array.isArray(innerSelectedSd.files) ? innerSelectedSd.files.map(file => ({
-                    name: file.name,
-                    status: 'done',
-                    url: file.url
-                })) : []
-            });
-        }
-        handleOk(innerSelectedSd, false);
-        setIsEditing(false);
-    };
+    // const onEditClick = () => {
+    //     setErrors({});
+    //     setIsEditing(true); // 비편집 모드일 때 편집 모드로 전환
+    // };
+    // const onCancelClick = () => {
+    //     setErrors({});
+    //     if (innerSelectedSd) {
+    //         setFormData({
+    //             actvYear: String(innerSelectedSd.actvYear || new Date().getFullYear()),
+    //             actvMth: String(innerSelectedSd.actvMth || (new Date().getMonth() + 1)),
+    //             name: innerSelectedSd.name || '',
+    //             fileList: Array.isArray(innerSelectedSd.files) ? innerSelectedSd.files.map(file => ({
+    //                 name: file.name,
+    //                 status: 'done',
+    //                 url: file.url
+    //             })) : []
+    //         });
+    //     }
+    //     handleOk(innerSelectedSd, false);
+    //     setIsEditing(false);
+    // };
 
-    const showEditingAlert = () => {
-        Swal.fire({
-            icon: 'warning',
-            title: '저장되지 않았습니다',
-            text: '변경사항이 저장되지 않았습니다. 정말 닫으시겠습니까?',
-            showCancelButton: true,
-            cancelButtonText: '취소',
-            confirmButtonText: '확인'
-        }).then(result => {
-            if (result.isConfirmed) {
-                onCancelClick(); // 변경사항 취소 및 폼 데이터 복원
-                handleCancel(); // 모달 닫기 처리
-            }
-        });
-    };
+    // const showEditingAlert = () => {
+    //     Swal.fire({
+    //         icon: 'warning',
+    //         title: '저장되지 않았습니다',
+    //         text: '변경사항이 저장되지 않았습니다. 정말 닫으시겠습니까?',
+    //         showCancelButton: true,
+    //         cancelButtonText: '취소',
+    //         confirmButtonText: '확인'
+    //     }).then(result => {
+    //         if (result.isConfirmed) {
+    //             onCancelClick(); // 변경사항 취소 및 폼 데이터 복원
+    //             handleCancel(); // 모달 닫기 처리
+    //         }
+    //     });
+    // };
 
-    return (
-        <Modal
-            open={isModalOpen}
-            onCancel={isEditing ? showEditingAlert : handleCancel} // 수정 중일 때 닫기 시도 시 경고 알림
-            width={400}
-            footer={null} //Ant Design의 기본 footer 제거(Cancel, OK 버튼)
-            maskClosable={!isEditing} // 모달 밖을 클릭해도 닫히지 않게 설정
-        >
-            <div className={sdStyles.modal_header}>
-                <div className={modalStyles.title}>증빙서류 상세보기</div>
-            </div>
+    // return (
+    //     <Modal
+    //         open={isModalOpen}
+    //         onCancel={isEditing ? showEditingAlert : handleCancel} // 수정 중일 때 닫기 시도 시 경고 알림
+    //         width={400}
+    //         footer={null} //Ant Design의 기본 footer 제거(Cancel, OK 버튼)
+    //         maskClosable={!isEditing} // 모달 밖을 클릭해도 닫히지 않게 설정
+    //     >
+    //         <div className={sdStyles.modal_header}>
+    //             <div className={modalStyles.title}>증빙서류 상세보기</div>
+    //         </div>
 
-            <div className={sdStyles.input_container}>
+    //         <div className={sdStyles.input_container}>
 
-                <div className={sdStyles.input_item}>
-                    <div className={sdStyles.input_title}>
-                        대상년월
-                        <span className={sdStyles.requiredAsterisk}>*</span>
-                    </div>
-                    <div className={sdStyles.select_item}>
-                        <Select
-                            id="actvYear"
-                            value={formData.actvYear}
-                            onChange={(value) => setFormData(prevData => ({ ...prevData, actvYear: value }))}
-                            disabled={true} // 항상 비활성화
-                        >
-                            {yearSelectOptions.map(option => (
-                                <Select.Option key={option.value} value={option.value}>
-                                    {option.label}
-                                </Select.Option>
-                            ))}
-                        </Select>
-                        <div>년</div>
-                        <Select
-                            id="actvMth"
-                            value={formData.actvMth}
-                            onChange={(value) => setFormData(prevData => ({ ...prevData, actvMth: value }))}
-                            disabled={true} // 항상 비활성화
-                        >
-                            {selectMonth.map(option => (
-                                <Select.Option key={option.value} value={option.value}>
-                                    {option.label}
-                                </Select.Option>
-                            ))}
-                        </Select>
-                        <div>월</div>
-                    </div>
-                    {errors.actvYearMth && <div className={modalStyles.error_message}>{errors.actvYearMth}</div>}
-                </div>
+    //             <div className={sdStyles.input_item}>
+    //                 <div className={sdStyles.input_title}>
+    //                     대상년월
+    //                     <span className={sdStyles.requiredAsterisk}>*</span>
+    //                 </div>
+    //                 <div className={sdStyles.select_item}>
+    //                     <Select
+    //                         id="actvYear"
+    //                         value={formData.actvYear}
+    //                         onChange={(value) => setFormData(prevData => ({ ...prevData, actvYear: value }))}
+    //                         disabled={true} // 항상 비활성화
+    //                     >
+    //                         {yearSelectOptions.map(option => (
+    //                             <Select.Option key={option.value} value={option.value}>
+    //                                 {option.label}
+    //                             </Select.Option>
+    //                         ))}
+    //                     </Select>
+    //                     <div>년</div>
+    //                     <Select
+    //                         id="actvMth"
+    //                         value={formData.actvMth}
+    //                         onChange={(value) => setFormData(prevData => ({ ...prevData, actvMth: value }))}
+    //                         disabled={true} // 항상 비활성화
+    //                     >
+    //                         {selectMonth.map(option => (
+    //                             <Select.Option key={option.value} value={option.value}>
+    //                                 {option.label}
+    //                             </Select.Option>
+    //                         ))}
+    //                     </Select>
+    //                     <div>월</div>
+    //                 </div>
+    //                 {errors.actvYearMth && <div className={modalStyles.error_message}>{errors.actvYearMth}</div>}
+    //             </div>
 
-                <div className={sdStyles.input_item}>
-                    <div className={sdStyles.input_title}>
-                        등록자
-                    </div>
-                    <input className={sdStyles.search} id="creator"
-                        value={selectedSd.creatorDeptCode+" / "+selectedSd.creatorName}
-                        onChange={(e) => setFormData(prevData => ({ ...prevData, name: e.target.value }))}
-                        disabled={true} // 항상 비활성화
-                    />
-                </div>
+    //             <div className={sdStyles.input_item}>
+    //                 <div className={sdStyles.input_title}>
+    //                     등록자
+    //                 </div>
+    //                 <input className={sdStyles.search} id="creator"
+    //                     value={selectedSd.creatorDeptCode+" / "+selectedSd.creatorName}
+    //                     onChange={(e) => setFormData(prevData => ({ ...prevData, name: e.target.value }))}
+    //                     disabled={true} // 항상 비활성화
+    //                 />
+    //             </div>
 
-                <div className={sdStyles.input_item}>
-                    <div className={sdStyles.input_title}>
-                        자료명
-                        <span className={sdStyles.requiredAsterisk}>*</span>
-                    </div>
-                    <input className={sdStyles.search} id="name"
-                        value={formData.name}
-                        onChange={(e) => setFormData(prevData => ({ ...prevData, name: e.target.value }))}
-                        disabled={!isEditing} // 편집 모드가 아닐 때 비활성화
-                    />
-                    {errors.name && <div className={modalStyles.error_message}>{errors.name}</div>}
-                </div>
+    //             <div className={sdStyles.input_item}>
+    //                 <div className={sdStyles.input_title}>
+    //                     자료명
+    //                     <span className={sdStyles.requiredAsterisk}>*</span>
+    //                 </div>
+    //                 <input className={sdStyles.search} id="name"
+    //                     value={formData.name}
+    //                     onChange={(e) => setFormData(prevData => ({ ...prevData, name: e.target.value }))}
+    //                     disabled={!isEditing} // 편집 모드가 아닐 때 비활성화
+    //                 />
+    //                 {errors.name && <div className={modalStyles.error_message}>{errors.name}</div>}
+    //             </div>
 
-                <div className={sdStyles.upload_item}>
-                    <div className={sdStyles.upload_header}>
-                        <div className={sdStyles.input_title}>
-                            첨부파일
-                            <span className={sdStyles.requiredAsterisk}>*</span>
-                        </div>
-                        <div>
-                            <input
-                                type="file"
-                                id="fileList"
-                                name="fileList"
-                                multiple
-                                style={{ display: 'none' }} // 숨김 처리
-                                onChange={handleFileChange} // 파일 선택 시 호출
-                                disabled={!isEditing} // 편집 모드가 아닐 때 비활성화
-                            />
-                            <button
-                                type="button"
-                                onClick={() => document.getElementById('fileList').click()}
-                                className={ps12Styles.upload_button}
-                                disabled={!isEditing} // 편집 모드가 아닐 때 비활성화
-                            >
-                                파일선택 <PaperClipOutlined />
-                            </button>
-                        </div>
-                    </div>
-                    <div className={sdStyles.file_list_container}>
-                        <div className={sdStyles.file_list}>
-                            {formData.fileList.length === 0 ? (
-                                <></>
-                            ) : (
-                                formData.fileList.map((file, index) => { // file.name 편집모드 아닐 때는 클릭시 다운
-                                    let displayName = file.name;
-                                    if (file.status === 'done') {
-                                        const underscoreIndex = file.name.indexOf('_');
-                                        if (underscoreIndex !== -1) {
-                                            displayName = file.name.substring(underscoreIndex + 1);
-                                        }
-                                    }
+    //             <div className={sdStyles.upload_item}>
+    //                 <div className={sdStyles.upload_header}>
+    //                     <div className={sdStyles.input_title}>
+    //                         첨부파일
+    //                         <span className={sdStyles.requiredAsterisk}>*</span>
+    //                     </div>
+    //                     <div>
+    //                         <input
+    //                             type="file"
+    //                             id="fileList"
+    //                             name="fileList"
+    //                             multiple
+    //                             style={{ display: 'none' }} // 숨김 처리
+    //                             onChange={handleFileChange} // 파일 선택 시 호출
+    //                             disabled={!isEditing} // 편집 모드가 아닐 때 비활성화
+    //                         />
+    //                         <button
+    //                             type="button"
+    //                             onClick={() => document.getElementById('fileList').click()}
+    //                             className={ps12Styles.upload_button}
+    //                             disabled={!isEditing} // 편집 모드가 아닐 때 비활성화
+    //                         >
+    //                             파일선택 <PaperClipOutlined />
+    //                         </button>
+    //                     </div>
+    //                 </div>
+    //                 <div className={sdStyles.file_list_container}>
+    //                     <div className={sdStyles.file_list}>
+    //                         {formData.fileList.length === 0 ? (
+    //                             <></>
+    //                         ) : (
+    //                             formData.fileList.map((file, index) => { // file.name 편집모드 아닐 때는 클릭시 다운
+    //                                 let displayName = file.name;
+    //                                 if (file.status === 'done') {
+    //                                     const underscoreIndex = file.name.indexOf('_');
+    //                                     if (underscoreIndex !== -1) {
+    //                                         displayName = file.name.substring(underscoreIndex + 1);
+    //                                     }
+    //                                 }
                                     
-                                    return (
-                                        <div key={index} className={sdStyles.file_item}>
-                                            {isEditing ? (
-                                                displayName
-                                            ) : (
-                                                <a href={file.url} target="_blank" rel="noopener noreferrer">
-                                                    {displayName}
-                                                </a>
-                                            )}
-                                            {isEditing && (
-                                                <button
-                                                    type="button"
-                                                    className={sdStyles.remove_button}
-                                                    onClick={() => handleFileRemove(file.name)}
-                                                >
-                                                    <CloseOutlined />
-                                                </button>
-                                            )}
-                                        </div>
-                                    )
-                                })
-                            )}
-                        </div>
-                    </div>
-                    {errors.fileList && <div className={modalStyles.error_message}>{errors.fileList}</div>}
-                </div>
-            </div>
+    //                                 return (
+    //                                     <div key={index} className={sdStyles.file_item}>
+    //                                         {isEditing ? (
+    //                                             displayName
+    //                                         ) : (
+    //                                             <a href={file.url} target="_blank" rel="noopener noreferrer">
+    //                                                 {displayName}
+    //                                             </a>
+    //                                         )}
+    //                                         {isEditing && (
+    //                                             <button
+    //                                                 type="button"
+    //                                                 className={sdStyles.remove_button}
+    //                                                 onClick={() => handleFileRemove(file.name)}
+    //                                             >
+    //                                                 <CloseOutlined />
+    //                                             </button>
+    //                                         )}
+    //                                     </div>
+    //                                 )
+    //                             })
+    //                         )}
+    //                     </div>
+    //                 </div>
+    //                 {errors.fileList && <div className={modalStyles.error_message}>{errors.fileList}</div>}
+    //             </div>
+    //         </div>
 
-            {!isEditing ? (
-                <button onClick={onEditClick} className={sdStyles.edit_button}>수정</button>
-            ) : (
-                <div className={sdStyles.button_group}>
-                    <button onClick={onCancelClick} className={sdStyles.cancel_button}>취소</button>
-                    <button onClick={onSaveClick} className={sdStyles.save_button}>저장</button>
-                </div>
-            )}
-        </Modal>
-    )
+    //         {!isEditing ? (
+    //             <button onClick={onEditClick} className={sdStyles.edit_button}>수정</button>
+    //         ) : (
+    //             <div className={sdStyles.button_group}>
+    //                 <button onClick={onCancelClick} className={sdStyles.cancel_button}>취소</button>
+    //                 <button onClick={onSaveClick} className={sdStyles.save_button}>저장</button>
+    //             </div>
+    //         )}
+    //     </Modal>
+    // )
 }
