@@ -51,7 +51,7 @@ export default function Pdc({pjtId}) {                                          
     const [inputEmpId, setInputEmpId] = useState('');                                     // 입력한 사번
     const [inputEmpName, setInputEmpName] = useState('');                                       // 입력한 사원명
 
-    const { handleCancel, onDeleteClick, isModalOpen } = useModalActions();
+    const { showModal, closeModal, isModalOpen } = useModalActions();
     const handleOk = useHandleOkAction();
     const searchAction = useSearchAction();
     const submitAction = useHandleSubmitAction();
@@ -97,22 +97,22 @@ export default function Pdc({pjtId}) {                                          
                     data={managers}
                     columns={pjtManagerColumns}                 
                     buttons={['Delete']}
-                    onClicks={[onDeleteClick]}
+                    onClicks={[() => showModal('Delete')]}
                     onRowClick={handleManagerClick}
                     selectedRows={[selectedManager]}
                     modals={[
                         {
-                            'modalType': 'Delete',
-                            'isModalOpen': isModalOpen.Delete,
-                            'handleOk': () => handleOk('Delete') ({
+                            modalType: 'Delete',
+                            isModalOpen: isModalOpen.Delete,
+                            handleOk: () => handleOk('Delete') ({
                                 data: selectedManager, 
                                 setter: setManagers, 
                                 setterSelected: setSelectedManager
                               }),
-                            'handleCancel': handleCancel('Delete'),
-                            'rowData': selectedManager,
-                            'rowDataName': 'userName',
-                            'url': '/pjt/manager'
+                            handleCancel: closeModal('Delete'),
+                            rowData: selectedManager,
+                            rowDataName: 'userName',
+                            url: '/pjt/manager'
                         },
                     ]}
                 />

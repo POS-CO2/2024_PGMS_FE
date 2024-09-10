@@ -35,7 +35,7 @@ const TabContainer = styled.div`
   // padding-top: 18px;
   padding-left: 28px;
   padding-right: 16px; /* 탭과 유저 정보 사이의 간격 */
-  overflow-x: hidden;
+  overflow: hidden;
 `;
 
 const TopRightWrapper = styled.div`

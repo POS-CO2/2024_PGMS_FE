@@ -116,7 +116,7 @@ export default function Fm() {
                         </Card>
                         {/** 버튼 변경 필요(엑셀 다운로드, 삭제, 등록) 및 등록 클릭 시 모달 추가 */}
                         <Card className={sysStyles.card_box} sx={{width:"100%", height:"fit-content", borderRadius:"15px"}}>
-                        <TableCustom title="설비목록" columns={equipColumns} data={fac} selectedRows={[selectedFac]} buttons={["DownloadExcel", "Delete", "Add"]} onClicks={[() => handleExcelUploadClick(fac, 'exported_table'), handleDeleteClick, handleAddClick]} onRowClick={handleRowClick} excel={true} modals={
+                        <TableCustom title="설비목록" columns={equipColumns} data={fac} selectedRows={[selectedFac]} buttons={["DownloadExcel", "Delete", "Add"]} onClicks={[() => handleExcelUploadClick(fac, 'exported_table'), handleDeleteClick, handleAddClick]} onRowClick={handleRowClick} modals={
                             [
                                 {
                                     "modalType" : 'Delete',
