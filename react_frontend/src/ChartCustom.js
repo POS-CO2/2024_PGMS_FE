@@ -27,30 +27,19 @@ export default function ChartCustom({ title, data }) {
                         //change left yAxis label styles
                         "& .MuiChartsAxis-left .MuiChartsAxis-tickLabel": {
                             strokeWidth: "0.4",
-                            fill: "white",
                             fontWeight: "bold",
-                        },
-                        // change all labels fontFamily shown on both xAxis and yAxis
-                        "& .MuiChartsAxis-tickContainer .MuiChartsAxis-tickLabel": {
-                            fill: "white",
-                        },
-                        "& .MuiChartsAxis-tickContainer .MuiChartsAxis-tick": {
-                            stroke: "white",
                         },
                         // change bottom label styles
                         "& .MuiChartsAxis-bottom .MuiChartsAxis-tickLabel": {
                             strokeWidth: "0.5",
-                            fill: "white",
                             fontWeight: "bold",
                         },
                         // bottomAxis Line Styles
                         "& .MuiChartsAxis-bottom .MuiChartsAxis-line ": {
-                            stroke: "white",
                             strokeWidth: 0.4,
                         },
                         // leftAxis Line Styles
                         "& .MuiChartsAxis-left .MuiChartsAxis-line": {
-                            stroke: "white",
                             strokeWidth: 0.4
                         },
                     }}
