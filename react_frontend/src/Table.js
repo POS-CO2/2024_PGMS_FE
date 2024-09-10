@@ -67,7 +67,7 @@ export default function CustomizedTables({
         editingCell = {},
         pagination = true,
         modalPagination = false,
-        columns = []
+        columns = [],
     }) {
     const [selectedRow, setSelectedRow] = useState({});       // default variant의 선택 상태
     const [selectedRows, setSelectedRows] = useState([]); 

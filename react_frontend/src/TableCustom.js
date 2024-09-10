@@ -11,6 +11,7 @@ import * as tableStyles from "./assets/css/newTable.css"
 
 const CustomButton = styled(Button)`
     border-color: transparent !important;
+
     &:hover {
         color: #0EAA00 !important;
         border-color: #0EAA00 !important;
@@ -56,10 +57,11 @@ export default function TableCustom({
     columns = [],
     pagination = true,        // 테이블 페이지네이션 디폴트는 페이지네이션 하는걸로.
     modalPagination = false,
-    keyProp = undefined
+    keyProp = undefined,
+    handleYearChange = () => { },
+    year = undefined,
 }) {modalPagination
     // 버튼 활성화 상태 결정
-    
     const buttonStatus = buttons.map((button) => {
         if (button === 'Edit' || button === 'Delete' || button === 'ShowDetails') {
             if (selectedRows.includes(null) || selectedRows.includes(undefined) || Object.keys(selectedRows[0]).length === 0) {  // 선택한 row가 없으면 삭제 버튼의 onRowClick 이벤트 비활성화(variant='default')
@@ -73,6 +75,15 @@ export default function TableCustom({
 
     // key 설정
     const tableKey = (keyProp === undefined) ? JSON.stringify(data) : JSON.stringify(keyProp);
+
+    // year 관련 핸들러
+    const handlePrevYear = () => {
+        handleYearChange(year - 1);
+    };
+
+    const handleNextYear = () => {
+        handleYearChange(year + 1);
+    };
 
     return (
         <>
@@ -98,8 +109,15 @@ export default function TableCustom({
                         ) : null;
                     })}
                 </div>
+                {year && (
+                    <Space style={{ marginBottom: '0.5rem' }}>
+                        <CustomButton icon={<LeftOutlined style={{ borderColor: 'transparent' }} />} onClick={handlePrevYear} />
+                        <span>{year}</span>
+                        <CustomButton icon={<RightOutlined style={{ borderColor: 'transparent' }} />} onClick={handleNextYear} />
+                    </Space>
+                )}
                 {table ? (
-                    <Table key={tableKey} data={data} variant={variant} onRowClick={onRowClick} pagination={pagination} modalPagination={modalPagination} columns={columns}/>
+                    <Table key={tableKey} data={data} variant={variant} onRowClick={onRowClick} pagination={pagination} modalPagination={modalPagination} columns={columns} handleYearChange={handleYearChange} />
                 ) : (<></>)}
             </div>
         </>
