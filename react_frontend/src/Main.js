@@ -17,7 +17,7 @@ import LeaderboardOutlinedIcon from '@mui/icons-material/LeaderboardOutlined';
 import SummarizeOutlinedIcon from '@mui/icons-material/SummarizeOutlined';
 import { ArrowBackIos, ArrowForward, ArrowForwardIos, Girl, MarginRounded } from '@mui/icons-material';
 import { color } from 'three/webgpu';
-import { Transfer, Select, Progress } from 'antd';
+import { Transfer, Select, Progress, ConfigProvider } from 'antd';
 import axiosInstance from './utils/AxiosInstance';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { EffectCoverflow, Pagination, Navigation, A11y, Grid } from 'swiper/modules';
@@ -417,6 +417,7 @@ export default function Main() {
                             {/* <SsidChartRoundedIcon sx={{width:"2rem",height:"2rem", paddingRight:"0.5rem"}}/> */}
                             PGMS
                         </div>
+                        <ConfigProvider theme={{token:{fontFamily:"SUITE-Regular"}}}>
                         <Select defaultValue={selectedMyPjt?.pjtName} value={selectedMyPjt?.pjtName} onChange={(e) => handleDropClick(e)} style={{width:"20%", height:"2.5rem", fontSize:"4rem"}}>
                             {myPjt.map(pjt => (
                                 <Select.Option key={pjt.id} value={pjt.pjtName}>
@@ -424,6 +425,7 @@ export default function Main() {
                                 </Select.Option>
                             ))}
                         </Select>
+                        </ConfigProvider>
                     </div>
                     <div className={gridStyles.box1_comp}>
                         <Card className={gridStyles.box1_1} sx={{borderRadius:"10px"}} >
@@ -601,6 +603,7 @@ export default function Main() {
                                     </div>
                                 </div>
                                 <div style={{margin:"0 auto", height:"90%"}}>
+                                    <ConfigProvider theme={{token:{fontFamily:"SUITE-Regular"}}} >
                                     <Transfer
                                         dataSource={mockData}
                                         showSearch
@@ -616,6 +619,7 @@ export default function Main() {
                                             height:"100%"
                                         }}
                                     />
+                                    </ConfigProvider>
                                 </div>
                             </Card>
                         </div>

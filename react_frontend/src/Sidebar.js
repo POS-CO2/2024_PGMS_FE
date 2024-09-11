@@ -37,6 +37,10 @@ const StyledMenu = styled(Menu)`
     width: 100% !important;
   }
 
+  .ant-menu-title-content {
+    font-family: SUITE-Regular;
+  }
+
   .ant-menu-item-selected,
   .ant-menu-submenu-selected > .ant-menu-submenu-title {
     background-color: #dcf9d9 !important;

@@ -12,7 +12,8 @@ const StyledButton = styled.button`
   border: none;
   cursor: pointer;
   border-radius: 4px;
-  font-size: 16px;
+  font-size: 14px;
+  height: 32px;
 
   &:hover {
     background-color: #8AC784; /* 마우스 오버 시 배경색 */
@@ -78,7 +79,7 @@ export default function SearchAtModal({ name, label, required = false, modalType
             rules={[{ required: required, message: '${label} 선택은 필수입니다.' }]}
         >
             <div className={formItemStyles.input_button_container}>
-                <Input className={formItemStyles.input_field} disabled={true} value={inputValue} />
+                <Input className={formItemStyles.input_field} disabled={true} value={inputValue} style={{height:"32px"}}/>
                 <StyledButton className={formItemStyles.modal_button} type="primary" onClick={showModal}>
                     찾기
                 </StyledButton>

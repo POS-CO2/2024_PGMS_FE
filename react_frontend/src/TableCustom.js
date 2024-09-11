@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import Swal from 'sweetalert2';
 import Table from "./Table.js";
-import { DelModal, PgAddModal, PdAddModal, FlAddModal, FlEditModal, FamAddModal, FamEditModal, FadAddModal, Ps12UploadExcelModal, CmAddModal, DeleteModal, DeleteModal2, CmEditModal, CmListAddModal, CmListEditModal, FmAddModal, UmAddModal, MmAddModal, EsmAddModal, SdAddModal, SdShowDetailsModal } from "./modals/PdModal.js";
+import * as tableStyles from "./assets/css/newTable.css"
+import { DelModal, PgAddModal, PdAddModal, FlAddModal, FlEditModal, FamAddModal, FamEditModal, FadAddModal, Ps12UploadExcelModal, CmAddModal, DeleteModal, DeleteModal2, CmEditModal, CmListAddModal, CmListEditModal, FmAddModal, UmAddModal, MmAddModal, EsmAddModal, SdAddModal, SdShowDetailsModal, EfmAddModal, EfmEditModal } from "./modals/PdModal.js";
 import { ButtonGroup } from './Button';
 import axiosInstance from './utils/AxiosInstance';
 import { styled } from '@mui/material/styles';
 import { Button, Space } from 'antd';
 import { LeftOutlined, RightOutlined } from '@ant-design/icons';
-import * as tableStyles from "./assets/css/newTable.css"
 
 const CustomButton = styled(Button)`
     border-color: transparent !important;
@@ -41,7 +41,9 @@ const modalMap = {
     MmAdd: MmAddModal,
     EsmAdd: EsmAddModal,
     SdAdd: SdAddModal,
-    SdShowDetails: SdShowDetailsModal
+    SdShowDetails: SdShowDetailsModal,
+    EfmAdd: EfmAddModal,
+    EfmEdit: EfmEditModal,
 }
 
 export default function TableCustom({

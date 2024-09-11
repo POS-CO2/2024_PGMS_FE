@@ -19,6 +19,10 @@ const CustomRadioGroup = styled(Radio.Group)`
         color: #0EAA00;
         border-color: #0EAA00;
     }
+    
+    .ant-radio-button-wrapper {
+        font-family: SUITE-Regular;
+    }
 
     .ant-radio-button-wrapper:not(:first-child)::before {
         background-color: #0EAA00; /* Line between buttons */
