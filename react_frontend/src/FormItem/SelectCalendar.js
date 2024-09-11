@@ -16,7 +16,7 @@ export default function SelectCalendar({ name, label, required = false }) {
     };
 
     return (
-        <ConfigProvider locale={{ locale: 'ko' }}>
+        <ConfigProvider locale={{ locale: 'ko' }} theme={{ token:{ fontFamily:"SUITE-Regular"}}}>
             <Form.Item
                 className={formItemStyles.form_item}
                 name={name}

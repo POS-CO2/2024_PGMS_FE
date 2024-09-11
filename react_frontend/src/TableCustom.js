@@ -7,7 +7,6 @@ import axiosInstance from './utils/AxiosInstance';
 import { styled } from '@mui/material/styles';
 import { Button, Space } from 'antd';
 import { LeftOutlined, RightOutlined } from '@ant-design/icons';
-import * as tableStyles from "./assets/css/newTable.css"
 
 const CustomButton = styled(Button)`
     border-color: transparent !important;
@@ -39,7 +38,9 @@ const modalMap = {
     MmAdd: MmAddModal,
     EsmAdd: EsmAddModal,
     SdAdd: SdAddModal,
-    SdShowDetails: SdShowDetailsModal
+    SdShowDetails: SdShowDetailsModal,
+    EfmAdd: EfmAddModal,
+    EfmEdit: EfmEditModal,
 }
 
 export default function TableCustom({

@@ -7,6 +7,7 @@ import InputYear from "./FormItem/InputYear";
 import SelectCalendar from "./FormItem/SelectCalendar";
 import SearchAtModal from "./FormItem/SearchAtModal";
 import SearchBtn from "./FormItem/SearchBtn";
+import styled from 'styled-components';
 
 /**
  * 모든 FormItem에
@@ -28,6 +29,28 @@ import SearchBtn from "./FormItem/SearchBtn";
  * SearchBtn
  * - label: 기본값은 "조회"
  */
+
+const StyledForm = styled(Form)`
+    .ant-input{
+        font-family: SUITE-Regular;
+    }
+
+    .ant-form-item{
+        font-family: SUITE-Regular;
+    }
+
+    .ant-form-item-label{
+        font-family: SUITE-Regular;
+    }
+
+    .ant-form-item-required{
+        font-family: SUITE-Regular;
+    }
+
+    .ant-select-selection-item{
+        font-family: SUITE-Regular;
+    }
+`; 
 
 const formItemComponents = {
     DropDown,
@@ -72,7 +95,7 @@ export default function SearchForms({ onFormSubmit, formFields, autoSubmitOnInit
     };
 
     return (
-        <Form form={form} layout="vertical" className={searchFormStyles.form_container} onFinish={handleFinish}>
+        <StyledForm form={form} layout="vertical" className={searchFormStyles.form_container} onFinish={handleFinish}>
             {formFields.map((field, index) => {
                 const FormItemComponent = formItemComponents[field.type];
                 return (
@@ -95,6 +118,6 @@ export default function SearchForms({ onFormSubmit, formFields, autoSubmitOnInit
                 )
             })}
             <SearchBtn/>
-        </Form>
+        </StyledForm>
     );
 };

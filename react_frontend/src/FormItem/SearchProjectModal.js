@@ -12,7 +12,10 @@ import { CustomButton } from '../Button';
 
 const CustomInput = styled(Input)`
     background-color: #ECF1F4 !important;
-
+    font-family: SUITE-Regular;
+    .ant-input{
+      font-family: SUITE-Regular;
+    }
     &:focus, &:hover, &.ant-input-focused, &:focus-within {
         outline: none;
         box-shadow: 0 0 0 0.5px #0EAA00 !important;
@@ -109,7 +112,7 @@ export default function ModalComponent({ isModalOpen, handleOk, handleCancel}) {
               allowClear={{ clearIcon: <CloseOutlined style={{color: "red"}} /> }}
               onChange={(e) => setPjtCode(e.target.value)}
               onKeyDown={handleKeyDown}
-              style={{ width: '12rem' }}
+              style={{ width: '12rem', fontFamily:"SUITE-Regular" }}
             />
           </div>
           <div className={pjtModalStyles.search_item}>
@@ -120,7 +123,7 @@ export default function ModalComponent({ isModalOpen, handleOk, handleCancel}) {
                 allowClear={{ clearIcon: <CloseOutlined style={{color: "red"}} /> }}
                 onChange={(e) => setPjtName(e.target.value)}
                 onKeyDown={handleKeyDown}
-                style={{ width: '12rem' }}
+                style={{ width: '12rem', fontFamily:"SUITE-Regular" }}
               />
               <button className={pjtModalStyles.search_button} onClick={handleFormSubmit}>찾기</button>
             </div>
