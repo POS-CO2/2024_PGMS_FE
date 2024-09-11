@@ -121,8 +121,8 @@ export default function Efm() {
             </div>
             <SearchForms onFormSubmit={handleFormSubmit} formFields={formField_efm}/>
             <div className={sysStyles.main_grid} >
-                <Card className={sysStyles.card_box} sx={{width:"50%", height:"75vh", borderRadius:"15px"}}>
-                    <TableCustom title="활동자료" columns={equipActvColumns} data={actv} onRowClick={handleRowClick}/>
+                <Card className={sysStyles.card_box} sx={{width:"50%", height:"93vh", borderRadius:"15px"}}>
+                    <TableCustom title="활동자료" columns={equipActvColumns} data={actv} onRowClick={handleRowClick} pagination={true} modalPagination={false}/>
                 </Card>
                 {showSearchResult ? (
                     <>
@@ -162,7 +162,7 @@ export default function Efm() {
                                         'isModalOpen': isModalOpen.EfmEdit,
                                         'handleOk': handleOk('EfmEdit'),
                                         'handleCancel': handleCancel('EfmEdit'),
-                                        'rowData': selectedEfm,
+                                        'rowData': {...selectedEfm,"inputUnitCode" : selectedActv.inputUnitCode, "actvDataId": selectedActv.id},
                                     },
                                     isModalOpen.Delete && {
                                         "modalType" : 'Delete',

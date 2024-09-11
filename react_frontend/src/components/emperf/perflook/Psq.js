@@ -171,7 +171,7 @@ function TableTab({ data, pjtName }) {
 
     return (
         <Card sx={{ width: "100%", height: "100%", borderRadius: "15px" }}>
-            <TableCustom columns={perfPjtColumns} title="프로젝트 실적 표" data={data} buttons={['DownloadExcel']} onClicks={[() => onDownloadExcelClick(data)]} />
+            <TableCustom columns={perfPjtColumns} title="프로젝트 실적 표" data={data} buttons={['DownloadExcel']} onClicks={[() => onDownloadExcelClick(data)]} monthPagination={true} pagination={false} />
         </Card>
     )
 }

@@ -10,13 +10,13 @@ export function CustomBarChart({ data }){
             <BarChart
                 borderRadius={10}
                 series={data}
-                barLabel={(item, context) => {
-                    return context.bar.height < 60 ? null : item.value?.toString();
-                }}
+                // barLabel={(item, context) => {
+                //     return context.bar.height < 60 ? null : item.value?.toString();
+                // }}
                 xAxis={[
                     {
                         scaleType: 'band',
-                        data: ['Jan', 'Feb', 'Mar', "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
+                        data: ['1월', '2월', '3월', "4월", "5월", "6월", "7월", "8월", "9월", "10월", "11월", "12월"],
                         id: 'months',
                     }, 
                 ]}
@@ -29,6 +29,9 @@ export function CustomBarChart({ data }){
                         strokeWidth:"0.4",
                         fill:"white",
                         fontWeight:"bold",
+                    },
+                    "& .MuiBarLabel-root text":{
+                        color:"white",
                     },
                 // change all labels fontFamily shown on both xAxis and yAxis
                     "& .MuiChartsAxis-tickContainer .MuiChartsAxis-tickLabel":{
@@ -97,6 +100,7 @@ export function CustomLineChart(){
                         fill:"white",
                         fontWeight:"bold",
                         display: 'none',
+                        fontFamily:"SUITE-Regular",
                     },
                 // change all labels fontFamily shown on both xAxis and yAxis
                     "& .MuiChartsAxis-tickContainer .MuiChartsAxis-tickLabel":{
