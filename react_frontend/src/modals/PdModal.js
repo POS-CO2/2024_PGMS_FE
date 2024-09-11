@@ -1037,6 +1037,7 @@ export function CmAddModal({ isModalOpen, handleOk, handleCancel }) {
     const [codeGrpName, setCodeGrpName] = useState('');
     const [codeGrpNameEn, setCodeGrpNameEn] = useState('');
     const [note, setNote] = useState('');
+    const [error, setError] = useState({});
 
     const handleSelect = async() => {
         let swalOptions = {
@@ -1049,6 +1050,14 @@ export function CmAddModal({ isModalOpen, handleOk, handleCancel }) {
             codeGrpNameEn,
             note,
         };
+        let newError = {};
+        if(!formData.codeGrpNo) newError.codeGrpNo = '코드그룹ID를 입력해주세요.';
+        if(!formData.codeGrpName) newError.codeGrpName = '코드그룹명을 입력해주세요.';
+        if(!formData.codeGrpNameEn) newError.codeGrpNameEn = '영문명을 입력해주세요.';
+        if (Object.keys(newError).length > 0) {
+            setError(newError);
+            return;
+        }
         try {
             // POST 요청으로 서버에 데이터 전송
             const {data} = await axiosInstance.post('/sys/codegroup', formData);
@@ -1081,20 +1090,23 @@ export function CmAddModal({ isModalOpen, handleOk, handleCancel }) {
             <div className={sysStyles.card_box}>
                 <div className={sysStyles.text_field} style={{ marginTop: "0.5rem" }}>
                     <div className={sysStyles.text}>
-                        {"코드 그룹 ID"}
+                        {"코드그룹ID"}
                     </div>
                     {/* <TextField size="small" id='codeGrpNo' value={codeGrpNo} onChange={(e) => setCodeGrpNo(e.target.value)} label="코드 그룹 번호" variant='outlined' sx={{ width: "20rem" }} /> */}
-                    <Input id='codeGrpNo' value={codeGrpNo} onChange={(e) => setCodeGrpNo(e.target.value)} label="코드 그룹 번호" style={{width:"18rem"}} />
+                    <Input id='codeGrpNo' value={codeGrpNo} onChange={(e) => setCodeGrpNo(e.target.value)} label="코드그룹번호" style={{width:"18rem"}} />
+                    {error.codeGrpNo && <div className={modalStyles.error_message}>{error.codeGrpNo}</div>}
                 </div>
                 <div className={sysStyles.text_field}>
-                    <div className={sysStyles.text}>{"코드 그룹 명"}</div>
+                    <div className={sysStyles.text}>{"코드그룹명"}</div>
                     {/* <TextField size="small" id='codeGrpName' value={codeGrpName} onChange={(e) => setCodeGrpName(e.target.value)} label="코드 그룹 명" variant='outlined' sx={{ width: "20rem" }} /> */}
-                    <Input id='codeGrpNo' value={codeGrpName} onChange={(e) => setCodeGrpName(e.target.value)} label="코드 그룹 명" style={{width:"18rem"}} />
+                    <Input id='codeGrpName' value={codeGrpName} onChange={(e) => setCodeGrpName(e.target.value)} label="코드그룹명" style={{width:"18rem"}} />
+                    {error.codeGrpName && <div className={modalStyles.error_message}>{error.codeGrpName}</div>}
                 </div>
                 <div className={sysStyles.text_field}>
-                    <div className={sysStyles.text}>{"영문 명"}</div>
+                    <div className={sysStyles.text}>{"영문명"}</div>
                     {/* <TextField size="small" id='codeGrpNameEn' value={codeGrpNameEn} onChange={(e) => setCodeGrpNameEn(e.target.value)} label="영문 명" variant='outlined' sx={{ width: "20rem" }} /> */}
-                    <Input id='codeGrpNoEn' value={codeGrpNameEn} onChange={(e) => setCodeGrpNameEn(e.target.value)} label="영문 명" style={{width:"18rem"}} />
+                    <Input id='codeGrpNameEn' value={codeGrpNameEn} onChange={(e) => setCodeGrpNameEn(e.target.value)} label="영문명" style={{width:"18rem"}} />
+                    {error.codeGrpNameEn && <div className={modalStyles.error_message}>{error.codeGrpNameEn}</div>}
                 </div>
                 <div className={sysStyles.text_field}>
                     <div className={sysStyles.text}>{"노트"}</div>
@@ -1120,6 +1132,7 @@ export function CmEditModal({ isModalOpen, handleOk, handleCancel, rowData }) {
     const [codeGrpName, setCodeGrpName] = useState(rowData.codeGrpName);
     const [codeGrpNameEn, setCodeGrpNameEn] = useState(rowData.codeGrpNameEn);
     const [note, setNote] = useState(rowData.note);
+    const [error, setError] = useState({});
     // 등록 버튼 클릭 시 호출될 함수
     const handleSelect = async() => {
 
@@ -1133,6 +1146,14 @@ export function CmEditModal({ isModalOpen, handleOk, handleCancel, rowData }) {
             codeGrpNameEn,
             note,
         };
+        let newError = {};
+        if(!formData.codeGrpNo) newError.codeGrpNo = '코드그룹ID를 입력해주세요.';
+        if(!formData.codeGrpName) newError.codeGrpName = '코드그룹명을 입력해주세요.';
+        if(!formData.codeGrpNameEn) newError.codeGrpNameEn = '영문명을 입력해주세요.';
+        if (Object.keys(newError).length > 0) {
+            setError(newError);
+            return;
+        }
         try {
             const {data} = await axiosInstance.patch('/sys/codegroup', formData);
             // handleOk을 호출하여 모달을 닫고 상위 컴포넌트에 알림
@@ -1163,17 +1184,20 @@ export function CmEditModal({ isModalOpen, handleOk, handleCancel, rowData }) {
             <div className={sysStyles.card_box}>
                 <div className={sysStyles.text_field} style={{ marginTop: "0.5rem" }}>
                     <div className={sysStyles.text}>
-                        {"코드 그룹 ID"}
+                        {"코드그룹ID"}
                     </div>
-                    <Input id='codeGrpNo' value={codeGrpNo} onChange={(e) => setCodeGrpNo(e.target.value)} label="코드 그룹 번호" style={{width:"18rem"}} />
+                    <Input id='codeGrpNo' value={codeGrpNo} onChange={(e) => setCodeGrpNo(e.target.value)} label="코드그룹번호" style={{width:"18rem"}} />
+                    {error.codeGrpNo && <div className={modalStyles.error_message}>{error.codeGrpNo}</div>}
                 </div>
                 <div className={sysStyles.text_field}>
-                    <div className={sysStyles.text}>{"코드 그룹 명"}</div>
-                    <Input id='codeGrpNo' value={codeGrpName} onChange={(e) => setCodeGrpName(e.target.value)} label="코드 그룹 명" style={{width:"18rem"}} />
+                    <div className={sysStyles.text}>{"코드그룹명"}</div>
+                    <Input id='codeGrpName' value={codeGrpName} onChange={(e) => setCodeGrpName(e.target.value)} label="코드그룹명" style={{width:"18rem"}} />
+                    {error.codeGrpName && <div className={modalStyles.error_message}>{error.codeGrpName}</div>}
                 </div>
                 <div className={sysStyles.text_field}>
-                    <div className={sysStyles.text}>{"영문 명"}</div>
-                    <Input id='codeGrpNoEn' value={codeGrpNameEn} onChange={(e) => setCodeGrpNameEn(e.target.value)} label="영문 명" style={{width:"18rem"}} />
+                    <div className={sysStyles.text}>{"영문명"}</div>
+                    <Input id='codeGrpNameEn' value={codeGrpNameEn} onChange={(e) => setCodeGrpNameEn(e.target.value)} label="영문명" style={{width:"18rem"}} />
+                    {error.codeGrpNameEn && <div className={modalStyles.error_message}>{error.codeGrpNameEn}</div>}
                 </div>
                 <div className={sysStyles.text_field}>
                     <div className={sysStyles.text}>{"노트"}</div>
@@ -1262,6 +1286,8 @@ export function CmListAddModal({ isModalOpen, handleOk, handleCancel, rowData })
     const [attri1, setAttri1] = useState('');
     const [attri2, setAttri2] = useState('');
     const [note, setNote] = useState('');
+    const [error, setError] = useState({});
+
     const handleSelect = async() => {
         let swalOptions = {
             confirmButtonText: '확인'
@@ -1276,6 +1302,16 @@ export function CmListAddModal({ isModalOpen, handleOk, handleCancel, rowData })
             attri2,
             note,
         };
+
+        let newError = {};
+        if(!formData.code) newError.code = '코드번호를 입력해주세요.';
+        if(!formData.codeName) newError.codeName = '코드이름을 입력해주세요.';
+        if (Object.keys(newError).length > 0) {
+            setError(newError);
+            return;
+        }
+
+
         try {
             // POST 요청으로 서버에 데이터 전송
             const {data} = await axiosInstance.post('/sys/code', formData);
@@ -1321,11 +1357,13 @@ export function CmListAddModal({ isModalOpen, handleOk, handleCancel, rowData })
                     <div className={sysStyles.text}>{"코드"}</div>
                     {/* <TextField size='small' id='code' value={code} onChange={(e) => setCode(e.target.value)} label="코드" variant='outlined' sx={{ width: "20rem" }} /> */}
                     <Input id='code' value={code} onChange={(e) => setCode(e.target.value)} label="코드" style={{width:"18rem"}} />
+                    {error.code && <div className={modalStyles.error_message}>{error.code}</div>}
                 </div>
                 <div className={sysStyles.text_field}>
                     <div className={sysStyles.text}>{"코드 명"}</div>
                     {/* <TextField size='small' id='codeName' value={codeName} onChange={(e) => setCodeName(e.target.value)} label="코드 명" variant='outlined' sx={{ width: "20rem" }} /> */}
                     <Input id='codeName' value={codeName} onChange={(e) => setCodeName(e.target.value)} label="코드 명" style={{width:"18rem"}} />
+                    {error.codeName && <div className={modalStyles.error_message}>{error.codeName}</div>}
                 </div>
                 <div className={sysStyles.text_field}>
                     <div className={sysStyles.text}>{"속성1"}</div>
@@ -1361,7 +1399,7 @@ export function CmListEditModal({ isModalOpen, handleOk, handleCancel, rowData }
     const [attri1, setAttri1] = useState(rowData.attri1);
     const [attri2, setAttri2] = useState(rowData.attri2);
     const [note, setNote] = useState(rowData.note);
-    console.log(rowData);
+    const [error, setError] = useState({});
     const handleSelect = async() => {
         let swalOptions = {
             confirmButtonText: '확인'
@@ -1376,6 +1414,15 @@ export function CmListEditModal({ isModalOpen, handleOk, handleCancel, rowData }
             attri2,
             note,
         };
+
+        let newError = {};
+        if(!formData.code) newError.code = '코드번호를 입력해주세요.';
+        if(!formData.codeName) newError.codeName = '코드이름을 입력해주세요.';
+        if (Object.keys(newError).length > 0) {
+            setError(newError);
+            return;
+        }
+
         try {
             // POST 요청으로 서버에 데이터 전송
             const {data} = await axiosInstance.patch('/sys/code', formData);
@@ -1420,12 +1467,14 @@ export function CmListEditModal({ isModalOpen, handleOk, handleCancel, rowData }
                     <div className={sysStyles.text}>{"코드"}</div>
                     {/* <TextField size='small' id='code' value={code} onChange={(e) => setCode(e.target.value)} label="코드" variant='outlined' sx={{ width: "20rem" }} /> */}
                     <Input id='code' value={code} onChange={(e) => setCode(e.target.value)} label="코드" style={{width:"18rem"}} />
+                    {error.code && <div className={modalStyles.error_message}>{error.code}</div>}
                 </div>
                 <div className={sysStyles.text_field}>
                     <div className={sysStyles.text}>{"코드 명"}</div>
                     {/* <TextField size='small' id='codeName' value={codeName} onChange={(e) => setCodeName(e.target.value)} label="코드 명" variant='outlined' sx={{ width: "20rem" }} /
                     > */}
                     <Input id='codeName' value={codeName} onChange={(e) => setCodeName(e.target.value)} label="코드 명" style={{width:"18rem"}} />
+                    {error.codeName && <div className={modalStyles.error_message}>{error.codeName}</div>}
                 </div>
                 <div className={sysStyles.text_field}>
                     <div className={sysStyles.text}>{"속성1"}</div>
@@ -1459,9 +1508,10 @@ export function EfmAddModal({ isModalOpen, handleOk, handleCancel, rowData }) {
     const [selectedGhgCode, setSelectedGhgCode] = useState([]);
     const [coefClassCode, setCoefClassCode] = useState([]);
     const [selectedCoefClassCode, setSelectedCoefClassCode] = useState([]);
-    const [unitCode, setUnitCode] = useState([]);
-    const [selectedUnitCode, setSelectedUnitCode] = useState([]);
+    const [afterSelectedCoefClassCode, setAfterSelectedCoefClassCode] = useState([]);
+    const [unitCode, setUnitCode] = useState("");
     const [coef, setCoef] = useState(0);
+    const [error, setError] = useState({});
 
     console.log(rowData);
 
@@ -1476,9 +1526,20 @@ export function EfmAddModal({ isModalOpen, handleOk, handleCancel, rowData }) {
             applyDvs: selectedApplyDvs,
             ghgCode: selectedGhgCode.length === 0 ? null : selectedGhgCode,
             coefClassCode:selectedCoefClassCode,
-            unitCode: selectedUnitCode,
+            unitCode,
             coef,
         };
+
+        let newError = {};
+        if(!formData.applyYear) newError.applyYear = '적용년도를 입력해주세요.';
+        if(!formData.applyDvs) newError.applyDvs = '적용구분을 입력해주세요.';
+        if(!formData.coefClassCode) newError.coefClassCode = '계수구분코드를 선택해주세요.';
+        if(!formData.unitCode) newError.unitCode = '계수구분코드를 선택해주세요.';
+        if(!formData.coef) newError.coef = '계수를 입력해주세요.';
+        if (Object.keys(newError).length > 0) {
+            setError(newError);
+            return;
+        }
         console.log(formData);
         try {
             // POST 요청으로 서버에 데이터 전송
@@ -1486,12 +1547,12 @@ export function EfmAddModal({ isModalOpen, handleOk, handleCancel, rowData }) {
             // handleOk을 호출하여 모달을 닫고 상위 컴포넌트에 알림
             handleOk(data);
             swalOptions.title = '성공!',
-            swalOptions.text = `${formData.ghgCode}가 성공적으로 등록되었습니다.`;
+            swalOptions.text = `배출계수가 성공적으로 등록되었습니다.`;
             swalOptions.icon = 'success';
         } catch (error) {
             console.error('Failed to add user:', error);
             swalOptions.title = '실패!',
-            swalOptions.text = `${formData.ghgCode} 등록에 실패하였습니다.`;
+            swalOptions.text = `배출계수 등록에 실패하였습니다.`;
             swalOptions.icon = 'error';
         }
         Swal.fire(swalOptions);
@@ -1501,38 +1562,47 @@ export function EfmAddModal({ isModalOpen, handleOk, handleCancel, rowData }) {
         const fetchData = async () => {
             const appDvsResponse = await axiosInstance.get(`/sys/unit?unitType=적용구분`);
             setApplyDvs(appDvsResponse.data);
-
-            const ghgResponse = await axiosInstance.get(`/sys/unit?unitType=온실가스코드`);
-            setGhgCode(ghgResponse.data);
-
+            console.log("1",appDvsResponse.data);
+            // const ghgResponse = await axiosInstance.get(`/sys/unit?unitType=온실가스코드`);
+            // setGhgCode(ghgResponse.data);
+            // console.log("2",ghgResponse.data);
             // const coefResponse = await axiosInstance.get(`/sys/unit?unitType=계수종류코드`);
             const coefResponse = [
                 {
-                    "code": 1,
-                    "name": "배출계수"
-                },
-                {
                     "code": 2,
                     "name": "순발열량"
+                },
+                {
+                    "code": 1,
+                    "name": "배출계수"
                 }
             ]
             setCoefClassCode(coefResponse);
-
+            const ghgResponse = await axiosInstance.get(`/sys/coef-unit?inputUnitCode=${rowData.inputUnitCode}`)
+            setAfterSelectedCoefClassCode(ghgResponse.data);
+            console.log(ghgResponse.data);
             // const unitCodeResponse = await axiosInstance.get(``);
-            setUnitCode([
-                {
-                    "code": 1,
-                    "name": "kgGhg"
-                },
-                {
-                    "code": 2,
-                    "name": "TJ"
-                }
-            ])
         };
 
         fetchData();
     }, [])
+    const handleInputUnitChange = (value) => {
+        console.log(value);
+        setSelectedCoefClassCode(value);
+        if (value === 2){
+            setSelectedGhgCode(null);
+        }
+        const matchedUnit = afterSelectedCoefClassCode[value === 2 ? 0 : value];
+        if (matchedUnit) {
+            setGhgCode(matchedUnit.gas);
+            setUnitCode(matchedUnit.unit);
+        }
+        else{
+            setGhgCode([]);
+            setUnitCode("");
+        }
+    }
+
 
 
     return (
@@ -1549,33 +1619,36 @@ export function EfmAddModal({ isModalOpen, handleOk, handleCancel, rowData }) {
             <div className={sysStyles.card_box}>
                 <div className={sysStyles.text_field} style={{ marginTop: "0.5rem" }}>
                     <div className={sysStyles.text}>
-                        {"적용 년도"}
+                        {"적용년도"}
                     </div>
-                    <Input id='applyYear' value={applyYear} onChange={e => setApplyYear(e.target.value)} label="적용 년도" style={{width:"18rem"}} />
+                    <Input id='applyYear' value={applyYear} onChange={e => setApplyYear(e.target.value)} label="적용년도" style={{width:"18rem"}} />
+                    {error.applyYear && <div className={modalStyles.error_message}>{error.applyYear}</div>}
                 </div>
                 <div className={sysStyles.text_field}>
-                    <div className={sysStyles.text}>{"적용 구분"}</div>
-                    <Select value={selectedApplyDvs} onChange={(value) => setSelectedApplyDvs(value)} style={{width:"18rem", height:"2rem",fontSize:"4rem"}}>
+                    <div className={sysStyles.text}>{"적용구분"}</div>
+                    <Select value={selectedApplyDvs} onChange={(value) => {setSelectedApplyDvs(value); console.log(value);}} style={{width:"18rem", height:"2rem",fontSize:"4rem"}}>
                     {applyDvs.map(option => (
                         <Select.Option key={option.code} value={option.code}>
                             {option.name}
                         </Select.Option>
                     ))}
                     </Select>
+                    {error.applyDvs && <div className={modalStyles.error_message}>{error.applyDvs}</div>}
                 </div>
                 <div className={sysStyles.text_field}>
-                    <div className={sysStyles.text}>{"계수 구분 코드"}</div>
-                    <Select value={selectedCoefClassCode} onChange={(value) => setSelectedCoefClassCode(value)} style={{width:"18rem", height:"2rem",fontSize:"4rem"}}>
+                    <div className={sysStyles.text}>{"계수구분코드"}</div>
+                    <Select value={selectedCoefClassCode} onChange={(value) => handleInputUnitChange(value)} style={{width:"18rem", height:"2rem",fontSize:"4rem"}}>
                     {coefClassCode.map(option => (
                         <Select.Option key={option.code} value={option.code}>
                             {option.name}
                         </Select.Option>
                     ))}
                     </Select>
+                    {error.coefClassCode && <div className={modalStyles.error_message}>{error.coefClassCode}</div>}
                 </div>
                 <div className={sysStyles.text_field}>
-                    <div className={sysStyles.text}>{"가스 코드"}</div>
-                    <Select value={selectedGhgCode} onChange={(value) => setSelectedGhgCode(value)} style={{width:"18rem", height:"2rem",fontSize:"4rem"}}>
+                    <div className={sysStyles.text}>{"가스코드"}</div>
+                    <Select value={selectedGhgCode} onChange={(value) => {setSelectedGhgCode(value); console.log(value);}} style={{width:"18rem", height:"2rem",fontSize:"4rem"}}>
                     {ghgCode.map(option => (
                         <Select.Option key={option.code} value={option.code}>
                             {option.name}
@@ -1585,17 +1658,13 @@ export function EfmAddModal({ isModalOpen, handleOk, handleCancel, rowData }) {
                 </div>
                 <div className={sysStyles.text_field}>
                     <div className={sysStyles.text}>{"단위"}</div>
-                    <Select value={selectedUnitCode} onChange={(value) => setSelectedUnitCode(value)} style={{width:"18rem", height:"2rem",fontSize:"4rem"}}>
-                    {unitCode.map(option => (
-                        <Select.Option key={option.code} value={option.code}>
-                            {option.name}
-                        </Select.Option>
-                    ))}
-                    </Select>
+                    <Input id='unitCode' value={unitCode} disabled label="단위" style={{width:"18rem"}} />
+                    {error.unitCode && <div className={modalStyles.error_message}>{error.unitCode}</div>}
                 </div>
                 <div className={sysStyles.text_field}>
                     <div className={sysStyles.text}>{"계수"}</div>
                     <Input id='coef' value={coef} onChange={(e) => setCoef(e.target.value)} label="계수" style={{width:"18rem"}} />
+                    {error.coef && <div className={modalStyles.error_message}>{error.coef}</div>}
                 </div>
             </div>
             <div style={{display:"flex", justifyContent:"center", alignContent:"center"}}>
@@ -1614,11 +1683,11 @@ export function EfmEditModal({ isModalOpen, handleOk, handleCancel, rowData }) {
     const [selectedGhgCode, setSelectedGhgCode] = useState(rowData.ghgCode);
     const [coefClassCode, setCoefClassCode] = useState([]);
     const [selectedCoefClassCode, setSelectedCoefClassCode] = useState(rowData.coefClassCode);
-    const [unitCode, setUnitCode] = useState([]);
+    const [afterSelectedCoefClassCode, setAfterSelectedCoefClassCode] = useState([]);
+    const [unitCode, setUnitCode] = useState(rowData.unitCode);
     const [selectedUnitCode, setSelectedUnitCode] = useState(rowData.unitCode);
     const [coef, setCoef] = useState(rowData.coef);
-
-    console.log(rowData);
+    const [error, setError] = useState({});
 
     const handleSelect = async() => {
         let swalOptions = {
@@ -1626,69 +1695,94 @@ export function EfmEditModal({ isModalOpen, handleOk, handleCancel, rowData }) {
         };
 
         const formData = {
-            actvDataId: rowData.id,
+            id: rowData.id,
+            actvDataId: rowData.actvDataId, 
             applyYear,
             applyDvs: selectedApplyDvs,
             ghgCode: selectedGhgCode,
             coefClassCode:selectedCoefClassCode,
-            unitCode: selectedUnitCode,
+            unitCode,
             coef,
         };
-        console.log(formData);
-        // try {
-        //     // POST 요청으로 서버에 데이터 전송
-        //     const {data} = await axiosInstance.patch('/equip/coef', formData);
-        //     // handleOk을 호출하여 모달을 닫고 상위 컴포넌트에 알림
-        //     handleOk(data);
-        //     swalOptions.title = '성공!',
-        //     swalOptions.text = `${formData.codeName}가 성공적으로 등록되었습니다.`;
-        //     swalOptions.icon = 'success';
-        // } catch (error) {
-        //     console.error('Failed to add user:', error);
-        //     swalOptions.title = '실패!',
-        //     swalOptions.text = `${formData.codeName} 등록에 실패하였습니다.`;
-        //     swalOptions.icon = 'error';
-        // }
-        // Swal.fire(swalOptions);
+        let newError = {};
+        if(!formData.applyYear) newError.applyYear = '적용년도를 입력해주세요.';
+        if(!formData.applyDvs) newError.applyDvs = '적용구분을 입력해주세요.';
+        if(!formData.coefClassCode) newError.coefClassCode = '계수구분코드를 선택해주세요.';
+        if(!formData.unitCode) newError.unitCode = '계수구분코드를 선택해주세요.';
+        if(!formData.coef) newError.coef = '계수구분코드를 선택해주세요.';
+        if (Object.keys(newError).length > 0) {
+            setError(newError);
+            return;
+        }
+
+        try {
+            // POST 요청으로 서버에 데이터 전송
+            const {data} = await axiosInstance.patch('/equip/coef', formData);
+            // handleOk을 호출하여 모달을 닫고 상위 컴포넌트에 알림
+            handleOk(data);
+            swalOptions.title = '성공!',
+            swalOptions.text = `배출계수가 성공적으로 등록되었습니다.`;
+            swalOptions.icon = 'success';
+        } catch (error) {
+            console.error('Failed to add user:', error);
+            swalOptions.title = '실패!',
+            swalOptions.text = `${error.response.data.message}`;
+            swalOptions.icon = 'error';
+        }
+        Swal.fire(swalOptions);
     };
 
     useEffect(() => {
         const fetchData = async () => {
             const appDvsResponse = await axiosInstance.get(`/sys/unit?unitType=적용구분`);
             setApplyDvs(appDvsResponse.data);
-
-            const ghgResponse = await axiosInstance.get(`/sys/unit?unitType=온실가스코드`);
-            setGhgCode(ghgResponse.data);
-
-            // const coefResponse = await axiosInstance.get(`/sys/unit?unitType=계수종류코드`);
+            const matchAppDvs = appDvsResponse.data.find(e => e.name === selectedApplyDvs);
+            setSelectedApplyDvs(matchAppDvs.code)
             const coefResponse = [
-                {
-                    "code": 1,
-                    "name": "배출계수"
-                },
                 {
                     "code": 2,
                     "name": "순발열량"
+                },
+                {
+                    "code": 1,
+                    "name": "배출계수"
                 }
             ]
             setCoefClassCode(coefResponse);
-
-            // const unitCodeResponse = await axiosInstance.get(``);
-            setUnitCode([
-                {
-                    "code": 1,
-                    "name": "kgGhg"
-                },
-                {
-                    "code": 2,
-                    "name": "TJ"
-                }
-            ])
+            const ghgResponse = await axiosInstance.get(`/sys/coef-unit?inputUnitCode=${rowData.inputUnitCode}`)
+            setAfterSelectedCoefClassCode(ghgResponse.data);
+            const matchCcc = ghgResponse.data.find(e => e.name === selectedCoefClassCode);
+            setGhgCode(matchCcc.gas);
+            setSelectedCoefClassCode(matchCcc.code ?? null);
+            const matchGhg = matchCcc.gas.find(e => e.name === selectedGhgCode);
+            if(matchGhg){
+                setSelectedGhgCode(matchGhg.code);
+            }
+            else{
+                setSelectedGhgCode("");
+            }
+            
         };
 
         fetchData();
     }, [])
 
+    const handleInputUnitChange = (value) => {
+        setSelectedCoefClassCode(value);
+        if (value === 2) {
+            setSelectedGhgCode(null);
+        }
+        const matchedUnit = afterSelectedCoefClassCode[value === 2 ? 0 : value];
+        if (matchedUnit) {
+            console.log(matchedUnit);
+            setGhgCode(matchedUnit.gas);
+            setUnitCode(matchedUnit.unit);
+        }
+        else{
+            setGhgCode([]);
+            setUnitCode("");
+        }
+    }
 
     return (
         <ConfigProvider
@@ -1700,36 +1794,39 @@ export function EfmEditModal({ isModalOpen, handleOk, handleCancel, rowData }) {
             footer={null}             //Ant Design의 기본 footer 제거(Cancel, OK 버튼)
         >
             {/* 모달제목 */}
-            <div className={modalStyles.title}>배출 계수 추가</div>
+            <div className={modalStyles.title}>배출 계수 수정</div>
             <div className={sysStyles.card_box}>
                 <div className={sysStyles.text_field} style={{ marginTop: "0.5rem" }}>
                     <div className={sysStyles.text}>
-                        {"적용 년도"}
+                        {"적용년도"}
                     </div>
                     <Input id='applyYear' value={applyYear} onChange={e => setApplyYear(e.target.value)} label="적용 년도" style={{width:"18rem"}} />
+                    {error.applyYear && <div className={modalStyles.error_message}>{error.applyYear}</div>}
                 </div>
                 <div className={sysStyles.text_field}>
-                    <div className={sysStyles.text}>{"적용 구분"}</div>
-                    <Select value={selectedApplyDvs} onChange={(value) => setSelectedApplyDvs(value)} style={{width:"18rem", height:"2rem", fontSize:"4rem"}}>
+                    <div className={sysStyles.text}>{"적용구분"}</div>
+                    <Select value={selectedApplyDvs} onChange={(value) => {setSelectedApplyDvs(value); console.log(value);}} style={{width:"18rem", height:"2rem", fontSize:"4rem"}}>
                     {applyDvs.map(option => (
                         <Select.Option key={option.code} value={option.code}>
                             {option.name}
                         </Select.Option>
                     ))}
                     </Select>
+                    {error.applyDvs && <div className={modalStyles.error_message}>{error.applyDvs}</div>}
                 </div>
                 <div className={sysStyles.text_field}>
-                    <div className={sysStyles.text}>{"계수 구분 코드"}</div>
-                    <Select value={selectedCoefClassCode} onChange={(value) => setSelectedCoefClassCode(value)} style={{width:"18rem", height:"2rem",fontSize:"4rem"}}>
+                    <div className={sysStyles.text}>{"계수구분코드"}</div>
+                    <Select value={selectedCoefClassCode} onChange={(value) => handleInputUnitChange(value)} style={{width:"18rem", height:"2rem",fontSize:"4rem"}}>
                     {coefClassCode.map(option => (
                         <Select.Option key={option.code} value={option.code}>
                             {option.name}
                         </Select.Option>
                     ))}
                     </Select>
+                    {error.coefClassCode && <div className={modalStyles.error_message}>{error.coefClassCode}</div>}
                 </div>
                 <div className={sysStyles.text_field}>
-                    <div className={sysStyles.text}>{"가스 코드"}</div>
+                    <div className={sysStyles.text}>{"가스코드"}</div>
                     <Select value={selectedGhgCode} onChange={(value) => setSelectedGhgCode(value)} style={{width:"18rem", height:"2rem",fontSize:"4rem"}}>
                     {ghgCode.map(option => (
                         <Select.Option key={option.code} value={option.code}>
@@ -1740,17 +1837,13 @@ export function EfmEditModal({ isModalOpen, handleOk, handleCancel, rowData }) {
                 </div>
                 <div className={sysStyles.text_field}>
                     <div className={sysStyles.text}>{"단위"}</div>
-                    <Select value={selectedUnitCode} onChange={(value) => setSelectedUnitCode(value)} style={{width:"18rem", height:"2rem",fontSize:"4rem"}}>
-                    {unitCode.map(option => (
-                        <Select.Option key={option.code} value={option.code}>
-                            {option.name}
-                        </Select.Option>
-                    ))}
-                    </Select>
+                    <Input id='unitCode' value={unitCode} disabled label="단위" style={{width:"18rem"}} />
+                    {error.unitCode && <div className={modalStyles.error_message}>{error.unitCode}</div>}
                 </div>
                 <div className={sysStyles.text_field}>
                     <div className={sysStyles.text}>{"계수"}</div>
                     <Input id='coef' value={coef} onChange={(e) => setCoef(e.target.value)} label="계수" style={{width:"18rem"}} />
+                    {error.coef && <div className={modalStyles.error_message}>{error.coef}</div>}
                 </div>
             </div>
             <div style={{display:"flex", justifyContent:"center", alignContent:"center"}}>
@@ -1887,6 +1980,7 @@ export function UmAddModal({ isModalOpen, handleOk, handleCancel }) {
     const [password, setPassword] = useState('');      // 비밀번호 상태
     const [selectedDept, setSelectedDept] = useState(''); // 부서 선택 상태
     const [selectedRole, setSelectedRole] = useState(''); // 권한 선택 상태
+    const [error, setError] = useState({});
     const access = [
         {
             value: 'FP',
@@ -1936,6 +2030,19 @@ export function UmAddModal({ isModalOpen, handleOk, handleCancel }) {
             role: selectedRole,
         };
 
+        let newError = {};
+        if (!formData.userName) newError.userName = '이름을 입력해주세요.';
+        if (!formData.loginId) newError.loginId = '로그인ID를 입력해주세요.';
+        if (!formData.password) newError.password = '비밀번호를 입력해주세요.';
+        if (!formData.deptCode) newError.deptCode = '부서를 선택해주세요.';
+        if (!formData.role) newError.role = '접근권한을 선택해주세요.';
+
+        if (Object.keys(newError).length > 0) {
+            setError(newError);
+            return;
+        }
+
+        setError({});
         try {
             // POST 요청으로 서버에 데이터 전송
             const {data} = await axiosInstance.post('/sys/user', formData);
@@ -1968,19 +2075,22 @@ export function UmAddModal({ isModalOpen, handleOk, handleCancel }) {
                 <div className={sysStyles.text_field}>
                     <div className={sysStyles.text} style={{marginTop:"0.5rem"}}>{"이름"}</div>
                     <TextField id='userName' size="small" label="이름" value={userName} onChange={(e) => setUserName(e.target.value)} borderRadious="4px" variant='outlined' sx={{ width: "20rem" }} />
+                    {error.userName && <div className={modalStyles.error_message}>{error.userName}</div>}
                 </div>
                 <div className={sysStyles.text_field} style={{ width:"20rem" }}>
                     <div className={sysStyles.text}>
-                        {"로그인 ID"}
+                        {"로그인ID"}
                     </div>
-                    <TextField id='loginId' size="small" label="로그인 ID" value={loginId} onChange={(e) => setLoginId(e.target.value)} variant='outlined' sx={{ width: "20rem" }} />
+                    <TextField id='loginId' size="small" label="로그인ID" value={loginId} onChange={(e) => setLoginId(e.target.value)} variant='outlined' sx={{ width: "20rem" }} />
+                    {error.loginId && <div className={modalStyles.error_message}>{error.loginId}</div>}
                 </div>
                 <div className={sysStyles.text_field}>
                     <div className={sysStyles.text}>{"비밀번호"}</div>
-                    <TextField id='userName' size="small" label="비밀번호" value={password} onChange={(e) => setPassword(e.target.value)} variant='outlined' sx={{ width: "20rem" }} />
+                    <TextField id='password' size="small" label="비밀번호" value={password} onChange={(e) => setPassword(e.target.value)} variant='outlined' sx={{ width: "20rem" }} />
+                    {error.password && <div className={modalStyles.error_message}>{error.password}</div>}
                 </div>
                 <div className={sysStyles.text_field}>
-                    <div className={sysStyles.text}>{"부서 명"}</div>
+                    <div className={sysStyles.text}>{"부서명"}</div>
                     <Select value={selectedDept} onChange={(value) => setSelectedDept(value)} style={{width:"20rem", height:"2.5rem",fontSize:"4rem"}}>
                     {dept.map(option => (
                         <Select.Option key={option.value} value={option.value}>
@@ -1988,9 +2098,10 @@ export function UmAddModal({ isModalOpen, handleOk, handleCancel }) {
                         </Select.Option>
                     ))}
                     </Select>
+                    {error.deptCode && <div className={modalStyles.error_message}>{error.deptCode}</div>}
                 </div>
                 <div className={sysStyles.text_field}>
-                    <div className={sysStyles.text}>{"권한"}</div>
+                    <div className={sysStyles.text}>{"접근권한"}</div>
                     <Select value={selectedRole} onChange={(value) => setSelectedRole(value)} style={{width:"20rem", height:"2.5rem", fontSize:"4rem"}}>
                     {access.map(option => (
                         <Select.Option key={option.value} value={option.value}>
@@ -1998,6 +2109,7 @@ export function UmAddModal({ isModalOpen, handleOk, handleCancel }) {
                         </Select.Option>
                     ))}
                     </Select>
+                    {error.role && <div className={modalStyles.error_message}>{error.role}</div>}
                 </div>
             </div>
             <div style={{display:"flex", justifyContent:"center", alignContent:"center"}}>
@@ -2027,6 +2139,7 @@ export function MmAddModal({ isModalOpen, handleOk, handleCancel, rowData }) {
     const [menuName, setMenuName] = useState('');
     const [url, setUrl] = useState('');
     const [orderMenu, setOrderMenu] = useState('');
+    const [error, setError] = useState({});
     
     // 등록 버튼 클릭 시 호출될 함수
     const handleSelect = async () => {
@@ -2040,6 +2153,18 @@ export function MmAddModal({ isModalOpen, handleOk, handleCancel, rowData }) {
             accessUser: selectedRole,
             menuOrder: orderMenu
         };
+        let newError = {};
+        if (!formData.menuName) newError.menuName = '메뉴이름을 입력해주세요.';
+        if (!formData.rootId) newError.rootId = '상위폴더를 선택해주세요.';
+        if (!formData.accessUser) newError.accessUser = '접근권한을 선택해주세요.';
+        if (!formData.menuOrder) newError.menuOrder = '메뉴순서를 선택해주세요.';
+
+        if (Object.keys(newError).length > 0) {
+            setError(newError);
+            return;
+        }
+
+        setError({});
         
         try {
             // POST 요청으로 서버에 데이터 전송
@@ -2100,12 +2225,13 @@ export function MmAddModal({ isModalOpen, handleOk, handleCancel, rowData }) {
             <div className={sysStyles.card_box}>
                 <div className={sysStyles.text_field} style={{ marginTop: "0.5rem" }}>
                     <div className={sysStyles.text}>
-                        {"메뉴 이름"}
+                        {"메뉴이름"}
                     </div>
-                    <TextField size='small' id='menuName' value={menuName} onChange={(e) => setMenuName(e.target.value)} label="메뉴 이름" variant='outlined' sx={{ width: "20rem" }} />
+                    <TextField size='small' id='menuName' value={menuName} onChange={(e) => setMenuName(e.target.value)} label="메뉴이름" variant='outlined' sx={{ width: "20rem" }} />
+                    {error.menuName && <div className={modalStyles.error_message}>{error.menuName}</div>}
                 </div>
                 <div className={sysStyles.text_field}>
-                    <div className={sysStyles.text}>{"상위 폴더"}</div>
+                    <div className={sysStyles.text}>{"상위폴더"}</div>
                     <Select value={selectedUpperDir} onChange={(e) => {setSelectedUpperDir(e)}} style={{width:"20rem", height:"2.5rem", fontSize:"4rem"}}>
                     {upperDir.map(option => (
                         <Select.Option key={option.id} value={option.id}>
@@ -2113,30 +2239,33 @@ export function MmAddModal({ isModalOpen, handleOk, handleCancel, rowData }) {
                         </Select.Option>
                     ))}
                     </Select>
+                    {error.rootId && <div className={modalStyles.error_message}>{error.rootId}</div>}
                 </div>
                 <div className={sysStyles.text_field}>
-                    <div className={sysStyles.text}>{"Url 주소"}</div>
+                    <div className={sysStyles.text}>{"Url주소"}</div>
                     <TextField size='small' id='address' value={url} onChange={(e) => setUrl(e.target.value)} label="Url 주소" variant='outlined' sx={{ width: "20rem" }} />
                 </div>
                 <div className={sysStyles.text_field}>
-                    <div className={sysStyles.text}>{"메뉴 순서"}</div>
-                    <Select placeholder={"메뉴 순서"} value={orderMenu} onChange={(value) => setOrderMenu(value)} style={{width:"20rem", height:"2.5rem", fontSize:"4rem"}}>
+                    <div className={sysStyles.text}>{"메뉴순서"}</div>
+                    <Select placeholder={"메뉴순서"} value={orderMenu} onChange={(value) => setOrderMenu(value)} style={{width:"20rem", height:"2.5rem", fontSize:"4rem"}}>
                     {orderMenuList.map(option => (
                         <Select.Option key={option} value={option}>
                             {option}
                         </Select.Option>
                     ))}
                     </Select>
+                    {error.menuOrder && <div className={modalStyles.error_message}>{error.menuOrder}</div>}
                 </div>
                 <div className={sysStyles.text_field}>
-                    <div className={sysStyles.text}>{"접근 권한"}</div>
-                    <Select placeholder={"접근 권한"} value={selectedRole} onChange={(value) => setSelectedRole(value)} style={{width:"20rem", height:"2.5rem", fontSize:"4rem"}}>
+                    <div className={sysStyles.text}>{"접근권한"}</div>
+                    <Select placeholder={"접근권한"} value={selectedRole} onChange={(value) => setSelectedRole(value)} style={{width:"20rem", height:"2.5rem", fontSize:"4rem"}}>
                     {access.map(option => (
                         <Select.Option key={option.value} value={option.value}>
                             {option.label}
                         </Select.Option>
                     ))}
                     </Select>
+                    {error.accessUser && <div className={modalStyles.error_message}>{error.accessUser}</div>}
                 </div>
             </div>
             <div style={{display:"flex", justifyContent:"center", alignContent:"center"}}>
