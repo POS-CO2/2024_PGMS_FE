@@ -1,28 +1,23 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Modal, Button, Upload, Select, Input } from 'antd';
+import Swal from 'sweetalert2';
+import axiosInstance from '../utils/AxiosInstance';
+import { Modal, Select, Input } from 'antd';
+import { TextField, Autocomplete } from '@mui/material';
 import { PaperClipOutlined, CloseOutlined } from '@ant-design/icons';
+import CheckOutlinedIcon from '@mui/icons-material/CheckBox';
+import CloseIcon from '@mui/icons-material/DisabledByDefault';
+import WarningAmberIcon from '@mui/icons-material/WarningAmber';
+import Table from "../Table";
+import { CustomButton } from '../Button';
+import styled from 'styled-components';
+import { pjtColumns, userColumns, equipColumns, equipActvColumns, equipEmissionColumns } from '../assets/json/tableColumn.js';
 import * as modalStyles from "../assets/css/pdModal.css";
 import * as rmStyles from "../assets/css/rmModal.css";
 import * as delStyle from "../assets/css/delModal.css";
 import * as pjtModalStyles from "../assets/css/pjtModal.css";
 import * as pdsStyles from "../assets/css/pds.css";
 import * as sysStyles from "../assets/css/sysmng.css"
-import * as sdStyles from "../assets/css/sdModal.css";
 import * as ps12Styles from "../assets/css/ps12UploadExcelModal.css";
-import * as formStyles from "../assets/css/formItem.css"
-import { EditButton } from "../Button";
-import Table from "../Table";
-import { actv } from "../assets/json/selectedPjt";
-import emsData from "../assets/json/ems";
-import { selectYear, selectMonth } from "../assets/json/sd";
-import { TextField, Box, InputLabel, MenuItem, FormControl, Autocomplete, createTheme, ThemeProvider  } from '@mui/material';
-import WarningAmberIcon from '@mui/icons-material/WarningAmber';
-import { Sledding } from '@mui/icons-material';
-import axiosInstance from '../utils/AxiosInstance.js';
-import { Center } from '@react-three/drei';
-import Swal from 'sweetalert2';
-import { pjtColumns, userColumns, equipColumns, equipActvColumns, equipLibColumns, equipEmissionColumns } from '../assets/json/tableColumn.js';
-import styled from 'styled-components';
 
 const StyledInput = styled(Input)`
   background: #ECF1F4 !important;
@@ -125,99 +120,21 @@ export function PgAddModal({ isModalOpen, handleOk, handleCancel }) {
                 <button className={pjtModalStyles.search_button} onClick={handleFormSubmit}>찾기</button>
             </div>
           </div>
+          <div className={pjtModalStyles.button_container}>
+              <CustomButton className={pjtModalStyles.select_button} onClick={handleSelect} disabled={selectedPjts.length === 0}>
+                <CheckOutlinedIcon className={pjtModalStyles.icon} sx={{ fontSize: '2.5rem' }}/>
+                <span className={pjtModalStyles.button_text}>선택</span>
+              </CustomButton> 
+            <CustomButton className={pjtModalStyles.select_button} onClick={handleCancel}>
+              <CloseIcon className={pjtModalStyles.icon} sx={{ fontSize: '2.5rem' }}/>
+              <span className={pjtModalStyles.button_text}>취소</span>
+            </CustomButton> 
+          </div>
         </div>
-  
         <div className={pjtModalStyles.result_container}>
             <Table data={project} columns={pjtColumns} variant='checkbox' onRowClick={handlePjtClick} />
         </div>
-  
-        <div className={pjtModalStyles.button_container}>
-            {(!selectedPjts || selectedPjts.length === 0) ?
-            <></> : ( <button className={pjtModalStyles.select_button} onClick={handleSelect}>선택</button> )}
-            <button className={pjtModalStyles.select_button} onClick={handleCancel}>취소</button>
-        </div>
       </Modal>
-    )
-}
-
-export function PdAddModal({ isModalOpen, handleOk, handleCancel }) {
-    const [formData, setFormData] = useState([]);
-    const [selectedEmps, setSelectedEmps] = useState([]);     // 선택된 사원의 loginId list
-    const [inputEmpId, setInputEmpId] = useState('');         // 입력한 사번
-    const [inputEmpName, setInputEmpName] = useState('');     // 입력한 사원명
-
-    // 엔터 키 입력 시 handleSearch 호출
-    const handleKeyDown = (e) => {
-        if (e.key === 'Enter') {
-        e.preventDefault();  // 폼의 기본 제출 동작 방지
-        handleSearch();
-        }
-    };
-    
-    // 찾기 버튼 클릭 시 호출될 함수
-    const handleSearch = async() => {
-        try {
-            const response = await axiosInstance.get(`/pjt/not-manager?loginId=${inputEmpId}&userName=${inputEmpName}`);
-            setFormData(response.data);
-        } catch (error) {
-            console.log(error);
-        }
-    };
-
-    // 사원 row 클릭 시 호출될 함수
-    const handleEmpClick = (emp) => {
-        setSelectedEmps(emp);
-    };
-
-    // 등록 버튼 클릭 시 호출될 함수
-    const handleSelect = () => {
-        setFormData([]);
-        handleOk(selectedEmps);
-    };
-
-    return (
-        <Modal
-            open={isModalOpen}
-            onCancel={handleCancel}
-            width={680}
-            footer={null}             //Ant Design의 기본 footer 제거(Cancel, OK 버튼)
-        >
-            <div className={modalStyles.title}>현장 담당자 지정</div>
-            <div className={modalStyles.search_container}>
-                <div className={modalStyles.search_item}>
-                    <div className={modalStyles.search_title}>사번</div>
-                    <Input
-                        value={inputEmpId}
-                        allowClear={{ clearIcon: <CloseOutlined style={{color: "red"}} /> }}
-                        onChange={(e) => setInputEmpId(e.target.value)}
-                        onKeyDown={handleKeyDown}
-                        style={{ width: '12rem' }}
-                    />
-                </div>
-                <div className={modalStyles.search_item}>
-                    <div className={modalStyles.search_title}>이름</div>
-                    <div className={modalStyles.input_with_btn}>
-                        <Input
-                            value={inputEmpName}
-                            allowClear={{ clearIcon: <CloseOutlined style={{color: "red"}} /> }}
-                            onChange={(e) => setInputEmpName(e.target.value)}
-                            onKeyDown={handleKeyDown}
-                            style={{ width: '12rem' }}
-                        />
-                        <button className={modalStyles.search_button} onClick={handleSearch}>조회</button>
-                    </div>
-                </div>
-            </div>
-
-            <div className={modalStyles.result_container}>
-                {(!formData || Object.keys(formData).length === 0) ? 
-                <></> : <Table data={formData} columns={userColumns} variant='checkbox' onRowClick={handleEmpClick} modalPagination={true} />
-                }
-            </div>
-
-            {(!selectedEmps || selectedEmps.length === 0) ?
-            <></> : ( <button className={modalStyles.select_button} onClick={handleSelect}>등록</button> )}
-        </Modal>
     )
 }
 
@@ -846,7 +763,7 @@ export function FadAddModal({ isModalOpen, handleOk, handleCancel, rowData }) {
                             value={inputActvDvs}
                             allowClear={{ clearIcon: <CloseOutlined style={{color: "red"}} /> }}
                             onChange={(value) => setInputActvDvs(value)}
-                            style={{ width: '15rem' }}
+                            style={{ width: '12rem' }}
                         >
                             {actvDvsList.map(option => (
                                 <Select.Option key={option.value} value={option.value}>
@@ -857,12 +774,20 @@ export function FadAddModal({ isModalOpen, handleOk, handleCancel, rowData }) {
                         <button className={pjtModalStyles.search_button} onClick={handleSearch}>찾기</button>
                     </div>
                 </div>
+                <div className={pjtModalStyles.button_container}>
+                    <CustomButton className={pjtModalStyles.select_button} onClick={handleSelect} disabled={selectedActves.length === 0}>
+                        <CheckOutlinedIcon className={pjtModalStyles.icon} sx={{ fontSize: '2.5rem' }}/>
+                        <span className={pjtModalStyles.button_text}>선택</span>
+                    </CustomButton> 
+                    <CustomButton className={pjtModalStyles.select_button} onClick={handleCancel}>
+                    <CloseIcon className={pjtModalStyles.icon} sx={{ fontSize: '2.5rem' }}/>
+                    <span className={pjtModalStyles.button_text}>취소</span>
+                    </CustomButton> 
+                </div>
             </div>
 
             <div className={pjtModalStyles.result_container}>
                 <Table data={actves} columns={equipActvColumns} variant='checkbox' onRowClick={handleActvClick} modalPagination={true} />
-                {(!selectedActves || selectedActves.length === 0) ?
-                <></> : ( <button className={pdsStyles.select_button} onClick={handleSelect}>등록</button> )}
             </div>
 
         </Modal>
@@ -1428,125 +1353,6 @@ export function CmListEditModal({ isModalOpen, handleOk, handleCancel, rowData }
     )
 }
 
-export function FmAddModal({ isModalOpen, handleOk, handleCancel, rowData }) {
-    const [showResults, setShowResults] = useState(false);    // 목록을 표시할지 여부
-    const [selectedSulbi, setSelectedSulbi] = useState([]);     // 선택된 Id list
-    const [sulbiLib, setSulbiLib] = useState([]);
-    const [equipName, setEquipName] = useState([]);
-    // 설비 라이브러리 불러오기 
-    useEffect(() => {
-        const fetchSulbiLib = async () => {
-            try {
-                const {data}= await axiosInstance.get("/equip/lib");
-                setSulbiLib(data);    
-            } catch (error) {
-                console.log(error);
-            }
-            
-        };
-        fetchSulbiLib(); // 컴포넌트 마운트 될 때 데이터불러옴
-    }, [])
-
-    // 찾기 버튼 클릭 시 호출될 함수
-    const handleSearch = (e) => {
-        setShowResults(true);
-    };
-
-
-    // row 클릭 시 호출될 함수
-    const handleSulbiClick = (sulbi) => {
-        setSelectedSulbi((prevSelectedSulbi) => {
-            // 선택된 Id가 이미 배열에 존재하는지 확인
-            if (prevSelectedSulbi.includes(sulbi.id)) {
-                // 존재한다면 배열에서 제거
-                return prevSelectedSulbi.filter((id) => id !== sulbi.id);
-            } else {
-                // 존재하지 않는다면 배열에 추가
-                return [...prevSelectedSulbi, sulbi.id];
-            }
-        });
-    };
-    // 등록 버튼 클릭 시 호출될 함수
-    const handleSelect = async () => {
-        let swalOptions = {
-            confirmButtonText: '확인'
-        };
-
-        const formData = {
-            pjtId: rowData[0].id,
-            equipLibId: value1[0].id, // selectedSulbi[0] <- 여러개일땐 
-            equipName,
-        };
-
-        try {
-            // POST 요청으로 서버에 데이터 전송
-            const {data} = await axiosInstance.post('/equip', formData);
-            // handleOk을 호출하여 모달을 닫고 상위 컴포넌트에 알림
-            handleOk(data);
-            swalOptions.title = '성공!',
-            swalOptions.text = `${formData.equipName}가 성공적으로 등록되었습니다.`;
-            swalOptions.icon = 'success';
-        } catch (error) {
-            console.error('Failed to add user:', error);
-            swalOptions.title = '실패!',
-            swalOptions.text = `${formData.equipName} 등록에 실패하였습니다.`;
-            swalOptions.icon = 'error';
-        }
-        Swal.fire(swalOptions);
-    };
-
-
-    const defaultProps = {
-        options: sulbiLib,
-        getOptionLabel: (option) => option.equipLibName
-    };
-
-    const flatProps = {
-        options: sulbiLib.map((option) => option.label),
-    };
-    const [value1, setValue] = useState([]);
-    return (
-        <Modal
-            open={isModalOpen}
-            onCancel={handleCancel}
-            width={600}
-            footer={null}             //Ant Design의 기본 footer 제거(Cancel, OK 버튼)
-        >
-            <div className={modalStyles.title}>설비 지정</div>
-            <div className={modalStyles.search_container}>
-                <div className={modalStyles.search_item}>
-                    <div className={modalStyles.search_title}>설비LIB명</div>
-                    <Autocomplete
-                        {...defaultProps}
-                        id="blur-on-select"
-                        blurOnSelect
-                        disableClearable
-                        onChange={(e, v) => setValue([v])}
-                        renderInput={(params) => (
-                            <TextField {...params} variant="standard" sx={{ width: "10rem" }} />
-                        )}
-                    />
-                </div>
-                <div className={modalStyles.input_with_btn}>
-                    <button className={modalStyles.search_button} style={{ marginTop: "1rem" }} onClick={handleSearch}>조회</button>
-                </div>
-            </div>
-            <div className={modalStyles.result_container}>
-                {showResults && 
-                <>
-                    <Table columns={equipColumns} data={value1} onRowClick={handleSulbiClick} />
-                    <div className={sysStyles.text_field}>
-                        <div className={sysStyles.text} style={{marginTop:"3rem", marginLeft:"5rem", fontWeight:"bold"}}>{"설비 명"}</div>
-                        <TextField size="small" id='equipName' label="설비 명" value={equipName} onChange={(e) => setEquipName(e.target.value)} variant='outlined' sx={{ width: "25rem", margin:"0 auto", display:"flex", justifyContent:"center", alignContent:"center" }} />
-                    </div>
-                </>
-                }
-            </div>
-            <button className={modalStyles.select_button} onClick={handleSelect}>등록</button>
-        </Modal>
-    )
-}
-
 export function UmAddModal({ isModalOpen, handleOk, handleCancel }) {
     const [dept, setDept] = useState([]);
     const [userName, setUserName] = useState('');      // 사용자명 상태
@@ -1880,14 +1686,31 @@ export function EsmAddModal({ isModalOpen, handleOk, handleCancel, rowData }) {
         <Modal
             open={isModalOpen}
             onCancel={handleCancel}
-            width={800}
+            width={1400}
             footer={null}             //Ant Design의 기본 footer 제거(Cancel, OK 버튼)
         >
-            <div className={modalStyles.title}>배출원 등록</div>
-
-            <Table data={emtnCands} variant='checkbox' onRowClick={handleEmtnClick} columns={equipEmissionColumns} modalPagination={true} />
-
-            <button className={modalStyles.select_button} onClick={handleSelect}>등록</button>
+            <div className={pjtModalStyles.group_container}>
+                <div className={pjtModalStyles.table_head}>
+                    <div>
+                        <div className={pjtModalStyles.title}>배출원 등록</div>
+                    </div>
+                    <div style={{ marginTop: '20px'}}>
+                        <div className={pjtModalStyles.button_container}>
+                            <CustomButton className={pjtModalStyles.select_button} onClick={handleSelect} disabled={selectedEmtnCands.length === 0}>
+                                <CheckOutlinedIcon className={pjtModalStyles.icon} sx={{ fontSize: '2.5rem' }}/>
+                                <span className={pjtModalStyles.button_text}>선택</span>
+                            </CustomButton> 
+                            <CustomButton className={pjtModalStyles.select_button} onClick={handleCancel}>
+                            <CloseIcon className={pjtModalStyles.icon} sx={{ fontSize: '2.5rem' }}/>
+                            <span className={pjtModalStyles.button_text}>취소</span>
+                            </CustomButton> 
+                        </div>
+                    </div>
+                </div>
+                <div className={pjtModalStyles.result_container}>
+                    <Table data={emtnCands} variant='checkbox' onRowClick={handleEmtnClick} columns={equipEmissionColumns} modalPagination={true} />
+                </div>
+            </div>
         </Modal>
     )
 }

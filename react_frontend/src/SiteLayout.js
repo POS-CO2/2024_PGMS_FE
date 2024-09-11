@@ -1,4 +1,4 @@
-import React, {useState, useRef} from 'react';
+import React, {useState, useRef, useEffect} from 'react';
 import { useNavigate, Outlet } from 'react-router-dom';
 import styled from 'styled-components';
 import Sidebar from './Sidebar';
@@ -75,7 +75,11 @@ export default function SiteLayout({handleLogout, menus, user}){
     const navigate = useNavigate();
     const tabsContainerRef = useRef(null);
     
-    const items = mapMenuDataToItems(menus);
+    let items = mapMenuDataToItems(menus);
+
+    useEffect(() => {
+        items = mapMenuDataToItems(menus);
+    }, [menus]);
 
     const handleFavClick = () => {
         setFav(!fav);

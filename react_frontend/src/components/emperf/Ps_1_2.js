@@ -46,15 +46,6 @@ export default function Ps_1_2() {
         setContent(value);
     };
 
-    // usagePerfs 상태가 변경될 때 실행될 useEffect
-    useEffect(() => {
-        console.log("usagePerfs");
-    }, [usagePerfs]);
-    // amountUsedPerfs 상태가 변경될 때 실행될 useEffect
-    useEffect(() => {
-        console.log("amountUsedPerfs");
-    }, [amountUsedPerfs]);
-
     // 배출활동유형 드롭다운 옵션 설정
     const [emtnActvType, setEmtnActvType] = useState([]);
     useEffect(() => {
@@ -225,7 +216,7 @@ export default function Ps_1_2() {
                 columns={perfColumns}
                 title="실적목록"
                 data={data}
-                buttons={['Edit', 'UploadExcel', 'DownloadExcelForm']}
+                buttons={['DoubleClickEdit', 'UploadExcel', 'DownloadExcelForm']}
                 onClicks={[() => {}, onUploadExcelClick, () => onDownloadExcelFormClick(data)]}
                 modals={[
                     {
@@ -304,7 +295,7 @@ export default function Ps_1_2() {
                 columns={perfColumns}
                 title="실적목록"
                 data={data}
-                buttons={['Edit', 'UploadExcel', 'DownloadExcelForm']}
+                buttons={['DoubleClickEdit', 'UploadExcel', 'DownloadExcelForm']}
                 onClicks={[() => {}, onUploadExcelClick, () => onDownloadExcelFormClick(data)]}
                 modals={[
                     {

@@ -12,6 +12,7 @@ import { Input, Select } from 'antd';
 import { Card } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import { CloseOutlined } from '@ant-design/icons';
+import { AddButton } from '../../../../Button';
 import { equipColumns } from '../../../../assets/json/tableColumn';
 import Table from "../../../../Table";
 import TableCustom from "../../../../TableCustom";
@@ -72,7 +73,7 @@ export default function Fd({pjtId}) {
     const [selectedEqLib, setSelectedEqLib] = useRecoilState(selectedEqLibState);
 
     // 드롭다운 리스트
-    const [eqTypeList, setEqTypeList] = useState([]);                           // 설비유형 리스트
+    const [eqTypeList, setEqTypeList] = useState([]);
     const [eqDvsList, setEqDvsList] = useState([]);    
 
     // 서치폼, 등록창 상태 관리
@@ -199,7 +200,7 @@ export default function Fd({pjtId}) {
                     title='설비목록' 
                     data={equips}
                     columns={equipColumns}                 
-                    buttons={['DownloadExcel', 'Delete']}
+                    buttons={['Delete', 'DownloadExcel']}
                     onClicks={[() => handleExcelUploadClick(equips, 'exported_table'), () => showModal('Delete')]}
                     onRowClick={handleEqClick}
                     selectedRows={[selectedEq]}
@@ -222,7 +223,10 @@ export default function Fd({pjtId}) {
             </Card>
             <Card sx={{ width: "50%", height: "auto", borderRadius: "0.5rem", paddingBottom: "20px" }}>
                 <div className={pdsStyles.card_container}>
-                    <div className={pdsStyles.table_title}>설비등록</div>
+                    <div className={pdsStyles.contents_header}>
+                        설비등록
+                        <AddButton onClick={handleSubmit} disabled={Object.keys(selectedEqLib).length === 0} />
+                    </div>
                     <div className={pdsStyles.search_container}>
                         <div className={pdsStyles.search_item}>
                             <div className={pdsStyles.search_title}>설비LIB명</div>
@@ -285,8 +289,6 @@ export default function Fd({pjtId}) {
                                 style={{ flex: 1 }}
                             />
                         </div>
-                        {(!selectedEqLib || Object.keys(selectedEqLib).length === 0) ?
-                        <></> : ( <button className={pdsStyles.select_button} onClick={handleSubmit}>등록</button> )}
                     </div>
                 </div>
             </Card>
