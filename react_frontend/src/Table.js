@@ -69,12 +69,13 @@ export default function CustomizedTables({
         editingCell = {},
         pagination = true,
         modalPagination = false,
+        monthPagination = false,
         columns = [],
     }) {
     const [selectedRow, setSelectedRow] = useState({});       // default variant의 선택 상태
     const [selectedRows, setSelectedRows] = useState([]); 
     const [page, setPage] = useState(0);
-    const [rowsPerPage, setRowsPerPage] = useState(modalPagination ? 5 : 13);             // default page row length
+    const [rowsPerPage, setRowsPerPage] = useState(modalPagination ? 5 : (monthPagination ? 12 : 10));             // default page row length
     const handleChangePage = (event, newPage) => {
         setPage(newPage);
     };
@@ -260,8 +261,9 @@ export default function CustomizedTables({
                 </Table>
             </TableContainer>
             {pagination && (data.length >= 13) ? ( !modalPagination ? (// 10개 이상이면 자동으로 pagination 활성화, (pagination이 true일때만.)
+            //페이지네이션을 하고 데이터길이가 길며 모달페이지네이션이 아닐때
             <TablePagination 
-                rowsPerPageOptions={[13, 25, 100]} // page row length custom
+                rowsPerPageOptions={[10, 25, 100]} // page row length custom
                 component="div"
                 count={data.length}
                 rowsPerPage={rowsPerPage}
@@ -270,6 +272,7 @@ export default function CustomizedTables({
                 onRowsPerPageChange={handleChangeRowsPerPage}
             />
             ) : (
+                //페이지네이션을 하고 데이터길이가 길며 모달페이지네이션이 맞을때
                 <TablePagination 
                 rowsPerPageOptions={[5, 10, 25]} // page row length custom
                 component="div"
@@ -283,6 +286,7 @@ export default function CustomizedTables({
             ) : ( !modalPagination ? (
                 <></>
             ) : (
+                //페이지네이션을 안하거나 데이터길이가 12이하이며 모달페이지네이션일때
                 <TablePagination 
                 rowsPerPageOptions={[5, 10, 25]} // page row length custom
                 component="div"
