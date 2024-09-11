@@ -149,20 +149,20 @@ export default function Cm() {
             <Card className={sysStyles.card_box} sx={{width:"50%", height:"80vh", borderRadius:"15px"}}>
             <TableCustom title="코드그룹ID" data={codeGroup} buttons={["Add", "Edit", "Delete"]} selectedRows={[selectedCodeGroup]} onRowClick={(e) => handleCodeGroupRowClick(e)} onClicks={[handleAddClick, handleEditClick, handleDeleteAClick]} columns={codeGroupColumns} modals={
                 [
-                    {
+                    isModalOpen.CMAdd && {
                         "modalType" : 'CMAdd',
                         'isModalOpen': isModalOpen.CMAdd,
                         'handleOk': handleOk('CMAdd'),
                         'handleCancel': handleCancel('CMAdd')
                     },
-                    {
+                    isModalOpen.CMEdit && {
                         "modalType" : 'CMEdit',
                         'isModalOpen': isModalOpen.CMEdit,
                         'handleOk': handleOk('CMEdit'),
                         'handleCancel': handleCancel('CMEdit'),
                         'rowData': selectedCodeGroup,
                     },
-                    {
+                    isModalOpen.DeleteA && {
                         "modalType" : 'DeleteA',
                         'isModalOpen': isModalOpen.DeleteA,
                         'handleOk': handleOk('DeleteA'),
@@ -172,7 +172,7 @@ export default function Cm() {
                         'url': '/sys/codegroup',
                     },
 
-                ]
+                ].filter(Boolean)
             }/>
             </Card>
             <Card className={sysStyles.card_box} sx={{width:"50%", height:"80vh", borderRadius:"15px"}}>
@@ -180,21 +180,21 @@ export default function Cm() {
             {showCode ? (
                 <TableCustom title="코드리스트" data={code} buttons={["Add", "Edit", "Delete"]} columns={codeColumns} selectedRows={[selectedCode]} onRowClick={handleCodeRowClick} onClicks={[handleListAddClick, handleListEditClick, handleDeleteBClick]} modals={
                     [
-                        {
+                        isModalOpen.CMListAdd && {
                             "modalType" : 'CMListAdd',
                             'isModalOpen': isModalOpen.CMListAdd,
                             'handleOk': handleOk('CMListAdd'),
                             'handleCancel': handleCancel('CMListAdd'),
                             'rowData': selectedCodeGroup,
                         },
-                        {
+                        isModalOpen.CMListEdit && {
                             "modalType" : 'CMListEdit',
                             'isModalOpen': isModalOpen.CMListEdit,
                             'handleOk': handleOk('CMListEdit'),
                             'handleCancel': handleCancel('CMListEdit'),
                             'rowData': selectedCode,
                         },
-                        {
+                        isModalOpen.DeleteB && {
                             "modalType" : 'DeleteB',
                             'isModalOpen': isModalOpen.DeleteB,
                             'handleOk': handleOk('DeleteB'),
@@ -204,7 +204,7 @@ export default function Cm() {
                             'url': '/sys/code'
                         },
     
-                    ]
+                    ].filter(Boolean)
                 }/>
             ) : (
                 <TableCustom title='코드리스트' table={false} />

@@ -198,13 +198,13 @@ export default function Um() {
                 <Card className={sysStyles.card_box} sx={{width:"50%", height:"80vh", borderRadius:"15px"}}>
                     {userShow && <TableCustom title="사용자 목록" columns={userColumns} data={userList} buttons={['Add']} onClicks={[handleAddClick]} onRowClick={(e) => handleRowClick(e)} modals={
                         [
-                            {
+                            isModalOpen.UmAdd && {
                                 "modalType" : 'UmAdd',
                                 'isModalOpen': isModalOpen.UmAdd,
                                 'handleOk': handleOk('UmAdd'),
                                 'handleCancel': handleCancel('UmAdd')
                             },
-                        ]
+                        ].filter(Boolean)
                     }/>}
                 </Card>
                 <Card className={sysStyles.card_box} sx={{width:"50%", borderRadius:"15px"}}>
@@ -215,7 +215,7 @@ export default function Um() {
                             modals={
                                 [
                                     
-                                    {
+                                    isModalOpen.Delete && {
                                         "modalType" : 'Delete',
                                         'isModalOpen': isModalOpen.Delete,
                                         'handleOk': handleOk('Delete'),
@@ -224,7 +224,7 @@ export default function Um() {
                                         'rowDataName': "userName",
                                         'url': '/sys/user', // 삭제 전달할 api 주소
                                     },
-                                ]
+                                ].filter(Boolean)
                             }/>
                             <div className={sysStyles.card_box}>
                             <div className={sysStyles.text_field} style={{marginTop:"2rem",width:"50%"}}>
