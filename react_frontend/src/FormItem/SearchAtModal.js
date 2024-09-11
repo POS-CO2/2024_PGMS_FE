@@ -72,7 +72,7 @@ export default function SearchAtModal({ name, label, required = false, modalType
 
     return (
         <Form.Item
-            className={formItemStyles.form_item}
+            className={formItemStyles.form_item_search_project}
             name={name}
             label={label}
             rules={[{ required: required, message: '${label} 선택은 필수입니다.' }]}

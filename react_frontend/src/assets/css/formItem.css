@@ -2,19 +2,25 @@
     width: auto;
 }
 
+.form_item_search_project {
+    width: 80%;
+}
+
 .select_dropdown {
     min-width: 8rem; /* 최소 너비 설정 */
     max-width: 16rem; /* 최대 너비 설정 */
 }
 
 .input_button_container {
+    width: 100%;
     display: flex;
+    justify-content: space-between;
     align-items: center;
     gap: 0.5rem;
 }
 
 .input_field {
-    flex: 1; /* Allow input to grow and shrink as needed */
+    flex-grow: 1; /* 남은 공간을 차지하도록 설정 */
     min-width: 14rem;
     color: #000000 !important; 
     font-size: 12px;
@@ -22,7 +28,7 @@
 }
 
 .modal_button {
-    flex-shrink: 0; /* Prevent the button from shrinking */
+    flex-shrink: 0; /* 버튼 크기를 고정 */
     padding-left: 0.2rem;
     padding-right: 0.2rem;
     width: 4rem;
