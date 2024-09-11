@@ -14,6 +14,8 @@ const StyledButton = styled.button`
   border-radius: 4px;
   font-size: 1rem;
   margin-left: 0.3rem;
+  height: 32px;
+  vertical-align: middle;
 
   &:hover {
     background-color: #8AC784; /* 마우스 오버 시 배경색 */
@@ -27,7 +29,8 @@ export default function SearchAtModal({ name, label, required = false, modalType
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [inputValue, setInputValue] = useState("");
 
-    const showModal = () => {
+    const showModal = (e) => {
+        e.preventDefault(); // 기본 동작 방지
         setIsModalOpen(true);
     };
     const handleOkForDropDown = (option) => {
@@ -73,14 +76,14 @@ export default function SearchAtModal({ name, label, required = false, modalType
 
     return (
         <Form.Item
-            className={formItemStyles.form_item}
+            className={formItemStyles.form_item_search_project}
             name={name}
             label={label}
             rules={[{ required: required, message: '${label} 선택은 필수입니다.' }]}
         >
             <div className={formItemStyles.input_button_container}>
-                <Input className={formItemStyles.input_field} disabled={true} value={inputValue} style={{height:"32px"}}/>
-                <StyledButton className={formItemStyles.modal_button} type="primary" onClick={showModal}>
+                <Input className={formItemStyles.input_field} disabled={true} value={inputValue} title={inputValue} style={{height:"32px"}}/>
+                <StyledButton className={formItemStyles.modal_button} htmlType="button" type="primary" onClick={showModal}>
                     찾기
                 </StyledButton>
                 {renderModal()}

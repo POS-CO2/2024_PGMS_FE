@@ -38,6 +38,13 @@ export default function DropDown({ name, label, required=false, options, default
     // 폰트 사이즈와 기타 요소들을 고려하여 너비를 설정
     const calculatedWidth = `${longestOptionLength * 1.25}rem`; // 기본 폰트 사이즈가 12px이라 가정하고 0.75rem 정도로 설정 -> 전부 짤려서 1.25배로 늘림
 
+    // name이 searchProject인 경우에는 max-width가 70rem 이도록 설정
+    const dropdownStyle = {
+        width: calculatedWidth,
+        minWidth: '8rem',
+        maxWidth: name === 'searchProject' ? '70rem' : '16rem'
+    };
+
     return (
         <ConfigProvider
             theme={{
@@ -47,6 +54,7 @@ export default function DropDown({ name, label, required=false, options, default
                 },
             }}
         >
+
             <Form.Item
                 className={formItemStyles.form_item}
                 name={name}
@@ -55,8 +63,8 @@ export default function DropDown({ name, label, required=false, options, default
                 initialValue={defaultSelected ? options[0].value : undefined}
             >
                 <CustomSelect
-                    className={formItemStyles.select_dropdown}
-                    style={{ width: calculatedWidth }}
+                    /*className={formItemStyles.select_dropdown}*/
+                    style={dropdownStyle}
                     allowClear={{ clearIcon: <CloseOutlined style={{color: "red"}} /> }}
                     disabled={disabled}
                     placeholder={placeholder}

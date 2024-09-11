@@ -5,7 +5,7 @@
 
 export const formField_ps12 = [ 
     { type: 'SearchAtModal', name: 'searchProject', label: '프로젝트코드/명', required: true, modalType: '프로젝트 찾기' },
-    { type: 'DropDown', name: 'actvYear', label: '대상년도', required: true, options: []/*, defaultSelected: true*//*, disabled: true, placeholder: '프로젝트를 선택하세요.'*/ },
+    { type: 'DropDown', name: 'actvYear', label: '대상년도', required: true, options: []/*, defaultSelected: true*/ },
     { type: 'DropDown', name: 'emtnActvType', label: '배출활동유형', options: [] },
 ];
 

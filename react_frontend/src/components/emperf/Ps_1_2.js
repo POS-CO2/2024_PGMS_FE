@@ -89,11 +89,11 @@ export default function Ps_1_2() {
 
             setFormFields(updatedFields);
 
-            // 옵션 데이터가 있으면 드롭다운을 활성화
-            setActvYearDisabled(yearOptions.length === 0);
-
-            // actvYear 필드 리셋
-            form.resetFields(['actvYear']);
+            // 옵션 데이터가 있으면 드롭다운을 활성화, default값 설정
+            if (yearOptions.length > 0) {
+                setActvYearDisabled(false);
+                form.setFieldsValue({ actvYear: yearOptions[0].value });
+            }
         }
     };
 
@@ -169,7 +169,6 @@ export default function Ps_1_2() {
         };
     
         const onUploadExcelClick = () => {
-            console.log("onUploadExcelClick");
             showModal();
         };
     
@@ -216,8 +215,8 @@ export default function Ps_1_2() {
                 columns={perfColumns}
                 title="실적목록"
                 data={data}
-                buttons={['DoubleClickEdit', 'UploadExcel', 'DownloadExcelForm']}
-                onClicks={[() => {}, onUploadExcelClick, () => onDownloadExcelFormClick(data)]}
+                buttons={['DoubleClickEdit', 'DownloadExcelForm', 'UploadExcel']}
+                onClicks={[() => {}, () => onDownloadExcelFormClick(data), onUploadExcelClick]}
                 modals={[
                     {
                         modalType: 'Ps12UploadExcel',
@@ -248,7 +247,6 @@ export default function Ps_1_2() {
         };
     
         const onUploadExcelClick = () => {
-            console.log("onUploadExcelClick2");
             showModal();
         };
         
@@ -295,8 +293,8 @@ export default function Ps_1_2() {
                 columns={perfColumns}
                 title="실적목록"
                 data={data}
-                buttons={['DoubleClickEdit', 'UploadExcel', 'DownloadExcelForm']}
-                onClicks={[() => {}, onUploadExcelClick, () => onDownloadExcelFormClick(data)]}
+                buttons={['DoubleClickEdit', 'DownloadExcelForm', 'UploadExcel']}
+                onClicks={[() => {}, () => onDownloadExcelFormClick(data), onUploadExcelClick]}
                 modals={[
                     {
                         modalType: 'Ps12UploadExcel',
@@ -319,8 +317,7 @@ export default function Ps_1_2() {
             </div>
 
             <SearchForms onFormSubmit={handleFormSubmit}
-                //formFields={formFields} 
-                formFields={formFields.map(field => field.name === 'actvYear' ? { ...field, disabled: actvYearDisabled, placeholder: actvYearDisabled ? '프로젝트를 선택하세요.' : '' } : field)} // actvYear 필드의 disabled 상태 반영
+                formFields={formFields.map(field => field.name === 'actvYear' ? { ...field, disabled: actvYearDisabled } : field)} // actvYear 필드의 disabled 상태 반영
                 onProjectSelect={onProjectSelect} />
             
             {(!formData || Object.keys(formData).length === 0) ? (
