@@ -5,9 +5,9 @@ import { SearchOutlined } from '@ant-design/icons';
 
 const theme = {
     token: {
-        colorPrimary: '#0A7800',
+        colorPrimary: '#0EAA00',
         colorPrimaryHover: '#8AC784',
-        //colorPrimaryActive: '#E5F1E4',
+        fontSize: '1rem',
     },
 }
 
@@ -15,7 +15,10 @@ export default function SearchBtn({ label = "조회", onClick }) {
     return (
         <Form.Item className={formItemStyles.search_btn}>
             <ConfigProvider theme={theme}>
-                <Button type="primary" htmlType="submit" onClick={onClick}>{label}<SearchOutlined /></Button>
+                <Button type="primary" htmlType="submit" onClick={onClick} style={{ padding: '6px 12px' }}>
+                    <SearchOutlined /> 
+                    {label}
+                </Button>
             </ConfigProvider>
         </Form.Item>
     )
