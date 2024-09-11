@@ -106,7 +106,11 @@ const StyledTabs = styled(Tabs)`
     width: auto;
     margin: 0 !important;
     justify-content: flex-start;
+<<<<<<< Updated upstream
     padding: 1rem 0.5rem;
+=======
+    padding: 0.8rem 0.5rem;
+>>>>>>> Stashed changes
     font-weight: bold;
     overflow: hidden;
     white-space: nowrap !important;
