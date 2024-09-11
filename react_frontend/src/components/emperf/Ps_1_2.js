@@ -178,7 +178,6 @@ export default function Ps_1_2() {
         };
     
         const onUploadExcelClick = () => {
-            console.log("onUploadExcelClick");
             showModal();
         };
     
@@ -225,8 +224,8 @@ export default function Ps_1_2() {
                 columns={perfColumns}
                 title="실적목록"
                 data={data}
-                buttons={['Edit', 'UploadExcel', 'DownloadExcelForm']}
-                onClicks={[() => {}, onUploadExcelClick, () => onDownloadExcelFormClick(data)]}
+                buttons={['Edit', 'DownloadExcelForm', 'UploadExcel']}
+                onClicks={[() => {}, () => onDownloadExcelFormClick(data), onUploadExcelClick]}
                 modals={[
                     {
                         modalType: 'Ps12UploadExcel',
@@ -257,7 +256,6 @@ export default function Ps_1_2() {
         };
     
         const onUploadExcelClick = () => {
-            console.log("onUploadExcelClick2");
             showModal();
         };
         
@@ -304,8 +302,8 @@ export default function Ps_1_2() {
                 columns={perfColumns}
                 title="실적목록"
                 data={data}
-                buttons={['Edit', 'UploadExcel', 'DownloadExcelForm']}
-                onClicks={[() => {}, onUploadExcelClick, () => onDownloadExcelFormClick(data)]}
+                buttons={['Edit', 'DownloadExcelForm', 'UploadExcel']}
+                onClicks={[() => {}, () => onDownloadExcelFormClick(data), onUploadExcelClick]}
                 modals={[
                     {
                         modalType: 'Ps12UploadExcel',
