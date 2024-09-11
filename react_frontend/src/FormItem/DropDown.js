@@ -39,20 +39,20 @@ export default function DropDown({ name, label, required=false, options, default
     const calculatedWidth = `${longestOptionLength * 1.25}rem`; // 기본 폰트 사이즈가 12px이라 가정하고 0.75rem 정도로 설정 -> 전부 짤려서 1.25배로 늘림
 
     return (
-        <Form.Item
-            className={formItemStyles.form_item}
-            name={name}
-            label={label}
-            rules={[{ required: required, message: '${label} 선택은 필수입니다.' }]}
-            initialValue={defaultSelected ? options[0].value : undefined}
+        <ConfigProvider
+            theme={{
+                token: {
+                    /* here is your global tokens */
+                    fontFamily: "SUITE-Regular"
+                },
+            }}
         >
-            <ConfigProvider
-                theme={{
-                    token: {
-                      /* here is your global tokens */
-                        fontFamily: "SUITE-Regular"
-                    },
-                }}
+            <Form.Item
+                className={formItemStyles.form_item}
+                name={name}
+                label={label}
+                rules={[{ required: required, message: '${label} 선택은 필수입니다.' }]}
+                initialValue={defaultSelected ? options[0].value : undefined}
             >
                 <CustomSelect
                     className={formItemStyles.select_dropdown}
@@ -68,7 +68,7 @@ export default function DropDown({ name, label, required=false, options, default
                         </Select.Option>
                     ))}
                 </CustomSelect>
-            </ConfigProvider>
-        </Form.Item>
+            </Form.Item>
+        </ConfigProvider>
     )
 }
