@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Modal, Button, Upload, Select, Input } from 'antd';
+import { Modal, Button, Upload, Select, Input, ConfigProvider } from 'antd';
 import { PaperClipOutlined, CloseOutlined } from '@ant-design/icons';
 import * as modalStyles from "../assets/css/pdModal.css";
 import * as rmStyles from "../assets/css/rmModal.css";
@@ -246,6 +246,8 @@ export function FlAddModal({ isModalOpen, handleOk, handleCancel, dropDown }) {
     };
 
     return (
+        <ConfigProvider
+        theme={{token:{fontFamily:"SUITE-Regular"}}}>
         <Modal
             open={isModalOpen}
             onCancel={handleCancel}
@@ -313,6 +315,7 @@ export function FlAddModal({ isModalOpen, handleOk, handleCancel, dropDown }) {
 
             <button className={rmStyles.select_button} onClick={handleSelect}>등록</button>
         </Modal>
+        </ConfigProvider>
     )
 }
 
@@ -355,6 +358,8 @@ export function FlEditModal({ isModalOpen, handleOk, handleCancel, rowData, drop
     };
 
     return (
+        <ConfigProvider
+        theme={{token:{fontFamily:"SUITE-Regular"}}}>
         <Modal 
             open={isModalOpen} 
             onCancel={handleCancel} 
@@ -422,6 +427,7 @@ export function FlEditModal({ isModalOpen, handleOk, handleCancel, rowData, drop
             
             <button className={rmStyles.select_button} onClick={handleSelect}>수정</button>
         </Modal>
+        </ConfigProvider>
     )
 }
 
@@ -996,6 +1002,8 @@ export function Ps12UploadExcelModal({ isModalOpen, handleOk, handleCancel }) { 
 
 export function DelModal({ isModalOpen, handleOk, handleCancel, rowData }) { // '엑셀 업로드' 모달
     return (
+        <ConfigProvider
+        theme={{token:{fontFamily:"SUITE-Regular"}}}>
         <Modal
             open={isModalOpen}
             onCancel={handleCancel}
@@ -1010,13 +1018,16 @@ export function DelModal({ isModalOpen, handleOk, handleCancel, rowData }) { // 
         >
             <div className={delStyle.container}>
                 <WarningAmberIcon style={{ fontSize: '2rem', marginRight: '0.5rem', verticalAlign: 'middle' }} />
+                <div style={{fontFamily:"SUITE-Regular"}}>
                 정말 삭제하시겠습니까?
+                </div>
             </div>
             <div className={delStyle.buttonContainer}>
                 <button className={delStyle.cancelButton} onClick={() => {handleCancel}}>취소</button>
                 <button className={delStyle.okButton} onClick={() => {handleOk(rowData)}}>삭제</button>
             </div>
         </Modal>
+        </ConfigProvider>   
     )
 }
 
@@ -1057,6 +1068,8 @@ export function CmAddModal({ isModalOpen, handleOk, handleCancel }) {
     };
 
     return (
+        <ConfigProvider
+        theme={{token:{fontFamily:"SUITE-Regular"}}}>
         <Modal
             open={isModalOpen}
             onCancel={handleCancel}
@@ -1094,6 +1107,7 @@ export function CmAddModal({ isModalOpen, handleOk, handleCancel }) {
             </div>
             
         </Modal>
+        </ConfigProvider>
     )
 }
 
@@ -1136,6 +1150,8 @@ export function CmEditModal({ isModalOpen, handleOk, handleCancel, rowData }) {
     };
 
     return (
+        <ConfigProvider
+        theme={{token:{fontFamily:"SUITE-Regular"}}}>
         <Modal
             open={isModalOpen}
             onCancel={handleCancel}
@@ -1168,6 +1184,7 @@ export function CmEditModal({ isModalOpen, handleOk, handleCancel, rowData }) {
             <button style={{width:"20rem"}} className={modalStyles.select_button} onClick={handleSelect}>수정</button>
             </div>
         </Modal>
+        </ConfigProvider>
     )
 }
 
@@ -1227,7 +1244,7 @@ export function DeleteModal({ isModalOpen, handleOk, handleCancel, rowData, rowD
             footer={null}             //Ant Design의 기본 footer 제거(Cancel, OK 버튼)
         >
             {/* 모달제목 */}
-            <div style={{display:"flex", marginTop:"10%", marginLeft:"5%", gap:"1rem", fontSize:"1.3rem", fontWeight:"bold"}}>
+            <div style={{display:"flex", marginTop:"10%", marginLeft:"5%", gap:"1rem", fontSize:"1.3rem", fontWeight:"bold", fontFamily:"SUITE-Regular"}}>
                 <WarningAmberIcon fontSize="large" sx={{color:"red"}}/>
                 정말 삭제하시겠습니까?
             </div>
@@ -1277,6 +1294,8 @@ export function CmListAddModal({ isModalOpen, handleOk, handleCancel, rowData })
     };
 
     return (
+        <ConfigProvider
+        theme={{token:{fontFamily:"SUITE-Regular"}}}>
         <Modal
             open={isModalOpen}
             onCancel={handleCancel}
@@ -1328,6 +1347,7 @@ export function CmListAddModal({ isModalOpen, handleOk, handleCancel, rowData })
             <button style={{width:"18rem"}} className={modalStyles.select_button} onClick={handleSelect}>등록</button>
             </div>
         </Modal>
+        </ConfigProvider>
     )
 }
 
@@ -1373,6 +1393,8 @@ export function CmListEditModal({ isModalOpen, handleOk, handleCancel, rowData }
         Swal.fire(swalOptions);
     };
     return (
+        <ConfigProvider
+        theme={{token:{fontFamily:"SUITE-Regular"}}}>
         <Modal
             open={isModalOpen}
             onCancel={handleCancel}
@@ -1425,6 +1447,7 @@ export function CmListEditModal({ isModalOpen, handleOk, handleCancel, rowData }
             <button style={{width:"18rem"}} className={modalStyles.select_button} onClick={handleSelect}>수정</button>
             </div>
         </Modal>
+        </ConfigProvider>
     )
 }
 
@@ -1513,6 +1536,8 @@ export function EfmAddModal({ isModalOpen, handleOk, handleCancel, rowData }) {
 
 
     return (
+        <ConfigProvider
+        theme={{token:{fontFamily:"SUITE-Regular"}}}>
         <Modal
             open={isModalOpen}
             onCancel={handleCancel}
@@ -1577,6 +1602,7 @@ export function EfmAddModal({ isModalOpen, handleOk, handleCancel, rowData }) {
             <button style={{width:"18rem"}} className={modalStyles.select_button} onClick={handleSelect}>등록</button>
             </div>
         </Modal>
+        </ConfigProvider>
     )
 }
 
@@ -1665,6 +1691,8 @@ export function EfmEditModal({ isModalOpen, handleOk, handleCancel, rowData }) {
 
 
     return (
+        <ConfigProvider
+        theme={{token:{fontFamily:"SUITE-Regular"}}}>
         <Modal
             open={isModalOpen}
             onCancel={handleCancel}
@@ -1729,6 +1757,7 @@ export function EfmEditModal({ isModalOpen, handleOk, handleCancel, rowData }) {
             <button style={{width:"18rem"}} className={modalStyles.select_button} onClick={handleSelect}>등록</button>
             </div>
         </Modal>
+        </ConfigProvider>
     )
 }
 
@@ -1926,6 +1955,8 @@ export function UmAddModal({ isModalOpen, handleOk, handleCancel }) {
     };
 
     return (
+        <ConfigProvider
+        theme={{token:{fontFamily:"SUITE-Regular"}}}>
         <Modal
             open={isModalOpen}
             onCancel={handleCancel}
@@ -1973,6 +2004,7 @@ export function UmAddModal({ isModalOpen, handleOk, handleCancel }) {
                 <button style={{width:"20rem"}} className={modalStyles.select_button} onClick={handleInsert}>등록</button>
             </div>
         </Modal>
+        </ConfigProvider>
     )
 }
 
@@ -2056,6 +2088,8 @@ export function MmAddModal({ isModalOpen, handleOk, handleCancel, rowData }) {
     })
 
     return (
+        <ConfigProvider
+        theme={{token:{fontFamily:"SUITE-Regular"}}}>
         <Modal
             open={isModalOpen}
             onCancel={handleCancel}
@@ -2109,6 +2143,7 @@ export function MmAddModal({ isModalOpen, handleOk, handleCancel, rowData }) {
             <button style={{width:"20rem"}} className={modalStyles.select_button} onClick={handleSelect}>등록</button>
             </div>
         </Modal>
+        </ConfigProvider>
     )
 }
 

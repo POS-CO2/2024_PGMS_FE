@@ -310,7 +310,7 @@ export default function Um() {
                         </div>
                         </>
                     ) : (
-                        <div className={sysStyles.mid_title}>{"사용자 상세 정보"}</div>
+                        <TableCustom title='사용자 상세 정보' table={false} />
                     )}
                 </Card>
             </div>

@@ -203,7 +203,8 @@ export default function CustomizedTables({
                                                         onBlur={handleBlur}
                                                         autoFocus
                                                         size="small"
-                                                    />
+                                                        sx={{width:"8rem"}}
+                                                    />  
                                                 ) : (
                                                     row[col.key]
                                                 )}

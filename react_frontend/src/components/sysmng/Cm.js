@@ -207,7 +207,7 @@ export default function Cm() {
                     ]
                 }/>
             ) : (
-                <div className={sysStyles.mid_title}>{"코드리스트"}</div>
+                <TableCustom title='코드리스트' table={false} />
             )}
             </Card>
             </div>
