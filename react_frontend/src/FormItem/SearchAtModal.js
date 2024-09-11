@@ -7,12 +7,13 @@ import SearchLibModal from "./SearchLibModal";
 import styled from 'styled-components';
 
 const StyledButton = styled.button`
-  background-color: #0A7800; /* 원하는 배경색으로 설정 */
+  background-color: #0EAA00; /* 원하는 배경색으로 설정 */
   color: white; /* 텍스트 색상 */
   border: none;
   cursor: pointer;
   border-radius: 4px;
-  font-size: 16px;
+  font-size: 1rem;
+  margin-left: 0.3rem;
 
   &:hover {
     background-color: #8AC784; /* 마우스 오버 시 배경색 */
@@ -79,7 +80,7 @@ export default function SearchAtModal({ name, label, required = false, modalType
             rules={[{ required: required, message: '${label} 선택은 필수입니다.' }]}
         >
             <div className={formItemStyles.input_button_container}>
-                <Input className={formItemStyles.input_field} disabled={true} value={inputValue} title={inputValue} />
+                <Input className={formItemStyles.input_field} disabled={true} value={inputValue} title={inputValue} style={{height:"32px"}}/>
                 <StyledButton className={formItemStyles.modal_button} htmlType="button" type="primary" onClick={showModal}>
                     찾기
                 </StyledButton>

@@ -9,7 +9,7 @@ import { equipActvColumns, equipCoefColumns } from '../../../assets/json/tableCo
 import * as mainStyles from "../../../assets/css/main.css";
 import * as pdsStyles from "../../../assets/css/pds.css";
 
-export default function Fam() {
+export default function Adm() {
     const [formFields, setFormFields] = useState(formField_fam);
     const [actves, setActves] = useState([]);                     // 활동자료목록
     const [selectedActv, setSelectedActv] = useState({});         // 선택된 활동자료

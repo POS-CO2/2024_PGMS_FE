@@ -4,7 +4,7 @@ import {
     managerState, eqState, eqLibState, emSourceState, revState
 } from '../../../../atoms/pdsAtoms';
 import axiosInstance from '../../../../utils/AxiosInstance';
-import Pdc from './Pdc';
+import Pd from './Pd';
 import Fd from './Fd';
 import Esd from './Esd';
 import Rm from './Rm';
@@ -138,7 +138,7 @@ export const PdsStateMgr = ({pjtId}) => {
               {(() => {
                 switch (selectedButton) {
                     case '담당자 지정':
-                      return <Pdc pjtId={pjtId} />;
+                      return <Pd pjtId={pjtId} />;
                     case '설비 지정':
                       return <Fd pjtId={pjtId} />;
                     case '배출원 관리':

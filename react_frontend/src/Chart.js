@@ -23,6 +23,7 @@ export function CustomBarChart({ data }){
                 leftAxis={null}
                 colors={['rgb(53, 98, 227)', 'rgb(196, 218, 250)']}
                 sx={{
+                    fontFamily:"SUITE-Regular",
                     //change left yAxis label styles
                     "& .MuiChartsAxis-left .MuiChartsAxis-tickLabel":{
                         strokeWidth:"0.4",
@@ -41,6 +42,7 @@ export function CustomBarChart({ data }){
                         strokeWidth:"0.5",
                         fill:"white",
                         fontWeight:"bold",
+                        fontFamily:"SUITE-Regular"
                     },
                     // bottomAxis Line Styles
                     "& .MuiChartsAxis-bottom .MuiChartsAxis-line ":{
@@ -67,7 +69,7 @@ export function CustomBarChart({ data }){
 
 
 export function CustomLineChart(){
-    const xLabels = ['Jan', 'Feb', 'Mar', "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
+    const xLabels = ['1월', '2월', '3월', "4월", "5월", "6월", "7월", "8월", "9월", "10월", "11월", "12월"]
 
     return (
         <div style={{width:"100%", height:"90%"}}>

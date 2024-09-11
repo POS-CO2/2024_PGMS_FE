@@ -1,7 +1,7 @@
 import React from 'react';
 import { styled } from '@mui/material/styles';
 import * as formItemStyles from '../assets/css/formItem.css';
-import { Form, Select } from 'antd';
+import { ConfigProvider, Form, Select } from 'antd';
 import { CloseOutlined } from '@ant-design/icons';
 
 const CustomSelect = styled(Select)`
@@ -24,6 +24,7 @@ const CustomSelect = styled(Select)`
     }
 
     .ant-select-selection-item {
+        font-family: SUITE-Regular;
         &:hover {
             border-color: #0EAA00 !important;
         }
@@ -45,27 +46,37 @@ export default function DropDown({ name, label, required=false, options, default
     };
 
     return (
-        <Form.Item
-            className={formItemStyles.form_item}
-            name={name}
-            label={label}
-            rules={[{ required: required, message: '${label} 선택은 필수입니다.' }]}
-            initialValue={defaultSelected ? options[0].value : undefined}
+        <ConfigProvider
+            theme={{
+                token: {
+                    /* here is your global tokens */
+                    fontFamily: "SUITE-Regular"
+                },
+            }}
         >
-            <CustomSelect
-                /*className={formItemStyles.select_dropdown}*/
-                style={dropdownStyle}
-                allowClear={{ clearIcon: <CloseOutlined style={{color: "red"}} /> }}
-                disabled={disabled}
-                placeholder={placeholder}
-                {...(name !== 'actvYear' && { onChange: (value) => onProjectSelect(value) })}  // name이 'actvYear'가 아닐 때만 onChange 속성 추가
+
+            <Form.Item
+                className={formItemStyles.form_item}
+                name={name}
+                label={label}
+                rules={[{ required: required, message: '${label} 선택은 필수입니다.' }]}
+                initialValue={defaultSelected ? options[0].value : undefined}
             >
-                {options.map(option => (
-                    <Select.Option key={option.value} value={option.value}>
-                        {option.label}
-                    </Select.Option>
-                ))}
-            </CustomSelect>
-        </Form.Item>
+                <CustomSelect
+                    /*className={formItemStyles.select_dropdown}*/
+                    style={dropdownStyle}
+                    allowClear={{ clearIcon: <CloseOutlined style={{color: "red"}} /> }}
+                    disabled={disabled}
+                    placeholder={placeholder}
+                    {...(name !== 'actvYear' && { onChange: (value) => onProjectSelect(value) })}  // name이 'actvYear'가 아닐 때만 onChange 속성 추가
+                >
+                    {options.map(option => (
+                        <Select.Option key={option.value} value={option.value}>
+                            {option.label}
+                        </Select.Option>
+                    ))}
+                </CustomSelect>
+            </Form.Item>
+        </ConfigProvider>
     )
 }

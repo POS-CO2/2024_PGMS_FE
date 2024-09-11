@@ -7,6 +7,7 @@ import InputYear from "./FormItem/InputYear";
 import SelectCalendar from "./FormItem/SelectCalendar";
 import SearchAtModal from "./FormItem/SearchAtModal";
 import SearchBtn from "./FormItem/SearchBtn";
+import styled from 'styled-components';
 
 /**
  * 모든 FormItem에
@@ -29,6 +30,28 @@ import SearchBtn from "./FormItem/SearchBtn";
  * - label: 기본값은 "조회"
  */
 
+const StyledForm = styled(Form)`
+    .ant-input{
+        font-family: SUITE-Regular;
+    }
+
+    .ant-form-item{
+        font-family: SUITE-Regular;
+    }
+
+    .ant-form-item-label{
+        font-family: SUITE-Regular;
+    }
+
+    .ant-form-item-required{
+        font-family: SUITE-Regular;
+    }
+
+    .ant-select-selection-item{
+        font-family: SUITE-Regular;
+    }
+`; 
+
 const formItemComponents = {
     DropDown,
     InputText,
@@ -37,7 +60,7 @@ const formItemComponents = {
     SearchAtModal
 };
 
-export default function SearchForms({ onFormSubmit, formFields, onSearch, autoSubmitOnInit=false, onProjectSelect=null }) {
+export default function SearchForms({ onFormSubmit, formFields, autoSubmitOnInit=false, onProjectSelect=null }) {
     const [form] = Form.useForm();
     const [isInitialSubmit, setIsInitialSubmit] = useState(autoSubmitOnInit); // 첫 렌더링 여부를 추적하는 상태
 
@@ -72,7 +95,7 @@ export default function SearchForms({ onFormSubmit, formFields, onSearch, autoSu
     };
 
     return (
-        <Form form={form} layout="vertical" className={searchFormStyles.form_container} onFinish={handleFinish}>
+        <StyledForm form={form} layout="vertical" className={searchFormStyles.form_container} onFinish={handleFinish}>
             {formFields.map((field, index) => {
                 const FormItemComponent = formItemComponents[field.type];
                 return (
@@ -95,6 +118,6 @@ export default function SearchForms({ onFormSubmit, formFields, onSearch, autoSu
                 )
             })}
             <SearchBtn/>
-        </Form>
+        </StyledForm>
     );
 };

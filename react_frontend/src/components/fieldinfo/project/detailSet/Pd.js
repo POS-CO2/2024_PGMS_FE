@@ -1,14 +1,21 @@
-import React, { useState, useEffect } from "react";
-import { RecoilRoot } from 'recoil';
-import Swal from 'sweetalert2';
+import React, { useState } from "react";
+import { useRecoilState } from 'recoil';
+import {
+        managerState, empState, selectedManagerState, selectedEmpState,
+    } from '../../../../atoms/pdsAtoms';
+import {
+        useHandleOkAction, useModalActions, useHandleSubmitAction,
+        useSearchAction, useHandleKeyDownAction
+    } from '../../../../actions/commonActions';
 import { Input, Select } from 'antd';
-import { Card, Button } from '@mui/material';
+import { Card } from '@mui/material';
 import { styled } from '@mui/material/styles';
-import axiosInstance from '../../../../utils/AxiosInstance';
-import SearchProjectModal from "../../../../FormItem/SearchProjectModal";
+import { CloseOutlined } from '@ant-design/icons';
+import { AddButton } from '../../../../Button';
+import { pjtManagerColumns, userColumns } from '../../../../assets/json/tableColumn';
+import Table from "../../../../Table";
+import TableCustom from "../../../../TableCustom";
 import * as pdsStyles from "../../../../assets/css/pds.css";
-import * as mainStyles from "../../../../assets/css/main.css";
-import PdsStateMgr from "./PdsStateMgr";
 
 const { Option } = Select;
 
@@ -34,242 +41,125 @@ const CustomInput = styled(Input)`
     &:hover {
         border-color: #0EAA00 !important;
     }
+
 `;
 
-const CustomSelect = styled(Select)`
-    .ant-select-selector {
-        background-color: transparent !important;
-        border-color: #D9D9D9 !important;
-        transition: border-color 0.3s;
+export default function Pd({pjtId}) {                                                   // 선택된 사원의 loginId list
+    const [managers, setManagers] = useRecoilState(managerState);                               // 조회 결과(담당자 목록)
+    const [selectedManager, setSelectedManager] = useRecoilState(selectedManagerState);;        // 선택된 담당자
+    const [emps, setEmps] = useRecoilState(empState);                                           // 조회 결과(사원 목록)
+    const [selectedEmps, setSelectedEmps] = useRecoilState(selectedEmpState);                   // 선택된 사원의 loginId list
+    const [inputEmpId, setInputEmpId] = useState('');                                     // 입력한 사번
+    const [inputEmpName, setInputEmpName] = useState('');                                       // 입력한 사원명
 
-        &:hover {
-            border-color: #0EAA00 !important;
-        }
+    const { showModal, closeModal, isModalOpen } = useModalActions();
+    const handleOk = useHandleOkAction();
+    const searchAction = useSearchAction();
+    const submitAction = useHandleSubmitAction();
+    const handleKeyDown = useHandleKeyDownAction();
 
-        &:focus, &:focus-within {
-            outline: none;
-            box-shadow: 0 0 0 0.5px #0EAA00 !important;
-            border-color: #0EAA00 !important;
-        }
+    const handleSearch = () => {
+        searchAction({
+          url: `/pjt/not-manager?pjtId=${pjtId}&loginId=${inputEmpId}&userName=${inputEmpName}`,
+          setter: setEmps,
+        });
+    };
+
+    const handleSubmit = () => {
+        submitAction({
+            data: selectedEmps,
+            setterReg: setManagers,
+            setterNotReg: setEmps,
+            setterSelectedNotReg: setSelectedEmps,
+            requestBody: selectedEmps.map(emp => ({
+                pjtId: pjtId,
+                userId: emp.id
+            })),
+            url: "/pjt/manager",
+            successMsg: '담당자가 성공적으로 지정되었습니다.'
+        })
     }
 
-    .ant-select-selection-item {
-        &:hover {
-            border-color: #0EAA00 !important;
-        }
-    }
-`;
-
-export default function Pd() {
-    const [searchedPjt, setSearchedPjt] = useState({});                         // 프로젝트 조회 결과
-    const [isSearchPjtModalOpen, setIsSearchPjtModalOpen] = useState(false);
-
-    const [emissions, setEmissions] = useState([]);                             // 조회 결과(배출원 목록)
-    const [selectedEms, setSelectedEms] = useState({});                         // 선택된 배출원
-    const [notEms, setNotEms] = useState([]);                                   
-    const [selectedNotEm, setSelectedNotEm] = useState({});
-
-    const showSearchPjtModal = () => {
-        setIsSearchPjtModalOpen(true);
+    // 사원 클릭 시 호출될 함수
+    const handleEmpClick = (emp) => {
+        setSelectedEmps(emp);
     };
 
-    const closeSearchPjtModal = () => {
-        setIsSearchPjtModalOpen(false);
+    // 담당자 클릭 시 호출될 함수
+    const handleManagerClick = (manager) => {
+        setSelectedManager(manager ?? {});
     };
-
-    // 프로젝트 찾기 모달의 선택 버튼 클릭 시 호출될 함수
-    const searchProject = (data) => {
-        setIsSearchPjtModalOpen(false);
-        setSearchedPjt(data);
-    };
-
-    // 배출원 row 클릭 시 호출될 함수
-    const handleEmClick = (em) => {
-        setSelectedEms(em ?? {});
-    };
-    
-    const handleOptionBtnClick = async (button) => {
-        setSelectedButton(button); // 클릭된 버튼의 상태를 변경
-
-        if (button === '담당자 지정') {
-            const response = await axiosInstance.get(`/pjt/manager?pjtId=${searchedPjt.id}`);
-            setManagers(response.data);
-        } else if (button === '설비 지정') {
-            const response = await axiosInstance.get(`/equip?pjtId=${searchedPjt.id}`);
-            setEquips(response.data);
-
-            const totalEqLib = await axiosInstance.get(`/equip/lib`);
-            setNotEqs(totalEqLib.data);
-        } else if (button === '배출원 관리') {
-            const response = await axiosInstance.get(`/equip/emission?projectId=${searchedPjt.id}`);
-            setEmissions(response.data);
-        }
-    };
-    
-    // 찾기(조회) 버튼 클릭 시 호출될 함수
-    const handleSearch = async() => {
-        try {
-            if (selectedButton === '담당자 지정') {
-                const response = await axiosInstance.get(`/pjt/not-manager?pjtId=${searchedPjt.id}&loginId=${inputEmpId}&userName=${inputEmpName}`);
-                setEmps(response.data);
-            } else if (selectedButton === '설비 지정') {
-                const params = {
-                    equipLibName: inputEqLib,
-                    equipDvs: inputEqDvs === '' ? null : inputEqDvs,
-                    equipType: inputEqType === '' ? null : inputEqType,
-                };
-
-                const response = await axiosInstance.get("/equip/lib", {params});
-                setNotEqs(response.data);
-            } else if (selectedButton === '배출원 관리') {
-                const response = await axiosInstance.get(`/pjt/not-manager?pjtId=${searchedPjt.id}&loginId=${inputEmpId}&userName=${inputEmpName}`);
-                setNotEms(response.data);
-            }
-        } catch (error) {
-            console.log(error);
-        }
-    };
-
-    // 등록 버튼 클릭 시 호출될 함수
-    const handleSelect = async(data) => {
-        setSelectedEmps([]);
-
-        let swalOptions = {
-            confirmButtonText: '확인'
-        };
-
-        if (selectedButton === '담당자 지정') {
-            // data 배열을 순회하며 requestBody 배열 생성
-            const requestBody = data.map(user => ({
-                pjtId: searchedPjt.id,
-                userId: user.id
-            }));
-
-            const response = await axiosInstance.post("/pjt/manager", requestBody);
-
-            // 기존 managers에서 placeholderManager 제거하고 새 데이터를 병합
-            setManagers(prevManagers => {
-                // placeholderManager 제거
-                const cleanedManagers = prevManagers.filter(manager => manager.id !== '');
-
-                // 새로 추가된 담당자를 병합
-                return [...cleanedManagers, ...response.data];
-            });
-
-            // emps 에서 새 데이터를 제거
-            setEmps(prevEmps => {
-                const managerIds = data.map(manager => manager.id);
-                const cleanedEmps = prevEmps.filter(emp => !managerIds.includes(emp.id));
-
-                return [...cleanedEmps];
-            })
-
-            // 입력창 초기화
-            setInputEmpId('');
-            setInputEmpName('');
-
-            swalOptions.title = '성공!',
-            swalOptions.text = '담당자가 성공적으로 지정되었습니다.';
-            swalOptions.icon = 'success';
-        } else if (selectedButton === '설비 지정') {
-            // data 배열을 순회하며 requestBody 배열 생성
-            const requestBody = data.map(user => ({
-                pjtId: searchedPjt.id,
-                userId: user.id
-            }));
-
-            const response = await axiosInstance.post("/pjt/manager", requestBody);
-
-            // 기존 managers에서 placeholderManager 제거하고 새 데이터를 병합
-            setManagers(prevManagers => {
-                // placeholderManager 제거
-                const cleanedManagers = prevManagers.filter(manager => manager.id !== '');
-
-                // 새로 추가된 담당자를 병합
-                return [...cleanedManagers, ...response.data];
-            });
-
-            // emps 에서 새 데이터를 제거
-            setEmps(prevEmps => {
-                const managerIds = data.map(manager => manager.id);
-                const cleanedEmps = prevEmps.filter(emp => !managerIds.includes(emp.id));
-
-                return [...cleanedEmps];
-            })
-
-            // 입력창 초기화
-            setInputEqLib('');
-            setInputEqType('');
-            setInputEqDvs('');
-
-            swalOptions.title = '성공!',
-            swalOptions.text = '담당자가 성공적으로 지정되었습니다.';
-            swalOptions.icon = 'success';
-        }
-
-        Swal.fire(swalOptions);
-    };
-
+  
     return (
         <>
-            <div className={mainStyles.breadcrumb}>현장정보 &gt; 프로젝트 상세설정 </div>
-            
-            {Object.keys(searchedPjt).length === 0 ? (
-                <div className={pdsStyles.main_grid}>
-                    <Card sx={{ height: "auto", padding: "2.5rem", borderRadius: "0.5rem" }}>
-                        <div className={pdsStyles.message_container}>
-                            <div className={pdsStyles.message}>프로젝트 찾기를 통해 먼저 프로젝트를 하나 선택해주세요.
-                                <button type="primary" onClick={showSearchPjtModal}>
-                                    프로젝트 찾기
-                                </button>
+            <Card sx={{ width: "50%", height: "auto", borderRadius: "0.5rem" }}>
+                <TableCustom
+                    title='현장담당자 목록' 
+                    data={managers}
+                    columns={pjtManagerColumns}                 
+                    buttons={['Delete']}
+                    onClicks={[() => showModal('Delete')]}
+                    onRowClick={handleManagerClick}
+                    selectedRows={[selectedManager]}
+                    modals={[
+                        {
+                            modalType: 'Delete',
+                            isModalOpen: isModalOpen.Delete,
+                            handleOk: () => handleOk('Delete') ({
+                                data: selectedManager, 
+                                setter: setManagers, 
+                                setterSelected: setSelectedManager
+                              }),
+                            handleCancel: closeModal('Delete'),
+                            rowData: selectedManager,
+                            rowDataName: 'userName',
+                            url: '/pjt/manager'
+                        },
+                    ]}
+                />
+            </Card>
+            <Card sx={{ width: "50%", height: "auto", borderRadius: "0.5rem", paddingBottom: "20px" }}>
+                <div className={pdsStyles.card_container}>
+                    <div className={pdsStyles.contents_header}>
+                        현장담당자 등록
+                        {(selectedEmps.length === 0 ? 
+                            <></> :
+                            <AddButton onClick={handleSubmit} disabled={selectedEmps.length === 0} />
+                        )}
+                    </div>
+                    <div className={pdsStyles.search_container}>
+                        <div className={pdsStyles.search_item}>
+                            <div className={pdsStyles.search_title}>사번</div>
+                            <CustomInput
+                                value={inputEmpId}
+                                allowClear={{ clearIcon: <CloseOutlined style={{color: "red"}} /> }}
+                                onChange={(e) => setInputEmpId(e.target.value)}
+                                onKeyDown={(e) => handleKeyDown(e, handleSearch)}
+                                style={{ width: '12rem', backgroundColor: '#E5F1E4', outline: 'none', boxShadow: 'none' }}
+                            />
+                        </div>
+                        <div className={pdsStyles.search_item}>
+                            <div className={pdsStyles.search_title}>이름</div>
+                            <div className={pdsStyles.input_with_btn}>
+                                <CustomInput
+                                    value={inputEmpName}
+                                    allowClear={{ clearIcon: <CloseOutlined style={{color: "red"}} /> }}
+                                    onChange={(e) => setInputEmpName(e.target.value)}
+                                    onKeyDown={(e) => handleKeyDown(e, handleSearch)}
+                                    style={{ width: '12rem', backgroundColor: '#E5F1E4', outline: 'none', boxShadow: 'none' }}
+                                />
+                                <button className={pdsStyles.search_button} onClick={handleSearch}>조회</button>
                             </div>
                         </div>
-                    </Card>
+                    </div>
+
+                    <div className={pdsStyles.result_container}>
+                        {(!emps || emps.length === 0) ? 
+                        <></> : <Table key={JSON.stringify(managers.length)} data={emps} columns={userColumns} variant='checkbox' onRowClick={handleEmpClick} modalPagination={true} />
+                        }
+                    </div>
                 </div>
-
-            ) : (
-                <div className={pdsStyles.main_grid}>
-                    <Card sx={{ height: "auto", padding: "1rem", borderRadius: "0.5rem" }}>
-                        <div className={pdsStyles.project_container}>
-                            <div className={pdsStyles.pjt_data_container}>프로젝트 코드
-                                <div className={pdsStyles.code}>{searchedPjt.pjtCode}</div>
-                            </div>
-                            <div className={pdsStyles.pjt_data_container}>프로젝트명
-                                <div className={pdsStyles.code}>{searchedPjt.pjtName}</div>
-                            </div>
-                            <div className={pdsStyles.pjt_data_container}>프로젝트 지역
-                                <div className={pdsStyles.code}>{searchedPjt.pjtType} / {searchedPjt.regCode}</div>
-                            </div>
-                            <div className={pdsStyles.pjt_data_container}>계약일
-                                <div className={pdsStyles.code}>{searchedPjt.ctrtFrYear} / {searchedPjt.ctrtFrMth} ~ {searchedPjt.ctrtToYear} / {searchedPjt.ctrtToMth}</div>
-                            </div>
-                            <div className={pdsStyles.pjt_data_container}>본부명
-                                <div className={pdsStyles.code}>{searchedPjt.divCode}</div>
-                            </div>
-                            <div className={pdsStyles.pjt_data_container}>연면적(m²)
-                                <div className={pdsStyles.code}>{searchedPjt.bldArea}</div>
-                            </div>
-                            <div className={pdsStyles.pjt_data_container}>진행상태
-                                <div className={pdsStyles.code}>{searchedPjt.pjtProgStus}</div>
-                            </div>
-                            <div className={pdsStyles.pjt_data_container}>분류
-                                <div className={pdsStyles.code}>{searchedPjt.prodTypeCode}</div>
-                            </div>
-                            <button style={{ marginLeft: "10px" }} onClick={showSearchPjtModal}>다시 선택하기</button>
-                        </div>
-                    </Card>
-
-                    <RecoilRoot>
-                        <PdsStateMgr pjtId={searchedPjt.id} />
-                    </RecoilRoot>
-                </div>
-            )}
-
-            <SearchProjectModal 
-                isModalOpen={isSearchPjtModalOpen} 
-                handleOk={searchProject} 
-                handleCancel={closeSearchPjtModal} 
-            />
+            </Card>
         </>
     )
 };
