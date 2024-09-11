@@ -5,7 +5,12 @@ import { ConfigProvider } from 'antd';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
-    <ConfigProvider theme={{ hashed: false }}>
+    <ConfigProvider 
+        theme={{ 
+            hashed: false,
+            fontFamily: "SUITE-Regular", 
+        }}
+    >
         <App />
     </ConfigProvider>
 );
