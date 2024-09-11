@@ -32,6 +32,7 @@
     flex-direction: column;
     border-radius: 15px;
     gap: 1rem;
+    font-family: "SUITE-Regular";
 }
 
 .text_field {

@@ -492,7 +492,8 @@ export default function Main() {
                             </div>
                         </Card>
                         <Card className={gridStyles.box1_2} sx={{borderRadius:"10px", backgroundColor: "rgb(23, 27, 38)"}}>
-                            <CustomBarChart data={scope}/>
+                            <CustomBarChart data={scope} 
+                            />
                         </Card>
                     </div>
                 </Card>
