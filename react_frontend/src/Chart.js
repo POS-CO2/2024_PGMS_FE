@@ -23,6 +23,7 @@ export function CustomBarChart({ data }){
                 leftAxis={null}
                 colors={['rgb(53, 98, 227)', 'rgb(196, 218, 250)']}
                 sx={{
+                    fontFamily:"SUITE-Regular",
                     //change left yAxis label styles
                     "& .MuiChartsAxis-left .MuiChartsAxis-tickLabel":{
                         strokeWidth:"0.4",
@@ -41,6 +42,7 @@ export function CustomBarChart({ data }){
                         strokeWidth:"0.5",
                         fill:"white",
                         fontWeight:"bold",
+                        fontFamily:"SUITE-Regular"
                     },
                     // bottomAxis Line Styles
                     "& .MuiChartsAxis-bottom .MuiChartsAxis-line ":{

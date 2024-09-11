@@ -82,6 +82,7 @@ const chartOptions = (title) => {
         },
         width: "100%",  // 부모 요소의 100%를 채우도록 설정
         height: "100%",
+        fontFamily: "SUITE-Regular",
         responsive: [{
             breakpoint: 600,
             options: {
@@ -137,6 +138,7 @@ const chartOptions = (title) => {
             fontSize:  '25px',
             fontWeight:  'bold',
             color:  'rgb(14, 170, 0)',
+            fontFamily:"SUITE-Regular",
         },
     }
     }
@@ -152,6 +154,7 @@ const miniChartOptions = (title, toMonth) => {
         },
         width: "100%",  // 부모 요소의 100%를 채우도록 설정
         height: "100%",
+        fontFamily:"SUITE-Regular",
         responsive: [{
             breakpoint: 600,
             options: {
@@ -208,7 +211,8 @@ const miniChartOptions = (title, toMonth) => {
         style: {
             fontSize:  '25px',
             fontWeight:  'bold',
-            color:  'white'
+            color:  'white',
+            fontFamily:"SUITE-Regular"
         },
     }
     }
@@ -235,6 +239,9 @@ const donutChartOptions = (label) => {
             }
             }]
         },
+        chart: {
+            fontFamily:"SUITE-Regular",
+        }
     }
         return chartOption;
 }
@@ -288,6 +295,7 @@ const polarAreaChartOptions = (labels) => {
             type: 'pie',
             toolbar: {
             show: false, // 차트 툴바 숨김
+            fontFamily:"SUITE-Regular",
             },
         },
         dataLabels:{
@@ -304,7 +312,8 @@ const polarAreaChartOptions = (labels) => {
             style: {
                 fontSize: "1rem",
                 fontWeight:"bold",
-                color: "rgb(55,57,78)"
+                color: "rgb(55,57,78)",
+                fontFamily:"SUITE-Regular",
             },
             dropShadow: {
                 enabled: false,
@@ -361,7 +370,7 @@ const polarAreaChartOptions = (labels) => {
                 fontSize: '22px',
                 fontWeight: 'bold',
                 color: "rgb(55,57,78)",
-                margin: "1rem"
+                fontFamily:"SUITE-Regular",
             },
         },
         };
@@ -421,7 +430,6 @@ export default function Main_Hp() {
                 // 올해 스코프
                 const scopeResponse = await axiosInstance.get(`/perf/total?year=${toYear}`);
                 const afterScope = scopeResponse.data;
-                console.log(afterScope);
 
                 setScope1(prev=>prev.concat(afterScope.map(e => e.scope1)));
                 setScope2(prev=>prev.concat(afterScope.map(e => e.scope2)));
@@ -500,8 +508,6 @@ export default function Main_Hp() {
         }
     };
 
-    console.log(emtnName);
-    console.log(emtnAmt);
     return (
         <>
             <div className={gridStyles.maingrid}>
@@ -652,7 +658,7 @@ export default function Main_Hp() {
                         </StyledChart2>
                         </div>
                         <div className={gridStyles.right_swiper_area}>
-                            <div style={{fontWeight:"bold", fontSize:"1.5rem", marginLeft:"1.5rem", color:"rgb(55, 57, 78)"}}>
+                            <div style={{fontWeight:"bold", fontSize:"22px", marginLeft:"0.5rem", color:"rgb(55, 57, 78)"}}>
                                 배출량
                             </div>
                             <StyledRoot2 style={{width:"100%", height:"100%", overflow:"hidden"}}>
