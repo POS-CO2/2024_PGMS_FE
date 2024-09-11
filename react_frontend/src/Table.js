@@ -8,7 +8,6 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import { Box, Checkbox, TablePagination, TextField } from '@mui/material';
-import { ConstructionOutlined } from '@mui/icons-material';
 import InboxIcon from '@mui/icons-material/Inbox';
 import Typography from '@mui/material/Typography';
 
@@ -33,7 +32,7 @@ const StyledTableCell = styled(TableCell)(({ theme }) => ({
 }));
 
 // TableRow를 스타일링하는 컴포넌트
-const StyledTableRow = styled(TableRow)(({ theme, selected, variant }) => ({
+const StyledTableRow = styled(TableRow)(({ theme, selected, variant, edited }) => ({
     '&:last-child td, &:last-child th': {
         border: 0,
     },
@@ -43,6 +42,8 @@ const StyledTableRow = styled(TableRow)(({ theme, selected, variant }) => ({
     '&.Mui-selected': {
         backgroundColor: selected && variant === 'default' ? '#B7E4B3 !important' : '#FFFFFF', // 선택된 상태에서 배경색 강제 적용 (default variant만)
     },
+
+    backgroundColor: edited ? '#FFF5E5' : 'transparent', // 수정된 행일 경우 배경색 변경
 }));
 
 // Checkbox를 스타일링하는 컴포넌트
@@ -70,6 +71,7 @@ export default function CustomizedTables({
         pagination = true,
         modalPagination = false,
         columns = [],
+        editedRows= []
     }) {
     const [selectedRow, setSelectedRow] = useState({});       // default variant의 선택 상태
     const [selectedRows, setSelectedRows] = useState([]); 
@@ -176,6 +178,7 @@ export default function CustomizedTables({
                                                 ? selectedRows.includes(rowIndex) 
                                                 : selectedRow === rowIndex + (rowsPerPage * page)}
                                         variant={variant}
+                                        edited={editedRows.includes(rowIndex + (rowsPerPage * page))} // 수정된 행을 식별
                                         onClick={() => handleRowClick(rowIndex + (rowsPerPage * page))}
                                     >
                                         {   // checkbox가 있는 테이블이면 체크박스 셀 추가
@@ -221,6 +224,7 @@ export default function CustomizedTables({
                                                 ? selectedRows.includes(index) 
                                                 : selectedRow === index
                                             }
+                                            edited={editedRows.includes(index)} // 수정된 행을 식별
                                             onClick={(e) => handleRowClick(index, e)}
                                         >
                                             {   // checkbox가 있는 테이블이면 체크박스 셀 추가

@@ -305,7 +305,6 @@ export default function Mm({menus, handleMenuSet}) {
 
     const clickMenuHandler = (e, item) => {
         setShowTable(true);
-        setEditable(true);
         const clickedItem = findMenuItemById(item, items); // items는 전체 메뉴 트리입니다.
         if (clickedItem) {
             // 상위 폴더 찾기
@@ -351,7 +350,6 @@ export default function Mm({menus, handleMenuSet}) {
         showModal('Delete');
     }
     const handleEditClick = () => {
-        setEditable(false);
         (async () => {
             const {data} = await axiosInstance.get(`/sys/menu/cand?id=${selectedMenu.originId !== undefined ? (selectedMenu.originId) : 1}`);
             setUpperDir(data);
@@ -365,7 +363,6 @@ export default function Mm({menus, handleMenuSet}) {
         
     }
     
-    const [editable, setEditable] = useState(true);
     const [upperDir, setUpperDir] = useState([]);
 
     const [menuName, setMenuName] = useState('');
@@ -376,7 +373,6 @@ export default function Mm({menus, handleMenuSet}) {
     const [menuOrderList, setMenuOrderList] = useState([]);
     const [selectedMenuOrder, setSelectedMenuOrder] = useState([]);
     const handleSaveClick = async () => {
-        setEditable(true);
         let swalOptions = {
             confirmButtonText: '확인'
         };
@@ -496,8 +492,8 @@ export default function Mm({menus, handleMenuSet}) {
             </div>
             <div className={sysStyles.main_grid}>
                 <Card sx={{width:"24%", borderRadius:"15px", height:"88vh", overflowY:"auto"}}>
-                <TableCustom title='' className={sysStyles.btn_group} buttons={['Add', 'Delete', 'Edit']} 
-                onClicks={[handleAddClick,handleDeleteClick, handleEditClick]} 
+                <TableCustom title='' className={sysStyles.btn_group} buttons={['Add', 'Delete']} 
+                onClicks={[handleAddClick,handleDeleteClick]} 
                 table={false} 
                 selectedRows={[selectedMenu]}
                 modals={[
@@ -530,21 +526,23 @@ export default function Mm({menus, handleMenuSet}) {
                     /** 권한 부여 현황 어케 할건지 및 등록, 수정화면 필요 */
                     <>
                     <Card className={sysStyles.card_box} sx={{width:"38%", height:"88vh", borderRadius:"15px"}}>
-                        <div className={sysStyles.mid_title}>{"메뉴 정보"}</div>
+                        <TableCustom 
+                            table={false} 
+                            title={"메뉴 정보"} 
+                            buttons={['DoubleClickEdit']} 
+                            onClicks={handleEditClick}
+                            onRowClick={() => { }}
+                            selectedRows={[]}
+                            modals={[]}
+                        />
                         <div className={sysStyles.text_field} style={{marginTop:"2rem"}}>
                             <div className={sysStyles.text}>
                                 {"메뉴 이름"}
                             </div>
-                            {!editable ? (
-                                <TextField size='small' id='menuName' disabled={editable} onChange={(e) => handleInputChangeText('name', e.target.value)} value={selectedMenu.name} variant='outlined' sx={{marginTop:"0.5rem",width:"20rem"}}/>
-                            ) : (
-                                <TextField size='small' id='menuName' disabled={editable} onChange={handleInputChange} value={selectedMenu.name} variant='outlined' sx={{marginTop:"0.5rem",width:"20rem", backgroundColor:"rgb(223,223,223)"}}/>
-                            )}
-                            
+                            <TextField size='small' id='menuName' onChange={(e) => handleInputChangeText('name', e.target.value)} value={selectedMenu.name} variant='outlined' sx={{marginTop:"0.5rem",width:"20rem"}}/>
                         </div>
                         <div className={sysStyles.text_field}>
                             <div className={sysStyles.text}>{"상위 폴더"}</div>
-                            {!editable ? (
                                 <Select value={selectedMenu.parentDir} onChange={(e) => {handleInputChange('parentDirId', e);}} style={{marginTop:"0.5rem",width:"20rem", height:"2.5rem", fontSize:"4rem"}}>
                                 {upperDir.map(option => (
                                     <Select.Option key={option.id} value={option.id}>
@@ -552,56 +550,35 @@ export default function Mm({menus, handleMenuSet}) {
                                     </Select.Option>
                                 ))}
                                 </Select>
-                            ) : (
-                            <TextField size='small' id='parentDir' disabled={editable} variant='outlined' value={selectedMenu.parentDir} sx={{marginTop:"0.5rem",width:"20rem", backgroundColor:"rgb(223,223,223)"}}/>
-                            )}
-                            
                         </div>
                         <div className={sysStyles.text_field}>
                             <div className={sysStyles.text}>{"Url 주소"}</div>
-                            {!editable ? (
-                                <TextField size='small' id='address' defaultValue={selectedMenu.url} disabled={editable} variant='outlined' onChange={(e) => handleInputChangeText('url', e.target.value)} value={selectedMenu.url} sx={{marginTop:"0.5rem",width:"20rem"}}/>
-                            ) : (
-                            <TextField size='small' id='address' disabled={editable} variant='outlined' value={selectedMenu.url} sx={{marginTop:"0.5rem",width:"20rem", backgroundColor:"rgb(223,223,223)"}}/>
-                            )}
-                            
+                            <TextField size='small' id='address' defaultValue={selectedMenu.url} variant='outlined' onChange={(e) => handleInputChangeText('url', e.target.value)} value={selectedMenu.url} sx={{marginTop:"0.5rem",width:"20rem"}}/>
                         </div>
                         <div className={sysStyles.text_field}>
                             <div className={sysStyles.text}>{"메뉴 순서"}</div>
-                            {!editable ? (
-                                // <TextField size='small' id='menuOrder' defaultValue={selectedMenu.menuOrder} disabled={editable} variant='outlined' onChange={(e) => handleInputChange('menuOrder', e.target.value)} value={selectedMenu.menuOrder} sx={{marginTop:"0.5rem",width:"20rem"}}/>
-                                <Select value={selectedMenu.menuOrder} onChange={(e) => handleInputChangeText('menuOrder', e)} style={{marginTop:"0.5rem",width:"20rem", height:"2.5rem", fontSize:"4rem"}}>
-                                {menuOrderList.map(option => (
-                                    <Select.Option key={option} value={option}>
-                                        {option}
-                                    </Select.Option>
-                                ))}
-                                </Select>
-                            ) : (
-                            <TextField size='small' id='menuOrder' value={selectedMenu.menuOrder} disabled={editable} variant='outlined' sx={{marginTop:"0.5rem",width:"20rem", backgroundColor:"rgb(223,223,223)"}}/>
-                            )}
-                            
+                            <Select value={selectedMenu.menuOrder} onChange={(e) => handleInputChangeText('menuOrder', e)} style={{marginTop:"0.5rem",width:"20rem", height:"2.5rem", fontSize:"4rem"}}>
+                            {menuOrderList.map(option => (
+                                <Select.Option key={option} value={option}>
+                                    {option}
+                                </Select.Option>
+                            ))}
+                            </Select>
                         </div>
                         <div className={sysStyles.text_field}>
                             <div className={sysStyles.text}>{"접근 권한"}</div>
-                            {!editable ? (
-                                <Select placeholder={"접근 권한"} defaultValue={selectedMenu.accessUser} value={selectedMenu.accessUser} onChange={(value) => handleInputChangeText('accessUser', value)} style={{marginTop:"0.5rem",width:"20rem", height:"2.5rem", fontSize:"4rem"}}>
-                                {access.map(option => (
-                                    <Select.Option key={option.value} value={option.value}>
-                                        {option.label}
-                                    </Select.Option>
-                                ))}
-                                </Select>
-                            ):(
-                                <TextField size='small' id='access' disabled={editable} variant='outlined' value={selectedMenu.accessUser} sx={{marginTop:"0.5rem",width:"20rem", backgroundColor:"rgb(223,223,223)"}}/>
-                            )}
-                            
+                            <Select placeholder={"접근 권한"} defaultValue={selectedMenu.accessUser} value={selectedMenu.accessUser} onChange={(value) => handleInputChangeText('accessUser', value)} style={{marginTop:"0.5rem",width:"20rem", height:"2.5rem", fontSize:"4rem"}}>
+                            {access.map(option => (
+                                <Select.Option key={option.value} value={option.value}>
+                                    {option.label}
+                                </Select.Option>
+                            ))}
+                            </Select>
                         </div>
-                        {!editable && <Button variant='contained' onClick={handleSaveClick} sx={{marginTop:"0.5rem",width:"20rem", margin:"5rem auto"}}>저장</Button>}
+                        <Button variant='contained' onClick={handleSaveClick} sx={{marginTop:"0.5rem",width:"20rem", margin:"5rem auto"}}>저장</Button>
                     </Card> 
                     <Card className={sysStyles.card_box} sx={{width:"38%", borderRadius:"15px"}}>
                         <TableCustom title='권한 부여 현황' data={res} columns={menuTableColumns}/>
-                        {/* <DataGrid rows = {} columns={} /> */}
                     </Card>
                     </>
                 ) : (

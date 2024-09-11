@@ -229,7 +229,7 @@ export default function Ps_1_2_Fp() {
                 columns={perfColumns}
                 title="실적목록"
                 data={data}
-                buttons={['Edit', 'UploadExcel', 'DownloadExcelForm']}
+                buttons={['DoubleClickEdit', 'UploadExcel', 'DownloadExcelForm']}
                 onClicks={[() => {}, onUploadExcelClick, () => onDownloadExcelFormClick(data)]}
                 modals={[
                     {
@@ -307,7 +307,7 @@ export default function Ps_1_2_Fp() {
                 columns={perfColumns}
                 title="실적목록"
                 data={data}
-                buttons={['Edit', 'UploadExcel', 'DownloadExcelForm']}
+                buttons={['DoubleClickEdit', 'UploadExcel', 'DownloadExcelForm']}
                 onClicks={[() => {}, onUploadExcelClick, () => onDownloadExcelFormClick(data)]}
                 modals={[
                     {

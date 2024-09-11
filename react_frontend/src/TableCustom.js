@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import Swal from 'sweetalert2';
 import Table from "./Table.js";
-import * as tableStyles from "./assets/css/newTable.css"
-import { DelModal, PgAddModal, PdAddModal, FlAddModal, FlEditModal, FamAddModal, FamEditModal, FadAddModal, Ps12UploadExcelModal, CmAddModal, DeleteModal, DeleteModal2, CmEditModal, CmListAddModal, CmListEditModal, FmAddModal, UmAddModal, MmAddModal, EsmAddModal, SdAddModal, SdShowDetailsModal, EfmAddModal, EfmEditModal } from "./modals/PdModal.js";
+import { DelModal, PgAddModal, FlAddModal, FlEditModal, FamAddModal, FamEditModal, FadAddModal, Ps12UploadExcelModal, CmAddModal, DeleteModal, DeleteModal2, CmEditModal, CmListAddModal, CmListEditModal, UmAddModal, MmAddModal, EsmAddModal, SdAddModal, SdShowDetailsModal } from "./modals/PdModal.js";
 import { ButtonGroup } from './Button';
 import axiosInstance from './utils/AxiosInstance';
 import { styled } from '@mui/material/styles';
@@ -29,14 +28,12 @@ const modalMap = {
     DeleteB: DeleteModal,
     Ps12UploadExcel: Ps12UploadExcelModal,
     PgAdd: PgAddModal,
-    PdAdd: PdAddModal,
     FlAdd: FlAddModal,
     FlEdit: FlEditModal,
     FamAdd: FamAddModal,
     FamEdit: FamEditModal,
     FadAdd: FadAddModal,
     Del: DelModal,
-    FmAdd: FmAddModal,
     UmAdd: UmAddModal,
     MmAdd: MmAddModal,
     EsmAdd: EsmAddModal,
@@ -66,7 +63,7 @@ export default function TableCustom({
     // 버튼 활성화 상태 결정
     const buttonStatus = buttons.map((button) => {
         if (button === 'Edit' || button === 'Delete' || button === 'ShowDetails') {
-            if (selectedRows.includes(null) || selectedRows.includes(undefined) || Object.keys(selectedRows[0]).length === 0) {  // 선택한 row가 없으면 삭제 버튼의 onRowClick 이벤트 비활성화(variant='default')
+            if (selectedRows.includes(null) || selectedRows.includes(undefined) || Object.keys(selectedRows[0] ?? {}).length === 0) {  // 선택한 row가 없으면 삭제 버튼의 onRowClick 이벤트 비활성화(variant='default')
                 return false;                               
             } else {
                 return selectedRows.length > 0;   // 선택된 row가 있으면 delete 버튼 활성화(variant='checkbox')
@@ -145,7 +142,6 @@ export function TableCustomDoubleClickEdit({
     handleYearChange = () => { },
     year = undefined
 }) {
-    const [isEditing, setIsEditing] = useState(false); // 'Edit' 모드 상태 관리
     const [editableData, setEditableData] = useState(data); // 수정된 데이터 저장
     const [editingCell, setEditingCell] = useState({ row: null, col: null }); // 현재 편집 중인 셀
     const [editedRows, setEditedRows] = useState([]); // 수정된 행의 인덱스 추적
@@ -182,36 +178,31 @@ export function TableCustomDoubleClickEdit({
             confirmButtonText: '확인'
         };
 
-        if (isEditing) {    // 저장 버튼 클릭 시
-            const updatedRows = editedRows.map(index => editableData[index]);
-            try {
-                const requestBody = updatedRows.map(row => ({
-                    id: row.id,
-                    pjtId: row.pjtId,
-                    year: row.year,
-                    mth: row.mth,
-                    salesAmt: parseInt((row.salesAmt ).replace(/,/g, ''), 10), // 쉼표를 제거하고 정수로 변환
-                }));
+        const updatedRows = editedRows.map(index => editableData[index]);
+        try {
+            const requestBody = updatedRows.map(row => ({
+                id: row.id,
+                pjtId: row.pjtId,
+                year: row.year,
+                mth: row.mth,
+                salesAmt: parseInt((row.salesAmt ).replace(/,/g, ''), 10), // 쉼표를 제거하고 정수로 변환
+            }));
 
-                const response = await axiosInstance.put("/pjt/sales", requestBody);
+            const response = await axiosInstance.put("/pjt/sales", requestBody);
 
-                swalOptions.title = '성공!',
-                swalOptions.text = '매출액이 성공적으로 수정되었습니다.';
-                swalOptions.icon = 'success';
+            swalOptions.title = '성공!',
+            swalOptions.text = '매출액이 성공적으로 수정되었습니다.';
+            swalOptions.icon = 'success';
 
-                handleFormSubmit(response.data);
+            handleFormSubmit(response.data);
 
-            } catch (error) {
-                swalOptions.title = '실패!',
-                swalOptions.text = '매출액 수정에 실패하였습니다.';
-                swalOptions.icon = 'error';
-            }
-            setIsEditing(false);
-            setEditedRows([]);
-            Swal.fire(swalOptions);
-        } else {
-            setIsEditing(true);
+        } catch (error) {
+            swalOptions.title = '실패!',
+            swalOptions.text = '매출액 수정에 실패하였습니다.';
+            swalOptions.icon = 'error';
         }
+        setEditedRows([]);
+        Swal.fire(swalOptions);
     };
 
     // Edit 버튼 클릭 핸들러
@@ -220,64 +211,58 @@ export function TableCustomDoubleClickEdit({
             confirmButtonText: '확인'
         };
 
-        if (isEditing) {    // 저장 버튼 클릭 시
-            const updatedRows = editedRows.map(index => editableData[index]);
+        const updatedRows = editedRows.map(index => editableData[index]);
 
-            if (updatedRows.length === 0) {
-                // 업데이트할 데이터가 없는 경우, 상태만 리셋하고 함수 종료
-                setIsEditing(false);
-                setEditedRows([]);
-                return;
-            }
-
-            try {
-                const requestBody = updatedRows.map(row => {
-                    // 변경된 활동량만 추출
-                    const updatedQuantities = row.quantityList
-                        .map((item, index) => {
-                            const newActvQty = row[index]; // 인덱스 위치의 새로운 값
-                            return {
-                                ...item,
-                                newActvQty
-                            };
-                        })
-                        .filter(item => item.formattedActvQty !== item.newActvQty)
-                        .map(item => ({
-                            id: item.id,
-                            actvYear: item.actvYear,
-                            actvMth: item.actvMth,
-                            fee: null, // 비용은 null로 설정
-                            actvQty: parseInt((item.newActvQty).replace(/,/g, ''), 10) // 쉼표를 제거하고 정수로 변환
-                        }));
-            
-                    return {
-                        emissionId: row.emissionId,
-                        emtnActvType: row.emtnActvType,
-                        quantityList: updatedQuantities
-                    };
-                });
-
-                console.log(requestBody);
-                const response = await axiosInstance.put("/perf", requestBody);
-
-                swalOptions.title = '성공!',
-                swalOptions.text = '활동량이 성공적으로 수정되었습니다.';
-                swalOptions.icon = 'success';
-
-                // 수정된 데이터로 테이블 갱신
-                handleFormSubmit(formData);
-
-            } catch (error) {
-                swalOptions.title = '실패!',
-                swalOptions.text = error.response.data.message;
-                swalOptions.icon = 'error';
-            }
-            setIsEditing(false);
+        if (updatedRows.length === 0) {
+            // 업데이트할 데이터가 없는 경우, 상태만 리셋하고 함수 종료
             setEditedRows([]);
-            Swal.fire(swalOptions);
-        } else {
-            setIsEditing(true);
+            return;
         }
+
+        try {
+            const requestBody = updatedRows.map(row => {
+                // 변경된 활동량만 추출
+                const updatedQuantities = row.quantityList
+                    .map((item, index) => {
+                        const newActvQty = row[index]; // 인덱스 위치의 새로운 값
+                        return {
+                            ...item,
+                            newActvQty
+                        };
+                    })
+                    .filter(item => item.formattedActvQty !== item.newActvQty)
+                    .map(item => ({
+                        id: item.id,
+                        actvYear: item.actvYear,
+                        actvMth: item.actvMth,
+                        fee: null, // 비용은 null로 설정
+                        actvQty: parseInt((item.newActvQty).replace(/,/g, ''), 10) // 쉼표를 제거하고 정수로 변환
+                    }));
+        
+                return {
+                    emissionId: row.emissionId,
+                    emtnActvType: row.emtnActvType,
+                    quantityList: updatedQuantities
+                };
+            });
+
+            console.log(requestBody);
+            const response = await axiosInstance.put("/perf", requestBody);
+
+            swalOptions.title = '성공!',
+            swalOptions.text = '활동량이 성공적으로 수정되었습니다.';
+            swalOptions.icon = 'success';
+
+            // 수정된 데이터로 테이블 갱신
+            handleFormSubmit(formData);
+
+        } catch (error) {
+            swalOptions.title = '실패!',
+            swalOptions.text = error.response.data.message;
+            swalOptions.icon = 'error';
+        }
+        setEditedRows([]);
+        Swal.fire(swalOptions);
     };
 
     // Edit 버튼 클릭 핸들러
@@ -286,68 +271,62 @@ export function TableCustomDoubleClickEdit({
             confirmButtonText: '확인'
         };
 
-        if (isEditing) {    // 저장 버튼 클릭 시
-            const updatedRows = editedRows.map(index => editableData[index]);
+        const updatedRows = editedRows.map(index => editableData[index]);
 
-            if (updatedRows.length === 0) {
-                // 업데이트할 데이터가 없는 경우, 상태만 리셋하고 함수 종료
-                setIsEditing(false);
-                setEditedRows([]);
-                return;
-            }
-            
-            try {
-                const requestBody = updatedRows.map(row => {
-                    // 변경된 활동량만 추출
-                    const updatedQuantities = row.quantityList
-                        .map((item, index) => {
-                            const newFee = row[index]; // 인덱스 위치의 새로운 값
-                            return {
-                                ...item,
-                                newFee
-                            };
-                        })
-                        .filter(item => item.formattedFee !== item.newFee)
-                        .map(item => ({
-                            id: item.id,
-                            actvYear: item.actvYear,
-                            actvMth: item.actvMth,
-                            fee: parseInt((item.newFee).replace(/,/g, ''), 10), // 쉼표를 제거하고 정수로 변환
-                            actvQty: null // 사용량은 null로 설정
-                        }));
-            
-                    return {
-                        emissionId: row.emissionId,
-                        emtnActvType: row.emtnActvType,
-                        quantityList: updatedQuantities
-                    };
-                });
-
-                const response = await axiosInstance.put("/perf", requestBody);
-
-                swalOptions.title = '성공!',
-                swalOptions.text = '활동량이 성공적으로 수정되었습니다.';
-                swalOptions.icon = 'success';
-
-                // 수정된 데이터로 테이블 갱신
-                handleFormSubmit(response.data);
-
-            } catch (error) {
-                swalOptions.title = '실패!',
-                swalOptions.text = '활동량 수정에 실패하였습니다.';
-                swalOptions.icon = 'error';
-            }
-            setIsEditing(false);
+        if (updatedRows.length === 0) {
+            // 업데이트할 데이터가 없는 경우, 상태만 리셋하고 함수 종료
             setEditedRows([]);
-            Swal.fire(swalOptions);
-        } else {
-            setIsEditing(true);
+            return;
         }
+        
+        try {
+            const requestBody = updatedRows.map(row => {
+                // 변경된 활동량만 추출
+                const updatedQuantities = row.quantityList
+                    .map((item, index) => {
+                        const newFee = row[index]; // 인덱스 위치의 새로운 값
+                        return {
+                            ...item,
+                            newFee
+                        };
+                    })
+                    .filter(item => item.formattedFee !== item.newFee)
+                    .map(item => ({
+                        id: item.id,
+                        actvYear: item.actvYear,
+                        actvMth: item.actvMth,
+                        fee: parseInt((item.newFee).replace(/,/g, ''), 10), // 쉼표를 제거하고 정수로 변환
+                        actvQty: null // 사용량은 null로 설정
+                    }));
+        
+                return {
+                    emissionId: row.emissionId,
+                    emtnActvType: row.emtnActvType,
+                    quantityList: updatedQuantities
+                };
+            });
+
+            const response = await axiosInstance.put("/perf", requestBody);
+
+            swalOptions.title = '성공!',
+            swalOptions.text = '활동량이 성공적으로 수정되었습니다.';
+            swalOptions.icon = 'success';
+
+            // 수정된 데이터로 테이블 갱신
+            handleFormSubmit(response.data);
+
+        } catch (error) {
+            swalOptions.title = '실패!',
+            swalOptions.text = '활동량 수정에 실패하였습니다.';
+            swalOptions.icon = 'error';
+        }
+        setEditedRows([]);
+        Swal.fire(swalOptions);
     };
 
     // 버튼 클릭 핸들러 수정
     const updatedOnClicks = onClicks.map((clickHandler, index) => {
-        if (buttons[index] === 'Edit') {
+        if (buttons[index] === 'DoubleClickEdit') {
             switch (pageType) {
                 case 'rm':
                     return handleEditButtonClickRm;
@@ -364,9 +343,7 @@ export function TableCustomDoubleClickEdit({
     
 
     const handleDoubleClick = (rowIndex, colIndex) => {
-        if (isEditing) {
-            setEditingCell({ row: rowIndex, col: colIndex });
-        }
+        setEditingCell({ row: rowIndex, col: colIndex });
     };
 
     const handleInputChange = (e, rowIndex, colIndex) => {
@@ -399,7 +376,6 @@ export function TableCustomDoubleClickEdit({
                         buttons={buttons} 
                         onClicks={updatedOnClicks} 
                         buttonStatus={buttonStatus}
-                        isEditing={isEditing}       //for edit button
                     />
                     
                     {modals.map((modal) => {
@@ -436,6 +412,7 @@ export function TableCustomDoubleClickEdit({
                         editingCell={editingCell}
                         pagination={pagination}
                         modalPagination={modalPagination}
+                        editedRows={editedRows} 
                     />
                 ) : (<></>)}
             </div>
