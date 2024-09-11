@@ -260,7 +260,7 @@ export default function CustomizedTables({
                         </TableBody>
                 </Table>
             </TableContainer>
-            {pagination && (data.length >= 13) ? ( !modalPagination ? (// 10개 이상이면 자동으로 pagination 활성화, (pagination이 true일때만.)
+            {pagination && (data.length >= 10) ? ( !modalPagination ? (// 10개 이상이면 자동으로 pagination 활성화, (pagination이 true일때만.)
             //페이지네이션을 하고 데이터길이가 길며 모달페이지네이션이 아닐때
             <TablePagination 
                 rowsPerPageOptions={[10, 25, 100]} // page row length custom

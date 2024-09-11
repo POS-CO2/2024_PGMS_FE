@@ -1082,7 +1082,7 @@ export function CmAddModal({ isModalOpen, handleOk, handleCancel }) {
         <Modal
             open={isModalOpen}
             onCancel={handleCancel}
-            width={400}
+            width={350}
             footer={null}             //Ant Design의 기본 footer 제거(Cancel, OK 버튼)
         >
             {/* 모달제목 */}
@@ -1176,7 +1176,7 @@ export function CmEditModal({ isModalOpen, handleOk, handleCancel, rowData }) {
         <Modal
             open={isModalOpen}
             onCancel={handleCancel}
-            width={400}
+            width={350}
             footer={null}             //Ant Design의 기본 footer 제거(Cancel, OK 버튼)
         >
             {/* 모달제목 */}
@@ -1205,7 +1205,7 @@ export function CmEditModal({ isModalOpen, handleOk, handleCancel, rowData }) {
                 </div>
             </div>
             <div style={{display:"flex", justifyContent:"center", alignContent:"center"}}>
-            <button style={{width:"20rem"}} className={modalStyles.select_button} onClick={handleSelect}>수정</button>
+            <button style={{width:"18rem"}} className={modalStyles.select_button} onClick={handleSelect}>수정</button>
             </div>
         </Modal>
         </ConfigProvider>
@@ -1335,7 +1335,7 @@ export function CmListAddModal({ isModalOpen, handleOk, handleCancel, rowData })
         <Modal
             open={isModalOpen}
             onCancel={handleCancel}
-            width={400}
+            width={350}
             footer={null}             //Ant Design의 기본 footer 제거(Cancel, OK 버튼)
         >
             {/* 모달제목 */}
@@ -1343,13 +1343,13 @@ export function CmListAddModal({ isModalOpen, handleOk, handleCancel, rowData })
             <div className={sysStyles.card_box}>
                 <div className={sysStyles.text_field} style={{ marginTop: "0.5rem" }}>
                     <div className={sysStyles.text}>
-                        {"코드 그룹 ID"}
+                        {"코드그룹ID"}
                     </div>
                     {/* <TextField size='small' id='codeGrpNo' value={rowData.codeGrpNo} disabled label="코드 그룹 번호" variant='outlined' sx={{ width: "20rem" }} /> */}
                     <Input id='codeGrpNo' disabled value={rowData.codeGrpNo} label="코드 그룹 번호" style={{width:"18rem"}} />
                 </div>
                 <div className={sysStyles.text_field}>
-                    <div className={sysStyles.text}>{"코드 그룹 이름"}</div>
+                    <div className={sysStyles.text}>{"코드그룹이름"}</div>
                     {/* <TextField size='small' id='codeName' value={rowData.codeGrpName} disabled label="코드 그룹 이름" variant='outlined' sx={{ width: "20rem" }} /> */}
                     <Input id='codeName' disabled value={rowData.codeGrpName} label="코드 그룹 이름" style={{width:"18rem"}} />
                 </div>
@@ -1360,7 +1360,7 @@ export function CmListAddModal({ isModalOpen, handleOk, handleCancel, rowData })
                     {error.code && <div className={modalStyles.error_message}>{error.code}</div>}
                 </div>
                 <div className={sysStyles.text_field}>
-                    <div className={sysStyles.text}>{"코드 명"}</div>
+                    <div className={sysStyles.text}>{"코드명"}</div>
                     {/* <TextField size='small' id='codeName' value={codeName} onChange={(e) => setCodeName(e.target.value)} label="코드 명" variant='outlined' sx={{ width: "20rem" }} /> */}
                     <Input id='codeName' value={codeName} onChange={(e) => setCodeName(e.target.value)} label="코드 명" style={{width:"18rem"}} />
                     {error.codeName && <div className={modalStyles.error_message}>{error.codeName}</div>}
@@ -1445,21 +1445,21 @@ export function CmListEditModal({ isModalOpen, handleOk, handleCancel, rowData }
         <Modal
             open={isModalOpen}
             onCancel={handleCancel}
-            width={400}
+            width={350}
             footer={null}             //Ant Design의 기본 footer 제거(Cancel, OK 버튼)
         >
             {/* 모달제목 */}
-            <div className={modalStyles.title}>코드 리스트</div>
+            <div className={modalStyles.title}>코드 리스트 수정</div>
             <div className={sysStyles.card_box}>
                 <div className={sysStyles.text_field} style={{ marginTop: "0.5rem" }}>
                     <div className={sysStyles.text}>
-                        {"코드 그룹 ID"}
+                        {"코드그룹ID"}
                     </div>
                     {/* <TextField size='small' id='codeGrpNo' value={rowData.codeGrpNo} disabled label="코드 그룹 번호" variant='outlined' sx={{ width: "20rem" }} /> */}
                     <Input id='codeGrpNo' disabled value={rowData.codeGrpNo} label="코드 그룹 번호" style={{width:"18rem"}} />
                 </div>
                 <div className={sysStyles.text_field}>
-                    <div className={sysStyles.text}>{"코드 그룹 이름"}</div>
+                    <div className={sysStyles.text}>{"코드그룹이름"}</div>
                     {/* <TextField size='small' id='codeName' value={rowData.codeGrpName} disabled label="코드 그룹 이름" variant='outlined' sx={{ width: "20rem" }} /> */}
                     <Input id='codeName' disabled value={rowData.codeGrpName} label="코드 그룹 이름" style={{width:"18rem"}} />
                 </div>
@@ -1470,7 +1470,7 @@ export function CmListEditModal({ isModalOpen, handleOk, handleCancel, rowData }
                     {error.code && <div className={modalStyles.error_message}>{error.code}</div>}
                 </div>
                 <div className={sysStyles.text_field}>
-                    <div className={sysStyles.text}>{"코드 명"}</div>
+                    <div className={sysStyles.text}>{"코드명"}</div>
                     {/* <TextField size='small' id='codeName' value={codeName} onChange={(e) => setCodeName(e.target.value)} label="코드 명" variant='outlined' sx={{ width: "20rem" }} /
                     > */}
                     <Input id='codeName' value={codeName} onChange={(e) => setCodeName(e.target.value)} label="코드 명" style={{width:"18rem"}} />
@@ -1513,7 +1513,6 @@ export function EfmAddModal({ isModalOpen, handleOk, handleCancel, rowData }) {
     const [coef, setCoef] = useState(0);
     const [error, setError] = useState({});
 
-    console.log(rowData);
 
     const handleSelect = async() => {
         let swalOptions = {
@@ -1540,7 +1539,6 @@ export function EfmAddModal({ isModalOpen, handleOk, handleCancel, rowData }) {
             setError(newError);
             return;
         }
-        console.log(formData);
         try {
             // POST 요청으로 서버에 데이터 전송
             const {data} = await axiosInstance.post('/equip/coef', formData);
@@ -1562,7 +1560,6 @@ export function EfmAddModal({ isModalOpen, handleOk, handleCancel, rowData }) {
         const fetchData = async () => {
             const appDvsResponse = await axiosInstance.get(`/sys/unit?unitType=적용구분`);
             setApplyDvs(appDvsResponse.data);
-            console.log("1",appDvsResponse.data);
             // const ghgResponse = await axiosInstance.get(`/sys/unit?unitType=온실가스코드`);
             // setGhgCode(ghgResponse.data);
             // console.log("2",ghgResponse.data);
@@ -1580,14 +1577,12 @@ export function EfmAddModal({ isModalOpen, handleOk, handleCancel, rowData }) {
             setCoefClassCode(coefResponse);
             const ghgResponse = await axiosInstance.get(`/sys/coef-unit?inputUnitCode=${rowData.inputUnitCode}`)
             setAfterSelectedCoefClassCode(ghgResponse.data);
-            console.log(ghgResponse.data);
             // const unitCodeResponse = await axiosInstance.get(``);
         };
 
         fetchData();
     }, [])
     const handleInputUnitChange = (value) => {
-        console.log(value);
         setSelectedCoefClassCode(value);
         if (value === 2){
             setSelectedGhgCode(null);
@@ -1611,7 +1606,7 @@ export function EfmAddModal({ isModalOpen, handleOk, handleCancel, rowData }) {
         <Modal
             open={isModalOpen}
             onCancel={handleCancel}
-            width={400}
+            width={350}
             footer={null}             //Ant Design의 기본 footer 제거(Cancel, OK 버튼)
         >
             {/* 모달제목 */}
@@ -1790,7 +1785,7 @@ export function EfmEditModal({ isModalOpen, handleOk, handleCancel, rowData }) {
         <Modal
             open={isModalOpen}
             onCancel={handleCancel}
-            width={400}
+            width={350}
             footer={null}             //Ant Design의 기본 footer 제거(Cancel, OK 버튼)
         >
             {/* 모달제목 */}
@@ -2067,31 +2062,31 @@ export function UmAddModal({ isModalOpen, handleOk, handleCancel }) {
         <Modal
             open={isModalOpen}
             onCancel={handleCancel}
-            width={400}
+            width={350}
             footer={null}             //Ant Design의 기본 footer 제거(Cancel, OK 버튼)
         >
             <div className={modalStyles.title}>사용자 등록</div>
             <div className={sysStyles.card_box}>
                 <div className={sysStyles.text_field}>
                     <div className={sysStyles.text} style={{marginTop:"0.5rem"}}>{"이름"}</div>
-                    <TextField id='userName' size="small" label="이름" value={userName} onChange={(e) => setUserName(e.target.value)} borderRadious="4px" variant='outlined' sx={{ width: "20rem" }} />
+                    <Input id='userName' value={userName} onChange={e => setUserName(e.target.value)} label="이름" style={{width:"18rem"}} />
                     {error.userName && <div className={modalStyles.error_message}>{error.userName}</div>}
                 </div>
                 <div className={sysStyles.text_field} style={{ width:"20rem" }}>
                     <div className={sysStyles.text}>
                         {"로그인ID"}
                     </div>
-                    <TextField id='loginId' size="small" label="로그인ID" value={loginId} onChange={(e) => setLoginId(e.target.value)} variant='outlined' sx={{ width: "20rem" }} />
+                    <Input id='loginId' value={loginId} onChange={e => setLoginId(e.target.value)} label="로그인ID" style={{width:"18rem"}} />
                     {error.loginId && <div className={modalStyles.error_message}>{error.loginId}</div>}
                 </div>
                 <div className={sysStyles.text_field}>
                     <div className={sysStyles.text}>{"비밀번호"}</div>
-                    <TextField id='password' size="small" label="비밀번호" value={password} onChange={(e) => setPassword(e.target.value)} variant='outlined' sx={{ width: "20rem" }} />
+                    <Input id='password' value={password} onChange={e => setPassword(e.target.value)} label="비밀번호" style={{width:"18rem"}} />
                     {error.password && <div className={modalStyles.error_message}>{error.password}</div>}
                 </div>
                 <div className={sysStyles.text_field}>
                     <div className={sysStyles.text}>{"부서명"}</div>
-                    <Select value={selectedDept} onChange={(value) => setSelectedDept(value)} style={{width:"20rem", height:"2.5rem",fontSize:"4rem"}}>
+                    <Select value={selectedDept} onChange={(value) => setSelectedDept(value)} style={{width:"18rem", height:"2rem",fontSize:"4rem"}}>
                     {dept.map(option => (
                         <Select.Option key={option.value} value={option.value}>
                             {option.label}
@@ -2102,7 +2097,7 @@ export function UmAddModal({ isModalOpen, handleOk, handleCancel }) {
                 </div>
                 <div className={sysStyles.text_field}>
                     <div className={sysStyles.text}>{"접근권한"}</div>
-                    <Select value={selectedRole} onChange={(value) => setSelectedRole(value)} style={{width:"20rem", height:"2.5rem", fontSize:"4rem"}}>
+                    <Select value={selectedRole} onChange={(value) => setSelectedRole(value)} style={{width:"18rem", height:"2rem", fontSize:"4rem"}}>
                     {access.map(option => (
                         <Select.Option key={option.value} value={option.value}>
                             {option.label}
@@ -2113,7 +2108,7 @@ export function UmAddModal({ isModalOpen, handleOk, handleCancel }) {
                 </div>
             </div>
             <div style={{display:"flex", justifyContent:"center", alignContent:"center"}}>
-                <button style={{width:"20rem"}} className={modalStyles.select_button} onClick={handleInsert}>등록</button>
+                <button style={{width:"18rem"}} className={modalStyles.select_button} onClick={handleInsert}>등록</button>
             </div>
         </Modal>
         </ConfigProvider>
@@ -2218,7 +2213,7 @@ export function MmAddModal({ isModalOpen, handleOk, handleCancel, rowData }) {
         <Modal
             open={isModalOpen}
             onCancel={handleCancel}
-            width={400}
+            width={350}
             footer={null}             //Ant Design의 기본 footer 제거(Cancel, OK 버튼)
         >
             <div className={modalStyles.title}>메뉴 등록</div>
@@ -2227,12 +2222,12 @@ export function MmAddModal({ isModalOpen, handleOk, handleCancel, rowData }) {
                     <div className={sysStyles.text}>
                         {"메뉴이름"}
                     </div>
-                    <TextField size='small' id='menuName' value={menuName} onChange={(e) => setMenuName(e.target.value)} label="메뉴이름" variant='outlined' sx={{ width: "20rem" }} />
+                    <Input id='menuName' value={menuName} onChange={e => setMenuName(e.target.value)} label="메뉴이름" style={{width:"18rem"}} />
                     {error.menuName && <div className={modalStyles.error_message}>{error.menuName}</div>}
                 </div>
                 <div className={sysStyles.text_field}>
                     <div className={sysStyles.text}>{"상위폴더"}</div>
-                    <Select value={selectedUpperDir} onChange={(e) => {setSelectedUpperDir(e)}} style={{width:"20rem", height:"2.5rem", fontSize:"4rem"}}>
+                    <Select value={selectedUpperDir} onChange={(e) => {setSelectedUpperDir(e)}} style={{width:"18rem", height:"2rem", fontSize:"4rem"}}>
                     {upperDir.map(option => (
                         <Select.Option key={option.id} value={option.id}>
                             {option.name}
@@ -2243,11 +2238,11 @@ export function MmAddModal({ isModalOpen, handleOk, handleCancel, rowData }) {
                 </div>
                 <div className={sysStyles.text_field}>
                     <div className={sysStyles.text}>{"Url주소"}</div>
-                    <TextField size='small' id='address' value={url} onChange={(e) => setUrl(e.target.value)} label="Url 주소" variant='outlined' sx={{ width: "20rem" }} />
+                    <Input id='address' value={url} onChange={e => setUrl(e.target.value)} label="Url주소" style={{width:"18rem"}} />
                 </div>
                 <div className={sysStyles.text_field}>
                     <div className={sysStyles.text}>{"메뉴순서"}</div>
-                    <Select placeholder={"메뉴순서"} value={orderMenu} onChange={(value) => setOrderMenu(value)} style={{width:"20rem", height:"2.5rem", fontSize:"4rem"}}>
+                    <Select placeholder={"메뉴순서"} value={orderMenu} onChange={(value) => setOrderMenu(value)} style={{width:"18rem", height:"2rem", fontSize:"4rem"}}>
                     {orderMenuList.map(option => (
                         <Select.Option key={option} value={option}>
                             {option}
@@ -2258,7 +2253,7 @@ export function MmAddModal({ isModalOpen, handleOk, handleCancel, rowData }) {
                 </div>
                 <div className={sysStyles.text_field}>
                     <div className={sysStyles.text}>{"접근권한"}</div>
-                    <Select placeholder={"접근권한"} value={selectedRole} onChange={(value) => setSelectedRole(value)} style={{width:"20rem", height:"2.5rem", fontSize:"4rem"}}>
+                    <Select placeholder={"접근권한"} value={selectedRole} onChange={(value) => setSelectedRole(value)} style={{width:"18rem", height:"2rem", fontSize:"4rem"}}>
                     {access.map(option => (
                         <Select.Option key={option.value} value={option.value}>
                             {option.label}
@@ -2269,7 +2264,7 @@ export function MmAddModal({ isModalOpen, handleOk, handleCancel, rowData }) {
                 </div>
             </div>
             <div style={{display:"flex", justifyContent:"center", alignContent:"center"}}>
-            <button style={{width:"20rem"}} className={modalStyles.select_button} onClick={handleSelect}>등록</button>
+            <button style={{width:"18rem"}} className={modalStyles.select_button} onClick={handleSelect}>등록</button>
             </div>
         </Modal>
         </ConfigProvider>
