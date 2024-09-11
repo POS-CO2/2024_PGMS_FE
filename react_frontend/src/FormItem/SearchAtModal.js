@@ -14,6 +14,8 @@ const StyledButton = styled.button`
   border-radius: 4px;
   font-size: 1rem;
   margin-left: 0.3rem;
+  height: 32px;
+  vertical-align: middle;
 
   &:hover {
     background-color: #8AC784; /* 마우스 오버 시 배경색 */
