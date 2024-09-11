@@ -98,11 +98,11 @@ export default function Ps_1_2() {
 
             setFormFields(updatedFields);
 
-            // 옵션 데이터가 있으면 드롭다운을 활성화
-            setActvYearDisabled(yearOptions.length === 0);
-
-            // actvYear 필드 리셋
-            form.resetFields(['actvYear']);
+            // 옵션 데이터가 있으면 드롭다운을 활성화, default값 설정
+            if (yearOptions.length > 0) {
+                setActvYearDisabled(false);
+                form.setFieldsValue({ actvYear: yearOptions[0].value });
+            }
         }
     };
 
