@@ -26,7 +26,8 @@ export default function SearchAtModal({ name, label, required = false, modalType
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [inputValue, setInputValue] = useState("");
 
-    const showModal = () => {
+    const showModal = (e) => {
+        e.preventDefault(); // 기본 동작 방지
         setIsModalOpen(true);
     };
     const handleOkForDropDown = (option) => {
@@ -79,7 +80,7 @@ export default function SearchAtModal({ name, label, required = false, modalType
         >
             <div className={formItemStyles.input_button_container}>
                 <Input className={formItemStyles.input_field} disabled={true} value={inputValue} />
-                <StyledButton className={formItemStyles.modal_button} type="primary" onClick={showModal}>
+                <StyledButton className={formItemStyles.modal_button} htmlType="button" type="primary" onClick={showModal}>
                     찾기
                 </StyledButton>
                 {renderModal()}
