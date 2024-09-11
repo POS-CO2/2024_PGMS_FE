@@ -118,7 +118,7 @@ export default function Psq_Fp() {
             </div>
             <SearchForms
                 onFormSubmit={handleFormSubmit}
-                formFields={formFields.map(field => field.name === 'actvYear' ? { ...field, disabled: actvYearDisabled, placeholder: actvYearDisabled ? '프로젝트를 선택하세요.' : '' } : field)} // actvYear 필드의 disabled 상태 반영
+                formFields={formFields.map(field => field.name === 'actvYear' ? { ...field, disabled: actvYearDisabled } : field)} // actvYear 필드의 disabled 상태 반영
                 onProjectSelect={onProjectSelect} />
            
             {(!formData || Object.keys(formData).length === 0) ? (
