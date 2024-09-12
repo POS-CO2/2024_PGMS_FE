@@ -25,14 +25,17 @@ export default function Ea() {
 
         switch (data.selected) {
             case "설비LIB":
+                //let url = `/perf/pjt?pjtId=${data.searchProject.id}&year=${data.actvYear}`;
                 setAnalEquipData(libData);
                 break;
     
             case "설비유형":
+                //let url = `/perf/pjt?pjtId=${data.searchProject.id}&year=${data.actvYear}`;
                 setAnalEquipData(typeData);
                 break;
     
             case "에너지원":
+                //let url = `/perf/pjt?pjtId=${data.searchProject.id}&year=${data.actvYear}`;
                 setAnalEquipData(sourceData);
                 break;
     
@@ -42,11 +45,8 @@ export default function Ea() {
                 break;
         }
 
-        //if(data.selected)
+        const response = await axiosInstance.get(url);
 
-        //let url = `/perf/pjt?pjtId=${data.searchProject.id}&year=${data.actvYear}`;
-        //const response = await axiosInstance.get(url);
-/*
         // data가 빈 배열인지 확인
         if (response.data.length === 0) {
             // 빈 데이터인 경우, 배열의 필드를 유지하면서 빈 값으로 채운 배열 생성
@@ -64,7 +64,7 @@ export default function Ea() {
                 { data: scope2Data, stack: 'A', label: 'Scope 2' }
             ];
             setChartPerfs(formattedChartPerfs);
-        }*/
+        }
     };
 
     return (
