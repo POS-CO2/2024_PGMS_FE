@@ -220,3 +220,22 @@ export const salesAnalColumns = [
     { key: 'formattedTotalSales', label: '매출액(백만원)', hidden: false },
     { key: 'formattedEmissionQtyPerSales', label: '원단위', hidden: false },
 ]
+
+export const equipAnalLibColumns = [
+    { key: 'equipLibName', label: '설비LIB명', hidden: false },
+    { key: 'totalEmissionQty', label: '총배출량', hidden: true },
+    { key: 'formattedTotalEmissionQty', label: '총배출량', hidden: false },
+]
+
+export const equipAnalTypeColumns = [
+    { key: 'equipType', label: '설비유형', hidden: false },
+    { key: 'totalEmissionQty', label: '총배출량', hidden: true },
+    { key: 'formattedTotalEmissionQty', label: '총배출량', hidden: false },
+]
+
+export const equipAnalSourceColumns = [
+    { key: 'energySource', label: '에너지원', hidden: false },
+    { key: 'equipSpecUnit', label: '설비사양단위', hidden: false },
+    { key: 'totalEmissionQty', label: '총배출량', hidden: true },
+    { key: 'formattedTotalEmissionQty', label: '총배출량', hidden: false },
+]
