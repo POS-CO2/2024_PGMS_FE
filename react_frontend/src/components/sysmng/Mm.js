@@ -31,7 +31,7 @@ import { Button, Card, TextField } from '@mui/material';
 import TableCustom from '../../TableCustom';
 import { table_mm } from '../../assets/json/selectedPjt';
 import * as mainStyle from '../../assets/css/main.css';
-import { Select } from 'antd';
+import { ConfigProvider, Input, Select } from 'antd';
 import axiosInstance from '../../utils/AxiosInstance';
 import Swal from 'sweetalert2';
 import { menuTableColumns } from '../../assets/json/tableColumn';
@@ -59,9 +59,9 @@ const StyledTreeItem = styled(TreeItem2)(({theme}) => ({
 
 const StyledTreeItemRoot = styled(TreeItem2Root)(({ theme }) => ({
     color:
-    theme.palette.mode === 'light'
-        ? theme.palette.grey[800]
-        : theme.palette.grey[400],
+        theme.palette.mode === 'light'
+            ? theme.palette.grey[800]
+            : theme.palette.grey[400],
     position: 'relative',
     [`& .${treeItemClasses.groupTransition}`]: {
         marginLeft: theme.spacing(3.5),
@@ -80,7 +80,7 @@ const CustomTreeItemContent = styled(TreeItem2Content)(({ theme }) => ({
         '&:not(.Mui-focused, .Mui-selected, .Mui-selected.Mui-focused) .labelIcon': {
     color:
         theme.palette.mode === 'light'
-            ? theme.palette.primary.main
+            ? "#0eaa00"
             : theme.palette.primary.dark,
     },
     '&::before': {
@@ -98,15 +98,15 @@ const CustomTreeItemContent = styled(TreeItem2Content)(({ theme }) => ({
         },
     },
     '&:hover': {
-        backgroundColor: alpha(theme.palette.primary.main, 0.1),
-        color: theme.palette.mode === 'light' ? theme.palette.primary.main : 'white',
+        backgroundColor: "#e0f8f0", //alpha(theme.palette.primary.main, 0.1)
+        color: theme.palette.mode === 'light' ? "#0eaa00" : 'white',
     },
     [`&.Mui-focused, &.Mui-selected, &.Mui-selected.Mui-focused`]: {
     backgroundColor:
         theme.palette.mode === 'light'
-            ? theme.palette.primary.main
+            ? "#dcf9d9"
             : theme.palette.primary.dark,
-        color: theme.palette.primary.contrastText,
+        color: "#0eaa00",
     },
 }));
 const AnimatedCollapse = animated(Collapse);
@@ -192,7 +192,6 @@ const convertMenusToTreeItems = (menus) => {
                 treeItem.url = node.url;
             }
             else if(!node.url) {
-                console.log("node", node);
                 treeItem.fileType = 'folder';
                 treeItem.url = node.url;
             }
@@ -311,16 +310,19 @@ export default function Mm({menus, handleMenuSet}) {
             const parrentDir = findParentFolder(item, items);
             const newMenuInfo = {
                 id: item,
-                originId: clickedItem.originId,
+                originId: (clickedItem.originId) ?? 1,
                 name: clickedItem.label, // 메뉴 이름
                 parentDir: parrentDir ? parrentDir.label : '상위 폴더 없음', // 상위 폴더 이름
-                parentDirId: parrentDir ? parrentDir.originId : 0,
+                parentDirId: (parrentDir ? parrentDir.originId : 0) ?? 1,
                 menuOrder: clickedItem.menuOrder,
                 accessUser: clickedItem.accessUser, // 접근 권한 (필요 시 다른 값을 설정)
                 url: clickedItem.url,
             };
             setSelectedMenu(newMenuInfo); // 상태 업데이트
+            console.log(newMenuInfo);
+            handleEditClick(newMenuInfo);
         }
+        
     };
 
     // 모달 구현부
@@ -349,14 +351,14 @@ export default function Mm({menus, handleMenuSet}) {
     const handleDeleteClick = () => {
         showModal('Delete');
     }
-    const handleEditClick = () => {
+    const handleEditClick = (e) => {
         (async () => {
-            const {data} = await axiosInstance.get(`/sys/menu/cand?id=${selectedMenu.originId !== undefined ? (selectedMenu.originId) : 1}`);
+            const {data} = await axiosInstance.get(`/sys/menu/cand?id=${selectedMenu.originId !== undefined ? (e.originId) : 1}`);
             setUpperDir(data);
         })();
 
         (async () => {
-            const {data} = await axiosInstance.get(`/sys/menu/menu-order?id=${selectedMenu.parentDirId !== undefined ? (selectedMenu.parentDirId) : 1}&isInsert=false`);
+            const {data} = await axiosInstance.get(`/sys/menu/menu-order?id=${selectedMenu.parentDirId !== undefined ? (e.parentDirId) : 1}&isInsert=false`);
             data.sort();
             setMenuOrderList(data);
         })();
@@ -491,7 +493,7 @@ export default function Mm({menus, handleMenuSet}) {
                 {"시스템관리 > 메뉴 관리"}
             </div>
             <div className={sysStyles.main_grid}>
-                <Card sx={{width:"24%", borderRadius:"15px", height:"88vh", overflowY:"auto"}}>
+                <Card sx={{width:"25%", borderRadius:"15px", height:"88vh", overflowY:"auto"}}>
                 <TableCustom title='' className={sysStyles.btn_group} buttons={['Add', 'Delete']} 
                 onClicks={[handleAddClick,handleDeleteClick]} 
                 table={false} 
@@ -516,7 +518,7 @@ export default function Mm({menus, handleMenuSet}) {
                 ].filter(Boolean)}/>
                 <RichTreeView
                 items={items}
-                sx={{ height: 'fit-content', flexGrow: 1, maxWidth: 400, overflowY: 'auto', width:"100%"}}
+                sx={{ height: 'fit-content', flexGrow: 1, maxWidth: 400, overflowY: 'hidden', width:"80%", margin:"0 auto"}}
                 slots={{ item: CustomTreeItem }}
                 onItemClick={(e, item) => {clickMenuHandler(e, item);}}
                 />
@@ -525,25 +527,22 @@ export default function Mm({menus, handleMenuSet}) {
                     /** 테이블 컴포넌트 하나 생성해서 할당 */
                     /** 권한 부여 현황 어케 할건지 및 등록, 수정화면 필요 */
                     <>
-                    <Card className={sysStyles.card_box} sx={{width:"38%", height:"88vh", borderRadius:"15px"}}>
+                    <Card className={sysStyles.card_box} sx={{width:"25%", height:"88vh", borderRadius:"15px"}}>
                         <TableCustom 
                             table={false} 
                             title={"메뉴 정보"} 
                             buttons={['DoubleClickEdit']} 
-                            onClicks={handleEditClick}
-                            onRowClick={() => { }}
-                            selectedRows={[]}
-                            modals={[]}
+                            onClicks={[handleSaveClick]}
                         />
                         <div className={sysStyles.text_field} style={{marginTop:"2rem"}}>
                             <div className={sysStyles.text}>
                                 {"메뉴 이름"}
                             </div>
-                            <TextField size='small' id='menuName' onChange={(e) => handleInputChangeText('name', e.target.value)} value={selectedMenu.name} variant='outlined' sx={{marginTop:"0.5rem",width:"20rem"}}/>
+                            <Input id='menuName' value={selectedMenu.name} onChange={(e) => handleInputChangeText('name', e.target.value)} label="메뉴명" style={{width:"18rem", marginTop:"0.5rem"}} />
                         </div>
                         <div className={sysStyles.text_field}>
                             <div className={sysStyles.text}>{"상위 폴더"}</div>
-                                <Select value={selectedMenu.parentDir} onChange={(e) => {handleInputChange('parentDirId', e);}} style={{marginTop:"0.5rem",width:"20rem", height:"2.5rem", fontSize:"4rem"}}>
+                                <Select value={selectedMenu.parentDir} onChange={(e) => {handleInputChange('parentDirId', e);}} style={{marginTop:"0.5rem",width:"18rem", height:"2rem", fontSize:"4rem"}}>
                                 {upperDir.map(option => (
                                     <Select.Option key={option.id} value={option.id}>
                                         {option.name}
@@ -553,11 +552,11 @@ export default function Mm({menus, handleMenuSet}) {
                         </div>
                         <div className={sysStyles.text_field}>
                             <div className={sysStyles.text}>{"Url 주소"}</div>
-                            <TextField size='small' id='address' defaultValue={selectedMenu.url} variant='outlined' onChange={(e) => handleInputChangeText('url', e.target.value)} value={selectedMenu.url} sx={{marginTop:"0.5rem",width:"20rem"}}/>
+                            <Input id='address' value={selectedMenu.url} onChange={(e) => handleInputChangeText('url', e.target.value)} label="Url" style={{width:"18rem", marginTop:"0.5rem"}} />
                         </div>
                         <div className={sysStyles.text_field}>
                             <div className={sysStyles.text}>{"메뉴 순서"}</div>
-                            <Select value={selectedMenu.menuOrder} onChange={(e) => handleInputChangeText('menuOrder', e)} style={{marginTop:"0.5rem",width:"20rem", height:"2.5rem", fontSize:"4rem"}}>
+                            <Select value={selectedMenu.menuOrder} onChange={(e) => handleInputChangeText('menuOrder', e)} style={{marginTop:"0.5rem",width:"18rem", height:"2rem", fontSize:"4rem"}}>
                             {menuOrderList.map(option => (
                                 <Select.Option key={option} value={option}>
                                     {option}
@@ -567,7 +566,7 @@ export default function Mm({menus, handleMenuSet}) {
                         </div>
                         <div className={sysStyles.text_field}>
                             <div className={sysStyles.text}>{"접근 권한"}</div>
-                            <Select placeholder={"접근 권한"} defaultValue={selectedMenu.accessUser} value={selectedMenu.accessUser} onChange={(value) => handleInputChangeText('accessUser', value)} style={{marginTop:"0.5rem",width:"20rem", height:"2.5rem", fontSize:"4rem"}}>
+                            <Select placeholder={"접근 권한"} defaultValue={selectedMenu.accessUser} value={selectedMenu.accessUser} onChange={(value) => handleInputChangeText('accessUser', value)} style={{marginTop:"0.5rem",width:"18rem", height:"2rem", fontSize:"4rem"}}>
                             {access.map(option => (
                                 <Select.Option key={option.value} value={option.value}>
                                     {option.label}
@@ -575,14 +574,14 @@ export default function Mm({menus, handleMenuSet}) {
                             ))}
                             </Select>
                         </div>
-                        <Button variant='contained' onClick={handleSaveClick} sx={{marginTop:"0.5rem",width:"20rem", margin:"5rem auto"}}>저장</Button>
+                        {/* <Button variant='contained' onClick={handleSaveClick} sx={{marginTop:"0.5rem",width:"20rem", margin:"5rem auto"}}>저장</Button> */}
                     </Card> 
-                    <Card className={sysStyles.card_box} sx={{width:"38%", borderRadius:"15px"}}>
+                    <Card className={sysStyles.card_box} sx={{width:"50%", borderRadius:"15px", height:"88vh"}}>
                         <TableCustom title='권한 부여 현황' data={res} columns={menuTableColumns}/>
                     </Card>
                     </>
                 ) : (
-                    <Card className={sysStyles.card_box} sx={{width:"38%", borderRadius:"15px"}}>
+                    <Card className={sysStyles.card_box} sx={{width:"50%", borderRadius:"15px", height:"88vh"}}>
                         <TableCustom title='권한 부여 현황' data={res} columns={menuTableColumns}/>
                     </Card>
                 )}
