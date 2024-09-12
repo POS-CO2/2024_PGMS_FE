@@ -32,6 +32,7 @@
     flex-direction: column;
     border-radius: 15px;
     gap: 1rem;
+    font-family: "SUITE-Regular";
 }
 
 .text_field {
@@ -43,4 +44,9 @@
 .text {
     margin-bottom: 0.5rem;
     font-size: 1.2rem;
+}
+
+.accodion {
+    width: 80%;
+    margin: 0 auto;
 }

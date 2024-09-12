@@ -8,7 +8,6 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import { Box, Checkbox, TablePagination, TextField } from '@mui/material';
-import { ConstructionOutlined } from '@mui/icons-material';
 import InboxIcon from '@mui/icons-material/Inbox';
 import Typography from '@mui/material/Typography';
 
@@ -17,13 +16,15 @@ const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
     backgroundColor: '#0A7800',
     color: '#FFFFFF',
-    fontSize: '0.75rem',
+    fontSize: '0.9rem',
+    fontFamily: 'SUITE-Regular',
     whiteSpace: 'nowrap', // 텍스트를 한 줄로 유지
     overflow: 'hidden', // 넘치는 내용을 숨기기
     textOverflow: 'ellipsis', // 넘치는 텍스트를 ...로 표시
   },
   [`&.${tableCellClasses.body}`]: {
-    fontSize: '0.75rem',
+    fontSize: '0.9rem',
+    fontFamily: 'SUITE-Regular',
     whiteSpace: 'nowrap', // 텍스트를 한 줄로 유지
     overflow: 'hidden', // 넘치는 내용을 숨기기
     textOverflow: 'ellipsis', // 넘치는 텍스트를 ...로 표시
@@ -31,7 +32,7 @@ const StyledTableCell = styled(TableCell)(({ theme }) => ({
 }));
 
 // TableRow를 스타일링하는 컴포넌트
-const StyledTableRow = styled(TableRow)(({ theme, selected, variant }) => ({
+const StyledTableRow = styled(TableRow)(({ theme, selected, variant, edited }) => ({
     '&:last-child td, &:last-child th': {
         border: 0,
     },
@@ -41,6 +42,8 @@ const StyledTableRow = styled(TableRow)(({ theme, selected, variant }) => ({
     '&.Mui-selected': {
         backgroundColor: selected && variant === 'default' ? '#B7E4B3 !important' : '#FFFFFF', // 선택된 상태에서 배경색 강제 적용 (default variant만)
     },
+
+    backgroundColor: edited ? '#FFF5E5' : 'transparent', // 수정된 행일 경우 배경색 변경
 }));
 
 // Checkbox를 스타일링하는 컴포넌트
@@ -67,12 +70,14 @@ export default function CustomizedTables({
         editingCell = {},
         pagination = true,
         modalPagination = false,
+        monthPagination = false,
         columns = [],
+        editedRows= []
     }) {
     const [selectedRow, setSelectedRow] = useState({});       // default variant의 선택 상태
     const [selectedRows, setSelectedRows] = useState([]); 
     const [page, setPage] = useState(0);
-    const [rowsPerPage, setRowsPerPage] = useState(modalPagination ? 5 : 13);             // default page row length
+    const [rowsPerPage, setRowsPerPage] = useState(modalPagination ? 5 : (monthPagination ? 12 : 10));             // default page row length
     const handleChangePage = (event, newPage) => {
         setPage(newPage);
     };
@@ -174,6 +179,7 @@ export default function CustomizedTables({
                                                 ? selectedRows.includes(rowIndex) 
                                                 : selectedRow === rowIndex + (rowsPerPage * page)}
                                         variant={variant}
+                                        edited={editedRows.includes(rowIndex + (rowsPerPage * page))} // 수정된 행을 식별
                                         onClick={() => handleRowClick(rowIndex + (rowsPerPage * page))}
                                     >
                                         {   // checkbox가 있는 테이블이면 체크박스 셀 추가
@@ -201,7 +207,8 @@ export default function CustomizedTables({
                                                         onBlur={handleBlur}
                                                         autoFocus
                                                         size="small"
-                                                    />
+                                                        sx={{width:"8rem"}}
+                                                    />  
                                                 ) : (
                                                     row[col.key]
                                                 )}
@@ -219,6 +226,7 @@ export default function CustomizedTables({
                                                 ? selectedRows.includes(index) 
                                                 : selectedRow === index
                                             }
+                                            edited={editedRows.includes(index)} // 수정된 행을 식별
                                             onClick={(e) => handleRowClick(index, e)}
                                         >
                                             {   // checkbox가 있는 테이블이면 체크박스 셀 추가
@@ -256,9 +264,10 @@ export default function CustomizedTables({
                         </TableBody>
                 </Table>
             </TableContainer>
-            {pagination && (data.length >= 13) ? ( !modalPagination ? (// 10개 이상이면 자동으로 pagination 활성화, (pagination이 true일때만.)
+            {pagination && (data.length >= 10) ? ( !modalPagination ? (// 10개 이상이면 자동으로 pagination 활성화, (pagination이 true일때만.)
+            //페이지네이션을 하고 데이터길이가 길며 모달페이지네이션이 아닐때
             <TablePagination 
-                rowsPerPageOptions={[13, 25, 100]} // page row length custom
+                rowsPerPageOptions={[10, 25, 100]} // page row length custom
                 component="div"
                 count={data.length}
                 rowsPerPage={rowsPerPage}
@@ -267,6 +276,7 @@ export default function CustomizedTables({
                 onRowsPerPageChange={handleChangeRowsPerPage}
             />
             ) : (
+                //페이지네이션을 하고 데이터길이가 길며 모달페이지네이션이 맞을때
                 <TablePagination 
                 rowsPerPageOptions={[5, 10, 25]} // page row length custom
                 component="div"
@@ -280,6 +290,7 @@ export default function CustomizedTables({
             ) : ( !modalPagination ? (
                 <></>
             ) : (
+                //페이지네이션을 안하거나 데이터길이가 12이하이며 모달페이지네이션일때
                 <TablePagination 
                 rowsPerPageOptions={[5, 10, 25]} // page row length custom
                 component="div"

@@ -45,11 +45,11 @@ export default function Psq() {
 
             setFormFields(updatedFields);
 
-            // 옵션 데이터가 있으면 드롭다운을 활성화
-            setActvYearDisabled(yearOptions.length === 0);
-
-            // actvYear 필드 리셋
-            form.resetFields(['actvYear']);
+            // 옵션 데이터가 있으면 드롭다운을 활성화, default값 설정
+            if (yearOptions.length > 0) {
+                setActvYearDisabled(false);
+                form.setFieldsValue({ actvYear: yearOptions[0].value });
+            }
         }
     };
 
@@ -88,7 +88,7 @@ export default function Psq() {
                 {"배출실적 > 실적조회 > 프로젝트별 조회"}
             </div>
             <SearchForms onFormSubmit={handleFormSubmit}
-                formFields={formFields.map(field => field.name === 'actvYear' ? { ...field, disabled: actvYearDisabled, placeholder: actvYearDisabled ? '프로젝트를 선택하세요.' : '' } : field)} // actvYear 필드의 disabled 상태 반영
+                formFields={formFields.map(field => field.name === 'actvYear' ? { ...field, disabled: actvYearDisabled } : field)} // actvYear 필드의 disabled 상태 반영
                 onProjectSelect={onProjectSelect} />
             
             {(!formData || Object.keys(formData).length === 0) ? (
@@ -171,7 +171,7 @@ function TableTab({ data, pjtName }) {
 
     return (
         <Card sx={{ width: "100%", height: "100%", borderRadius: "15px" }}>
-            <TableCustom columns={perfPjtColumns} title="프로젝트 실적 표" data={data} buttons={['DownloadExcel']} onClicks={[() => onDownloadExcelClick(data)]} />
+            <TableCustom columns={perfPjtColumns} title="프로젝트 실적 표" data={data} buttons={['DownloadExcel']} onClicks={[() => onDownloadExcelClick(data)]} monthPagination={true} pagination={false} />
         </Card>
     )
 }

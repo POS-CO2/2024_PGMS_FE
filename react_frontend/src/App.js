@@ -13,12 +13,11 @@ import Ps_1_2_Fp from './components/emperf/Ps_1_2_Fp';
 import Psq from './components/emperf/perflook/Psq';
 import Psq_Fp from './components/emperf/perflook/Psq_Fp';
 import Tep from './components/emperf/perflook/Tep';
-import Pd from './components/fieldinfo/project/detailSet/Pd';
+import Pds from './components/fieldinfo/project/detailSet/Pds';
 import Pg from './components/fieldinfo/project/Pg';
-import Rm from './components/fieldinfo/project/Rm';
 import Fm from './components/fieldinfo/facility/Fm';
 import Fad from './components/fieldinfo/facility/Fad';
-import Fam from './components/fieldinfo/facility/Fam';
+import Adm from './components/fieldinfo/facility/Adm';
 import Fl from './components/fieldinfo/facility/Fl';
 import Esm from './components/fieldinfo/emission/Esm';
 import Esm_Fp from './components/fieldinfo/emission/Esm_Fp';
@@ -126,12 +125,11 @@ export default function App() {
                             <Route path='/efm' element={<Efm />} />
                             <Route path='/tep' element={<Tep />} />
                             <Route path='/pmg' element={<Pmg />} />
-                            <Route path='/pd' element={<Pd />} />
+                            <Route path='/pds' element={<Pds />} />
                             <Route path='/pg' element={<Pg />} />
-                            <Route path='/rm' element={<Rm />} />
                             <Route path='/fm' element={<Fm />} />
                             <Route path='/fad' element={<Fad />} />
-                            <Route path='/fam' element={<Fam />} />
+                            <Route path='/adm' element={<Adm />} />
                             <Route path='/fl' element={<Fl />} />
                             <Route path='/sd' element={<Sd />} />
                             <Route path='/cm' element={<Cm />} />
