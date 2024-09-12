@@ -135,17 +135,17 @@ for (let month = 0; month < 12; month++) {
 export const perfTotalColumns = [
     { key: 'actvYear', label: '활동시작년', hidden: true },
     { key: 'actvMth', label: '월', hidden: false },
-    { key: 'scope1', label: 'Scope1배출량', hidden: false },
-    { key: 'scope2', label: 'Scope2배출량', hidden: false },
-    { key: 'total', label: '총배출량', hidden: false },
+    { key: 'scope1', label: 'Scope1배출량(kgGHG)', hidden: false },
+    { key: 'scope2', label: 'Scope2배출량(kgGHG)', hidden: false },
+    { key: 'total', label: '총배출량(kgGHG)', hidden: false },
 ]
 
 export const perfPjtColumns = [
     { key: 'actvYear', label: '활동시작년', hidden: true },
     { key: 'actvMth', label: '월', hidden: false },
-    { key: 'scope1', label: 'Scope1배출량', hidden: false },
-    { key: 'scope2', label: 'Scope2배출량', hidden: false },
-    { key: 'total', label: '총배출량', hidden: false },
+    { key: 'scope1', label: 'Scope1배출량(kgGHG)', hidden: false },
+    { key: 'scope2', label: 'Scope2배출량(kgGHG)', hidden: false },
+    { key: 'total', label: '총배출량(kgGHG)', hidden: false },
 ]
 
 export const equipEmissionColumns = [
