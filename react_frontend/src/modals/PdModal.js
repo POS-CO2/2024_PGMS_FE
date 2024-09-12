@@ -1997,7 +1997,7 @@ export function UmAddModal({ isModalOpen, handleOk, handleCancel }) {
                     <Input id='userName' value={userName} onChange={e => setUserName(e.target.value)} label="이름" style={{width:"18rem"}} />
                     {error.userName && <div className={modalStyles.error_message}>{error.userName}</div>}
                 </div>
-                <div className={sysStyles.text_field} style={{ width:"20rem" }}>
+                <div className={sysStyles.text_field}>
                     <div className={sysStyles.text}>
                         {"로그인ID"}
                     </div>
