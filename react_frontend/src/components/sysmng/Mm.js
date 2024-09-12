@@ -291,16 +291,7 @@ export default function Mm({menus, handleMenuSet}) {
     // 수정해야함
     const [showtable, setShowTable] = useState(false);
 
-    const [selectedMenu, setSelectedMenu] = useState({
-        item: '',
-        originId: '',
-        name: '',
-        parentDir: '',
-        parentDirId: '',
-        menuOrder: '',
-        accessUser: '',
-        url: '',
-    });
+    const [selectedMenu, setSelectedMenu] = useState([]);
 
     const clickMenuHandler = (e, item) => {
         setShowTable(true);
@@ -487,6 +478,7 @@ export default function Mm({menus, handleMenuSet}) {
     }, [selectedUpperDir]);
 
     menus.forEach(menu => parseMenu(menu.menu, menu.name, null));
+    console.log(selectedMenu);
     return (
         <>
             <div className={mainStyle.breadcrumb}>
