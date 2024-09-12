@@ -1,3 +1,5 @@
+// 매출액별 분석
+// 테이블
 export const saData = [
     {
         "pjtCode": "070687CA",
@@ -53,6 +55,7 @@ export const saData = [
     }
 ]
 
+// 본부별 평균 원단위
 export const avgUnitPerDivData = [
     {
         "divCode": "CEALD00",
@@ -86,6 +89,7 @@ export const avgUnitPerDivData = [
     }
 ]
 
+// 상품별 평균 원단위
 export const unitPerProdData = [
     {
         "divCode": "1201",
@@ -141,5 +145,55 @@ export const unitPerProdData = [
         "divCode": "125",
         "avgEmissionQtyPerSales": 24358,
         "formattedAvgEmissionQtyPerSales": "106,799.866277"
+    }
+]
+
+// 설비별 분석
+// 설비LIB
+export const libData = [
+    {
+        "equipLibName": "가설사무실 전력",
+        "totalEmissionQty": 352094.3804618,
+        "formattedTotalEmissionQty": "352,094.380462"
+    },
+    {
+        "equipLibName": "공사용 전력",
+        "totalEmissionQty": 23653.5181155016,
+        "formattedTotalEmissionQty": "23,653.518116"
+    },
+    {
+        "equipLibName": "법인차량",
+        "totalEmissionQty": 2114.2896,
+        "formattedTotalEmissionQty": "2,114.2896"
+    }
+]
+
+// 설비유형
+export const typeData = [
+    {
+        "equipType": "1",
+        "totalEmissionQty": 2114.2896,
+        "formattedTotalEmissionQty": "2,114.2896"
+    },
+    {
+        "equipType": "9",
+        "totalEmissionQty": 375747.8985773016,
+        "formattedTotalEmissionQty": "375,747.898577"
+    }
+]
+
+// 에너지원
+export const sourceData = [
+    {
+        "energySource": "전력",
+        "equipSpecUnit": "kWh",
+        "totalEmissionQty": 375747.8985773016,
+        "formattedTotalEmissionQty": "375,747.898577"
+    },
+    {
+        "energySource": "액체연료",
+        "equipSpecUnit": "ℓ",
+        "totalEmissionQty": 2114.2896,
+        "formattedTotalEmissionQty": "2,114.2896"
     }
 ]

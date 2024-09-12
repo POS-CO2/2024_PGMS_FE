@@ -12,7 +12,7 @@ import * as chartStyles from "../../assets/css/chart.css"
 import * as saStyles from "../../assets/css/sa.css"
 import * as XLSX from 'xlsx';
 
-import { saData, avgUnitPerDivData, unitPerProdData } from '../../assets/json/saDataEx';
+import { libData, typeData, sourceData } from '../../assets/json/saDataEx';
 
 export default function Ea() {
     const [formData, setFormData] = useState(); // 검색 데이터
@@ -22,19 +22,18 @@ export default function Ea() {
     // 조회 버튼 클릭시 호출될 함수
     const handleFormSubmit = async (data) => {
         setFormData(data);
-        console.log(data.selected);
 
         switch (data.selected) {
             case "설비LIB":
-                setAnalEquipData();
+                setAnalEquipData(libData);
                 break;
     
             case "설비유형":
-                setAnalEquipData();
+                setAnalEquipData(typeData);
                 break;
     
             case "에너지원":
-                setAnalEquipData();
+                setAnalEquipData(sourceData);
                 break;
     
             default:
