@@ -32,8 +32,8 @@ export default function Psq() {
         setContent(value);
     };
 
-    const [selectedMonth, setSelectedMonth] = useState({ key: 'null', label: '- All -', });
-    const items = [{ key: 'null', label: '- All -', }, { key: '1', label: '1월', }, { key: '2', label: '2월', }, { key: '3', label: '3월', }, { key: '4', label: '4월', }, { key: '5', label: '5월', }, { key: '6', label: '6월', },
+    const [selectedMonth, setSelectedMonth] = useState({ key: '0', label: '- All -', });
+    const items = [{ key: '0', label: '- All -', }, { key: '1', label: '1월', }, { key: '2', label: '2월', }, { key: '3', label: '3월', }, { key: '4', label: '4월', }, { key: '5', label: '5월', }, { key: '6', label: '6월', },
         { key: '7', label: '7월', }, { key: '8', label: '8월', }, { key: '9', label: '9월', }, { key: '10', label: '10월', }, { key: '11', label: '11월', }, { key: '12', label: '12월', },];
     const colors = ['#67b7dc', '#6794dc', '#6771dc', '#8067dc', '#a367dc', '#c767dc'];
 
@@ -95,29 +95,31 @@ export default function Psq() {
             setChartPerfs(formattedChartPerfs);
         }
 
-        ///////////////////////// 파이 차트 데이터 설정하기, default는 all(0)
-        //let url = `/equip/document?actvYear=${value}&emissionId=${selectedEmtn.id}`;
-        //const pieChartPerfsData = await axiosInstance.get(url);
-
-        const colorPerItem = desktopOS.map((item, index) => ({
-            ...item,
+        // 파이 차트 데이터 설정하기, default는 all(0)
+        let pieChartUrl = `/perf/pjt-equip?pjtId=${data.searchProject.id}&year=${data.actvYear}&mth=${selectedMonth.key}`;
+        let pieChartPerfsData = await axiosInstance.get(pieChartUrl);
+        const colorPerItem = pieChartPerfsData.data.map((item, index) => ({
+            label: item.actvDataName,
+            value: item.co2EmtnConvTotalQty,
             color: colors[index % colors.length], // 색상을 순환하여 할당
         }));
         setPieChartPerfs(colorPerItem);
+        console.log(colorPerItem);
     };
 
     function ChartTab({ data }) {
-        const valueFormatter = (item) => `${item.value}%`;
+        const valueFormatter = (item) => `${item.value}`;
         
         // Dropdown에서 항목 선택 시 호출되는 함수
         const handleMenuClick = async ({ key }) => {
             const selectedItem = items.find(item => item.key === key);
             setSelectedMonth(selectedItem);
 
-            //let url = `/equip/document?actvYear=${value}&emissionId=${selectedEmtn.id}`;
-            //const pieChartPerfsData = await axiosInstance.get(url);
-            const colorPerItem = desktopOS.map((item, index) => ({
-                ...item,
+            let pieChartUrl = `/perf/pjt-equip?pjtId=${formData.searchProject.id}&year=${formData.actvYear}&mth=${selectedItem.key}`;
+            let pieChartPerfsData = await axiosInstance.get(pieChartUrl);
+            const colorPerItem = pieChartPerfsData.data.map((item, index) => ({
+                label: item.actvDataName,
+                value: item.co2EmtnConvTotalQty,
                 color: colors[index % colors.length], // 색상을 순환하여 할당
             }));
             setPieChartPerfs(colorPerItem);
@@ -130,7 +132,7 @@ export default function Psq() {
                 </Card>
                 <Card className={saStyles.card_box} sx={{ width: "50%", height: "auto", borderRadius: "15px" }}>
                     <div className={psqStyles.title_container}>
-                        <div className={chartStyles.chart_title}>{"설비별 실적 차트 : "}</div>
+                        <div className={chartStyles.chart_title}>{"설비별 실적 차트"}</div>
 
                         <Dropdown
                             menu={{
