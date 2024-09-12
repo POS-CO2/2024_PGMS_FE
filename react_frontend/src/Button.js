@@ -17,7 +17,6 @@ const buttonMap = {
   DownloadExcelForm: DownloadExcelFormButton,
   DownloadExcel: DownloadExcelButton,
   ShowDetails: ShowDetailsButton,
-  ShowManagers: ShowManagersButton
 };
 
 export const CustomButton = styled(Button)(({disabled}) => ({
@@ -111,14 +110,6 @@ export function ShowDetailsButton({ onClick, disabled=true }) {
   return (
     <CustomButton variant="contained" onClick={onClick} disabled={disabled}>
       상세보기
-    </CustomButton>
-  );
-}
-
-export function ShowManagersButton({ onClick, disabled=false }) {
-  return (
-    <CustomButton variant="contained" onClick={onClick} disabled={disabled}>
-      담당자보기
     </CustomButton>
   );
 }
