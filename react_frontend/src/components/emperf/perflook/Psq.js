@@ -8,7 +8,13 @@ import * as mainStyle from '../../../assets/css/main.css';
 import * as ps12Style from '../../../assets/css/ps12.css';
 import * as sysStyles from '../../../assets/css/sysmng.css';
 import * as esmStyles from '../../../assets/css/esm.css';
+import * as chartStyles from "../../../assets/css/chart.css"
+import * as saStyles from "../../../assets/css/sa.css"
+import * as psqStyles from "../../../assets/css/psq.css"
 import { Card } from '@mui/material';
+import { PieChart } from '@mui/x-charts/PieChart';
+import { DownOutlined } from '@ant-design/icons';
+import { Dropdown, Space } from 'antd';
 import axiosInstance from '../../../utils/AxiosInstance';
 import { perfPjtColumns, pjtColumns } from '../../../assets/json/tableColumn';
 
@@ -19,12 +25,20 @@ export default function Psq() {
     const [perfsData, setPerfsData] = useState([]);
     const [chartPerfs, setChartPerfs] = useState([]);
     const [actvYearDisabled, setActvYearDisabled] = useState(true);  // 드롭다운 비활성화 상태 관리
+    const [pieChartPerfs, setPieChartPerfs] = useState([]);
 
     const [content, setContent] = useState('chart'); // chart || table
     const handleButtonClick = (value) => {
         setContent(value);
     };
 
+    const [selectedMonth, setSelectedMonth] = useState({ key: 'null', label: '- All -', });
+    const items = [{ key: 'null', label: '- All -', }, { key: '1', label: '1월', }, { key: '2', label: '2월', }, { key: '3', label: '3월', }, { key: '4', label: '4월', }, { key: '5', label: '5월', }, { key: '6', label: '6월', },
+        { key: '7', label: '7월', }, { key: '8', label: '8월', }, { key: '9', label: '9월', }, { key: '10', label: '10월', }, { key: '11', label: '11월', }, { key: '12', label: '12월', },];
+    const colors = ['#67b7dc', '#6794dc', '#6771dc', '#8067dc', '#a367dc', '#c767dc'];
+
+    const desktopOS = [{ label: 'Windows', value: 72.72, }, { label: 'OS X', value: 16.38, }, { label: 'Linux', value: 3.83, }, { label: 'Chrome OS', value: 2.42, }, { label: 'Other', value: 4.65, }, { label: 'test', value: 5.0, },];
+    
     // 프로젝트 선택 후 대상년도 드롭다운 옵션 설정
     const onProjectSelect = (selectedData, form) => {
         if (selectedData) {
@@ -80,7 +94,122 @@ export default function Psq() {
             ];
             setChartPerfs(formattedChartPerfs);
         }
+
+        ///////////////////////// 파이 차트 데이터 설정하기, default는 all(0)
+        //let url = `/equip/document?actvYear=${value}&emissionId=${selectedEmtn.id}`;
+        //const pieChartPerfsData = await axiosInstance.get(url);
+
+        const colorPerItem = desktopOS.map((item, index) => ({
+            ...item,
+            color: colors[index % colors.length], // 색상을 순환하여 할당
+        }));
+        setPieChartPerfs(colorPerItem);
     };
+
+    function ChartTab({ data }) {
+        const valueFormatter = (item) => `${item.value}%`;
+        
+        // Dropdown에서 항목 선택 시 호출되는 함수
+        const handleMenuClick = async ({ key }) => {
+            const selectedItem = items.find(item => item.key === key);
+            setSelectedMonth(selectedItem);
+
+            //let url = `/equip/document?actvYear=${value}&emissionId=${selectedEmtn.id}`;
+            //const pieChartPerfsData = await axiosInstance.get(url);
+            const colorPerItem = desktopOS.map((item, index) => ({
+                ...item,
+                color: colors[index % colors.length], // 색상을 순환하여 할당
+            }));
+            setPieChartPerfs(colorPerItem);
+        };
+        
+        return (
+            <>
+                <Card className={saStyles.card_box} sx={{ width: "50%", height: "auto", borderRadius: "15px" }}>
+                    <ChartCustom title={"프로젝트 실적 차트"} data={data} />
+                </Card>
+                <Card className={saStyles.card_box} sx={{ width: "50%", height: "auto", borderRadius: "15px" }}>
+                    <div className={psqStyles.title_container}>
+                        <div className={chartStyles.chart_title}>{"설비별 실적 차트 : "}</div>
+
+                        <Dropdown
+                            menu={{
+                                items,
+                                selectable: true,
+                                onClick: handleMenuClick,
+                            }}
+                            placement="bottom"
+                        >
+                            <a className={chartStyles.chart_title} onClick={(e) => e.preventDefault()}>
+                                <Space>
+                                    {selectedMonth.label}
+                                    <DownOutlined />
+                                </Space>
+                            </a>
+                        </Dropdown>
+                    </div>
+
+                    <PieChart
+                        series={[
+                            {
+                                data: pieChartPerfs,
+                                highlightScope: { fade: 'global', highlight: 'item' },
+                                faded: { innerRadius: 30, additionalRadius: -30, color: 'gray' },
+                                cornerRadius: 3,
+                                //innerRadius: 50,
+                                outerRadius: 150,
+                                valueFormatter,
+                                arcLabel: (item) => `${item.value}%`,
+                                arcLabelMinAngle: 35,
+                            },
+                        ]}
+                        height={300}
+                    />
+                </Card>
+            </>
+        )
+    }
+    
+    function TableTab({ data, pjtName }) {
+        const onDownloadExcelClick = (csvData) => {
+            const year = csvData[0].actvYear;
+            const fileName = `실적_${pjtName}_${year}`;
+    
+            // CSV 변환 함수
+            const csvRows = [];
+            
+            // 헤더 생성
+            const headers = Object.keys(csvData[0]);
+            csvRows.push(headers.join(','));
+            
+            // 데이터 생성
+            for (const row of csvData) {
+                const values = headers.map(header => {
+                    const escaped = ('' + row[header]).replace(/"/g, '\\"');
+                    return `"${escaped}"`;
+                });
+                csvRows.push(values.join(','));
+            }
+            
+            // CSV 파일 생성
+            const csvString = csvRows.join('\n');
+            const blob = new Blob([csvString], { type: 'text/csv' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.setAttribute('hidden', '');
+            a.setAttribute('href', url);
+            a.setAttribute('download', `${fileName}.csv`);
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+        };
+    
+        return (
+            <Card sx={{ width: "100%", height: "100%", borderRadius: "15px" }}>
+                <TableCustom columns={perfPjtColumns} title="프로젝트 실적 표" data={data} buttons={['DownloadExcel']} onClicks={[() => onDownloadExcelClick(data)]} monthPagination={true} pagination={false} />
+            </Card>
+        )
+    }
 
     return (
         <div>
@@ -116,62 +245,11 @@ export default function Psq() {
                         </CustomButton>
                     </div>
                     <div className={sysStyles.main_grid}>
-                        <Card className={sysStyles.card_box} sx={{ width: "100%", height: "100%", borderRadius: "15px" }}>
-                            {content === 'chart' && <ChartTab data={chartPerfs} />}
-                            {content === 'table' && <TableTab data={perfsData} pjtName={formData.searchProject.pjtName} />}
-                        </Card>
+                        {content === 'chart' && <ChartTab data={chartPerfs} />}
+                        {content === 'table' && <TableTab data={perfsData} pjtName={formData.searchProject.pjtName} />}
                     </div>
                 </>
             )}
         </div>
     );
-}
-
-function ChartTab({ data }) {
-    return (
-        <Card sx={{ width: "100%", height: "100%", borderRadius: "15px" }}>
-            <ChartCustom title={"프로젝트 실적 차트"} data={data} />
-        </Card>
-    )
-}
-
-function TableTab({ data, pjtName }) {
-    const onDownloadExcelClick = (csvData) => {
-        const year = csvData[0].actvYear;
-        const fileName = `실적_${pjtName}_${year}`;
-
-        // CSV 변환 함수
-        const csvRows = [];
-        
-        // 헤더 생성
-        const headers = Object.keys(csvData[0]);
-        csvRows.push(headers.join(','));
-        
-        // 데이터 생성
-        for (const row of csvData) {
-            const values = headers.map(header => {
-                const escaped = ('' + row[header]).replace(/"/g, '\\"');
-                return `"${escaped}"`;
-            });
-            csvRows.push(values.join(','));
-        }
-        
-        // CSV 파일 생성
-        const csvString = csvRows.join('\n');
-        const blob = new Blob([csvString], { type: 'text/csv' });
-        const url = window.URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.setAttribute('hidden', '');
-        a.setAttribute('href', url);
-        a.setAttribute('download', `${fileName}.csv`);
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-    };
-
-    return (
-        <Card sx={{ width: "100%", height: "100%", borderRadius: "15px" }}>
-            <TableCustom columns={perfPjtColumns} title="프로젝트 실적 표" data={data} buttons={['DownloadExcel']} onClicks={[() => onDownloadExcelClick(data)]} monthPagination={true} pagination={false} />
-        </Card>
-    )
 }
