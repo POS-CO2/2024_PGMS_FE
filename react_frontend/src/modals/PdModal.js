@@ -722,8 +722,8 @@ export function FadAddModal({ isModalOpen, handleOk, handleCancel, rowData }) {
         const filteredActves = allActv.filter(actv => {
             const opt = actvDvsList.find(option => option.value === inputActvDvs);
 
-            const matchesName = inputActvName ? actv.활동자료명?.includes(inputActvName) : true;
-            const matchesActvDvs = inputActvDvs ? actv.활동자료구분?.includes(opt.label) : true;
+            const matchesName = inputActvName ? actv.actvDataName?.includes(inputActvName) : true;
+            const matchesActvDvs = inputActvDvs ? actv.actvDataDvs?.includes(opt.label) : true;
             return matchesName && matchesActvDvs;
           });
           

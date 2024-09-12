@@ -61,7 +61,8 @@ export default function Um() {
         role: '',
     });
 
-    const handleRowClick = (e) => {
+    const handleRowClick = (data) => {
+        const e = data.row;
         
         setSelectedUser(e ?? {});
         if (e === undefined) {

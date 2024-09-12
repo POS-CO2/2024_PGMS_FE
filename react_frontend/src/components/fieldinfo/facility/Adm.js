@@ -89,13 +89,16 @@ export default function Adm() {
         try {
             const response = await axiosInstance.get("/equip/actv", {params});
             setActves(response.data);
+            setEmissionFactors([]);
         } catch (error) {
             console.error("Error fetching actv data:", error);
         }
     };
 
     // 활동자료 row 클릭 시 호출될 함수
-    const handleActvClick = async (actv) => {
+    const handleActvClick = async (data) => {
+        const actv = data.row;
+        
         // actv 없으면 setSelectedActv를 빈 객체로 설정하고, 함수 종료
         if (!actv) {
             setSelectedActv({});
@@ -281,7 +284,7 @@ export default function Adm() {
                     </Card>
 
                     <Card sx={{ width: "50%", borderRadius: "0.5rem", paddingBottom: "20px" }}>
-                        {(!emissionFactors || emissionFactors.length === 0) ?
+                        {(!selectedActv || Object.keys(selectedActv).length === 0) ?
                         <div className={pdsStyles.card_container}>
                             <div className={pdsStyles.table_title} style={{ padding: "8px" }}>배출계수목록</div>
                         </div> : (

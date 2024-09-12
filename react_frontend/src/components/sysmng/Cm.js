@@ -53,7 +53,7 @@ export default function Cm() {
     const [selectedCode, setSelectedCode] = useState(null);
 
     const handleCodeRowClick = (e) => {
-        setSelectedCode(e);
+        setSelectedCode(e.row);
     }
 
     const [isModalOpen, setIsModalOpen] = useState({

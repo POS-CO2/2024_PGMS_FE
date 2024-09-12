@@ -76,7 +76,9 @@ export default function Esd({pjtId}) {
     const handleOk = useHandleOkAction();
 
     // 배출원 row 클릭 시 호출될 함수
-    const handleESClick = async (es) => {
+    const handleESClick = async (data) => {
+        const es = data.row;
+        
         if (!es) {
             setSelectedES({});
             setSuppDocs([]);
@@ -99,7 +101,7 @@ export default function Esd({pjtId}) {
 
     // 증빙자료 row 클릭 시 호출될 함수
     const handleSDClick = (sd) => {
-        setSelectedSD(sd ?? {});
+        setSelectedSD(sd.row ?? {});
     };
 
     const handleYearChange = (year) => {
