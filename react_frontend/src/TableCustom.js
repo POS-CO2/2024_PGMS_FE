@@ -64,7 +64,6 @@ export default function TableCustom({
     // 버튼 활성화 상태 결정
     const buttonStatus = buttons.map((button) => {
         if (button === 'Edit' || button === 'Delete' || button === 'ShowDetails') {
-            console.log(selectedRows);
             if (selectedRows.includes(null) || selectedRows.includes(undefined) || Object.keys(selectedRows[0] ?? {}).length === 0) {  // 선택한 row가 없으면 삭제 버튼의 onRowClick 이벤트 비활성화(variant='default')
                 return false;                               
             } else {

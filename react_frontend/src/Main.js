@@ -15,7 +15,7 @@ import DataSaverOffOutlinedIcon from '@mui/icons-material/DataSaverOffOutlined';
 import SpeedIcon from '@mui/icons-material/Speed';
 import LeaderboardOutlinedIcon from '@mui/icons-material/LeaderboardOutlined';
 import SummarizeOutlinedIcon from '@mui/icons-material/SummarizeOutlined';
-import { ArrowBackIos, ArrowForward, ArrowForwardIos, Girl, MarginRounded } from '@mui/icons-material';
+import { ArrowBackIos, ArrowForward, ArrowForwardIos, Girl, MarginRounded, Star } from '@mui/icons-material';
 import { color } from 'three/webgpu';
 import { Transfer, Select, Progress, ConfigProvider } from 'antd';
 import axiosInstance from './utils/AxiosInstance';
@@ -51,60 +51,60 @@ function GaugePointer() {
     );
 }
 
-function Earth() {
-    const earthRef = useRef();
-    const [hovered, setHovered] = useState(false);
-    const [hoveredCity, setHoveredCity] = useState(null);
+// function Earth() {
+//     const earthRef = useRef();
+//     const [hovered, setHovered] = useState(false);
+//     const [hoveredCity, setHoveredCity] = useState(null);
 
-    // 도시 위치 및 이름
-    const cities = [
-        { name: 'New York', position: new THREE.Vector3(0.6, 0.5, 0.5) },
-        { name: 'London', position: new THREE.Vector3(0.5, 0.6, -0.4) },
-        { name: 'Tokyo', position: new THREE.Vector3(0.6, -0.5, 0.4) },
-    ];
+//     // 도시 위치 및 이름
+//     const cities = [
+//         { name: 'New York', position: new THREE.Vector3(0.6, 0.5, 0.5) },
+//         { name: 'London', position: new THREE.Vector3(0.5, 0.6, -0.4) },
+//         { name: 'Tokyo', position: new THREE.Vector3(0.6, -0.5, 0.4) },
+//     ];
 
-    useFrame(() => {
-        if (earthRef.current) {
-            const rotation = earthRef.current.rotation;
-        }
-    });
+//     useFrame(() => {
+//         if (earthRef.current) {
+//             const rotation = earthRef.current.rotation;
+//         }
+//     });
 
-    // 텍스처 로더
-    const textureLoader = new TextureLoader();
-    const earthTexture = textureLoader.load(earthTextureUrl); // 텍스처 이미지 경로
+//     // 텍스처 로더
+//     const textureLoader = new TextureLoader();
+//     const earthTexture = textureLoader.load(earthTextureUrl); // 텍스처 이미지 경로
 
-    return (
-        <mesh ref={earthRef}>
-            {/* 지구의 텍스처 */}
-            <sphereGeometry args={[2, 32, 32]} />
-            <meshStandardMaterial map={earthTexture} />
-            {cities.map((city, index) => (
-                <mesh
-                    key={index}
-                    position={city.position.toArray()}
-                    onPointerOver={() => {
-                        setHovered(true);
-                        setHoveredCity(city);
-                    }}
-                    onPointerOut={() => {
-                        setHovered(false);
-                        setHoveredCity(null);
-                    }}
-                >
-                <sphereGeometry args={[0.05, 16, 16]} />
-                <meshStandardMaterial color="red" />
-                {hovered && hoveredCity === city && (
-                <Html position={[city.position.x, city.position.y + 0.1, city.position.z]} distanceFactor={10}>
-                    <div style={{ color: 'white', backgroundColor: 'green', padding: '2px 5px', borderRadius: '3px' }}>
-                        {city.name}
-                    </div>
-                </Html>
-            )}
-                </mesh>
-        ))}
-        </mesh>
-    );
-}
+//     return (
+//         <mesh ref={earthRef}>
+//             {/* 지구의 텍스처 */}
+//             <sphereGeometry args={[2, 32, 32]} />
+//             <meshStandardMaterial map={earthTexture} />
+//             {cities.map((city, index) => (
+//                 <mesh
+//                     key={index}
+//                     position={city.position.toArray()}
+//                     onPointerOver={() => {
+//                         setHovered(true);
+//                         setHoveredCity(city);
+//                     }}
+//                     onPointerOut={() => {
+//                         setHovered(false);
+//                         setHoveredCity(null);
+//                     }}
+//                 >
+//                 <sphereGeometry args={[0.05, 16, 16]} />
+//                 <meshStandardMaterial color="red" />
+//                 {hovered && hoveredCity === city && (
+//                 <Html position={[city.position.x, city.position.y + 0.1, city.position.z]} distanceFactor={10}>
+//                     <div style={{ color: 'white', backgroundColor: 'green', padding: '2px 5px', borderRadius: '3px' }}>
+//                         {city.name}
+//                     </div>
+//                 </Html>
+//             )}
+//                 </mesh>
+//         ))}
+//         </mesh>
+//     );
+// }
 
 const StyledRoot = styled.div`
     .swiper {
@@ -119,26 +119,51 @@ const StyledRoot = styled.div`
         }
         &-slide {
             display: flex;
+            flex-shrink: 0;
             align-items: center;
             justify-content: center;
             width: 100%;
-            height: 100%;
+            height: 90%;
+            margin: auto 0;
         },
         &-slide-active{
         }
         &-slide-next {
             width: 100%;
-            height: 95%;
+            height: 85%;
             margin: auto 0;
+            
         }
         &-slide-prev {
             width: 100%;
-            height: 95%;
+            height: 85%;
             margin: auto 0;
+            
         }
         &-button-next {
             z-idnex: 1;
         }
+    }    
+`;
+
+const StyledRootColumn = styled.div`
+    .swiper {
+
+        &.swiper-initialized {
+            width: 100%;
+            height: 100%;
+        }
+        &-wrapper {
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+            height: 100%;
+        }
+        &-slide {
+            flex-shrink: 0; // important
+            width: 100%;
+            height: 100%;
+        },
     }    
 `;
 
@@ -159,6 +184,7 @@ export default function Main() {
     const [scopeOne, setScopeOne] = useState(0);
     const [scopeTwo, setScopeTwo] = useState(0);
     const [documentStatus, setDocumentStatus] = useState([]);
+    const [dpPjt, setDpPjt] = useState([]);
 
     let today = new Date();
     let toYear = today.getFullYear();
@@ -168,10 +194,11 @@ export default function Main() {
         const tempTargetKeys = [];
         const tempMockData = [];
         const bae = ae.concat(be);
+        console.log(bae);
         bae.map(v => {
             const data = {
                 key: [v.equipId, v.actvDataId],
-                title: v.equipName,
+                title: `${v.equipName} (${v.actvDataName})`,
                 description: v.equipLibName,
                 chosen: v.id != null,
             }
@@ -233,9 +260,6 @@ export default function Main() {
                     setBeforeEmission(be);
                     getMock(ae, be);
                     
-                    console.log(documentResponse.data);
-                    console.log(ae);
-                    console.log(be);
                 }
             }
             catch(error){
@@ -247,6 +271,11 @@ export default function Main() {
     }, []);
 
     useEffect(() => {
+        const fetchMyPjt = async () => {
+            const pjtResponse = await axiosInstance.get(`/pjt/my`);
+            const myPjt = pjtResponse.data;
+            setMyPjt(myPjt);
+        };
         const fetchSelectedProjectData = async () => {
             if (!selectedMyPjt) return;
             setPjtStartYear(selectedMyPjt.ctrtFrYear);
@@ -280,6 +309,7 @@ export default function Main() {
                 console.error(error);
             }
         };
+        fetchMyPjt();
         fetchSelectedProjectData();
     }, [selectedMyPjt]);
 
@@ -293,7 +323,7 @@ export default function Main() {
                     setAfterEmission(ae);
                 }
             } catch (error) {
-                
+                console.error(error);
             }
         }
         fetchEmission();
@@ -320,7 +350,7 @@ export default function Main() {
                 } catch (error) {
                     console.error(error);
                     swalOptions.title = '실패!',
-                    swalOptions.text = `배출원 등록에 실패하였습니다.`;
+                    swalOptions.text = `${error.response.data.message}`;
                     swalOptions.icon = 'error';
                 }
                 
@@ -340,7 +370,7 @@ export default function Main() {
                     } catch (error) {
                         console.error(error);
                         swalOptions.title = '실패!',
-                        swalOptions.text = `배출원 삭제에 실패하였습니다.`;
+                        swalOptions.text = `${error.response.data.message}`;
                         swalOptions.icon = 'error';
                     }
                 }
@@ -358,8 +388,6 @@ export default function Main() {
     const handleDropClick = (e) => {
         const selectedItem = myPjt.find(item => item.pjtName === e);
         setSelectedMyPjt(selectedItem);
-
-        
     }
 
 
@@ -407,19 +435,41 @@ export default function Main() {
         return result;
     }
 
+    const handleSetDpPjt = async (e) => {
+        let swalOptions = {
+            confirmButtonText: '확인'
+        };
+        console.log(e);
+        const formData = {
+            pjtId : e.pjtId,
+        }
+        try {
+            const {data} = await axiosInstance.patch(`/pjt/selected`, formData);
+            swalOptions.title = '성공!',
+            swalOptions.text = `대표프로젝트가 성공적으로 설정되었습니다.`;
+            swalOptions.icon = 'success';
+        } catch (error) {
+            swalOptions.title = '실패!',
+            swalOptions.text = `${error.response.data.message}`;
+            swalOptions.icon = 'error';
+        }
+        setDpPjt(e);
+        setSelectedMyPjt(e);
+        Swal.fire(swalOptions);
+    }
+
     return (
             <div className={gridStyles.grid_container}>
-                <Card className={gridStyles.box1} sx={{borderRadius:"15px", backgroundColor:"rgb(6, 10, 18)", color:"white"}}>
+                <Card className={gridStyles.box1} sx={{borderRadius:"10px", color:"white"}}>
                     <div className={gridStyles.box1_header}>
-                        
                         {/* 로고  */}
                         <div className={gridStyles.box1_logo}>
                             {/* <SsidChartRoundedIcon sx={{width:"2rem",height:"2rem", paddingRight:"0.5rem"}}/> */}
                             PGMS
                         </div>
                         <ConfigProvider theme={{token:{fontFamily:"SUITE-Regular"}}}>
-                        <Select defaultValue={selectedMyPjt?.pjtName} value={selectedMyPjt?.pjtName} onChange={(e) => handleDropClick(e)} style={{width:"20%", height:"2.5rem", fontSize:"4rem"}}>
-                            {myPjt.map(pjt => (
+                        <Select defaultValue={selectedMyPjt?.pjtName} value={selectedMyPjt?.pjtName} onChange={(e) => handleDropClick(e)} style={{width:"20%", height:"2.5rem", fontSize:"4rem", color:"rgb(55, 57, 78)"}}>
+                            {myPjt.map((pjt) => (
                                 <Select.Option key={pjt.id} value={pjt.pjtName}>
                                 {pjt.pjtName}
                                 </Select.Option>
@@ -445,7 +495,7 @@ export default function Main() {
                                         sx={(theme) => ({
                                             [`& .${gaugeClasses.valueText}`]: {
                                             fontSize: 40,
-                                            color: 'white',
+                                            color: "rgb(55, 57, 78)",
                                             fontWeight: 700,
                                             },
                                             [`& .${gaugeClasses.valueArc}`]: {
@@ -498,6 +548,41 @@ export default function Main() {
                     </div>
                 </Card>
                 <div className={gridStyles.box2}>
+                    {/* 대표프로젝트설정 */}
+                    <div className={gridStyles.box2_2}>
+                        <Card sx={{borderRadius:"10px", height:"100%"}}>
+                            <div className={gridStyles.box2_2_title}>
+                                대표프로젝트설정
+                            </div>
+                            <div className={gridStyles.box2_2_pjt}>
+                                <StyledRootColumn style={{width:"100%", height:"100%", overflow:"hidden"}}>
+                                    <Swiper
+                                        direction='vertical'
+                                        spaceBetween={30}    // 슬라이드 사이의 간격
+                                        slidesPerView={2}     // 화면에 보여질 슬라이드 수
+                                        pagination={{ clickable: true }}  // 페이지 네이션 (점으로 표시되는 네비게이션)
+                                        navigation={true}           // 이전/다음 버튼 네비게이션
+                                        modules={[Navigation, Pagination]}
+                                    >
+                                        {myPjt.map((data, idx) => (
+                                            <SwiperSlide style={{width:"100%", height:"100%"}}>
+                                                <Card sx={{backgroundColor:"white", width:"90%", height:"100%", margin:"1rem auto", borderRadius:"15px", display:"flex", flexDirection:"column", backgroundColor:"rgb(241,244,248)"}}>
+                                                    <div className={gridStyles.star}>
+                                                        {idx === 0 ? <Star fontSize='large' sx={{color:"#ffd700"}} /> : <Star fontSize='large' onClick={() => handleSetDpPjt(data)} sx={{color:"gray"}}/>}
+                                                    </div>
+                                                    <div className={gridStyles.dp_pjt}>
+                                                        {`${data.pjtName}`}
+                                                    </div>
+                                                </Card>    
+                                            </SwiperSlide>
+                                        ))}
+                                        <SwiperSlide>
+                                        </SwiperSlide>
+                                    </Swiper>
+                                </StyledRootColumn>
+                            </div>
+                        </Card>
+                    </div>
                     <div className={gridStyles.box2_1}>
                         <div className={gridStyles.box2_1_1}>
                             <Card 
@@ -505,13 +590,12 @@ export default function Main() {
                                 sx={{
                                 borderRadius:"15px",
                                 height:"100%", 
-                                background:"linear-gradient(to right, #66C869, #02A007)", 
                                 width:"100%",
                                 display:"flex"
                                 }}>
                                 <div className={gridStyles.box2_1_1_1}>
-                                    <div className={gridStyles.box1_1_logo} style={{color:'white'}}>
-                                        <SummarizeOutlinedIcon fontSize='large' sx={{margin:"0 0.3rem 0 1rem"}}/>증빙자료 제출 현황
+                                    <div className={gridStyles.box1_1_logo} style={{color:'white', fontSize:"1rem", paddingLeft:"2rem"}}>
+                                        증빙자료 제출 현황
                                     </div>
                                     <div className={gridStyles.box2_1_1_1_1}>
                                     <Chip label={selectedMyPjt?.pjtName} variant="outlined" onClick={() => {}} sx={{backgroundColor:"white", fontSize:"1rem", fontWeight:"bold", width: "100%"}}/>
@@ -520,21 +604,13 @@ export default function Main() {
                                 <div className={gridStyles.box2_swap}>
                                 <StyledRoot style={{height:"80%", width:"100%", margin:"0 auto", overflow: "hidden"}}>
                                 <Swiper
-                                    effect={'coverflow'}
-                                    spaceBetween={15}    // 슬라이드 사이의 간격
+                                    dir="rtl"
+                                    spaceBetween={100}    // 슬라이드 사이의 간격
                                     slidesPerView={2}     // 화면에 보여질 슬라이드 수
-                                    coverflowEffect={{
-                                        rotate: 60,
-                                        stretch: 10,
-                                        depth: 100,
-                                        modifier: 1,
-                                        slideShadows: true,
-                                    }}
-                                    
                                     centeredSlides={true}
                                     pagination={{ clickable: true }}  // 페이지 네이션 (점으로 표시되는 네비게이션)
                                     navigation={true}           // 이전/다음 버튼 네비게이션
-                                    modules={[Navigation, Pagination, EffectCoverflow]}
+                                    modules={[Navigation, Pagination]}
                                     >
                                     {documentStatus.map(document => (
                                         <SwiperSlide style={{width:"100%", alignContent:"center"}}>
@@ -548,6 +624,7 @@ export default function Main() {
                                                         [`& .${gaugeClasses.valueText}`]: {
                                                         fontSize: "1.5rem",
                                                         fontWeight:"bold",
+                                                        color:"rgb(55, 57, 78)",
                                                         },
                                                         [`& .${gaugeClasses.valueArc}`]: {
                                                         fill: '#008CFF',
@@ -558,10 +635,10 @@ export default function Main() {
                                                         margin: "1rem auto",
                                                     })}
                                                     text={
-                                                        ({ value, valueMax }) => `${value} / ${valueMax}`
+                                                        ({ value, valueMax }) => `${valueMax} / ${value}`
                                                     }
                                                 />
-                                                <div style={{fontSize:"2rem", fontWeight:"bold", textAlign:"center", marginTop:"1rem"}}>
+                                                <div style={{fontSize:"2rem", fontWeight:"bold", textAlign:"center", marginTop:"1rem", color:"rgb(55, 57, 78)"}}>
                                                 {`${document.year}년 ${document.mth}월`}
                                                 <br/>
                                                 </div>
@@ -575,17 +652,13 @@ export default function Main() {
                             </Card>
                         </div>
                     </div>
-                    <div className={gridStyles.box2_2}>
-                        <Card sx={{borderRadius:"10px", height:"100%", backgroundColor:"black"}}>
-                        <Canvas>
+                    
+                    {/* <Canvas>
                             <ambientLight intensity={2.0} />
                             <pointLight position={[10, 10, 10]} />
                             <Earth />
                             <OrbitControls />
-                        </Canvas>
-                        </Card>
-                    </div>
-                    
+                        </Canvas> */}
                     <div className={gridStyles.box2_3}>
                         <div className={gridStyles.box2_3_1}>
                             <Card sx={{borderRadius:"10px", height:"100%", display:"flex", justifyContent:"center", alignContent:"center", flexDirection:"column", gap:"2%"}}>
@@ -597,14 +670,14 @@ export default function Main() {
                                     justifyContent:"space-between",
                                     fontWeight:"bold",
                                     alignItems:"center",
-                                    padding:"0 5%"
+                                    padding:"0 2rem"
                                 }}>
                                     <div style={{width:"20%", color:"white", fontSize:"1rem"}}>
                                         배출원 지정
                                     </div>
                                 </div>
                                 <div style={{margin:"0 auto", height:"90%"}}>
-                                    <ConfigProvider theme={{token:{fontFamily:"SUITE-Regular"}}} >
+                                    <ConfigProvider theme={{token:{fontFamily:"SUITE-Regular", color:"rgb(55, 57, 78)"}}} >
                                     <Transfer
                                         dataSource={mockData}
                                         showSearch
@@ -617,7 +690,9 @@ export default function Main() {
                                             height:"95%",
                                         }}
                                         listStyle={{
-                                            height:"100%"
+                                            height:"100%",
+                                            width:250,
+                                            textOverflow:"ellipsis",
                                         }}
                                     />
                                     </ConfigProvider>

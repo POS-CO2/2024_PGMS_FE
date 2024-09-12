@@ -99,7 +99,7 @@ const StyledTabs = styled(Tabs)`
     width: auto;
     margin: 0 !important;
     justify-content: flex-start;
-    padding: 0.3rem 0.5rem;
+    padding: 0.6rem 0.5rem;
     font-weight: bold;
     overflow: hidden;
     white-space: nowrap !important;

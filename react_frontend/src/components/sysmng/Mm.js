@@ -373,6 +373,7 @@ export default function Mm({menus, handleMenuSet}) {
             accessUser: selectedMenu.accessUser,
             menuOrder: selectedMenu.menuOrder
         }
+        console.log(formData);
         try {
             const {data} = await axiosInstance.patch('/sys/menu', formData);
             swalOptions.title = '성공!',
