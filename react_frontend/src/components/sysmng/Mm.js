@@ -27,7 +27,7 @@ import { TreeItem2DragAndDropOverlay } from '@mui/x-tree-view/TreeItem2DragAndDr
 import { ButtonGroup, ButtonGroupMm } from '../../Button';
 import { useState, useEffect } from 'react';
 import Paper from '@mui/material/Paper';
-import { Button, Card, TextField } from '@mui/material';
+import { Accordion, AccordionDetails, AccordionSummary, Button, Card, Divider, TextField } from '@mui/material';
 import TableCustom from '../../TableCustom';
 import { table_mm } from '../../assets/json/selectedPjt';
 import * as mainStyle from '../../assets/css/main.css';
@@ -35,6 +35,7 @@ import { ConfigProvider, Input, Select } from 'antd';
 import axiosInstance from '../../utils/AxiosInstance';
 import Swal from 'sweetalert2';
 import { menuTableColumns } from '../../assets/json/tableColumn';
+import { ExpandMore, Public } from '@mui/icons-material';
 
 function DotIcon() {
     return (
@@ -310,7 +311,6 @@ export default function Mm({menus, handleMenuSet}) {
                 url: clickedItem.url,
             };
             setSelectedMenu(newMenuInfo); // 상태 업데이트
-            console.log(newMenuInfo);
             handleEditClick(newMenuInfo);
         }
         
@@ -358,13 +358,8 @@ export default function Mm({menus, handleMenuSet}) {
     
     const [upperDir, setUpperDir] = useState([]);
 
-    const [menuName, setMenuName] = useState('');
-    const [url, setUrl] = useState('');
-    const [accessUser, setAccessUser] = useState('');
-    const [menuOrder, setMenuOrder] = useState('');
     const [selectedUpperDir, setSelectedUpperDir] = useState('');
     const [menuOrderList, setMenuOrderList] = useState([]);
-    const [selectedMenuOrder, setSelectedMenuOrder] = useState([]);
     const handleSaveClick = async () => {
         let swalOptions = {
             confirmButtonText: '확인'
@@ -380,8 +375,6 @@ export default function Mm({menus, handleMenuSet}) {
         }
         try {
             const {data} = await axiosInstance.patch('/sys/menu', formData);
-            console.log("form", formData);
-            console.log("patchdata",data);
             swalOptions.title = '성공!',
             swalOptions.text = `${formData.menuName}이 성공적으로 수정되었습니다.`;
             swalOptions.icon = 'success';
@@ -436,31 +429,17 @@ export default function Mm({menus, handleMenuSet}) {
             ...prevState,
             [field]: value
         }));
-        console.log(selectedMenu);
     };
-    const [upperChange, setUpperChange] = useState(false);
 
     const handleInputChange = (field, value) => {
         const par = findNameById(value, upperDir)
-        // console.log(par);
         const parName = par.name;
-        // if(par.id !== selectedMenu.parentDirId){
-        //     setUpperChange(true);
-        //     console.log("origin", menuOrderList);
-        
-        //     setMenuOrderList(prev=>[...prev, prev.length + 1]);
-        //     console.log(menuOrderList);
-        // }
-        // else{
-        //     setUpperChange(false);
-        // }
         setSelectedUpperDir(par);
         setSelectedMenu(prevState => ({
             ...prevState,
             [field]: value,
             "parentDir": parName
         }));
-        console.log(selectedMenu);
     };
     useEffect(() => {
         if (selectedUpperDir) {
@@ -476,9 +455,23 @@ export default function Mm({menus, handleMenuSet}) {
             setMenuOrderList([]);
         }
     }, [selectedUpperDir]);
-
     menus.forEach(menu => parseMenu(menu.menu, menu.name, null));
-    console.log(selectedMenu);
+    const [fpMenu, setFpMenu] = useState(res.filter(e => e.accessUser === "FP"));
+    const [hpMenu, setHpMenu] = useState(res.filter(e => e.accessUser === "HP"));
+    const [adminMenu, setAdminMenu] = useState(res.filter(e => e.accessUser === "ADMIN"));
+
+    const [expanded, setExpanded] = useState();
+
+    const handleExpanded = (panel) => (event, isExpanded) => {
+        setExpanded(isExpanded ? panel : false);
+    }
+
+    useEffect(() => {
+        setFpMenu(res.filter(e => e.accessUser === "FP"));
+        setHpMenu(res.filter(e => e.accessUser === "HP"));
+        setAdminMenu(res.filter(e => e.accessUser === "ADMIN"));
+    }, [res])
+
     return (
         <>
             <div className={mainStyle.breadcrumb}>
@@ -566,15 +559,205 @@ export default function Mm({menus, handleMenuSet}) {
                             ))}
                             </Select>
                         </div>
-                        {/* <Button variant='contained' onClick={handleSaveClick} sx={{marginTop:"0.5rem",width:"20rem", margin:"5rem auto"}}>저장</Button> */}
                     </Card> 
-                    <Card className={sysStyles.card_box} sx={{width:"50%", borderRadius:"15px", height:"88vh"}}>
-                        <TableCustom title='권한 부여 현황' data={res} columns={menuTableColumns}/>
+                    <Card className={sysStyles.card_box} sx={{width:"50%", borderRadius:"15px", height:"88vh", overflowY:"auto", paddingBottom:"1rem"}}>
+                        <TableCustom title='권한 부여 현황' table={false}/>
+                        <div className={sysStyles.accodion}>
+                        <Accordion expanded={expanded === 'panel1'} onChange={handleExpanded('panel1')}>
+                            <AccordionSummary
+                                expandIcon={<ExpandMore />}
+                                aria-controls="panel1bh-content"
+                                id="panel1bh-header"
+                                sx={{
+                                    bgcolor: expanded === 'panel1' ? '#dcf9d9' : 'transparent', // 확장 상태일 때
+                                    '&:hover': {
+                                        bgcolor: '#e0f8f0', // hover 시
+                                        color:"#0eaa00"
+                                    },
+                                    color: expanded === 'panel1' ? '#0eaa00' : "black",
+                                    fontSize:"1.2rem",
+                                    fontWeight:"bold",
+                                }}
+                            >
+                                현장담당자
+                            </AccordionSummary>
+                            {fpMenu.map((e) => {
+                                if (e.level === 2) {
+                                    return (
+                                        <>
+                                        <Divider />
+                                        <AccordionDetails sx={{marginLeft:"2rem", display:"flex", flexDirection:"column"}}>
+                                            <div style={{display:"flex", flexDirection:"row", alignItems:"center", gap:"0.6rem"}}>
+                                                <div style={{fontSize:"1.2rem"}}>
+                                                {`${e.name}`}
+                                                </div>
+                                                <div style={{fontSize:"0.8rem", color:"gray"}}>
+                                                {`( ${e.bd} > ${e.md} ) `} 
+                                                </div>
+                                            
+                                            </div>
+                                            <div style={{display:"flex"}}>
+                                            <Public sx={{color:"green", marginRight:"0.6rem"}}/>{` : ${e.url}`}
+                                            </div>
+                                        </AccordionDetails>
+                                        </>
+                                    );
+                                }
+                                else if (e.level === 3) {
+                                    return (
+                                        <>
+                                        <Divider />
+                                        <AccordionDetails sx={{marginLeft:"2rem"}}>
+                                            <div style={{display:"flex", flexDirection:"row", alignItems:"center", gap:"0.6rem"}}>
+                                                <div style={{fontSize:"1.2rem"}}>
+                                                {`${e.name}`}
+                                                </div>
+                                                <div style={{fontSize:"0.8rem", color:"gray"}}>
+                                                {`( ${e.bd} > ${e.md} > ${e.sd} ) `} 
+                                                </div>
+                                            
+                                            </div>
+                                            <div style={{display:"flex"}}>
+                                            <Public sx={{color:"green", marginRight:"0.6rem"}}/>{` : ${e.url}`}
+                                            </div>
+                                        </AccordionDetails>
+                                        </>
+                                    );
+                                }
+                            })}
+                            </Accordion>
+                            <Accordion expanded={expanded === 'panel2'} onChange={handleExpanded('panel2')}>
+                            <AccordionSummary
+                                expandIcon={<ExpandMore />}
+                                aria-controls="panel2bh-content"
+                                id="panel2bh-header"
+                                sx={{
+                                    bgcolor: expanded === 'panel2' ? '#dcf9d9' : 'transparent', // 확장 상태일 때
+                                    '&:hover': {
+                                        bgcolor: '#e0f8f0', // hover 시
+                                        color:"#0eaa00"
+                                    },
+                                    color: expanded === 'panel2' ? '#0eaa00' : "black",
+                                    fontSize:"1.2rem",
+                                    fontWeight:"bold",
+                                }}
+                            >
+                                본사담당자
+                            </AccordionSummary>
+                            {hpMenu.map((e) => {
+                                if (e.level === 2) {
+                                    return (
+                                        <>
+                                        <Divider />
+                                        <AccordionDetails sx={{marginLeft:"2rem", display:"flex", flexDirection:"column"}}>
+                                            <div style={{display:"flex", flexDirection:"row", alignItems:"center", gap:"0.6rem"}}>
+                                                <div style={{fontSize:"1.2rem"}}>
+                                                {`${e.name}`}
+                                                </div>
+                                                <div style={{fontSize:"0.8rem", color:"gray"}}>
+                                                {`( ${e.bd} > ${e.md} ) `} 
+                                                </div>
+                                            
+                                            </div>
+                                            <div style={{display:"flex"}}>
+                                            <Public sx={{color:"green", marginRight:"0.6rem"}}/>{` : ${e.url}`}
+                                            </div>
+                                        </AccordionDetails>
+                                        </>
+                                    );
+                                }
+                                else if (e.level === 3) {
+                                    return (
+                                        <>
+                                        <Divider />
+                                        <AccordionDetails sx={{marginLeft:"2rem"}}>
+                                            <div style={{display:"flex", flexDirection:"row", alignItems:"center", gap:"0.6rem"}}>
+                                                <div style={{fontSize:"1.2rem"}}>
+                                                {`${e.name}`}
+                                                </div>
+                                                <div style={{fontSize:"0.8rem", color:"gray"}}>
+                                                {`( ${e.bd} > ${e.md} > ${e.sd} ) `} 
+                                                </div>
+                                            
+                                            </div>
+                                            <div style={{display:"flex"}}>
+                                            <Public sx={{color:"green", marginRight:"0.6rem"}}/>{` : ${e.url}`}
+                                            </div>
+                                        </AccordionDetails>
+                                        </>
+                                    );
+                                }
+                            })}
+                            </Accordion>
+                            <Accordion expanded={expanded === 'panel3'} onChange={handleExpanded('panel3')}>
+                            <AccordionSummary
+                                expandIcon={<ExpandMore />}
+                                aria-controls="panel3bh-content"
+                                id="panel3bh-header"
+                                sx={{
+                                    bgcolor: expanded === 'panel3' ? '#dcf9d9' : 'transparent', // 확장 상태일 때
+                                    '&:hover': {
+                                        bgcolor: '#e0f8f0', // hover 시
+                                        color:"#0eaa00"
+                                    },
+                                    color: expanded === 'panel3' ? '#0eaa00' : "black",
+                                    fontSize:"1.2rem",
+                                    fontWeight:"bold",
+                                }}
+                            >
+                                시스템관리자
+                            </AccordionSummary>
+                            {adminMenu.map((e) => {
+                                if (e.level === 2) {
+                                    return (
+                                        <>
+                                        <Divider />
+                                        <AccordionDetails sx={{marginLeft:"2rem", display:"flex", flexDirection:"column"}}>
+                                            <div style={{display:"flex", flexDirection:"row", alignItems:"center", gap:"0.6rem"}}>
+                                                <div style={{fontSize:"1.2rem"}}>
+                                                {`${e.name}`}
+                                                </div>
+                                                <div style={{fontSize:"0.8rem", color:"gray"}}>
+                                                {`( ${e.bd} > ${e.md} ) `} 
+                                                </div>
+                                            
+                                            </div>
+                                            <div style={{display:"flex"}}>
+                                            <Public sx={{color:"green", marginRight:"0.6rem"}}/>{` : ${e.url}`}
+                                            </div>
+                                        </AccordionDetails>
+                                        </>
+                                    );
+                                }
+                                else if (e.level === 3) {
+                                    return (
+                                        <>
+                                        <Divider />
+                                        <AccordionDetails sx={{marginLeft:"2rem"}}>
+                                            <div style={{display:"flex", flexDirection:"row", alignItems:"center", gap:"0.6rem"}}>
+                                                <div style={{fontSize:"1.2rem"}}>
+                                                {`${e.name}`}
+                                                </div>
+                                                <div style={{fontSize:"0.8rem", color:"gray"}}>
+                                                {`( ${e.bd} > ${e.md} > ${e.sd} ) `} 
+                                                </div>
+                                            
+                                            </div>
+                                            <div style={{display:"flex"}}>
+                                            <Public sx={{color:"green", marginRight:"0.6rem"}}/>{` : ${e.url}`}
+                                            </div>
+                                        </AccordionDetails>
+                                        </>
+                                    );
+                                }
+                            })}
+                            </Accordion>
+                            </div>
                     </Card>
                     </>
                 ) : (
                     <Card className={sysStyles.card_box} sx={{width:"50%", borderRadius:"15px", height:"88vh"}}>
-                        <TableCustom title='권한 부여 현황' data={res} columns={menuTableColumns}/>
+                        <TableCustom title='권한 부여 현황' table={false}/>
                     </Card>
                 )}
                 
@@ -582,4 +765,3 @@ export default function Mm({menus, handleMenuSet}) {
         </>
     );
 }
-
