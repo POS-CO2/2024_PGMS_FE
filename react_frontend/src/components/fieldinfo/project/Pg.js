@@ -69,9 +69,6 @@ export default function Pg() {
         fetchProject();
     }, []);
 
-    // selectedPjt 변경될 때마다 실행될 useEffect
-    useEffect(() => {}, [selectedPjt]);
-
     // saleAmt 상태가 변경될 때 실행될 useEffect
     useEffect(() => {
         if (projects.length === 0) {
@@ -229,7 +226,7 @@ export default function Pg() {
                         buttons={['Delete', 'Add']}
                         onClicks={[onDeleteClick, onAddClick]}
                         onRowClick={handlePjtClick}
-                        selectedRows={[selectedPjt.id]}
+                        selectedRows={[selectedPjt]}
                         modals={[
                             {
                                 'modalType': 'Delete',

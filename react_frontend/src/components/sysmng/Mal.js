@@ -103,7 +103,7 @@ export default function Mal() {
                     {showLog ? (
                         <TableCustom title="메뉴 접속 로그" data={log} button="" columns={menuLogColumns}/>
                     ) : (
-                        <div className={sysStyles.mid_title}>{"메뉴 접속 로그"}</div>
+                        <TableCustom title='메뉴 접속 로그' table={false} />
                     )}
                 </Card>
             </div>

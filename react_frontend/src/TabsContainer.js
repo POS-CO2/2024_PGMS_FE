@@ -42,6 +42,7 @@ const TopRightWrapper = styled.div`
   display: flex;
   align-items: center;
   gap: 2px; /* 언어 선택기와 유저 정보 사이의 간격 */
+  font-family: SUITE-Regular;
 `;
 
 const UserInfo = styled.div`
@@ -61,7 +62,7 @@ const Row = styled.div`
   justify-content: space-between;
   align-items: center;
   color: #000;
-
+  font-family: SUITE-Regular;
   img {
     width: 40px;
     height: 40px;
@@ -291,7 +292,7 @@ const TabsContainer = forwardRef(({ handleLogout, user }, ref) => {
     label: (
       <DraggableTabNode index={index} moveTabNode={moveTabNode}>
         <div style={{display:"flex", alignContent:"center", cursor:"pointer"}}>
-          <div style={{ textOverflow:"ellipsis", whiteSpace:"nowrap", overflowX:"hidden"}}>
+          <div style={{ textOverflow:"ellipsis", whiteSpace:"nowrap", overflowX:"hidden", fontFamily:'SUITE-Regular'}}>
             {tab.tab}
           </div>
           <div>
@@ -346,7 +347,7 @@ const TabsContainer = forwardRef(({ handleLogout, user }, ref) => {
 
   // 다국어 메뉴
   const languageMenu = (
-    <div style={{ padding: '10px' }}>
+    <div style={{ padding: '10px', fontFamily:"SUITE-Regular"}}>
       <Language />
     </div>
   );

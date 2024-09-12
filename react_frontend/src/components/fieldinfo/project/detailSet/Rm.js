@@ -36,7 +36,7 @@ export default function Rm({pjtId}) {
                     title='매출액목록' 
                     data={revenues}
                     columns={pjtSalesColumns}                
-                    buttons={['Edit']}
+                    buttons={['DoubleClickEdit']}
                     pagination={false}
                     onClicks={[() => {}]}
                     onRowClick={handleRevClick}

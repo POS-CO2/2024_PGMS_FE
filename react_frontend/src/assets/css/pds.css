@@ -33,7 +33,6 @@ button {
     border-radius: 4px;
     font-size: 16px;
     padding: 8px;
-    margin-left: 10px;
 }
 
 button:hover {
@@ -92,11 +91,26 @@ button:hover {
 }
 
 .card_container {
+    display: flex;
+    flex-direction: column;
+    flex-wrap: nowrap;
     padding: 20px;
     height: 100%;
 }
 
+.contents_header {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: nowrap;
+    font-weight: bold;
+    line-height: 39px;
+    font-size: 20px;
+    align-items: center;
+    padding: 8px;
+}
+
 .table_title {
+    justify-content: flex-start;
     position: relative;
     font-weight: bold;
     line-height: 39px;
@@ -105,6 +119,10 @@ button:hover {
     align-items: center;
     color: #000000;
     padding: 8px;
+}
+
+.table_button {
+    justify-content: flex-end;
 }
 
 .search_container {
@@ -166,8 +184,6 @@ button:hover {
 }
 
 .select_button {
-    width: 100%;
-    height: 41px;
     padding: 5px 10px;
     background: #0EAA00;
     color: white;

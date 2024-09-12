@@ -17,7 +17,7 @@
 .container {
     display: flex;
     justify-content: space-between; /* 컨테이너의 자식 요소를 양쪽 끝에 배치합니다 */
-    align-items: flex-end; /* 버튼과 제목을 세로 가운데 정렬합니다 */
+    align-items: center; /* 버튼과 제목을 세로 가운데 정렬합니다 */
     padding: 0.5rem;
 }
 
