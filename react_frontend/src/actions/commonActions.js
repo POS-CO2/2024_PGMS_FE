@@ -2,6 +2,7 @@ import { useRecoilCallback, useRecoilState } from 'recoil';
 import { modalState } from '../atoms/pdsAtoms'
 import axiosInstance from '../utils/AxiosInstance';
 import Swal from 'sweetalert2';
+import { ContinuousColorLegend } from '@mui/x-charts';
 
 // 조회 액션
 export const useSearchAction = () => {
@@ -87,8 +88,7 @@ export const useModalActions = () => {
 
 // 모달 내의 버튼(등록, 수정, 삭제) 액션
 export const useHandleOkAction = () => {
-  return useRecoilCallback(({ set }) => (modalType) => async ({data, setter, setterSelected, url, requestBody, successMsg}) => {
-
+  return useRecoilCallback(({ set }) => (modalType) => async ({data, setter, setterSelected, url, requestBody, successMsg, aa}) => {
     let swalOptions = {
       confirmButtonText: '확인'
     };
@@ -99,7 +99,6 @@ export const useHandleOkAction = () => {
     if (modalType.includes('Add')) {
       try {
         //const response = await axiosInstance.post(url, requestBody);
-        console.log("handleOk", useHandleOkAction);
 
         // 등록한 데이터를 목록에 추가
         // setter(prevRegs => [

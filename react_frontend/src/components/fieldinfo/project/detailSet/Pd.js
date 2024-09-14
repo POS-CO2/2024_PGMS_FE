@@ -105,11 +105,12 @@ export default function Pd({pjtId}) {                                           
                         {
                             modalType: 'Delete',
                             isModalOpen: isModalOpen.Delete,
-                            handleOk: () => handleOk('Delete') ({
+                            handleOk: (params) => handleOk('Delete')({
+                                ...params,
                                 data: selectedManager, 
                                 setter: setManagers, 
                                 setterSelected: setSelectedManager
-                              }),
+                            }),
                             handleCancel: closeModal('Delete'),
                             rowData: selectedManager,
                             rowDataName: 'userName',

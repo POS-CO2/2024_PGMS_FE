@@ -193,7 +193,8 @@ export default function Esd({pjtId}) {
                             {
                                 modalType: 'SdAdd',
                                 isModalOpen: isModalOpen.SdAdd,
-                                handleOk: () => handleOk('SdAdd') ({
+                                handleOk: (params) => handleOk('SdAdd')({
+                                    ...params,
                                     data: selectedSD, 
                                     setter: setFilteredSDs, 
                                     setterSelected: setSelectedSD

@@ -1171,7 +1171,7 @@ export function DeleteModal({ isModalOpen, handleOk, handleCancel, rowData, rowD
             swalOptions.title = '성공!',
             swalOptions.text = `${rowName}(이)가 성공적으로 삭제되었습니다.`;
             swalOptions.icon = 'success';
-            handleOk(rowData);
+            handleOk();
         } catch (error) {
             console.error('Failed to delete:', error);
             swalOptions.title = '실패!',
