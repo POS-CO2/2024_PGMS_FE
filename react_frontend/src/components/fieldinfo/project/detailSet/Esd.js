@@ -110,6 +110,8 @@ export default function Esd({pjtId}) {
         setFilteredSDs(filteredResult);
     };
 
+    console.log("handleOk", handleOk);
+    
     return (
         <>
             <Card sx={{ width: "50%", height: "auto", borderRadius: "0.5rem" }}>

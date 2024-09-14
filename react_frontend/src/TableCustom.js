@@ -260,7 +260,6 @@ export function TableCustomDoubleClickEdit({
                 };
             });
 
-            console.log(requestBody);
             const response = await axiosInstance.put("/perf", requestBody);
 
             swalOptions.title = '성공!',
