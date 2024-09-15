@@ -208,7 +208,8 @@ export default function Fd({pjtId}) {
                         {
                             modalType: 'Delete',
                             isModalOpen: isModalOpen.Delete,
-                            handleOk: () => handleOk('Delete') ({
+                            handleOk: (params) => handleOk('Delete') ({
+                                ...params,
                                 data: selectedEq, 
                                 setter: setEquips, 
                                 setterSelected: setSelectedEq
