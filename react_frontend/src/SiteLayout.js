@@ -12,8 +12,9 @@ import {
     PieChartOutlined,
   } from '@ant-design/icons';
 import axiosInstance from './utils/AxiosInstance';
-import { SpeedDial, SpeedDialAction, SpeedDialIcon } from '@mui/material';
+import { Badge, Box, SpeedDial, SpeedDialAction, SpeedDialIcon } from '@mui/material';
 import { ChatBubble } from '@mui/icons-material';
+import Chat from './Chat';
 
 const StyledTabsContainer = styled(TabsContainer)`
     flex: 1;
@@ -74,6 +75,7 @@ export default function SiteLayout({handleLogout, menus, user}){
 
     const [collapsed, setCollapsed] = useState(false);
     const [openKeys, setOpenKeys] = useState([]);
+    const [chatOpen, setChatOpen] = useState(false);
     const navigate = useNavigate();
     const tabsContainerRef = useRef(null);
     
@@ -120,6 +122,10 @@ export default function SiteLayout({handleLogout, menus, user}){
         return null;
         }, null);
 
+    const handleChatClick = () => {
+        setChatOpen(true);
+    }
+
     if (loading) {
         return (
             <div id={mainStyles.root}>
@@ -164,16 +170,17 @@ export default function SiteLayout({handleLogout, menus, user}){
                     <Outlet />
                 </div>
                 <Favorite handleFavClick={handleFavClick} fav={fav}/>
-                <SpeedDial
-                    ariaLabel='ChatDial'
-                    sx={{ position:"fixed", bottom: 16, right: 16}}
-                    icon={<SpeedDialIcon />}
-                >
-                    <SpeedDialAction 
-                        icon={<ChatBubble />}
-                        tooltipTitle={"Chat"}
-                    />
-                </SpeedDial>
+                {
+                    chatOpen ? (
+                        <Chat />
+                    ) : (
+                            <Box component="span" onClick={handleChatClick} sx={{borderRadius:"50%", backgroundColor:"rgb(14, 170, 0)", position:"fixed", bottom: "16px", right:"16px", width:"70px", height:"70px", display:"flex", justifyContent:"center", alignItems:"center", cursor:"pointer"}}>
+                                <Badge color='error' badgeContent={99} >
+                                    <ChatBubble fontSize='large' sx={{color:"white"}}/>
+                                </Badge>
+                            </Box>
+                    )
+                }
             </ContentContainer>
         </div>
     );
