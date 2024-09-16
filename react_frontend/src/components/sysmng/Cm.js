@@ -146,23 +146,23 @@ export default function Cm() {
             </div>
             <SearchForms onFormSubmit={handleFormSubmit} formFields={formField_cm} />
             <div className={sysStyles.main_grid}>
-            <Card className={sysStyles.card_box} sx={{width:"50%", height:"75vh", borderRadius:"15px"}}>
-            <TableCustom title="코드그룹ID" data={codeGroup} buttons={["Add", "Edit", "Delete"]} selectedRows={[selectedCodeGroup]} onRowClick={(e) => handleCodeGroupRowClick(e)} onClicks={[handleAddClick, handleEditClick, handleDeleteAClick]} columns={codeGroupColumns} modals={
+            <Card className={sysStyles.card_box} sx={{width:"50%", height:"80vh", borderRadius:"15px"}}>
+            <TableCustom title="코드그룹ID" data={codeGroup} buttons={["Delete", "Edit", "Add"]} selectedRows={[selectedCodeGroup]} onRowClick={(e) => handleCodeGroupRowClick(e)} onClicks={[handleDeleteAClick, handleEditClick, handleAddClick]} columns={codeGroupColumns} modals={
                 [
-                    {
+                    isModalOpen.CMAdd && {
                         "modalType" : 'CMAdd',
                         'isModalOpen': isModalOpen.CMAdd,
                         'handleOk': handleOk('CMAdd'),
                         'handleCancel': handleCancel('CMAdd')
                     },
-                    {
+                    isModalOpen.CMEdit && {
                         "modalType" : 'CMEdit',
                         'isModalOpen': isModalOpen.CMEdit,
                         'handleOk': handleOk('CMEdit'),
                         'handleCancel': handleCancel('CMEdit'),
                         'rowData': selectedCodeGroup,
                     },
-                    {
+                    isModalOpen.DeleteA && {
                         "modalType" : 'DeleteA',
                         'isModalOpen': isModalOpen.DeleteA,
                         'handleOk': handleOk('DeleteA'),
@@ -172,29 +172,29 @@ export default function Cm() {
                         'url': '/sys/codegroup',
                     },
 
-                ]
+                ].filter(Boolean)
             }/>
             </Card>
-            <Card className={sysStyles.card_box} sx={{width:"50%", height:"75vh", borderRadius:"15px"}}>
+            <Card className={sysStyles.card_box} sx={{width:"50%", height:"80vh", borderRadius:"15px"}}>
             
             {showCode ? (
-                <TableCustom title="코드리스트" data={code} buttons={["Add", "Edit", "Delete"]} columns={codeColumns} selectedRows={[selectedCode]} onRowClick={handleCodeRowClick} onClicks={[handleListAddClick, handleListEditClick, handleDeleteBClick]} modals={
+                <TableCustom title="코드리스트" data={code} buttons={["Delete", "Edit", "Add"]} columns={codeColumns} selectedRows={[selectedCode]} onRowClick={handleCodeRowClick} onClicks={[handleDeleteBClick, handleListEditClick, handleListAddClick]} modals={
                     [
-                        {
+                        isModalOpen.CMListAdd && {
                             "modalType" : 'CMListAdd',
                             'isModalOpen': isModalOpen.CMListAdd,
                             'handleOk': handleOk('CMListAdd'),
                             'handleCancel': handleCancel('CMListAdd'),
                             'rowData': selectedCodeGroup,
                         },
-                        {
+                        isModalOpen.CMListEdit && {
                             "modalType" : 'CMListEdit',
                             'isModalOpen': isModalOpen.CMListEdit,
                             'handleOk': handleOk('CMListEdit'),
                             'handleCancel': handleCancel('CMListEdit'),
                             'rowData': selectedCode,
                         },
-                        {
+                        isModalOpen.DeleteB && {
                             "modalType" : 'DeleteB',
                             'isModalOpen': isModalOpen.DeleteB,
                             'handleOk': handleOk('DeleteB'),
@@ -204,10 +204,10 @@ export default function Cm() {
                             'url': '/sys/code'
                         },
     
-                    ]
+                    ].filter(Boolean)
                 }/>
             ) : (
-                <div className={sysStyles.mid_title}>{"코드리스트"}</div>
+                <TableCustom title='코드리스트' table={false} />
             )}
             </Card>
             </div>

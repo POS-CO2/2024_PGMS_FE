@@ -27,14 +27,15 @@ import { TreeItem2DragAndDropOverlay } from '@mui/x-tree-view/TreeItem2DragAndDr
 import { ButtonGroup, ButtonGroupMm } from '../../Button';
 import { useState, useEffect } from 'react';
 import Paper from '@mui/material/Paper';
-import { Button, Card, TextField } from '@mui/material';
+import { Accordion, AccordionDetails, AccordionSummary, Button, Card, Divider, TextField } from '@mui/material';
 import TableCustom from '../../TableCustom';
 import { table_mm } from '../../assets/json/selectedPjt';
 import * as mainStyle from '../../assets/css/main.css';
-import { Select } from 'antd';
+import { ConfigProvider, Input, Select } from 'antd';
 import axiosInstance from '../../utils/AxiosInstance';
 import Swal from 'sweetalert2';
 import { menuTableColumns } from '../../assets/json/tableColumn';
+import { ExpandMore, Public } from '@mui/icons-material';
 
 function DotIcon() {
     return (
@@ -59,9 +60,9 @@ const StyledTreeItem = styled(TreeItem2)(({theme}) => ({
 
 const StyledTreeItemRoot = styled(TreeItem2Root)(({ theme }) => ({
     color:
-    theme.palette.mode === 'light'
-        ? theme.palette.grey[800]
-        : theme.palette.grey[400],
+        theme.palette.mode === 'light'
+            ? theme.palette.grey[800]
+            : theme.palette.grey[400],
     position: 'relative',
     [`& .${treeItemClasses.groupTransition}`]: {
         marginLeft: theme.spacing(3.5),
@@ -80,7 +81,7 @@ const CustomTreeItemContent = styled(TreeItem2Content)(({ theme }) => ({
         '&:not(.Mui-focused, .Mui-selected, .Mui-selected.Mui-focused) .labelIcon': {
     color:
         theme.palette.mode === 'light'
-            ? theme.palette.primary.main
+            ? "#0eaa00"
             : theme.palette.primary.dark,
     },
     '&::before': {
@@ -98,15 +99,15 @@ const CustomTreeItemContent = styled(TreeItem2Content)(({ theme }) => ({
         },
     },
     '&:hover': {
-        backgroundColor: alpha(theme.palette.primary.main, 0.1),
-        color: theme.palette.mode === 'light' ? theme.palette.primary.main : 'white',
+        backgroundColor: "#e0f8f0", //alpha(theme.palette.primary.main, 0.1)
+        color: theme.palette.mode === 'light' ? "#0eaa00" : 'white',
     },
     [`&.Mui-focused, &.Mui-selected, &.Mui-selected.Mui-focused`]: {
     backgroundColor:
         theme.palette.mode === 'light'
-            ? theme.palette.primary.main
+            ? "#dcf9d9"
             : theme.palette.primary.dark,
-        color: theme.palette.primary.contrastText,
+        color: "#0eaa00",
     },
 }));
 const AnimatedCollapse = animated(Collapse);
@@ -187,7 +188,12 @@ const convertMenusToTreeItems = (menus) => {
                 children: traverse(node.menu, id),
             };
             if (node.url) {
+                
                 treeItem.fileType = 'doc'; 
+                treeItem.url = node.url;
+            }
+            else if(!node.url) {
+                treeItem.fileType = 'folder';
                 treeItem.url = node.url;
             }
             return treeItem;
@@ -286,36 +292,28 @@ export default function Mm({menus, handleMenuSet}) {
     // 수정해야함
     const [showtable, setShowTable] = useState(false);
 
-    const [selectedMenu, setSelectedMenu] = useState({
-        item: '',
-        originId: '',
-        name: '',
-        parentDir: '',
-        parentDirId: '',
-        menuOrder: '',
-        accessUser: '',
-        url: '',
-    });
+    const [selectedMenu, setSelectedMenu] = useState([]);
 
     const clickMenuHandler = (e, item) => {
         setShowTable(true);
-        setEditable(true);
         const clickedItem = findMenuItemById(item, items); // items는 전체 메뉴 트리입니다.
         if (clickedItem) {
             // 상위 폴더 찾기
             const parrentDir = findParentFolder(item, items);
             const newMenuInfo = {
                 id: item,
-                originId: clickedItem.originId,
+                originId: (clickedItem.originId) ?? 1,
                 name: clickedItem.label, // 메뉴 이름
                 parentDir: parrentDir ? parrentDir.label : '상위 폴더 없음', // 상위 폴더 이름
-                parentDirId: parrentDir ? parrentDir.originId : 0,
+                parentDirId: (parrentDir ? parrentDir.originId : 0) ?? 1,
                 menuOrder: clickedItem.menuOrder,
                 accessUser: clickedItem.accessUser, // 접근 권한 (필요 시 다른 값을 설정)
                 url: clickedItem.url,
             };
             setSelectedMenu(newMenuInfo); // 상태 업데이트
+            handleEditClick(newMenuInfo);
         }
+        
     };
 
     // 모달 구현부
@@ -344,33 +342,25 @@ export default function Mm({menus, handleMenuSet}) {
     const handleDeleteClick = () => {
         showModal('Delete');
     }
-    const handleEditClick = () => {
-        setEditable(false);
+    const handleEditClick = (e) => {
         (async () => {
-            const {data} = await axiosInstance.get(`/sys/menu/cand?id=${selectedMenu.originId !== undefined ? (selectedMenu.originId) : 1}`);
+            const {data} = await axiosInstance.get(`/sys/menu/cand?id=${selectedMenu.originId !== undefined ? (e.originId) : 1}`);
             setUpperDir(data);
         })();
 
         (async () => {
-            const {data} = await axiosInstance.get(`/sys/menu/menu-order?id=${selectedMenu.parentDirId !== undefined ? (selectedMenu.parentDirId) : 1}&isInsert=false`);
+            const {data} = await axiosInstance.get(`/sys/menu/menu-order?id=${selectedMenu.parentDirId !== undefined ? (e.parentDirId) : 1}&isInsert=false`);
             data.sort();
             setMenuOrderList(data);
         })();
         
     }
     
-    const [editable, setEditable] = useState(true);
     const [upperDir, setUpperDir] = useState([]);
 
-    const [menuName, setMenuName] = useState('');
-    const [url, setUrl] = useState('');
-    const [accessUser, setAccessUser] = useState('');
-    const [menuOrder, setMenuOrder] = useState('');
     const [selectedUpperDir, setSelectedUpperDir] = useState('');
     const [menuOrderList, setMenuOrderList] = useState([]);
-    const [selectedMenuOrder, setSelectedMenuOrder] = useState([]);
     const handleSaveClick = async () => {
-        setEditable(true);
         let swalOptions = {
             confirmButtonText: '확인'
         };
@@ -379,14 +369,12 @@ export default function Mm({menus, handleMenuSet}) {
             id: selectedMenu.originId,
             menuName: selectedMenu.name,
             rootId: selectedMenu.parentDirId === undefined ? 1 : selectedMenu.parentDirId,
-            address: selectedMenu.url,
+            address: selectedMenu.url === "" ? null : selectedMenu.url,
             accessUser: selectedMenu.accessUser,
             menuOrder: selectedMenu.menuOrder
         }
         try {
             const {data} = await axiosInstance.patch('/sys/menu', formData);
-            console.log("form", formData);
-            console.log("patchdata",data);
             swalOptions.title = '성공!',
             swalOptions.text = `${formData.menuName}이 성공적으로 수정되었습니다.`;
             swalOptions.icon = 'success';
@@ -441,31 +429,17 @@ export default function Mm({menus, handleMenuSet}) {
             ...prevState,
             [field]: value
         }));
-        console.log(selectedMenu);
     };
-    const [upperChange, setUpperChange] = useState(false);
 
     const handleInputChange = (field, value) => {
         const par = findNameById(value, upperDir)
-        // console.log(par);
         const parName = par.name;
-        // if(par.id !== selectedMenu.parentDirId){
-        //     setUpperChange(true);
-        //     console.log("origin", menuOrderList);
-        
-        //     setMenuOrderList(prev=>[...prev, prev.length + 1]);
-        //     console.log(menuOrderList);
-        // }
-        // else{
-        //     setUpperChange(false);
-        // }
         setSelectedUpperDir(par);
         setSelectedMenu(prevState => ({
             ...prevState,
             [field]: value,
             "parentDir": parName
         }));
-        console.log(selectedMenu);
     };
     useEffect(() => {
         if (selectedUpperDir) {
@@ -481,28 +455,43 @@ export default function Mm({menus, handleMenuSet}) {
             setMenuOrderList([]);
         }
     }, [selectedUpperDir]);
-
     menus.forEach(menu => parseMenu(menu.menu, menu.name, null));
+    const [fpMenu, setFpMenu] = useState(res.filter(e => e.accessUser === "FP"));
+    const [hpMenu, setHpMenu] = useState(res.filter(e => e.accessUser === "HP"));
+    const [adminMenu, setAdminMenu] = useState(res.filter(e => e.accessUser === "ADMIN"));
+
+    const [expanded, setExpanded] = useState();
+
+    const handleExpanded = (panel) => (event, isExpanded) => {
+        setExpanded(isExpanded ? panel : false);
+    }
+
+    useEffect(() => {
+        setFpMenu(res.filter(e => e.accessUser === "FP"));
+        setHpMenu(res.filter(e => e.accessUser === "HP"));
+        setAdminMenu(res.filter(e => e.accessUser === "ADMIN"));
+    }, [res])
+
     return (
         <>
             <div className={mainStyle.breadcrumb}>
                 {"시스템관리 > 메뉴 관리"}
             </div>
             <div className={sysStyles.main_grid}>
-                <Card sx={{width:"24%", borderRadius:"15px", height:"88vh", overflowY:"auto"}}>
-                <TableCustom title='' className={sysStyles.btn_group} buttons={['Add', 'Delete', 'Edit']} 
-                onClicks={[handleAddClick,handleDeleteClick, handleEditClick]} 
+                <Card sx={{width:"25%", borderRadius:"15px", height:"88vh", overflowY:"auto"}}>
+                <TableCustom title='' className={sysStyles.btn_group} buttons={['Add', 'Delete']} 
+                onClicks={[handleAddClick,handleDeleteClick]} 
                 table={false} 
                 selectedRows={[selectedMenu]}
                 modals={[
-                    {
+                    isModalOpen.MmAdd && {
                         "modalType" : 'MmAdd',
                         'isModalOpen': isModalOpen.MmAdd,
                         'handleOk': handleOk('MmAdd'),
                         'handleCancel': handleCancel('MmAdd'),
                         'rowData': selectedMenu,
                     },
-                    {
+                    isModalOpen.Delete && {
                         "modalType" : 'Delete',
                         'isModalOpen': isModalOpen.Delete,
                         'handleOk': handleOk('Delete'),
@@ -511,10 +500,10 @@ export default function Mm({menus, handleMenuSet}) {
                         'rowDataName': "name",
                         'url': '/sys/menu',
                     },
-                ]}/>
+                ].filter(Boolean)}/>
                 <RichTreeView
                 items={items}
-                sx={{ height: 'fit-content', flexGrow: 1, maxWidth: 400, overflowY: 'auto', width:"100%"}}
+                sx={{ height: 'fit-content', flexGrow: 1, maxWidth: 400, overflowY: 'hidden', width:"80%", margin:"0 auto"}}
                 slots={{ item: CustomTreeItem }}
                 onItemClick={(e, item) => {clickMenuHandler(e, item);}}
                 />
@@ -523,84 +512,252 @@ export default function Mm({menus, handleMenuSet}) {
                     /** 테이블 컴포넌트 하나 생성해서 할당 */
                     /** 권한 부여 현황 어케 할건지 및 등록, 수정화면 필요 */
                     <>
-                    <Card className={sysStyles.card_box} sx={{width:"38%", height:"88vh", borderRadius:"15px"}}>
-                        <div className={sysStyles.mid_title}>{"메뉴 정보"}</div>
+                    <Card className={sysStyles.card_box} sx={{width:"25%", height:"88vh", borderRadius:"15px"}}>
+                        <TableCustom 
+                            table={false} 
+                            title={"메뉴 정보"} 
+                            buttons={['DoubleClickEdit']} 
+                            onClicks={[handleSaveClick]}
+                        />
                         <div className={sysStyles.text_field} style={{marginTop:"2rem"}}>
                             <div className={sysStyles.text}>
                                 {"메뉴 이름"}
                             </div>
-                            {!editable ? (
-                                <TextField size='small' id='menuName' disabled={editable} onChange={(e) => handleInputChangeText('name', e.target.value)} value={selectedMenu.name} variant='outlined' sx={{marginTop:"0.5rem",width:"20rem"}}/>
-                            ) : (
-                                <TextField size='small' id='menuName' disabled={editable} onChange={handleInputChange} value={selectedMenu.name} variant='outlined' sx={{marginTop:"0.5rem",width:"20rem", backgroundColor:"rgb(223,223,223)"}}/>
-                            )}
-                            
+                            <Input id='menuName' value={selectedMenu.name} onChange={(e) => handleInputChangeText('name', e.target.value)} label="메뉴명" style={{width:"18rem", marginTop:"0.5rem"}} />
                         </div>
                         <div className={sysStyles.text_field}>
                             <div className={sysStyles.text}>{"상위 폴더"}</div>
-                            {!editable ? (
-                                <Select value={selectedMenu.parentDir} onChange={(e) => {handleInputChange('parentDirId', e);}} style={{marginTop:"0.5rem",width:"20rem", height:"2.5rem", fontSize:"4rem"}}>
+                                <Select value={selectedMenu.parentDir} onChange={(e) => {handleInputChange('parentDirId', e);}} style={{marginTop:"0.5rem",width:"18rem", height:"2rem", fontSize:"4rem"}}>
                                 {upperDir.map(option => (
                                     <Select.Option key={option.id} value={option.id}>
                                         {option.name}
                                     </Select.Option>
                                 ))}
                                 </Select>
-                            ) : (
-                            <TextField size='small' id='parentDir' disabled={editable} variant='outlined' value={selectedMenu.parentDir} sx={{marginTop:"0.5rem",width:"20rem", backgroundColor:"rgb(223,223,223)"}}/>
-                            )}
-                            
                         </div>
                         <div className={sysStyles.text_field}>
                             <div className={sysStyles.text}>{"Url 주소"}</div>
-                            {!editable ? (
-                                <TextField size='small' id='address' defaultValue={selectedMenu.url} disabled={editable} variant='outlined' onChange={(e) => handleInputChangeText('url', e.target.value)} value={selectedMenu.url} sx={{marginTop:"0.5rem",width:"20rem"}}/>
-                            ) : (
-                            <TextField size='small' id='address' disabled={editable} variant='outlined' value={selectedMenu.url} sx={{marginTop:"0.5rem",width:"20rem", backgroundColor:"rgb(223,223,223)"}}/>
-                            )}
-                            
+                            <Input id='address' value={selectedMenu.url} onChange={(e) => handleInputChangeText('url', e.target.value)} label="Url" style={{width:"18rem", marginTop:"0.5rem"}} />
                         </div>
                         <div className={sysStyles.text_field}>
                             <div className={sysStyles.text}>{"메뉴 순서"}</div>
-                            {!editable ? (
-                                // <TextField size='small' id='menuOrder' defaultValue={selectedMenu.menuOrder} disabled={editable} variant='outlined' onChange={(e) => handleInputChange('menuOrder', e.target.value)} value={selectedMenu.menuOrder} sx={{marginTop:"0.5rem",width:"20rem"}}/>
-                                <Select value={selectedMenu.menuOrder} onChange={(e) => handleInputChangeText('menuOrder', e)} style={{marginTop:"0.5rem",width:"20rem", height:"2.5rem", fontSize:"4rem"}}>
-                                {menuOrderList.map(option => (
-                                    <Select.Option key={option} value={option}>
-                                        {option}
-                                    </Select.Option>
-                                ))}
-                                </Select>
-                            ) : (
-                            <TextField size='small' id='menuOrder' value={selectedMenu.menuOrder} disabled={editable} variant='outlined' sx={{marginTop:"0.5rem",width:"20rem", backgroundColor:"rgb(223,223,223)"}}/>
-                            )}
-                            
+                            <Select value={selectedMenu.menuOrder} onChange={(e) => handleInputChangeText('menuOrder', e)} style={{marginTop:"0.5rem",width:"18rem", height:"2rem", fontSize:"4rem"}}>
+                            {menuOrderList.map(option => (
+                                <Select.Option key={option} value={option}>
+                                    {option}
+                                </Select.Option>
+                            ))}
+                            </Select>
                         </div>
                         <div className={sysStyles.text_field}>
                             <div className={sysStyles.text}>{"접근 권한"}</div>
-                            {!editable ? (
-                                <Select placeholder={"접근 권한"} defaultValue={selectedMenu.accessUser} value={selectedMenu.accessUser} onChange={(value) => handleInputChangeText('accessUser', value)} style={{marginTop:"0.5rem",width:"20rem", height:"2.5rem", fontSize:"4rem"}}>
-                                {access.map(option => (
-                                    <Select.Option key={option.value} value={option.value}>
-                                        {option.label}
-                                    </Select.Option>
-                                ))}
-                                </Select>
-                            ):(
-                                <TextField size='small' id='access' disabled={editable} variant='outlined' value={selectedMenu.accessUser} sx={{marginTop:"0.5rem",width:"20rem", backgroundColor:"rgb(223,223,223)"}}/>
-                            )}
-                            
+                            <Select placeholder={"접근 권한"} defaultValue={selectedMenu.accessUser} value={selectedMenu.accessUser} onChange={(value) => handleInputChangeText('accessUser', value)} style={{marginTop:"0.5rem",width:"18rem", height:"2rem", fontSize:"4rem"}}>
+                            {access.map(option => (
+                                <Select.Option key={option.value} value={option.value}>
+                                    {option.label}
+                                </Select.Option>
+                            ))}
+                            </Select>
                         </div>
-                        {!editable && <Button variant='contained' onClick={handleSaveClick} sx={{marginTop:"0.5rem",width:"20rem", margin:"5rem auto"}}>저장</Button>}
                     </Card> 
-                    <Card className={sysStyles.card_box} sx={{width:"38%", borderRadius:"15px"}}>
-                        <TableCustom title='권한 부여 현황' data={res} columns={menuTableColumns}/>
-                        {/* <DataGrid rows = {} columns={} /> */}
+                    <Card className={sysStyles.card_box} sx={{width:"50%", borderRadius:"15px", height:"88vh", overflowY:"auto", paddingBottom:"1rem"}}>
+                        <TableCustom title='권한 부여 현황' table={false}/>
+                        <div className={sysStyles.accodion}>
+                        <Accordion expanded={expanded === 'panel1'} onChange={handleExpanded('panel1')}>
+                            <AccordionSummary
+                                expandIcon={<ExpandMore />}
+                                aria-controls="panel1bh-content"
+                                id="panel1bh-header"
+                                sx={{
+                                    bgcolor: expanded === 'panel1' ? '#dcf9d9' : 'transparent', // 확장 상태일 때
+                                    '&:hover': {
+                                        bgcolor: '#e0f8f0', // hover 시
+                                        color:"#0eaa00"
+                                    },
+                                    color: expanded === 'panel1' ? '#0eaa00' : "black",
+                                    fontSize:"1.2rem",
+                                    fontWeight:"bold",
+                                }}
+                            >
+                                현장담당자
+                            </AccordionSummary>
+                            {fpMenu.map((e) => {
+                                if (e.level === 2) {
+                                    return (
+                                        <>
+                                        <Divider />
+                                        <AccordionDetails sx={{marginLeft:"2rem", display:"flex", flexDirection:"column"}}>
+                                            <div style={{display:"flex", flexDirection:"row", alignItems:"center", gap:"0.6rem"}}>
+                                                <div style={{fontSize:"1.2rem"}}>
+                                                {`${e.name}`}
+                                                </div>
+                                                <div style={{fontSize:"0.8rem", color:"gray"}}>
+                                                {`( ${e.bd} > ${e.md} ) `} 
+                                                </div>
+                                            
+                                            </div>
+                                            <div style={{display:"flex"}}>
+                                            <Public sx={{color:"green", marginRight:"0.6rem"}}/>{` : ${e.url}`}
+                                            </div>
+                                        </AccordionDetails>
+                                        </>
+                                    );
+                                }
+                                else if (e.level === 3) {
+                                    return (
+                                        <>
+                                        <Divider />
+                                        <AccordionDetails sx={{marginLeft:"2rem"}}>
+                                            <div style={{display:"flex", flexDirection:"row", alignItems:"center", gap:"0.6rem"}}>
+                                                <div style={{fontSize:"1.2rem"}}>
+                                                {`${e.name}`}
+                                                </div>
+                                                <div style={{fontSize:"0.8rem", color:"gray"}}>
+                                                {`( ${e.bd} > ${e.md} > ${e.sd} ) `} 
+                                                </div>
+                                            
+                                            </div>
+                                            <div style={{display:"flex"}}>
+                                            <Public sx={{color:"green", marginRight:"0.6rem"}}/>{` : ${e.url}`}
+                                            </div>
+                                        </AccordionDetails>
+                                        </>
+                                    );
+                                }
+                            })}
+                            </Accordion>
+                            <Accordion expanded={expanded === 'panel2'} onChange={handleExpanded('panel2')}>
+                            <AccordionSummary
+                                expandIcon={<ExpandMore />}
+                                aria-controls="panel2bh-content"
+                                id="panel2bh-header"
+                                sx={{
+                                    bgcolor: expanded === 'panel2' ? '#dcf9d9' : 'transparent', // 확장 상태일 때
+                                    '&:hover': {
+                                        bgcolor: '#e0f8f0', // hover 시
+                                        color:"#0eaa00"
+                                    },
+                                    color: expanded === 'panel2' ? '#0eaa00' : "black",
+                                    fontSize:"1.2rem",
+                                    fontWeight:"bold",
+                                }}
+                            >
+                                본사담당자
+                            </AccordionSummary>
+                            {hpMenu.map((e) => {
+                                if (e.level === 2) {
+                                    return (
+                                        <>
+                                        <Divider />
+                                        <AccordionDetails sx={{marginLeft:"2rem", display:"flex", flexDirection:"column"}}>
+                                            <div style={{display:"flex", flexDirection:"row", alignItems:"center", gap:"0.6rem"}}>
+                                                <div style={{fontSize:"1.2rem"}}>
+                                                {`${e.name}`}
+                                                </div>
+                                                <div style={{fontSize:"0.8rem", color:"gray"}}>
+                                                {`( ${e.bd} > ${e.md} ) `} 
+                                                </div>
+                                            
+                                            </div>
+                                            <div style={{display:"flex"}}>
+                                            <Public sx={{color:"green", marginRight:"0.6rem"}}/>{` : ${e.url}`}
+                                            </div>
+                                        </AccordionDetails>
+                                        </>
+                                    );
+                                }
+                                else if (e.level === 3) {
+                                    return (
+                                        <>
+                                        <Divider />
+                                        <AccordionDetails sx={{marginLeft:"2rem"}}>
+                                            <div style={{display:"flex", flexDirection:"row", alignItems:"center", gap:"0.6rem"}}>
+                                                <div style={{fontSize:"1.2rem"}}>
+                                                {`${e.name}`}
+                                                </div>
+                                                <div style={{fontSize:"0.8rem", color:"gray"}}>
+                                                {`( ${e.bd} > ${e.md} > ${e.sd} ) `} 
+                                                </div>
+                                            
+                                            </div>
+                                            <div style={{display:"flex"}}>
+                                            <Public sx={{color:"green", marginRight:"0.6rem"}}/>{` : ${e.url}`}
+                                            </div>
+                                        </AccordionDetails>
+                                        </>
+                                    );
+                                }
+                            })}
+                            </Accordion>
+                            <Accordion expanded={expanded === 'panel3'} onChange={handleExpanded('panel3')}>
+                            <AccordionSummary
+                                expandIcon={<ExpandMore />}
+                                aria-controls="panel3bh-content"
+                                id="panel3bh-header"
+                                sx={{
+                                    bgcolor: expanded === 'panel3' ? '#dcf9d9' : 'transparent', // 확장 상태일 때
+                                    '&:hover': {
+                                        bgcolor: '#e0f8f0', // hover 시
+                                        color:"#0eaa00"
+                                    },
+                                    color: expanded === 'panel3' ? '#0eaa00' : "black",
+                                    fontSize:"1.2rem",
+                                    fontWeight:"bold",
+                                }}
+                            >
+                                시스템관리자
+                            </AccordionSummary>
+                            {adminMenu.map((e) => {
+                                if (e.level === 2) {
+                                    return (
+                                        <>
+                                        <Divider />
+                                        <AccordionDetails sx={{marginLeft:"2rem", display:"flex", flexDirection:"column"}}>
+                                            <div style={{display:"flex", flexDirection:"row", alignItems:"center", gap:"0.6rem"}}>
+                                                <div style={{fontSize:"1.2rem"}}>
+                                                {`${e.name}`}
+                                                </div>
+                                                <div style={{fontSize:"0.8rem", color:"gray"}}>
+                                                {`( ${e.bd} > ${e.md} ) `} 
+                                                </div>
+                                            
+                                            </div>
+                                            <div style={{display:"flex"}}>
+                                            <Public sx={{color:"green", marginRight:"0.6rem"}}/>{` : ${e.url}`}
+                                            </div>
+                                        </AccordionDetails>
+                                        </>
+                                    );
+                                }
+                                else if (e.level === 3) {
+                                    return (
+                                        <>
+                                        <Divider />
+                                        <AccordionDetails sx={{marginLeft:"2rem"}}>
+                                            <div style={{display:"flex", flexDirection:"row", alignItems:"center", gap:"0.6rem"}}>
+                                                <div style={{fontSize:"1.2rem"}}>
+                                                {`${e.name}`}
+                                                </div>
+                                                <div style={{fontSize:"0.8rem", color:"gray"}}>
+                                                {`( ${e.bd} > ${e.md} > ${e.sd} ) `} 
+                                                </div>
+                                            
+                                            </div>
+                                            <div style={{display:"flex"}}>
+                                            <Public sx={{color:"green", marginRight:"0.6rem"}}/>{` : ${e.url}`}
+                                            </div>
+                                        </AccordionDetails>
+                                        </>
+                                    );
+                                }
+                            })}
+                            </Accordion>
+                            </div>
                     </Card>
                     </>
                 ) : (
-                    <Card className={sysStyles.card_box} sx={{width:"38%", borderRadius:"15px"}}>
-                        <TableCustom title='권한 부여 현황' data={res} columns={menuTableColumns}/>
+                    <Card className={sysStyles.card_box} sx={{width:"50%", borderRadius:"15px", height:"88vh"}}>
+                        <TableCustom title='권한 부여 현황' table={false}/>
                     </Card>
                 )}
                 
@@ -608,4 +765,3 @@ export default function Mm({menus, handleMenuSet}) {
         </>
     );
 }
-

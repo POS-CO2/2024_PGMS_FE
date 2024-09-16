@@ -10,24 +10,28 @@ export function CustomBarChart({ data }){
             <BarChart
                 borderRadius={10}
                 series={data}
-                barLabel={(item, context) => {
-                    return context.bar.height < 60 ? null : item.value?.toString();
-                }}
+                // barLabel={(item, context) => {
+                //     return context.bar.height < 60 ? null : item.value?.toString();
+                // }}
                 xAxis={[
                     {
                         scaleType: 'band',
-                        data: ['Jan', 'Feb', 'Mar', "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
+                        data: ['1월', '2월', '3월', "4월", "5월", "6월", "7월", "8월", "9월", "10월", "11월", "12월"],
                         id: 'months',
                     }, 
                 ]}
                 leftAxis={null}
                 colors={['rgb(53, 98, 227)', 'rgb(196, 218, 250)']}
                 sx={{
+                    fontFamily:"SUITE-Regular",
                     //change left yAxis label styles
                     "& .MuiChartsAxis-left .MuiChartsAxis-tickLabel":{
                         strokeWidth:"0.4",
                         fill:"white",
                         fontWeight:"bold",
+                    },
+                    "& .MuiBarLabel-root text":{
+                        color:"white",
                     },
                 // change all labels fontFamily shown on both xAxis and yAxis
                     "& .MuiChartsAxis-tickContainer .MuiChartsAxis-tickLabel":{
@@ -41,6 +45,7 @@ export function CustomBarChart({ data }){
                         strokeWidth:"0.5",
                         fill:"white",
                         fontWeight:"bold",
+                        fontFamily:"SUITE-Regular"
                     },
                     // bottomAxis Line Styles
                     "& .MuiChartsAxis-bottom .MuiChartsAxis-line ":{
@@ -67,7 +72,7 @@ export function CustomBarChart({ data }){
 
 
 export function CustomLineChart(){
-    const xLabels = ['Jan', 'Feb', 'Mar', "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
+    const xLabels = ['1월', '2월', '3월', "4월", "5월", "6월", "7월", "8월", "9월", "10월", "11월", "12월"]
 
     return (
         <div style={{width:"100%", height:"90%"}}>
@@ -95,6 +100,7 @@ export function CustomLineChart(){
                         fill:"white",
                         fontWeight:"bold",
                         display: 'none',
+                        fontFamily:"SUITE-Regular",
                     },
                 // change all labels fontFamily shown on both xAxis and yAxis
                     "& .MuiChartsAxis-tickContainer .MuiChartsAxis-tickLabel":{

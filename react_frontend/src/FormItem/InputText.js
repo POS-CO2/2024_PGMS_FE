@@ -1,7 +1,33 @@
 import React, { useState } from 'react';
+import { styled } from '@mui/material/styles';
 import * as formItemStyles from '../assets/css/formItem.css';
 import { Form, Input } from 'antd';
 import { CloseOutlined } from '@ant-design/icons';
+
+const CustomInput = styled(Input)`
+    background-color: transparent !important;
+
+    &:focus, &:hover, &.ant-input-focused, &:focus-within {
+        outline: none;
+        box-shadow: 0 0 0 0.5px #0EAA00 !important;
+        border-color: #0EAA00 !important;
+    }
+
+    &:hover {
+        border-color: #0EAA00 !important;
+    }
+
+    input {
+        &:focus {
+            box-shadow: none !important;
+            border-color: #0EAA00 !important;
+    }
+
+    &:hover {
+        border-color: #0EAA00 !important;
+    }
+
+`;
 
 export default function InputText({ name, label, required = false }) {
     const [value, setValue] = useState('');
@@ -17,7 +43,7 @@ export default function InputText({ name, label, required = false }) {
             label={label}
             rules={[{ required: required, message: '${label} 입력은 필수입니다.' }]}
         >
-            <Input
+            <CustomInput
                 value={value}
                 onChange={handleChange}
                 allowClear={{ clearIcon: <CloseOutlined style={{ color: "red" }} /> }}

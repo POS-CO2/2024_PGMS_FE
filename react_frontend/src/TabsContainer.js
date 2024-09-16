@@ -23,19 +23,26 @@ const TabsWrapper = styled.div`
 
 const TabContainer = styled.div`
   display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  flex-grow: 1;
-  padding-top: 18px;
+  flex-wrap: nowrap;
+  flex-shrink: 1;
+  max-width: calc(100% - 160px);
+  width: 100%;
+  height: 50px;
+  padding-top: 6px;
+  // flex-direction: column;
+  // align-items: flex-start;
+  // flex-grow: 1;
+  // padding-top: 18px;
   padding-left: 28px;
   padding-right: 16px; /* 탭과 유저 정보 사이의 간격 */
-  overflow-x: hidden;
+  overflow: hidden;
 `;
 
 const TopRightWrapper = styled.div`
   display: flex;
   align-items: center;
   gap: 2px; /* 언어 선택기와 유저 정보 사이의 간격 */
+  font-family: SUITE-Regular;
 `;
 
 const UserInfo = styled.div`
@@ -55,7 +62,7 @@ const Row = styled.div`
   justify-content: space-between;
   align-items: center;
   color: #000;
-
+  font-family: SUITE-Regular;
   img {
     width: 40px;
     height: 40px;
@@ -123,6 +130,7 @@ const StyledTabs = styled(Tabs)`
 
   .ant-tabs-ink-bar {
     background-color: #0EAA00 !important; /* 밑줄 색상 변경 */
+    margin-bottom: 8px;
   }
 
   .ant-tabs-nav-more {
@@ -284,7 +292,7 @@ const TabsContainer = forwardRef(({ handleLogout, user }, ref) => {
     label: (
       <DraggableTabNode index={index} moveTabNode={moveTabNode}>
         <div style={{display:"flex", alignContent:"center", cursor:"pointer"}}>
-          <div style={{ textOverflow:"ellipsis", whiteSpace:"nowrap", overflowX:"hidden"}}>
+          <div style={{ textOverflow:"ellipsis", whiteSpace:"nowrap", overflowX:"hidden", fontFamily:'SUITE-Regular'}}>
             {tab.tab}
           </div>
           <div>
@@ -339,7 +347,7 @@ const TabsContainer = forwardRef(({ handleLogout, user }, ref) => {
 
   // 다국어 메뉴
   const languageMenu = (
-    <div style={{ padding: '10px' }}>
+    <div style={{ padding: '10px', fontFamily:"SUITE-Regular"}}>
       <Language />
     </div>
   );

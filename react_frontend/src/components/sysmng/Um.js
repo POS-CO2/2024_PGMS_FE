@@ -9,7 +9,7 @@ import * as mainStyle from '../../assets/css/main.css';
 import { Card, TextField, Button, Hidden } from '@mui/material';
 import { Dropdown } from '@mui/base';
 import axiosInstance from '../../utils/AxiosInstance';
-import { Select } from 'antd';
+import { ConfigProvider, Select } from 'antd';
 import Swal from 'sweetalert2';
 import { userColumns } from '../../assets/json/tableColumn';
 
@@ -53,16 +53,10 @@ export default function Um() {
 
     const [infoShow ,setInfoShow] = useState(false);
 
-    const [selectedUser, setSelectedUser] = useState({
-        userName: '',
-        loginId: '',
-        password: '',
-        deptCode: '',
-        role: '',
-    });
+    const [selectedUser, setSelectedUser] = useState([]);
 
     const handleRowClick = (e) => {
-        
+        console.log(e);
         setSelectedUser(e ?? {});
         if (e === undefined) {
             setInfoShow(false);
@@ -107,7 +101,7 @@ export default function Um() {
     const [editable, setEditable] = useState(true);
     
     const handleEditable = () => {
-        setEditable(false); // 되게함
+        setEditable(true); // 되게함
         
     }
     
@@ -131,7 +125,7 @@ export default function Um() {
             setUserList(prevList => prevList.map(user => 
                 user.id === data.id ? data : user
             ));
-            setSelectedUser(data);
+            setSelectedUser(data ?? {});
             setPassword(null);
             swalOptions.title = '성공!',
             swalOptions.text = `${formData.userName}이 성공적으로 수정되었습니다.`;
@@ -195,71 +189,52 @@ export default function Um() {
             </div>
             <SearchForms onFormSubmit={handleFormSubmit} formFields={formFields}/>
             <div className={sysStyles.main_grid}>
-                <Card className={sysStyles.card_box} sx={{width:"50%", height:"75vh", borderRadius:"15px"}}>
-                    {userShow && <TableCustom title="사용자 목록" columns={userColumns} data={userList} buttons={['Add']} onClicks={[handleAddClick]} onRowClick={(e) => handleRowClick(e)} modals={
+                <Card className={sysStyles.card_box} sx={{width:"50%", height:"80vh", borderRadius:"15px"}}>
+                    {userShow && <TableCustom title="사용자 목록" columns={userColumns} data={userList} buttons={['Delete', 'Add']} selectedRows={[selectedUser]} onClicks={[handleDeleteClick, handleAddClick]} onRowClick={(e) => handleRowClick(e)} modals={
                         [
-                            {
+                            isModalOpen.UmAdd && {
                                 "modalType" : 'UmAdd',
                                 'isModalOpen': isModalOpen.UmAdd,
                                 'handleOk': handleOk('UmAdd'),
                                 'handleCancel': handleCancel('UmAdd')
                             },
-                        ]
+                            isModalOpen.Delete && {
+                                "modalType" : 'Delete',
+                                'isModalOpen': isModalOpen.Delete,
+                                'handleOk': handleOk('Delete'),
+                                'handleCancel': handleCancel('Delete'),
+                                'rowData': selectedUser, // 추가 사항 삭제할 객체 전달
+                                'rowDataName': "userName",
+                                'url': '/sys/user', // 삭제 전달할 api 주소
+                            },
+                        ].filter(Boolean)
                     }/>}
                 </Card>
-                <Card className={sysStyles.card_box} sx={{width:"50%", borderRadius:"15px"}}>
+                <Card className={sysStyles.card_box} sx={{width:"50%", borderRadius:"15px", height:"80vh"}}>
                     {infoShow ? (
-                        <>
-                            <TableCustom title='사용자 상세 정보' buttons={['Delete', 'Edit']} onClicks={[handleDeleteClick, handleEditable]} table={false} 
-                            selectedRows={[selectedUser]}
-                            modals={
-                                [
-                                    
-                                    {
-                                        "modalType" : 'Delete',
-                                        'isModalOpen': isModalOpen.Delete,
-                                        'handleOk': handleOk('Delete'),
-                                        'handleCancel': handleCancel('Delete'),
-                                        'rowData': selectedUser, // 추가 사항 삭제할 객체 전달
-                                        'rowDataName': "userName",
-                                        'url': '/sys/user', // 삭제 전달할 api 주소
-                                    },
-                                ]
-                            }/>
+                        <ConfigProvider
+                        theme={{token:{fontFamily:"SUITE-Regular"}}}>
+                            <TableCustom title='사용자 상세 정보' buttons={['DoubleClickEdit']} onClicks={[handleEditClick]} table={false} 
+                            selectedRows={[selectedUser]}/>
                             <div className={sysStyles.card_box}>
                             <div className={sysStyles.text_field} style={{marginTop:"2rem",width:"50%"}}>
                                 <div className={sysStyles.text}>
                                     {"로그인 아이디"}
                                 </div>
-                                {!editable ? (
-                                    <TextField size="small" id='loginId' disabled={editable} variant='outlined' onChange={handleInputChange} defaultValue={selectedUser.loginId} value={selectedUser.loginId} sx={{width:"100%"}}/>
-                                ) : (
-                                    <TextField size="small" id='loginId' disabled={editable} variant='outlined' onChange={handleInputChange} defaultValue={selectedUser.loginId} value={selectedUser.loginId} sx={{width:"100%", backgroundColor:"rgb(223,223,223)"}}/>
-                                )}
-                                
+                                <TextField size="small" id='loginId'  variant='outlined' onChange={handleInputChange} defaultValue={selectedUser.loginId} value={selectedUser.loginId} sx={{width:"100%"}}/>
                             </div>
                             <div className={sysStyles.text_field} style={{marginTop:"0.5rem",width:"50%"}}>
                                 <div className={sysStyles.text}>
                                     {"비밀번호"}
                                 </div>
-                                {!editable ? (
-                                    <TextField size="small" id='password' disabled={editable} variant='outlined' onChange={(e) => setPassword(e.target.value)} value={password} sx={{width:"100%"}}/>
-                                ) : (
-                                    <TextField size="small" id='password' disabled={editable} variant='outlined' onChange={handleInputChange} value={''} placeholder='비밀번호 입력 시 비밀번호가 변경됩니다.' sx={{width:"100%", backgroundColor:"rgb(223,223,223)"}}/>
-                                )}
-                                
+                                <TextField size="small" id='password'  variant='outlined' onChange={(e) => setPassword(e.target.value)} value={password} sx={{width:"100%"}}/>
                             </div>
                             <div className={sysStyles.text_field} style={{marginTop:"0.5rem",width:"50%"}}>
                                 <div className={sysStyles.text}>{"이름 "}</div>
-                                {!editable ? (
-                                    <TextField size="small" id='userName' disabled={editable} variant='outlined' onChange={handleInputChange} defaultValue={selectedUser.userName} value={selectedUser.userName} sx={{width:"100%"}}/>
-                                ) : (
-                                    <TextField size="small" id='userName' disabled={editable} variant='outlined' onChange={handleInputChange} defaultValue={selectedUser.userName} value={selectedUser.userName} sx={{width:"100%", backgroundColor:"rgb(223,223,223)"}}/>
-                                )}
+                                    <TextField size="small" id='userName'  variant='outlined' onChange={handleInputChange} defaultValue={selectedUser.userName} value={selectedUser.userName} sx={{width:"100%"}}/>
                             </div>
                             <div className={sysStyles.text_field} style={{marginTop:"0.5rem",width:"50%"}}>
                                 <div className={sysStyles.text}>{"부서 명"}</div>
-                                {!editable ? (
                                     <Select value={selectedUser.deptCode} onChange={(value) => handleInputChange({ target: { id: 'deptCode', value} })} defaultValue={selectedUser.deptCode} style={{width:"100%", height:"2.5rem", fontSize:"4rem"}}>
                                     {dept.map(option => (
                                         <Select.Option key={option.value} value={option.value}>
@@ -267,14 +242,9 @@ export default function Um() {
                                         </Select.Option>
                                     ))}
                                     </Select>
-                                ) : (
-                                    <TextField size="small" id='deptCode' disabled={editable} variant='outlined' onChange={handleInputChange} defaultValue={selectedUser.deptCode} value={selectedUser.deptCode} sx={{width:"100%", backgroundColor:"rgb(223,223,223)"}}/>
-                                )}
-                                
                             </div>
                             <div className={sysStyles.text_field} style={{marginTop:"0.5rem",width:"50%"}}>
                                 <div className={sysStyles.text}>{"권한"}</div>
-                                {!editable ? (
                                     <Select value={selectedUser.role} onChange={(value) => handleInputChange({ target: { id: 'role', value } })} defaultValue={selectedUser.role} style={{width:"100%", height:"2.5rem", fontSize:"4rem"}}>
                                     {access.map(option => (
                                         <Select.Option key={option.value} value={option.value}>
@@ -282,35 +252,11 @@ export default function Um() {
                                         </Select.Option>
                                     ))}
                                     </Select>
-                                ) : (
-                                    <TextField
-                                        id="role"
-                                        size="small"
-                                        select
-                                        disabled={editable}
-                                        defaultValue={selectedUser.role}
-                                        value={selectedUser.role || ''}
-                                        onChange={handleInputChange}
-                                        SelectProps={{
-                                            native: true,
-                                        }}
-                                        sx={{width:"100%", backgroundColor:"rgb(223,223,223)"}}
-                                        >
-                                        {access.map((option) => (
-                                            <option key={option.value} value={option.value}>
-                                                {option.label}
-                                            </option>
-                                        ))}
-                                    </TextField>
-                                )}
-                            </div>
-                            <div className={sysStyles.text_field} style={{width:"50%", marginTop:"0.5rem"}}>
-                                {!editable && <Button variant='contained' onClick={handleEditClick} sx={{marginTop:"0.5rem",width:"100%"}}>저장</Button>}
                             </div>
                         </div>
-                        </>
+                        </ConfigProvider>
                     ) : (
-                        <div className={sysStyles.mid_title}>{"사용자 상세 정보"}</div>
+                        <TableCustom title='사용자 상세 정보' table={false} />
                     )}
                 </Card>
             </div>

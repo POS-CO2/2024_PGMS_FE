@@ -1,11 +1,14 @@
 import React, { useState } from 'react';
 import SearchForms from "../../../SearchForms";
 import { formField_tep } from "../../../assets/json/searchFormData"
-import InnerTabs from "../../../InnerTabs";
 import TableCustom from "../../../TableCustom.js";
 import ChartCustom from "../../../ChartCustom.js";
-import { Card } from '@mui/material';
+import { CustomButton } from '../Ps_1_2';
 import * as mainStyle from '../../../assets/css/main.css';
+import * as ps12Style from '../../../assets/css/ps12.css';
+import * as sysStyles from '../../../assets/css/sysmng.css';
+import * as esmStyles from '../../../assets/css/esm.css';
+import { Card } from '@mui/material';
 import axiosInstance from '../../../utils/AxiosInstance';
 import { perfTotalColumns } from '../../../assets/json/tableColumn';
 
@@ -13,6 +16,11 @@ export default function Tep() {
     const [formData, setFormData] = useState(); // 검색 데이터
     const [perfsData, setPerfsData] = useState([]);
     const [chartPerfs, setChartPerfs] = useState([]);
+
+    const [content, setContent] = useState('chart'); // chart || table
+    const handleButtonClick = (value) => {
+        setContent(value);
+    };
 
     // 조회 버튼 클릭시 호출될 함수
     const handleFormSubmit = async (data) => {
@@ -49,13 +57,30 @@ export default function Tep() {
             </div>
             <SearchForms onFormSubmit={handleFormSubmit} formFields={formField_tep} autoSubmitOnInit={true} />
 
-            {(!formData || Object.keys(formData).length === 0) ?
-                <></> : (
-                    <InnerTabs items={[
-                        { label: '차트', key: '1', children: <ChartTab data={chartPerfs} />, },
-                        { label: '표', key: '2', children: <TableTab data={perfsData} />, },
-                    ]} />
-                )}
+            {(!formData || Object.keys(formData).length === 0) ? (
+                <></>
+            ) : (
+                <>
+                    <div className={ps12Style.button_container}>
+                        <CustomButton 
+                            selected={content === 'chart'} 
+                            onClick={() => handleButtonClick('chart')}
+                        >
+                            차트
+                        </CustomButton>
+                        <CustomButton 
+                            selected={content === 'table'} 
+                            onClick={() => handleButtonClick('table')}
+                        >
+                            표
+                        </CustomButton>
+                    </div>
+                    <div className={sysStyles.main_grid}>
+                        {content === 'chart' && <ChartTab data={chartPerfs} />}
+                        {content === 'table' && <TableTab data={perfsData} />}
+                    </div>
+                </>
+            )}
         </div>
     );
 }

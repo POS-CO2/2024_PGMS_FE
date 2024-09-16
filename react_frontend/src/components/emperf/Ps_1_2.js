@@ -1,60 +1,50 @@
 import React, { useState, useEffect } from 'react';
 import SearchForms from "../../SearchForms";
 import { formField_ps12 } from "../../assets/json/searchFormData";
-// import InnerTabs from "../../InnerTabs";
-import { Radio } from 'antd';
-import {TableCustomDoubleClickEdit} from "../../TableCustom.js";
-import { Card } from '@mui/material';
+import TableCustom, {TableCustomDoubleClickEdit} from "../../TableCustom.js";
+import { Card, Button } from '@mui/material';
+import { styled } from '@mui/material/styles';
 import * as mainStyle from '../../assets/css/main.css';
 import * as ps12Style from '../../assets/css/ps12.css';
+import * as sysStyles from '../../assets/css/sysmng.css';
+import * as esmStyles from '../../assets/css/esm.css';
 import axiosInstance from '../../utils/AxiosInstance';
-import { perfColumns } from '../../assets/json/tableColumn';
-import styled from 'styled-components';
+import { perfColumns, pjtColumns } from '../../assets/json/tableColumn';
+import * as XLSX from 'xlsx';
 
-const CustomRadioGroup = styled(Radio.Group)`
-    .ant-radio-button-wrapper:hover {
-        background-color: #FFFFFF;
-        color: #0EAA00;
-        border-color: #0EAA00;
-    }
+export const CustomButton = styled(Button)(({ theme, selected }) => ({
+    color: selected ? '#000' : '#B6B6B6',
+    border: selected ? '0.1rem solid #0A7800' : '0.1rem solid transparent', // 기본적으로 테두리 공간을 차지
+    backgroundColor: selected ? '#fff' : 'transparent',
+    fontWeight: selected ? 'bolder' : 'normal',
+    borderRadius: '1.3rem',
+    fontSize: '1rem',
+    paddingTop: '0.1rem',
+    paddingBottom: '0.1rem',
+    paddingLeft: '1rem',
+    paddingRight: '1rem',
 
-    .ant-radio-button-wrapper:not(:first-child)::before {
-        background-color: #0EAA00; /* Line between buttons */
-    }
-
-    .ant-radio-button-wrapper-checked {
-        background-color: #0EAA00 !important;
-        color: white;
-        border-color: #0EAA00 !important;
-    }
-
-    .ant-radio-button-wrapper-checked:hover {
-        background-color: #FFFFFF;
-        color: white;
-        border-color: #0EAA00 !important;
-    }
-`;
+    '&:hover': {
+        color: '#000',
+        backgroundColor: '#fff',
+        border: '0.1rem solid #0A7800',
+        borderRadius: '1.3rem',
+        fontWeight: 'bolder',
+    },
+}));
 
 export default function Ps_1_2() {
     const [formFields, setFormFields] = useState(formField_ps12);
-    const [formData, setFormData] = useState({}); // 검색 데이터
+    const [formData, setFormData] = useState(); // 검색 데이터
+    const [selectedPjt, setSelectedPjt] = useState([]);
     const [usagePerfs, setUsagePerfs] = useState([]);
     const [amountUsedPerfs, setAmountUsedPerfs] = useState([]);
     const [actvYearDisabled, setActvYearDisabled] = useState(true);  // 드롭다운 비활성화 상태 관리
 
     const [content, setContent] = useState('actvQty'); // actvQty || fee
-    const onRadioChange = (e) => {
-        setContent(e.target.value);
+    const handleButtonClick = (value) => {
+        setContent(value);
     };
-
-    // usagePerfs 상태가 변경될 때 실행될 useEffect
-    useEffect(() => {
-        console.log("usagePerfs");
-    }, [usagePerfs]);
-    // amountUsedPerfs 상태가 변경될 때 실행될 useEffect
-    useEffect(() => {
-        console.log("amountUsedPerfs");
-    }, [amountUsedPerfs]);
 
     // 배출활동유형 드롭다운 옵션 설정
     const [emtnActvType, setEmtnActvType] = useState([]);
@@ -76,7 +66,6 @@ export default function Ps_1_2() {
                 console.error(error);
             }
         };
-
         fetchEmtnActvTypeCode();
     }, []);
 
@@ -100,11 +89,11 @@ export default function Ps_1_2() {
 
             setFormFields(updatedFields);
 
-            // 옵션 데이터가 있으면 드롭다운을 활성화
-            setActvYearDisabled(yearOptions.length === 0);
-
-            // actvYear 필드 리셋
-            form.resetFields(['actvYear']);
+            // 옵션 데이터가 있으면 드롭다운을 활성화, default값 설정
+            if (yearOptions.length > 0) {
+                setActvYearDisabled(false);
+                form.setFieldsValue({ actvYear: yearOptions[0].value });
+            }
         }
     };
 
@@ -134,13 +123,14 @@ export default function Ps_1_2() {
                 perfData[monthKey] = 0.0; // 데이터가 없는 경우 기본값 0.0 설정
             }
         }
-
+        
         return perfData;
     };
 
     // 조회 버튼 클릭시 호출될 함수
     const handleFormSubmit = async (data) => {
         setFormData(data);
+        setSelectedPjt([data.searchProject]);
 
         let url = `/perf?pjtId=${data.searchProject.id}&actvYear=${data.actvYear}`;
         // emtnActvType이 존재하는 경우에만 URL에 추가
@@ -171,7 +161,7 @@ export default function Ps_1_2() {
             setIsModalOpen(true);
         };
         const handleOk = (data) => {
-            // 결과 처리
+            handleFormSubmit(formData);
             setIsModalOpen(false);
         };
         const handleCancel = () => {
@@ -179,47 +169,45 @@ export default function Ps_1_2() {
         };
     
         const onUploadExcelClick = () => {
-            console.log("onUploadExcelClick");
             showModal();
         };
     
         const onDownloadExcelFormClick = (csvData) => {
-            const fileName = `사용량 엑셀 양식_${formData.actvYear}`;
+            const fileName = `사용량 엑셀 양식_${formData.searchProject.pjtName}_${formData.actvYear}`;
     
-            // CSV 변환 함수
-            const csvRows = [];
+            // 워크북 및 워크시트 생성
+            const wb = XLSX.utils.book_new();
+            const wsData = [];
             
             // 헤더 생성 (perfColumns 순서대로, quantityList 제외, '년도' 맨앞에 추가)
             const headers = ['년도'].concat(
                 perfColumns.filter(column => column.key !== 'quantityList')
-                           .map(column => column.label)
+                        .map(column => column.label)
             );
-            csvRows.push(headers.join(','));
+            wsData.push(headers);
             
             // 데이터 생성
             for (const row of csvData) {
-                const values = [`"${formData.actvYear}"`].concat(
+                const values = [formData.actvYear].concat(
                     perfColumns.filter(column => column.key !== 'quantityList')
                                .map(column => {
-                                   const value = row[column.key] || '';
-                                   const escaped = ('' + value).replace(/"/g, '\\"');
-                                   return `"${escaped}"`;
+                                    let value = row[column.key] || '';
+                                    // value가 문자열인지 확인 후 ',' 제거
+                                    if (typeof value === 'string') {
+                                        value = value.replace(/,/g, '');
+                                    }
+                                    return value;
                                })
                 );
-                csvRows.push(values.join(','));
+                wsData.push(values);
             }
             
-            // CSV 파일 생성
-            const csvString = csvRows.join('\n');
-            const blob = new Blob([csvString], { type: 'text/csv' });
-            const url = window.URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.setAttribute('hidden', '');
-            a.setAttribute('href', url);
-            a.setAttribute('download', `${fileName}.csv`);
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
+            // 워크시트에 데이터 추가
+            const ws = XLSX.utils.aoa_to_sheet(wsData);
+            XLSX.utils.book_append_sheet(wb, ws, 'Sheet1');
+
+            // 파일 다운로드
+            XLSX.writeFile(wb, `${fileName}.xlsx`);
         };
     
         return (
@@ -227,8 +215,8 @@ export default function Ps_1_2() {
                 columns={perfColumns}
                 title="실적목록"
                 data={data}
-                buttons={['Edit', 'UploadExcel', 'DownloadExcelForm']}
-                onClicks={[() => {}, onUploadExcelClick, () => onDownloadExcelFormClick(data)]}
+                buttons={['DoubleClickEdit', 'DownloadExcelForm', 'UploadExcel']}
+                onClicks={[() => {}, () => onDownloadExcelFormClick(data), onUploadExcelClick]}
                 modals={[
                     {
                         modalType: 'Ps12UploadExcel',
@@ -251,7 +239,7 @@ export default function Ps_1_2() {
             setIsModalOpen(true);
         };
         const handleOk = (data) => {
-            // 결과 처리
+            handleFormSubmit(formData);
             setIsModalOpen(false);
         };
         const handleCancel = () => {
@@ -259,47 +247,45 @@ export default function Ps_1_2() {
         };
     
         const onUploadExcelClick = () => {
-            console.log("onUploadExcelClick2");
             showModal();
         };
         
         const onDownloadExcelFormClick = (csvData) => {
-            const fileName = `사용금액 엑셀 양식_${formData.actvYear}`;
+            const fileName = `사용금액 엑셀 양식_${formData.searchProject.pjtName}_${formData.actvYear}`;
     
-            // CSV 변환 함수
-            const csvRows = [];
-            
+            // 워크북 및 워크시트 생성
+            const wb = XLSX.utils.book_new();
+            const wsData = [];
+
             // 헤더 생성 (perfColumns 순서대로, quantityList 제외, '년도' 맨앞에 추가)
             const headers = ['년도'].concat(
                 perfColumns.filter(column => column.key !== 'quantityList')
                            .map(column => column.label)
             );
-            csvRows.push(headers.join(','));
+            wsData.push(headers);
             
             // 데이터 생성
             for (const row of csvData) {
-                const values = [`"${formData.actvYear}"`].concat(
+                const values = [formData.actvYear].concat(
                     perfColumns.filter(column => column.key !== 'quantityList')
-                               .map(column => {
-                                   const value = row[column.key] || '';
-                                   const escaped = ('' + value).replace(/"/g, '\\"');
-                                   return `"${escaped}"`;
-                               })
+                            .map(column => {
+                                let value = row[column.key] || '';
+                                // value가 문자열인지 확인 후 ',' 제거
+                                if (typeof value === 'string') {
+                                    value = value.replace(/,/g, '');
+                                }
+                                return value;
+                            })
                 );
-                csvRows.push(values.join(','));
+                wsData.push(values);
             }
             
-            // CSV 파일 생성
-            const csvString = csvRows.join('\n');
-            const blob = new Blob([csvString], { type: 'text/csv' });
-            const url = window.URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.setAttribute('hidden', '');
-            a.setAttribute('href', url);
-            a.setAttribute('download', `${fileName}.csv`);
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
+            // 워크시트에 데이터 추가
+            const ws = XLSX.utils.aoa_to_sheet(wsData);
+            XLSX.utils.book_append_sheet(wb, ws, 'Sheet1');
+
+            // 파일 다운로드
+            XLSX.writeFile(wb, `${fileName}.xlsx`);
         };
     
         return (
@@ -307,8 +293,8 @@ export default function Ps_1_2() {
                 columns={perfColumns}
                 title="실적목록"
                 data={data}
-                buttons={['Edit', 'UploadExcel', 'DownloadExcelForm']}
-                onClicks={[() => {}, onUploadExcelClick, () => onDownloadExcelFormClick(data)]}
+                buttons={['DoubleClickEdit', 'DownloadExcelForm', 'UploadExcel']}
+                onClicks={[() => {}, () => onDownloadExcelFormClick(data), onUploadExcelClick]}
                 modals={[
                     {
                         modalType: 'Ps12UploadExcel',
@@ -331,28 +317,40 @@ export default function Ps_1_2() {
             </div>
 
             <SearchForms onFormSubmit={handleFormSubmit}
-                //formFields={formFields} 
-                formFields={formFields.map(field => field.name === 'actvYear' ? { ...field, disabled: actvYearDisabled, placeholder: actvYearDisabled ? '프로젝트를 선택하세요.' : '' } : field)} // actvYear 필드의 disabled 상태 반영
+                formFields={formFields.map(field => field.name === 'actvYear' ? { ...field, disabled: actvYearDisabled } : field)} // actvYear 필드의 disabled 상태 반영
                 onProjectSelect={onProjectSelect} />
             
             {(!formData || Object.keys(formData).length === 0) ? (
                 <></>
              ) : (
-                <div className={ps12Style.main_contents}>
-                    <Card sx={{ width: "100%", height: "100%", borderRadius: "15px" }}>
-                        <CustomRadioGroup
-                            options={[{label: '사용량', value: 'actvQty'}, {label: '사용금액', value: 'fee'}]}
-                            onChange={onRadioChange}
-                            value={content}
-                            optionType="button"
-                            buttonStyle="solid"
-                            className={ps12Style.custom_radio_group}
-                        />
-
-                        {content === 'actvQty' && <Usage data={usagePerfs} />}
-                        {content === 'fee' && <AmountUsed data={amountUsedPerfs} />}
-                    </Card>
-                </div>
+                <>
+                    <div className={esmStyles.main_grid}>
+                        <Card sx={{ width: "100%", height: "auto", borderRadius: "15px", marginBottom: "1rem" }}>
+                            <TableCustom title="조회결과" columns={pjtColumns} data={selectedPjt} pagination={false}/>
+                        </Card>
+                    </div>
+                    
+                    <div className={ps12Style.button_container}>
+                        <CustomButton 
+                            selected={content === 'actvQty'} 
+                            onClick={() => handleButtonClick('actvQty')}
+                        >
+                            사용량
+                        </CustomButton>
+                        <CustomButton 
+                            selected={content === 'fee'} 
+                            onClick={() => handleButtonClick('fee')}
+                        >
+                            사용금액
+                        </CustomButton>
+                    </div>
+                    <div className={sysStyles.main_grid}>
+                        <Card className={sysStyles.card_box} sx={{ width: "100%", height: "100%", borderRadius: "15px" }}>
+                            {content === 'actvQty' && <Usage data={usagePerfs} />}
+                            {content === 'fee' && <AmountUsed data={amountUsedPerfs} />}
+                        </Card>
+                    </div>
+                </>
             )}
         </div>
     );
