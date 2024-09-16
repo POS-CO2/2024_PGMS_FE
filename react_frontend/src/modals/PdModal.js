@@ -1448,12 +1448,12 @@ export function EfmAddModal({ isModalOpen, handleOk, handleCancel, rowData }) {
             actvDataId: rowData.id,
             applyYear,
             applyDvs: selectedApplyDvs,
-            ghgCode: selectedGhgCode.length === 0 ? null : selectedGhgCode,
+            ghgCode: selectedGhgCode === null ? null : selectedGhgCode,
             coefClassCode:selectedCoefClassCode,
             unitCode,
             coef,
         };
-
+        console.log(formData);
         let newError = {};
         if(!formData.applyYear) newError.applyYear = '적용년도를 입력해주세요.';
         if(!formData.applyDvs) newError.applyDvs = '적용구분을 입력해주세요.';
@@ -2079,7 +2079,7 @@ export function MmAddModal({ isModalOpen, handleOk, handleCancel, rowData }) {
         if (!formData.accessUser) newError.accessUser = '접근권한을 선택해주세요.';
         if (!formData.menuOrder) newError.menuOrder = '메뉴순서를 선택해주세요.';
 
-        if (Object.keys(newError).length > 0) {
+        if (Object.keys(newError)?.length > 0) {
             setError(newError);
             return;
         }
