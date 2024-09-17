@@ -102,7 +102,7 @@ export default function Psq() {
 
         // 파이 차트 데이터 설정하기, default는 all(0)
         setSelectedMonth({ key: '0', label: '- All -', });
-        let pieChartUrl = `/perf/pjt-equip?pjtId=${data.searchProject.id}&year=${data.actvYear}&mth=${selectedMonth.key}`;
+        let pieChartUrl = `/perf/pjt-equip?pjtId=${data.searchProject.id}&year=${data.actvYear}&mth=${0}`;
         let pieChartPerfsData = await axiosInstance.get(pieChartUrl);
         const colorPerItem = pieChartPerfsData.data.map((item, index) => ({
             label: item.actvDataName,
@@ -110,7 +110,6 @@ export default function Psq() {
             color: colors[index % colors.length], // 색상을 순환하여 할당
         }));
         setPieChartPerfs(colorPerItem);
-        console.log(colorPerItem);
     };
 
     const valueFormatter = (item) => `${item.value}`;
@@ -211,6 +210,7 @@ export default function Psq() {
                                             menu={{
                                                 items,
                                                 selectable: true,
+                                                selectedKeys: [selectedMonth.key],
                                                 onClick: handleMenuClick,
                                             }}
                                             placement="bottom"
