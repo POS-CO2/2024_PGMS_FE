@@ -29,3 +29,29 @@
     width: 85%;
     height: 100%;
 }
+
+.board_header {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
+    width: 100%;
+    height: 5%;
+    align-items: center;
+    margin-top: 0.5rem;
+}
+
+.userlist {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 95%;
+    overflow-y: scroll;
+}
+
+.chatlist {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 95%;
+    overflow-y: scroll;
+}

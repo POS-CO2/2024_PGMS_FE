@@ -126,6 +126,10 @@ export default function SiteLayout({handleLogout, menus, user}){
         setChatOpen(true);
     }
 
+    const handleCloseClick = () => {
+        setChatOpen(false);
+    }
+
     if (loading) {
         return (
             <div id={mainStyles.root}>
@@ -172,7 +176,7 @@ export default function SiteLayout({handleLogout, menus, user}){
                 <Favorite handleFavClick={handleFavClick} fav={fav}/>
                 {
                     chatOpen ? (
-                        <Chat />
+                        <Chat handleCloseClick={handleCloseClick}/>
                     ) : (
                             <Box component="span" onClick={handleChatClick} sx={{borderRadius:"50%", backgroundColor:"rgb(14, 170, 0)", position:"fixed", bottom: "16px", right:"16px", width:"70px", height:"70px", display:"flex", justifyContent:"center", alignItems:"center", cursor:"pointer"}}>
                                 <Badge color='error' badgeContent={99} >

@@ -1,22 +1,54 @@
 import React, { useState } from "react";
 import * as chatStyles from './assets/css/chat.css'
-import { ChatOutlined, Person } from "@mui/icons-material";
+import { ChatOutlined, Close, Person, Search } from "@mui/icons-material";
 import { IconButton } from "@mui/material";
 
 
-export default function Chat(params) {
+export default function Chat({ handleCloseClick }) {
+    const [status, setStatus] = useState("user");
+
+    const handleUserClick = () => {
+        setStatus("user");
+    }
+
+    const handleChatListClick = () => {
+        setStatus("chat");
+    }
+
+    const user = localStorage.getItem("user");
+    console.log(user);
+
+    
     return (
         <div className={chatStyles.main}>
             <div className={chatStyles.menu_bar}> 
-                <IconButton >
+                <IconButton onClick={handleUserClick}>
                     <Person fontSize="large" sx={{color: "gray"}} />
                 </IconButton>
-                <IconButton>
+                <IconButton onClick={handleChatListClick}>
                     <ChatOutlined fontSize="large" sx={{color:"gray"}} />
                 </IconButton>
             </div>
             <div className={chatStyles.board}>
-
+                <div className={chatStyles.board_header}>
+                    <IconButton >
+                        <Search />
+                    </IconButton>
+                    <IconButton onClick={handleCloseClick}>
+                        <Close />
+                    </IconButton>
+                </div>
+                {
+                    status === "user" ? (
+                        <div className={chatStyles.userlist}>
+                            userlist
+                        </div>
+                    ) : (
+                        <div className={chatStyles.chatlist}>
+                            chatlist
+                        </div>
+                    )
+                }
             </div>
         </div>
     );
