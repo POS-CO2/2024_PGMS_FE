@@ -60,9 +60,14 @@ const formItemComponents = {
     SearchAtModal
 };
 
-export default function SearchForms({ onFormSubmit, formFields, autoSubmitOnInit=false, onProjectSelect=null }) {
+export default function SearchForms({ initialValues, onFormSubmit, formFields, autoSubmitOnInit=false, onProjectSelect=null }) {
     const [form] = Form.useForm();
     const [isInitialSubmit, setIsInitialSubmit] = useState(autoSubmitOnInit); // 첫 렌더링 여부를 추적하는 상태
+
+    // 폼 초기값 설정
+    useEffect(() => {
+        form.setFieldsValue(initialValues);
+    }, [initialValues, form]);
 
     // 초기 렌더링 시 폼을 제출하는 함수 //default일 때 자동 폼 제출
     const autoSubmitForm = () => {

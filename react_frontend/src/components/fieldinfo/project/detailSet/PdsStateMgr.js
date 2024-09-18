@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
-import { useSetRecoilState } from 'recoil';
+import { useRecoilState, useSetRecoilState } from 'recoil';
 import {
-    managerState, eqState, eqLibState, emSourceState, revState
+    managerState, eqState, eqLibState, emSourceState, revState, selectedButtonState
 } from '../../../../atoms/pdsAtoms';
 import axiosInstance from '../../../../utils/AxiosInstance';
 import Pd from './Pd';
@@ -34,7 +34,7 @@ const CustomButton = styled(Button)(({ selected }) => ({
 }));
 
 export const PdsStateMgr = ({pjtId}) => {
-    const [selectedButton, setSelectedButton] = useState('담당자 관리');
+    const [selectedButton, setSelectedButton] = useRecoilState(selectedButtonState);
 
     const setManagers = useSetRecoilState(managerState);
     const setEquips = useSetRecoilState(eqState);

@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { Modal, Button, Upload, Select, Input, ConfigProvider } from 'antd';
 import Swal from 'sweetalert2';
 import { useRecoilValue, useRecoilState } from 'recoil';
-import { pjtState, selectedSuppDocState } from '../atoms/pdsAtoms';
+import { selectedPjtState, selectedSuppDocState } from '../atoms/pdsAtoms';
 import axiosInstance from '../utils/AxiosInstance';
 import { TextField, Autocomplete } from '@mui/material';
 import { PaperClipOutlined, CloseOutlined } from '@ant-design/icons';
@@ -2302,7 +2302,7 @@ export function EsmAddModal({ isModalOpen, handleOk, handleCancel, rowData }) {
 }
 
 export function SdAddModal({ isModalOpen, handleOk, handleCancel, rowData }) { 
-    const project = useRecoilValue(pjtState);
+    const project = useRecoilValue(selectedPjtState);
     const [yearSelectOptions, setYearSelectOptions] = useState([]);
     const [formData, setFormData] = useState({
         actvYear: new Date().getFullYear().toString(),
@@ -2520,7 +2520,7 @@ export function SdAddModal({ isModalOpen, handleOk, handleCancel, rowData }) {
 }
 
 export function SdShowDetailsModal({ isModalOpen, handleOk, handleCancel }) {
-    const project = useRecoilValue(pjtState);
+    const project = useRecoilValue(selectedPjtState);
     const [selectedSD, setSelectedSD] = useRecoilState(selectedSuppDocState);
     const [yearSelectOptions, setYearSelectOptions] = useState([]);
     const [formData, setFormData] = useState({

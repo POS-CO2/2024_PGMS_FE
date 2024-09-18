@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from "react";
+import { useRecoilState } from "recoil";
+import { actvSearchForm } from '../../../atoms/searchFormAtoms';
 import Swal from 'sweetalert2';
 import { Card } from '@mui/material';
 import TableCustom from "../../../TableCustom";
@@ -11,13 +13,13 @@ import * as pdsStyles from "../../../assets/css/pds.css";
 
 export default function Adm() {
     const [formFields, setFormFields] = useState(formField_fam);
+    const [formData, setFormData] = useRecoilState(actvSearchForm);
     const [actves, setActves] = useState([]);                     // 활동자료목록
     const [selectedActv, setSelectedActv] = useState({});         // 선택된 활동자료
     const [emissionFactors, setEmissionFactors] = useState([]);
     const [filteredEfs, setFilteredEfs] = useState([]);
     const [selectedEF, setSelectedEF] = useState({});
     const [year, setYear] = useState(new Date().getFullYear());
-    const yearProps = { year, setYear };
     
     const [isModalOpen, setIsModalOpen] = useState({
         FamAdd: false,
@@ -72,7 +74,9 @@ export default function Adm() {
         };
     
         fetchDropDown();
-        fetchActv();
+
+        // formData값이 있으면 활동자료를 findAll, 없으면(이전 탭의 검색기록이 있으면) 그 값을 불러옴
+        Object.keys(formData).length === 0 ? fetchActv() : handleFormSubmit(formData);
     }, []);
 
     //조회 버튼 클릭시 호출될 함수
@@ -90,6 +94,7 @@ export default function Adm() {
             const response = await axiosInstance.get("/equip/actv", {params});
             setActves(response.data);
             setEmissionFactors([]);
+            setFormData(data);
         } catch (error) {
             console.error("Error fetching actv data:", error);
         }
@@ -241,7 +246,11 @@ export default function Adm() {
     return (
         <>
             <div className={mainStyles.breadcrumb}>현장정보 &gt; 설비 &gt; 활동자료 관리</div>
-            <SearchForms onFormSubmit={handleFormSubmit} formFields={formFields} />
+            <SearchForms 
+                initialValues={formData} 
+                onFormSubmit={handleFormSubmit} 
+                formFields={formFields} 
+            />
 
             <div className={pdsStyles.main_grid}>
                 <div className={pdsStyles.contents_container}>

@@ -15,8 +15,6 @@ import Psq_Fp from './components/emperf/perflook/Psq_Fp';
 import Tep from './components/emperf/perflook/Tep';
 import Pds from './components/fieldinfo/project/detailSet/Pds';
 import Pg from './components/fieldinfo/project/Pg';
-import Fm from './components/fieldinfo/facility/Fm';
-import Fad from './components/fieldinfo/facility/Fad';
 import Adm from './components/fieldinfo/facility/Adm';
 import Fl from './components/fieldinfo/facility/Fl';
 import Esm from './components/fieldinfo/emission/Esm';
@@ -126,8 +124,6 @@ export default function App() {
                             <Route path='/pmg' element={<Pmg />} />
                             <Route path='/pds' element={<Pds />} />
                             <Route path='/pg' element={<Pg />} />
-                            <Route path='/fm' element={<Fm />} />
-                            <Route path='/fad' element={<Fad />} />
                             <Route path='/adm' element={<Adm />} />
                             <Route path='/fl' element={<Fl />} />
                             <Route path='/sd' element={<Sd />} />
