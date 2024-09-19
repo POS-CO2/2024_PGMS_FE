@@ -126,11 +126,12 @@ export default function Psq() {
         let pieChartUrl = `/perf/pjt-equip?pjtId=${data.searchProject.id}&year=${data.actvYear}&mth=${0}`;
         let pieChartPerfsData = await axiosInstance.get(pieChartUrl);
         const colorPerItem = pieChartPerfsData.data.map((item, index) => ({
-            label: item.actvDataName,
-            value: item.co2EmtnConvTotalQty,
+            label: item.equipName,
+            value: item.totalQty,
             color: colors[index % colors.length], // 색상을 순환하여 할당
         }));
         setPieChartPerfs(colorPerItem);
+        console.log(colorPerItem);
     };
 
     const valueFormatter = (item) => `${item.value}`;
@@ -142,12 +143,18 @@ export default function Psq() {
 
         let pieChartUrl = `/perf/pjt-equip?pjtId=${formData.searchProject.id}&year=${formData.actvYear}&mth=${selectedItem.key}`;
         let pieChartPerfsData = await axiosInstance.get(pieChartUrl);
+        console.log(selectedItem.key);
         const colorPerItem = pieChartPerfsData.data.map((item, index) => ({
-            label: item.actvDataName,
-            value: item.co2EmtnConvTotalQty,
+            label: item.equipName,
+            value : Number(selectedItem.key) === 0 
+                ? item.totalQty 
+                : (item.emissionQuantityList && item.emissionQuantityList[0] && item.emissionQuantityList[0].co2EmtnConvTotalQty) 
+                    ? item.emissionQuantityList[0].co2EmtnConvTotalQty 
+                    : null,
             color: colors[index % colors.length], // 색상을 순환하여 할당
         }));
         setPieChartPerfs(colorPerItem);
+        console.log(colorPerItem);
     };
 
     const onDownloadExcelClick = (csvData) => {
