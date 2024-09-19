@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import * as chatStyles from '../assets/css/chat.css';
 import { AccordionSummary, Avatar, Chip, Divider } from '@mui/material';
 import MuiAccordion from '@mui/material/Accordion';
@@ -39,19 +39,18 @@ const UserIcon = ({data}) => {
 
 
 
-export default function UserList({ UserListIcon }) {
+export default function UserList({ UserListIcon, handleChattingClick, fpUser, hpUser, adminUser, me }) {
 
-    const userData = JSON.parse(localStorage.getItem("user"));
 
     return (
         <div className={chatStyles.userlist}>
             <div className={chatStyles.user_profile}>
                 <div style={{display:"flex" ,flexDirection:"row", alignItems:"center", gap:"1rem", fontSize:"1.3rem", fontWeight:"500"}}>
-                    <UserIcon data = {userData}/>
-                    {`${userData.userName}`}
+                    <UserIcon data = {me}/>
+                    {`${me.userName}`}
                 </div>
                 <div>
-                    <Chip label={userData.deptCode} variant='outlined' />
+                    <Chip label={me.deptCode} variant='outlined' />
                 </div>
                 
             </div>
@@ -67,33 +66,17 @@ export default function UserList({ UserListIcon }) {
                         현장 담당자
                     </AccordionSummary>
                     <AccordionDetails>
-                        <div className={chatStyles.user_lists}>
-                            <div style={{display:"flex" ,flexDirection:"row", alignItems:"center", gap:"1rem", fontSize:"1rem", fontWeight:"500"}}>
-                                <UserListIcon data = {userData}/>
-                                {`${userData.userName}`}
+                        {fpUser.map(data => (
+                            <div className={chatStyles.user_lists} key={data.id} onDoubleClick={() => handleChattingClick(data)}>
+                                <div style={{display:"flex" ,flexDirection:"row", alignItems:"center", gap:"1rem", fontSize:"1rem", fontWeight:"500"}}>
+                                    <UserListIcon data = {data}/>
+                                    {`${data.userName}`}
+                                </div>
+                                <div>
+                                    <Chip label={data.deptCode} variant='outlined' />
+                                </div>
                             </div>
-                            <div>
-                                <Chip label={userData.deptCode} variant='outlined' />
-                            </div>
-                        </div>
-                        <div className={chatStyles.user_lists}>
-                            <div style={{display:"flex" ,flexDirection:"row", alignItems:"center", gap:"1rem", fontSize:"1rem", fontWeight:"500"}}>
-                                <UserListIcon data = {userData}/>
-                                {`${userData.userName}`}
-                            </div>
-                            <div>
-                                <Chip label={userData.deptCode} variant='outlined' />
-                            </div>
-                        </div>
-                        <div className={chatStyles.user_lists}>
-                            <div style={{display:"flex" ,flexDirection:"row", alignItems:"center", gap:"1rem", fontSize:"1rem", fontWeight:"500"}}>
-                                <UserListIcon data = {userData}/>
-                                {`${userData.userName}`}
-                            </div>
-                            <div>
-                                <Chip label={userData.deptCode} variant='outlined' />
-                            </div>
-                        </div>
+                        ))}
                     </AccordionDetails>
                 </Accordion>
                 <Divider variant='middle'/>
@@ -107,42 +90,17 @@ export default function UserList({ UserListIcon }) {
                         본사 담당자
                     </AccordionSummary>
                     <AccordionDetails>
-                    <div className={chatStyles.user_lists}>
+                    {hpUser.map(data => (
+                        <div className={chatStyles.user_lists} key={data.id} onDoubleClick={() => handleChattingClick(data)}>
                             <div style={{display:"flex" ,flexDirection:"row", alignItems:"center", gap:"1rem", fontSize:"1rem", fontWeight:"500"}}>
-                                <UserListIcon data = {userData}/>
-                                {`${userData.userName}`}
+                                <UserListIcon data = {data}/>
+                                {`${data.userName}`}
                             </div>
                             <div>
-                                <Chip label={userData.deptCode} variant='outlined' />
+                                <Chip label={data.deptCode} variant='outlined' />
                             </div>
                         </div>
-                        <div className={chatStyles.user_lists}>
-                            <div style={{display:"flex" ,flexDirection:"row", alignItems:"center", gap:"1rem", fontSize:"1rem", fontWeight:"500"}}>
-                                <UserListIcon data = {userData}/>
-                                {`${userData.userName}`}
-                            </div>
-                            <div>
-                                <Chip label={userData.deptCode} variant='outlined' />
-                            </div>
-                        </div>
-                        <div className={chatStyles.user_lists}>
-                            <div style={{display:"flex" ,flexDirection:"row", alignItems:"center", gap:"1rem", fontSize:"1rem", fontWeight:"500"}}>
-                                <UserListIcon data = {userData}/>
-                                {`${userData.userName}`}
-                            </div>
-                            <div>
-                                <Chip label={userData.deptCode} variant='outlined' />
-                            </div>
-                        </div>
-                        <div className={chatStyles.user_lists}>
-                            <div style={{display:"flex" ,flexDirection:"row", alignItems:"center", gap:"1rem", fontSize:"1rem", fontWeight:"500"}}>
-                                <UserListIcon data = {userData}/>
-                                {`${userData.userName}`}
-                            </div>
-                            <div>
-                                <Chip label={userData.deptCode} variant='outlined' />
-                            </div>
-                        </div>
+                    ))}
                     </AccordionDetails>
                 </Accordion>
                 <Divider variant='middle'/>
@@ -156,51 +114,17 @@ export default function UserList({ UserListIcon }) {
                         시스템 관리자
                     </AccordionSummary>
                     <AccordionDetails>
-                    <div className={chatStyles.user_lists}>
+                    {adminUser.map(data => (
+                        <div className={chatStyles.user_lists} key={data.id} onDoubleClick={() => handleChattingClick(data)}>
                             <div style={{display:"flex" ,flexDirection:"row", alignItems:"center", gap:"1rem", fontSize:"1rem", fontWeight:"500"}}>
-                                <UserListIcon data = {userData}/>
-                                {`${userData.userName}`}
+                                <UserListIcon data = {data}/>
+                                {`${data.userName}`}
                             </div>
                             <div>
-                                <Chip label={userData.deptCode} variant='outlined' />
+                                <Chip label={data.deptCode} variant='outlined' />
                             </div>
                         </div>
-                        <div className={chatStyles.user_lists}>
-                            <div style={{display:"flex" ,flexDirection:"row", alignItems:"center", gap:"1rem", fontSize:"1rem", fontWeight:"500"}}>
-                                <UserListIcon data = {userData}/>
-                                {`${userData.userName}`}
-                            </div>
-                            <div>
-                                <Chip label={userData.deptCode} variant='outlined' />
-                            </div>
-                        </div>
-                        <div className={chatStyles.user_lists}>
-                            <div style={{display:"flex" ,flexDirection:"row", alignItems:"center", gap:"1rem", fontSize:"1rem", fontWeight:"500"}}>
-                                <UserListIcon data = {userData}/>
-                                {`${userData.userName}`}
-                            </div>
-                            <div>
-                                <Chip label={userData.deptCode} variant='outlined' />
-                            </div>
-                        </div>
-                        <div className={chatStyles.user_lists}>
-                            <div style={{display:"flex" ,flexDirection:"row", alignItems:"center", gap:"1rem", fontSize:"1rem", fontWeight:"500"}}>
-                                <UserListIcon data = {userData}/>
-                                {`${userData.userName}`}
-                            </div>
-                            <div>
-                                <Chip label={userData.deptCode} variant='outlined' />
-                            </div>
-                        </div>
-                        <div className={chatStyles.user_lists}>
-                            <div style={{display:"flex" ,flexDirection:"row", alignItems:"center", gap:"1rem", fontSize:"1rem", fontWeight:"500"}}>
-                                <UserListIcon data = {userData}/>
-                                {`${userData.userName}`}
-                            </div>
-                            <div>
-                                <Chip label={userData.deptCode} variant='outlined' />
-                            </div>
-                        </div>
+                    ))}
                     </AccordionDetails>
                 </Accordion>
             </div>
