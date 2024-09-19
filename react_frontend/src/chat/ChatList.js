@@ -27,9 +27,16 @@ export default function ChatList({ UserListIcon, handleChattingClick, room }){
                         <div style={{fontSize:"0.8rem", color:"grey", textOverflow:"ellipsis"}}>
                         {data.lastSentDate}
                         </div>
-                        <div className={chatStyles.chat_badge}>
-                            {data.notReadCnt}
-                        </div>
+                        {data.notReadCnt !== 0 ? ( 
+                            <div className={chatStyles.chat_badge}>
+                                {data.notReadCnt}
+                            </div>
+                        ) : (
+                            <div className={chatStyles.chat_badge_zero}>
+                            </div>    
+                        )
+                        }
+                        
                     </div>
                 </div>
             ))}

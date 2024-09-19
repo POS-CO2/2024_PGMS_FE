@@ -159,6 +159,17 @@
     border-radius: 50%;
 }
 
+.chat_badge_zero{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    width: 1rem;
+    height: 1rem;
+    color: white;
+    border-radius: 50%;
+}
+
 .user_profile {
     display: flex;
     flex-direction: row;

@@ -54,7 +54,6 @@ export default function Chatting({ UserListIcon ,handleChatListClick, chatUser, 
             
         }
     };
-
     const handleKeyPress = (e) => {
         if (e.key === 'Enter' && !e.shiftKey) { 
             e.preventDefault();
@@ -88,8 +87,11 @@ export default function Chatting({ UserListIcon ,handleChatListClick, chatUser, 
             <Divider variant="middle" />
             <div className={chatStyles.chatting_content} ref={chatContainerRef}>
                 {chatContent.map((data, idx) => (
-                    <div key={idx} className={data.senderId === me.id ? chatStyles.mymessage : chatStyles.targetmessage}>
-                        {data.message}
+                    <div style={{display:"flex", flexDirection:"row", alignItems:"flex-end"}}>
+                        <div key={idx} className={data.senderId === me.id ? chatStyles.mymessage : chatStyles.targetmessage} style={{position:"relative"}}>
+                            {data.message}
+                            {!data.readYn && <div style={{position: "absolute",bottom: "0", left:"-1rem", color:"rgb(14, 170, 0)"}}>1</div>}
+                        </div>
                     </div>
                 ))}
                 {/* {isLoading && <CircularProgress color="success" sx={{margin:"0 auto"}}/>} */}
