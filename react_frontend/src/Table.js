@@ -326,7 +326,6 @@ export default function CustomizedTables({
                                                 <Box
                                                     sx={{
                                                         backgroundColor: '#FFF',
-                                                        padding: '1rem',
                                                         display: 'flex',
                                                         flexDirection: 'column',
                                                         justifyContent: 'flex-start', 
@@ -339,9 +338,12 @@ export default function CustomizedTables({
                                                         sx={{ 
                                                             fontWeight: 'bold', 
                                                             marginBottom: '1rem', // 제목과 카드들 사이에 간격 추가 
+                                                            borderBottom: '2px solid black', // 밑줄 추가
+                                                            display: 'inline-block', 
+                                                            width: 'fit-content', // 텍스트 길이에 맞게 너비 설정
                                                         }}
                                                     >
-                                                        담당자 목록
+                                                        담당자목록
                                                     </Typography>
                                                     {subData.length > 0 ? (
                                                         <Box

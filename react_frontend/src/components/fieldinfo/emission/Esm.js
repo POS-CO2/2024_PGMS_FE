@@ -15,8 +15,6 @@ import axiosInstance from '../../../utils/AxiosInstance';
 import { pjtColumns, equipEmissionColumns, equipDocumentColumns } from '../../../assets/json/tableColumn';
 
 export default function Esm() {
-    const [formData, setFormData] = useState({});
-
     const [showResults, setShowResults] = useState(false);            // 조회결과를 표시할지 여부
     const [selectedPjt, setSelectedPjt] = useState([]);               // 선택된 프로젝트
     const [emtns, setEmtns] = useState([]);                           // 배출원 목록

@@ -24,7 +24,10 @@ export default function Adm() {
     const [isModalOpen, setIsModalOpen] = useState({
         FamAdd: false,
         FamEdit: false,
-        Delete: false
+        EfmAdd: false,
+        EfmEdit: false,
+        DeleteA: false,
+        DeleteB: false,
     });
 
     const fetchOptions = async (unitType) => {
@@ -126,7 +129,7 @@ export default function Adm() {
 
     // 배출계수 row 클릭 시 호출될 함수
     const handleEFClick = (ef) => {
-        setSelectedEF(ef ?? {});
+        setSelectedEF(ef.row ?? {});
     };
 
     // 모달 열기
@@ -175,14 +178,10 @@ export default function Adm() {
                 swalOptions.icon = 'error';
             }
             Swal.fire(swalOptions);
-        } else if (modalType === 'Delete') {
-            try {
-                // 선택된 활동자료를 actves 리스트에서 제거
-                setActves(prevActves => prevActves.filter(actv => actv.id !== selectedActv.id));
-                setSelectedActv({});
-            } catch (error) {
-                console.log(error);
-            }
+        } else if (modalType === 'DeleteA') {
+            // 선택된 활동자료를 actves 리스트에서 제거
+            setActves(prevActves => prevActves.filter(actv => actv.id !== selectedActv.id));
+            setSelectedActv({});
         } else if (modalType === 'FamEdit') {
             try {
                 const requestBody = {
@@ -216,25 +215,25 @@ export default function Adm() {
                 swalOptions.icon = 'error';
             }
             Swal.fire(swalOptions);
-        } 
+        } else if (modalType === 'EfmAdd') {
+            setFilteredEfs(prevList => [data, ...prevList]);
+            setSelectedEF(data);
+        } else if (modalType === 'EfmEdit') {
+            setFilteredEfs(prevList =>
+                prevList.map(item =>
+                    item.id === data.id ? { ...item, ...data } : item
+                )
+            );
+        } else if (modalType === 'DeleteB') {
+            // 선택된 활동자료를 actves 리스트에서 제거
+            setFilteredEfs(prevList => prevList.filter(item => item.id !== selectedEF.id));
+            setSelectedEF({});
+        }
     };
 
     // 모달 닫기
     const handleCancel = (modalType) => () => {
         setIsModalOpen(prevState => ({ ...prevState, [modalType]: false }));
-    };
-
-    // 버튼 클릭 시 모달 열림 설정
-    const onAddClick = () => {
-        showModal('FamAdd');
-    };
-
-    const onEditClick = () => {
-        showModal('FamEdit');
-    };
-
-    const onDeleteClick = () => {
-        showModal('Delete');
     };
 
     const handleYearChange = (year) => {
@@ -260,15 +259,15 @@ export default function Adm() {
                             data={actves} 
                             columns={equipActvColumns}
                             buttons={['Delete', 'Edit', 'Add']}
-                            onClicks={[onDeleteClick, onEditClick, onAddClick]}
+                            onClicks={[() => showModal('DeleteA'), () => showModal('FamEdit'), () => showModal('FamAdd')]}
                             onRowClick={handleActvClick}
                             selectedRows={[selectedActv]}
                             modals={[
                                 {
-                                    'modalType': 'Delete',
-                                    'isModalOpen': isModalOpen.Delete,
-                                    'handleOk': handleOk('Delete'),
-                                    'handleCancel': handleCancel('Delete'),
+                                    'modalType': 'DeleteA',
+                                    'isModalOpen': isModalOpen.DeleteA,
+                                    'handleOk': handleOk('DeleteA'),
+                                    'handleCancel': handleCancel('DeleteA'),
                                     'rowData': selectedActv,
                                     'rowDataName': 'actvDataName',
                                     'url': '/equip/actv'
@@ -301,8 +300,39 @@ export default function Adm() {
                                 title="배출계수목록" 
                                 data={filteredEfs}
                                 columns={equipCoefColumns}
+                                buttons={["Delete", "Edit", "Add"]} 
+                                selectedRows={[selectedEF]} 
+                                onRowClick={handleEFClick} 
+                                onClicks={[() => showModal('DeleteB'), () => showModal('EfmEdit'), () => showModal('EfmAdd')]}
                                 handleYearChange={handleYearChange}
                                 year={year}
+                                modals={
+                                    [
+                                        isModalOpen.EfmAdd && {
+                                            "modalType" : 'EfmAdd',
+                                            'isModalOpen': isModalOpen.EfmAdd,
+                                            'handleOk': handleOk('EfmAdd'),
+                                            'handleCancel': handleCancel('EfmAdd'),
+                                            'rowData': selectedActv,
+                                        },
+                                        isModalOpen.EfmEdit && {
+                                            "modalType" : 'EfmEdit',
+                                            'isModalOpen': isModalOpen.EfmEdit,
+                                            'handleOk': handleOk('EfmEdit'),
+                                            'handleCancel': handleCancel('EfmEdit'),
+                                            'rowData': {...selectedEF, "inputUnitCode" : selectedActv.inputUnitCode, "actvDataId": selectedActv.id},
+                                        },
+                                        isModalOpen.DeleteB && {
+                                            "modalType" : 'DeleteB',
+                                            'isModalOpen': isModalOpen.DeleteB,
+                                            'handleOk': handleOk('DeleteB'),
+                                            'handleCancel': handleCancel('DeleteB'),
+                                            'rowData': selectedEF,
+                                            'rowDataName': "applyDvs",
+                                            'url': '/equip/coef',
+                                        },
+                                    ]
+                                }
                             />
                         )}
                     </Card>

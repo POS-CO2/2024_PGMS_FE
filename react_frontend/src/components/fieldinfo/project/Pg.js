@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from "react";
+import { useRecoilState } from "recoil";
+import { pjtMgrSearchForm } from '../../../atoms/searchFormAtoms';
 import Swal from 'sweetalert2';
 import { Card, Accordion, AccordionSummary, AccordionDetails } from '@mui/material';
 import * as mainStyles from "../../../assets/css/main.css"
@@ -8,10 +10,11 @@ import {formField_pg} from "../../../assets/json/searchFormData"
 import { pjtColumns, pjtManagerColumns } from '../../../assets/json/tableColumn';
 import axiosInstance from '../../../utils/AxiosInstance';
 import dayjs from 'dayjs';
-import { managerState } from "../../../atoms/pdsAtoms";
+import * as pdsStyles from "../../../assets/css/pds.css";
 
 export default function Pg() {
     const [formFields, setFormFields] = useState(formField_pg);
+    const [formData, setFormData] = useRecoilState(pjtMgrSearchForm);
     const [projects, setProjects] = useState([]);                   // 검색 데이터(프로젝트 목록)
     const [selectedPjt, setSelectedPjt] = useState({});             // 선택된 프로젝트(PK column only)
     const [managers, setManagers] = useState([]);
@@ -70,10 +73,17 @@ export default function Pg() {
     
         fetchDropDown();
         fetchProject();
+
+        // formData값이 있으면(이전 탭의 검색기록이 있으면) 그 값을 불러옴
+        if(Object.keys(formData).length !== 0) {
+            handleFormSubmit(formData);
+        }
     }, []);
 
     // 조회 버튼 클릭시 호출될 함수
     const handleFormSubmit = async (data) => {
+        setFormData(data);
+
         // data.calendar가 정의되어 있지 않거나 값이 없는 경우를 처리하기 위해 설정
         const startDate = data.calendar?.[0]?.$d;
         const endDate = data.calendar?.[1]?.$d;
@@ -81,8 +91,8 @@ export default function Pg() {
         const params = {
             pjtCode : data.pjtCode,
             pjtName : data.pjtName,
-            userLoginId : data.userLoginId,
-            userName : data.userName,
+            userLoginId : data.managerId,
+            userName : data.managerName,
             divCode : data.divCode,
             pjtProgStus : data.pjtProgStus,
             regCode: data.reg,
@@ -92,7 +102,6 @@ export default function Pg() {
         };
 
         const response = await axiosInstance.get("/pjt", {params});
-
         setProjects(response.data);
     };
 
@@ -183,41 +192,49 @@ export default function Pg() {
     return (
         <>
             <div className={mainStyles.breadcrumb}>현장정보 &gt; 프로젝트 &gt; 프로젝트 관리</div>
-            <SearchForms onFormSubmit={handleFormSubmit} formFields={formFields} />
+            <SearchForms
+                initialValues={formData}
+                onFormSubmit={handleFormSubmit} 
+                formFields={formFields} 
+            />
 
-            {(!projects || Object.keys(projects).length === 0) ?
-            <></> : (
-                <>
-                    <TableCustom 
-                        title='프로젝트목록' 
-                        data={projects}
-                        columns={pjtColumns}            
-                        buttons={['Delete', 'Add']}
-                        onClicks={[onDeleteClick, onAddClick]}
-                        onRowClick={handlePjtClick}
-                        selectedRows={[selectedPjt]}
-                        subData={managers}
-                        expandedRow={expandedRow}
-                        modals={[
-                            {
-                                'modalType': 'Delete',
-                                'isModalOpen': isModalOpen.Delete,
-                                'handleOk': handleOk('Delete'),
-                                'handleCancel': handleCancel('Delete'),
-                                'rowData': selectedPjt,
-                                'rowDataName': 'pjtName',
-                                'url': '/pjt'
-                            },
-                            {
-                                'modalType': 'PgAdd',
-                                'isModalOpen': isModalOpen.PgAdd,
-                                'handleOk': handleOk('PgAdd'),
-                                'handleCancel': handleCancel('PgAdd')
-                            }
-                        ]}
-                    />
-                </>
-            )}
+            <div className={pdsStyles.main_grid}>
+                <div className={pdsStyles.contents_container}>
+                    {(!projects || Object.keys(projects).length === 0) ?
+                    <></> : (
+                        <Card sx={{ width: "100%", height: "auto", borderRadius: "0.5rem" }}>
+                            <TableCustom 
+                                title='프로젝트목록' 
+                                data={projects}
+                                columns={pjtColumns}            
+                                buttons={['Delete', 'Add']}
+                                onClicks={[onDeleteClick, onAddClick]}
+                                onRowClick={handlePjtClick}
+                                selectedRows={[selectedPjt]}
+                                subData={managers}
+                                expandedRow={expandedRow}
+                                modals={[
+                                    {
+                                        'modalType': 'Delete',
+                                        'isModalOpen': isModalOpen.Delete,
+                                        'handleOk': handleOk('Delete'),
+                                        'handleCancel': handleCancel('Delete'),
+                                        'rowData': selectedPjt,
+                                        'rowDataName': 'pjtName',
+                                        'url': '/pjt'
+                                    },
+                                    {
+                                        'modalType': 'PgAdd',
+                                        'isModalOpen': isModalOpen.PgAdd,
+                                        'handleOk': handleOk('PgAdd'),
+                                        'handleCancel': handleCancel('PgAdd')
+                                    }
+                                ]}
+                            />
+                        </Card>
+                    )}
+                </div>
+            </div>
         </>
     );
 }

@@ -74,7 +74,7 @@ export default function Fl() {
         
         fetchDropDown();
 
-        // formData값이 있으면 설비LIB을 findAll, 없으면(이전 탭의 검색기록이 있으면) 그 값을 불러옴
+        // formData값이 없으면 설비LIB을 findAll, 있으면(이전 탭의 검색기록이 있으면) 그 값을 불러옴
         Object.keys(formData).length === 0 ? fetchEqLib() : handleFormSubmit(formData);
     }, []);
 

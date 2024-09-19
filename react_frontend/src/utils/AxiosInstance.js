@@ -2,7 +2,7 @@ import axios from 'axios';
 
 
 const axiosInstance = axios.create({
-    baseURL: "http://52.78.229.102:8080/api",
+    baseURL: "http://alb-1042622281.ap-northeast-2.elb.amazonaws.com:8080/api",
     headers: {
         'Content-Type': 'application/json'
     },

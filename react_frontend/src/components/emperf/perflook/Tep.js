@@ -1,4 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useRecoilState } from "recoil";
+import { totalPerfScpForm } from '../../../atoms/searchFormAtoms';
+import { tepSelectedBtnState } from '../../../atoms/buttonAtoms';
 import SearchForms from "../../../SearchForms";
 import { formField_tep } from "../../../assets/json/searchFormData"
 import TableCustom from "../../../TableCustom.js";
@@ -7,17 +10,24 @@ import { CustomButton } from '../Ps_1_2';
 import * as mainStyle from '../../../assets/css/main.css';
 import * as ps12Style from '../../../assets/css/ps12.css';
 import * as sysStyles from '../../../assets/css/sysmng.css';
-import * as esmStyles from '../../../assets/css/esm.css';
 import { Card } from '@mui/material';
 import axiosInstance from '../../../utils/AxiosInstance';
 import { perfTotalColumns } from '../../../assets/json/tableColumn';
 
 export default function Tep() {
-    const [formData, setFormData] = useState(); // 검색 데이터
+    const [formData, setFormData] = useRecoilState(totalPerfScpForm);
     const [perfsData, setPerfsData] = useState([]);
     const [chartPerfs, setChartPerfs] = useState([]);
+    const [content, setContent] = useRecoilState(tepSelectedBtnState);
 
-    const [content, setContent] = useState('chart'); // chart || table
+    useEffect(() => {
+        // formData값이 있으면(이전 탭의 검색기록이 있으면) 그 값을 불러옴
+        if(Object.keys(formData).length !== 0) {
+            handleFormSubmit(formData);
+        }
+        handleButtonClick(content);
+    }, [])
+
     const handleButtonClick = (value) => {
         setContent(value);
     };
@@ -55,7 +65,12 @@ export default function Tep() {
             <div className={mainStyle.breadcrumb}>
                 {"배출실적 > 실적조회 > 총량실적 조회"}
             </div>
-            <SearchForms onFormSubmit={handleFormSubmit} formFields={formField_tep} autoSubmitOnInit={true} />
+            <SearchForms 
+                initialValues={formData} 
+                onFormSubmit={handleFormSubmit} 
+                formFields={formField_tep} 
+                autoSubmitOnInit={true}
+            />
 
             {(!formData || Object.keys(formData).length === 0) ? (
                 <></>

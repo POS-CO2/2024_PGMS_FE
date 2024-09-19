@@ -7,7 +7,6 @@ import SiteLayout from './SiteLayout';
 import Main from './Main';
 import Main_Hp from './Main_Hp';
 import Main_Admin from './Main_Admin';
-import Efm from './components/fieldinfo/Efm';
 import Ps_1_2 from './components/emperf/Ps_1_2';
 import Ps_1_2_Fp from './components/emperf/Ps_1_2_Fp';
 import Psq from './components/emperf/perflook/Psq';
@@ -24,7 +23,6 @@ import Cm from './components/sysmng/Cm';
 import Mm from './components/sysmng/Mm';
 import Um from './components/sysmng/Um';
 import Mal from './components/sysmng/Mal';
-import Pmg from './components/emperf/Pmg';
 import Login from './components/login/Login';
 import Sa from './components/analfc/Sa';
 import Ea from './components/analfc/Ea';
@@ -119,9 +117,7 @@ export default function App() {
                                 </>
                                 )
                             }
-                            <Route path='/efm' element={<Efm />} />
                             <Route path='/tep' element={<Tep />} />
-                            <Route path='/pmg' element={<Pmg />} />
                             <Route path='/pds' element={<Pds />} />
                             <Route path='/pg' element={<Pg />} />
                             <Route path='/adm' element={<Adm />} />

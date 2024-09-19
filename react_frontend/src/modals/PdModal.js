@@ -860,7 +860,6 @@ export function Ps12UploadExcelModal({ isModalOpen, handleOk, handleCancel }) { 
                 }
             });
 
-            console.log(response.data);
             handleOk(response.data, true); // 새로 입력된 데이터를 handleOk 함수로 전달, 두번째 인자-closeModal=true
             swalOptions.title = '성공!',
             swalOptions.text = `성공적으로 등록되었습니다.`;
@@ -1441,7 +1440,7 @@ export function EfmAddModal({ isModalOpen, handleOk, handleCancel, rowData }) {
     const [coef, setCoef] = useState(0);
     const [error, setError] = useState({});
 
-
+    console.log("HOCHUL")
     const handleSelect = async() => {
         let swalOptions = {
             confirmButtonText: '확인'
@@ -1456,7 +1455,7 @@ export function EfmAddModal({ isModalOpen, handleOk, handleCancel, rowData }) {
             unitCode,
             coef,
         };
-        console.log("formData", formData);
+
         let newError = {};
         if(!formData.applyYear) newError.applyYear = '적용년도를 입력해주세요.';
         if(!formData.applyDvs) newError.applyDvs = '적용구분을 입력해주세요.';
@@ -1470,7 +1469,7 @@ export function EfmAddModal({ isModalOpen, handleOk, handleCancel, rowData }) {
         try {
             // POST 요청으로 서버에 데이터 전송
             const {data} = await axiosInstance.post('/equip/coef', formData);
-            console.log("data2", data);
+
             // handleOk을 호출하여 모달을 닫고 상위 컴포넌트에 알림
             handleOk(data);
             swalOptions.title = '성공!',
@@ -1489,10 +1488,7 @@ export function EfmAddModal({ isModalOpen, handleOk, handleCancel, rowData }) {
         const fetchData = async () => {
             const appDvsResponse = await axiosInstance.get(`/sys/unit?unitType=적용구분`);
             setApplyDvs(appDvsResponse.data);
-            // const ghgResponse = await axiosInstance.get(`/sys/unit?unitType=온실가스코드`);
-            // setGhgCode(ghgResponse.data);
-            // console.log("2",ghgResponse.data);
-            // const coefResponse = await axiosInstance.get(`/sys/unit?unitType=계수종류코드`);
+
             const coefResponse = [
                 {
                     "code": 2,
@@ -1570,7 +1566,7 @@ export function EfmAddModal({ isModalOpen, handleOk, handleCancel, rowData }) {
                 </div>
                 <div className={sysStyles.text_field}>
                     <div className={sysStyles.text}>{"가스코드"}</div>
-                    <Select value={selectedGhgCode} onChange={(value) => {setSelectedGhgCode(value); console.log(value);}} style={{width:"18rem", height:"2rem",fontSize:"4rem"}}>
+                    <Select value={selectedGhgCode} onChange={(value) => {setSelectedGhgCode(value)}} style={{width:"18rem", height:"2rem",fontSize:"4rem"}}>
                     {ghgCode.map(option => (
                         <Select.Option key={option.code} value={option.code}>
                             {option.name}
@@ -1640,9 +1636,8 @@ export function EfmEditModal({ isModalOpen, handleOk, handleCancel, rowData }) {
         try {
             // POST 요청으로 서버에 데이터 전송
             const response = await axiosInstance.patch('/equip/coef', formData);
-
             console.log("response", response);
-            console.log(formData); 
+
             // handleOk을 호출하여 모달을 닫고 상위 컴포넌트에 알림
             handleOk(response.data);
             swalOptions.title = '성공!',
@@ -1699,7 +1694,6 @@ export function EfmEditModal({ isModalOpen, handleOk, handleCancel, rowData }) {
         }
         const matchedUnit = afterSelectedCoefClassCode[value === 2 ? 0 : value];
         if (matchedUnit) {
-            console.log(matchedUnit);
             setGhgCode(matchedUnit.gas);
             setUnitCode(matchedUnit.unit);
         }
@@ -1730,7 +1724,7 @@ export function EfmEditModal({ isModalOpen, handleOk, handleCancel, rowData }) {
                 </div>
                 <div className={sysStyles.text_field}>
                     <div className={sysStyles.text}>{"적용구분"}</div>
-                    <Select value={selectedApplyDvs} onChange={(value) => {setSelectedApplyDvs(value); console.log(value);}} style={{width:"18rem", height:"2rem", fontSize:"4rem"}}>
+                    <Select value={selectedApplyDvs} onChange={(value) => {setSelectedApplyDvs(value)}} style={{width:"18rem", height:"2rem", fontSize:"4rem"}}>
                     {applyDvs.map(option => (
                         <Select.Option key={option.code} value={option.code}>
                             {option.name}
@@ -2223,7 +2217,6 @@ export function EsmAddModal({ isModalOpen, handleOk, handleCancel, rowData }) {
     // 배출원 row 클릭 시 호출될 함수
     const handleEmtnClick = (row) => {
         setSelectedEmtnCands(row);
-        console.log(row);
     };
 
     // 등록 버튼 클릭 시 호출될 함수
