@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import SearchForms from "../../../SearchForms";
 import { formField_psq } from "../../../assets/json/searchFormData"
 import { CustomButton } from '../Ps_1_2';
+import Table from "../../../Table";
 import TableCustom from "../../../TableCustom.js";
 import ChartCustom from "../../../ChartCustom.js";
 import * as mainStyle from '../../../assets/css/main.css';
@@ -268,8 +269,8 @@ export default function Psq() {
                                 <Card className={psqStyles.table_card} sx={{ width: "100%", height: "fit-contents", borderRadius: "15px" }}>
                                     <TableCustom columns={perfPjtColumns} title="프로젝트 실적 표" data={perfsData} buttons={['DownloadExcel']} onClicks={[() => onDownloadExcelClick(perfsData)]} monthPagination={true} pagination={false} />
                                 </Card>
-                                <Card className={psqStyles.table_card} sx={{ width: "100%", height: "100%", borderRadius: "15px" }}>
-                                    <TableCustom title="프로젝트 실적 표" data={perfsData} buttons={['DownloadExcel']} onClicks={[() => onDownloadExcelClick(perfsData)]} monthPagination={true} pagination={false} />
+                                <Card className={psqStyles.table_card_not_custom} sx={{ width: "100%", height: "fit-contents", borderRadius: "15px" }}>
+                                    <Table columns={perfPjtColumns} data={perfsData} monthPagination={true} pagination={false} showHeader={false} />
                                 </Card>
                             </div>
                         }

@@ -72,7 +72,8 @@ export default function CustomizedTables({
         modalPagination = false,
         monthPagination = false,
         columns = [],
-        editedRows= []
+        editedRows= [],
+        showHeader=true
     }) {
     const [selectedRow, setSelectedRow] = useState({});       // default variant의 선택 상태
     const [selectedRows, setSelectedRows] = useState([]); 
@@ -162,12 +163,14 @@ export default function CustomizedTables({
             }}>
                 <Table sx={{ minWidth: 600 }} stickyHeader aria-label="customized table">
                     <TableHead>
-                        <TableRow>
-                        {variant === 'checkbox' && <StyledTableCell></StyledTableCell>}
-                        {visibleColumns.map(col => (
-                            <StyledTableCell key={col.key}>{col.label}</StyledTableCell>
-                        ))}
-                        </TableRow>
+                        {showHeader && (  // visibleColumns가 비어 있지 않은 경우에만 헤더를 렌더링
+                            <TableRow>
+                                {variant === 'checkbox' && <StyledTableCell></StyledTableCell>}
+                                {visibleColumns.map(col => (
+                                    <StyledTableCell key={col.key}>{col.label}</StyledTableCell>
+                                ))}
+                            </TableRow>
+                        )}
                     </TableHead>
                     <TableBody>
                             {pagination ? (
