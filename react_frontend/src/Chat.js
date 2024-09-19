@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import * as chatStyles from './assets/css/chat.css'
 import { ChatOutlined, Close, Person, Search } from "@mui/icons-material";
 import { IconButton } from "@mui/material";
+import UserList from "./chat/UserList";
 
 
 export default function Chat({ handleCloseClick }) {
@@ -16,7 +17,6 @@ export default function Chat({ handleCloseClick }) {
     }
 
     const user = localStorage.getItem("user");
-    console.log(user);
 
     
     return (
@@ -40,9 +40,7 @@ export default function Chat({ handleCloseClick }) {
                 </div>
                 {
                     status === "user" ? (
-                        <div className={chatStyles.userlist}>
-                            userlist
-                        </div>
+                        <UserList />
                     ) : (
                         <div className={chatStyles.chatlist}>
                             chatlist

@@ -55,3 +55,25 @@
     height: 95%;
     overflow-y: scroll;
 }
+
+.user_profile {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    height: 15%;
+    justify-content: space-between;
+    padding: 0 1rem;
+    align-items: center;
+    gap: 1rem;
+}
+
+.user_lists {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    height: 15%;
+    justify-content: space-between;
+    padding: 0.5rem 1rem;
+    align-items: center;
+    gap: 1rem;
+}
