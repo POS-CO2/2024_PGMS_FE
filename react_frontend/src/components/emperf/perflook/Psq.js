@@ -22,7 +22,7 @@ export default function Psq() {
     const [formFields, setFormFields] = useState(formField_psq);
     const [formData, setFormData] = useState(); // 검색 데이터
     const [selectedPjt, setSelectedPjt] = useState([]);
-    const [perfsData, setPerfsData] = useState([]);
+    const [perfsData, setPerfsData] = useState(Array(12).fill({})); //const [perfsData, setPerfsData] = useState([]);
     const [chartPerfs, setChartPerfs] = useState([]);
     const [actvYearDisabled, setActvYearDisabled] = useState(true);  // 드롭다운 비활성화 상태 관리
     const [pieChartPerfs, setPieChartPerfs] = useState([]);
@@ -79,7 +79,6 @@ export default function Psq() {
 
         let url = `/perf/pjt?pjtId=${data.searchProject.id}&year=${data.actvYear}`;
         const response = await axiosInstance.get(url);
-        setPerfsData(response.data);
 
         // data가 빈 배열인지 확인
         if (response.data.length === 0) {
@@ -88,6 +87,8 @@ export default function Psq() {
                 { data: Array(12).fill(null), stack: 'A', label: 'Scope 1' },
                 { data: Array(12).fill(null), stack: 'A', label: 'Scope 2' }
             ]);
+
+            setPerfsData([]);
 
         } else {
             //차트
@@ -98,6 +99,25 @@ export default function Psq() {
                 { data: scope2Data, stack: 'A', label: 'Scope 2' }
             ];
             setChartPerfs(formattedChartPerfs);
+
+            // 표
+            const scope1TableData = { emissionSource: 'scope1' };
+            const scope2TableData = { emissionSource: 'scope2' };
+            const totalTableData = { emissionSource: 'total' };
+
+            // 각 월 데이터를 채워 넣기
+            response.data.forEach((item, index) => {
+                scope1TableData[index] = item.scope1;
+                scope2TableData[index] = item.scope2;
+                totalTableData[index] = item.total;
+            });
+
+            // 최종 데이터 배열에 추가
+            const formattedTableData = [scope1TableData, scope2TableData, totalTableData];
+
+            // 상태값 업데이트
+            setPerfsData(formattedTableData);
+            console.log(formattedTableData);
         }
 
         // 파이 차트 데이터 설정하기, default는 all(0)
@@ -244,9 +264,14 @@ export default function Psq() {
                             </>
                         }
                         {content === 'table' && 
-                            <Card sx={{ width: "100%", height: "100%", borderRadius: "15px" }}>
-                                <TableCustom columns={perfPjtColumns} title="프로젝트 실적 표" data={perfsData} buttons={['DownloadExcel']} onClicks={[() => onDownloadExcelClick(perfsData)]} monthPagination={true} pagination={false} />
-                            </Card>
+                            <div className={psqStyles.table_container}>
+                                <Card className={psqStyles.table_card} sx={{ width: "100%", height: "fit-contents", borderRadius: "15px" }}>
+                                    <TableCustom columns={perfPjtColumns} title="프로젝트 실적 표" data={perfsData} buttons={['DownloadExcel']} onClicks={[() => onDownloadExcelClick(perfsData)]} monthPagination={true} pagination={false} />
+                                </Card>
+                                <Card className={psqStyles.table_card} sx={{ width: "100%", height: "100%", borderRadius: "15px" }}>
+                                    <TableCustom title="프로젝트 실적 표" data={perfsData} buttons={['DownloadExcel']} onClicks={[() => onDownloadExcelClick(perfsData)]} monthPagination={true} pagination={false} />
+                                </Card>
+                            </div>
                         }
                     </div>
                 </>
