@@ -1,8 +1,9 @@
 import React, { useState } from "react";
 import * as chatStyles from './assets/css/chat.css'
 import { ChatOutlined, Close, Person, Search } from "@mui/icons-material";
-import { IconButton } from "@mui/material";
+import { Avatar, IconButton } from "@mui/material";
 import UserList from "./chat/UserList";
+import ChatList from "./chat/ChatList";
 
 
 export default function Chat({ handleCloseClick }) {
@@ -18,6 +19,20 @@ export default function Chat({ handleCloseClick }) {
 
     const user = localStorage.getItem("user");
 
+    const UserListIcon = ({data}) => {
+        if (!data) {
+            return <></>;
+        }
+        if (data.role === "FP") {
+            return <Avatar sx={{ bgcolor: "rgb(14, 170, 0)", fontSize:"1rem", fontWeight:"bold" }} >현장</Avatar>
+        }
+        else if (data.role === "HP") {
+            return <Avatar sx={{ bgcolor: "rgb(74, 122, 230)", fontSize:"1rem", fontWeight:"bold" }} >본사</Avatar>
+        }
+        else {
+            return <Avatar sx={{ bgcolor: "orange", fontSize:"1.3rem", fontWeight:"bold" }} >관리</Avatar>
+        }
+    }
     
     return (
         <div className={chatStyles.main}>
@@ -40,11 +55,9 @@ export default function Chat({ handleCloseClick }) {
                 </div>
                 {
                     status === "user" ? (
-                        <UserList />
+                        <UserList UserListIcon={UserListIcon} />
                     ) : (
-                        <div className={chatStyles.chatlist}>
-                            chatlist
-                        </div>
+                        <ChatList UserListIcon={UserListIcon} />
                     )
                 }
             </div>

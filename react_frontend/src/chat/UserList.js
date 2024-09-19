@@ -37,22 +37,9 @@ const UserIcon = ({data}) => {
     }
 }
 
-const UserListIcon = ({data}) => {
-    if (!data) {
-        return <></>;
-    }
-    if (data.role === "FP") {
-        return <Avatar sx={{ bgcolor: "rgb(14, 170, 0)", fontSize:"1rem", fontWeight:"bold" }} >현장</Avatar>
-    }
-    else if (data.role === "HP") {
-        return <Avatar sx={{ bgcolor: "rgb(74, 122, 230)", fontSize:"1rem", fontWeight:"bold" }} >본사</Avatar>
-    }
-    else {
-        return <Avatar sx={{ bgcolor: "orange", fontSize:"1.3rem", fontWeight:"bold" }} >관리</Avatar>
-    }
-}
 
-export default function UserList({  }) {
+
+export default function UserList({ UserListIcon }) {
 
     const userData = JSON.parse(localStorage.getItem("user"));
 
@@ -120,7 +107,42 @@ export default function UserList({  }) {
                         본사 담당자
                     </AccordionSummary>
                     <AccordionDetails>
-                        hello Accordion
+                    <div className={chatStyles.user_lists}>
+                            <div style={{display:"flex" ,flexDirection:"row", alignItems:"center", gap:"1rem", fontSize:"1rem", fontWeight:"500"}}>
+                                <UserListIcon data = {userData}/>
+                                {`${userData.userName}`}
+                            </div>
+                            <div>
+                                <Chip label={userData.deptCode} variant='outlined' />
+                            </div>
+                        </div>
+                        <div className={chatStyles.user_lists}>
+                            <div style={{display:"flex" ,flexDirection:"row", alignItems:"center", gap:"1rem", fontSize:"1rem", fontWeight:"500"}}>
+                                <UserListIcon data = {userData}/>
+                                {`${userData.userName}`}
+                            </div>
+                            <div>
+                                <Chip label={userData.deptCode} variant='outlined' />
+                            </div>
+                        </div>
+                        <div className={chatStyles.user_lists}>
+                            <div style={{display:"flex" ,flexDirection:"row", alignItems:"center", gap:"1rem", fontSize:"1rem", fontWeight:"500"}}>
+                                <UserListIcon data = {userData}/>
+                                {`${userData.userName}`}
+                            </div>
+                            <div>
+                                <Chip label={userData.deptCode} variant='outlined' />
+                            </div>
+                        </div>
+                        <div className={chatStyles.user_lists}>
+                            <div style={{display:"flex" ,flexDirection:"row", alignItems:"center", gap:"1rem", fontSize:"1rem", fontWeight:"500"}}>
+                                <UserListIcon data = {userData}/>
+                                {`${userData.userName}`}
+                            </div>
+                            <div>
+                                <Chip label={userData.deptCode} variant='outlined' />
+                            </div>
+                        </div>
                     </AccordionDetails>
                 </Accordion>
                 <Divider variant='middle'/>
@@ -134,7 +156,51 @@ export default function UserList({  }) {
                         시스템 관리자
                     </AccordionSummary>
                     <AccordionDetails>
-                        hello Accordion
+                    <div className={chatStyles.user_lists}>
+                            <div style={{display:"flex" ,flexDirection:"row", alignItems:"center", gap:"1rem", fontSize:"1rem", fontWeight:"500"}}>
+                                <UserListIcon data = {userData}/>
+                                {`${userData.userName}`}
+                            </div>
+                            <div>
+                                <Chip label={userData.deptCode} variant='outlined' />
+                            </div>
+                        </div>
+                        <div className={chatStyles.user_lists}>
+                            <div style={{display:"flex" ,flexDirection:"row", alignItems:"center", gap:"1rem", fontSize:"1rem", fontWeight:"500"}}>
+                                <UserListIcon data = {userData}/>
+                                {`${userData.userName}`}
+                            </div>
+                            <div>
+                                <Chip label={userData.deptCode} variant='outlined' />
+                            </div>
+                        </div>
+                        <div className={chatStyles.user_lists}>
+                            <div style={{display:"flex" ,flexDirection:"row", alignItems:"center", gap:"1rem", fontSize:"1rem", fontWeight:"500"}}>
+                                <UserListIcon data = {userData}/>
+                                {`${userData.userName}`}
+                            </div>
+                            <div>
+                                <Chip label={userData.deptCode} variant='outlined' />
+                            </div>
+                        </div>
+                        <div className={chatStyles.user_lists}>
+                            <div style={{display:"flex" ,flexDirection:"row", alignItems:"center", gap:"1rem", fontSize:"1rem", fontWeight:"500"}}>
+                                <UserListIcon data = {userData}/>
+                                {`${userData.userName}`}
+                            </div>
+                            <div>
+                                <Chip label={userData.deptCode} variant='outlined' />
+                            </div>
+                        </div>
+                        <div className={chatStyles.user_lists}>
+                            <div style={{display:"flex" ,flexDirection:"row", alignItems:"center", gap:"1rem", fontSize:"1rem", fontWeight:"500"}}>
+                                <UserListIcon data = {userData}/>
+                                {`${userData.userName}`}
+                            </div>
+                            <div>
+                                <Chip label={userData.deptCode} variant='outlined' />
+                            </div>
+                        </div>
                     </AccordionDetails>
                 </Accordion>
             </div>
