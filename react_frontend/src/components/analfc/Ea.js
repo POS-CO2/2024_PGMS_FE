@@ -23,6 +23,15 @@ export default function Ea() {
 
     const colors = ['#67b7dc', '#6794dc', '#6771dc', '#8067dc', '#a367dc', '#c767dc'];
 
+    useEffect(() => {
+        const chartData = analEquipData.map((item, index) => ({
+            label: Object.values(item)[0],
+            value: item.totalEmissionQty,
+            color: colors[index % colors.length], // 색상을 순환하여 할당
+        }));
+        setAnalEquipChartData(chartData);
+    }, [analEquipData]);
+
     // 조회 버튼 클릭시 호출될 함수
     const handleFormSubmit = async (data) => {
         setFormData(data);
@@ -71,13 +80,6 @@ export default function Ea() {
             ];
             setAnalEquipData(formattedChartPerfs);
         }*/
-
-        const chartData = analEquipData.map((item, index) => ({
-            label: Object.values(item)[0],
-            value: item.totalEmissionQty,
-            color: colors[index % colors.length], // 색상을 순환하여 할당
-        }));
-        setAnalEquipChartData(chartData);
     };
 
     const onDownloadExcelClick = (csvData) => {
@@ -121,7 +123,7 @@ export default function Ea() {
                     <div className={sysStyles.main_grid}>
                         <Card className={saStyles.card_box} sx={{ width: "50%", height: "auto", borderRadius: "15px" }}>
                             <div className={psqStyles.title_container}>
-                                <div className={chartStyles.chart_title}>{"설비별 실적 차트 : "}</div>
+                                <div className={chartStyles.chart_title}>{"설비별 실적 차트"}</div>
                             </div>
 
                             <PieChart
