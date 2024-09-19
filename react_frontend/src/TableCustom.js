@@ -60,7 +60,6 @@ export default function TableCustom({
     keyProp = undefined,
     handleYearChange = () => { },
     year = undefined,
-    showHeader = true
 }) {modalPagination
     // 버튼 활성화 상태 결정
     const buttonStatus = buttons.map((button) => {
@@ -118,7 +117,7 @@ export default function TableCustom({
                     </Space>
                 )}
                 {table ? (
-                    <Table key={tableKey} data={data} variant={variant} onRowClick={onRowClick} pagination={pagination} modalPagination={modalPagination} columns={columns} handleYearChange={handleYearChange} showHeader={showHeader} />
+                    <Table key={tableKey} data={data} variant={variant} onRowClick={onRowClick} pagination={pagination} modalPagination={modalPagination} columns={columns} handleYearChange={handleYearChange} />
                 ) : (<></>)}
             </div>
         </>

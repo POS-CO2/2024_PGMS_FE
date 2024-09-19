@@ -147,8 +147,20 @@ export const perfTotalColumns = [
     { key: 'scope2', label: 'Scope2배출량(kgGHG)', hidden: false },
     { key: 'total', label: '총배출량(kgGHG)', hidden: false },
 ]*/
+export const emissionPerfPjtColumns = [
+    { key: 'scope', label: '배출원', hidden: false },
+]
+// 월별 칼럼 추가
+for (let month = 0; month < 12; month++) {
+    emissionPerfPjtColumns.push({
+        key: `${month}`,
+        label: `${month+1}월`,
+        hidden: false
+    });
+}
+
 export const perfPjtColumns = [
-    { key: 'emissionSource', label: '배출원', hidden: false },
+    { key: 'scope', label: 'scope 배출량(kgGHG)', hidden: false },
 ]
 // 월별 칼럼 추가
 for (let month = 0; month < 12; month++) {

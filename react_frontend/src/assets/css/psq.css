@@ -4,6 +4,7 @@
 
 .table_container {
     display: block;
+    width: 100%;
 }
 
 .table_card {

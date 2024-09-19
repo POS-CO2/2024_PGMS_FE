@@ -17,7 +17,7 @@ import { PieChart } from '@mui/x-charts/PieChart';
 import { DownOutlined } from '@ant-design/icons';
 import { Dropdown, Space } from 'antd';
 import axiosInstance from '../../../utils/AxiosInstance';
-import { perfPjtColumns, pjtColumns } from '../../../assets/json/tableColumn';
+import { emissionPerfPjtColumns, perfPjtColumns, pjtColumns } from '../../../assets/json/tableColumn';
 
 export default function Psq() {
     const [formFields, setFormFields] = useState(formField_psq);
@@ -102,9 +102,9 @@ export default function Psq() {
             setChartPerfs(formattedChartPerfs);
 
             // 표
-            const scope1TableData = { emissionSource: 'scope1' };
-            const scope2TableData = { emissionSource: 'scope2' };
-            const totalTableData = { emissionSource: 'total' };
+            const scope1TableData = { scope: 'scope1' };
+            const scope2TableData = { scope: 'scope2' };
+            const totalTableData = { scope: 'total' };
 
             // 각 월 데이터를 채워 넣기
             response.data.forEach((item, index) => {
@@ -267,10 +267,10 @@ export default function Psq() {
                         {content === 'table' && 
                             <div className={psqStyles.table_container}>
                                 <Card className={psqStyles.table_card} sx={{ width: "100%", height: "fit-contents", borderRadius: "15px" }}>
-                                    <TableCustom columns={perfPjtColumns} title="프로젝트 실적 표" data={perfsData} buttons={['DownloadExcel']} onClicks={[() => onDownloadExcelClick(perfsData)]} monthPagination={true} pagination={false} />
+                                    <TableCustom columns={emissionPerfPjtColumns} title="프로젝트 실적 표" data={perfsData} buttons={['DownloadExcel']} onClicks={[() => onDownloadExcelClick(perfsData)]} monthPagination={true} pagination={false} />
                                 </Card>
                                 <Card className={psqStyles.table_card_not_custom} sx={{ width: "100%", height: "fit-contents", borderRadius: "15px" }}>
-                                    <Table columns={perfPjtColumns} data={perfsData} monthPagination={true} pagination={false} showHeader={false} />
+                                    <Table columns={perfPjtColumns} data={perfsData} monthPagination={true} pagination={false} />
                                 </Card>
                             </div>
                         }
