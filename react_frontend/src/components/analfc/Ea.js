@@ -24,11 +24,20 @@ export default function Ea() {
     const colors = ['#67b7dc', '#6794dc', '#6771dc', '#8067dc', '#a367dc', '#c767dc'];
 
     useEffect(() => {
-        const chartData = analEquipData.map((item, index) => ({
-            label: Object.values(item)[0],
-            value: item.totalEmissionQty,
-            color: colors[index % colors.length], // 색상을 순환하여 할당
-        }));
+        // 총 value 계산
+        const totalValue = analEquipData.reduce((total, item) => total + item.totalEmissionQty, 0);
+
+         // 각 항목의 비율 계산 후 arcLabel 할당
+        const chartData = analEquipData.map((item, index) => {
+            const percentage = totalValue ? ((item.totalEmissionQty / totalValue) * 100).toFixed(2) : 0; // 퍼센트 계산
+            return {
+                label: Object.values(item)[0],
+                value: item.totalEmissionQty,
+                color: colors[index % colors.length], // 색상을 순환하여 할당
+                arcLabel: `${percentage}%`, // 비율을 %로 표시
+            };
+        });
+
         setAnalEquipChartData(chartData);
     }, [analEquipData]);
 
@@ -135,11 +144,11 @@ export default function Ea() {
                                         cornerRadius: 3,
                                         outerRadius: 150,
                                         //valueFormatter,
-                                        arcLabel: (item) => `${item.value}`,
+                                        arcLabel: (item) => `${item.arcLabel}%`,
                                         arcLabelMinAngle: 35,
                                     },
                                 ]}
-                                height={300}
+                                height={400}
                             />
                         </Card>
 
