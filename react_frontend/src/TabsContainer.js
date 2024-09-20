@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef, forwardRef, useImperativeHandle } from 'react';
 import { useRecoilState } from "recoil";
 import { openTabsState, activeTabState } from './atoms/tabAtoms';
-import { Tabs, Dropdown, Menu, Button } from 'antd';
+import { Tabs, Dropdown, Menu, Button, Tooltip } from 'antd';
 import { CloseOutlined, CloseCircleOutlined } from '@ant-design/icons';
 import GTranslateIcon from '@mui/icons-material/GTranslate';
 import { useNavigate } from 'react-router-dom';
@@ -55,12 +55,9 @@ const UserDetails = styled.div`
 `;
 
 const StyledCloseCircleOutlined = styled(CloseCircleOutlined)`
-  position: absolute;
-  margin-left: 12px;
-  bottom: 0; /* 하단 배치 */
-  right: 0;  /* 우측 정렬 (필요시) */
-  font-size: 1.2rem; /* 아이콘 크기 */
+  font-size: 1.3rem; /* 아이콘 크기 */
   color: #777777; /* 아이콘 색상 */
+  margin-right: 0.5rem;
 `;
 
 const Row = styled.div`
@@ -287,6 +284,14 @@ const TabsContainer = forwardRef(({ handleLogout, user }, ref) => {
     navigate(newActiveKey);
   };
 
+  // 홈 탭만 남기고 나머지 탭 제거
+  const closeAllTabs = () => {
+    const homeTab = tabs.find(tab => tab.key === '');
+    setTabs([homeTab]); // 홈 탭만 남기고 나머지 모두 제거
+    setActiveKey(''); // 홈 탭으로 activeKey를 설정
+    navigate(''); // 홈 탭으로 이동
+  };
+
   const moveTabNode = (dragIndex, hoverIndex) => {
     const newTabs = [...tabs];
     const draggedTab = newTabs.splice(dragIndex, 1)[0];
@@ -366,28 +371,27 @@ const TabsContainer = forwardRef(({ handleLogout, user }, ref) => {
           <StyledTabs
             activeKey={activeKey}
             onChange={onTabChange}
-            items={[
-              ...tabsData,
-              {
-                label: (
-                  <StyledCloseCircleOutlined 
-                    style={{ marginLeft: 'auto' }} // 아이콘이 탭 리스트 마지막에 위치
-                    onClick={() => {/* 원하는 동작 */}}
-                  />
-                ),
-                key: 'close-icon', // 고유한 key 필요
-              },
-            ]}
+            items={tabsData}
             hideAdd
             moreIcon={null}
             style={{width:"100%", textOverflow:"ellipsis"}}
           />
         </TabContainer>
+
+        {/* 탭 모두 닫기 섹션 */}
         <TopRightWrapper>
+          <Tooltip title="탭 모두 닫기">
+            <StyledCloseCircleOutlined
+              style={{ cursor: "pointer" }} // 커서 모양을 추가
+              onClick={closeAllTabs}
+            />
+          </Tooltip>
+
           {/* 다국어 섹션 */}
           <Dropdown overlay={languageMenu} trigger={['click']} placement="bottomCenter">
             <GTranslateIcon style={{ cursor: 'pointer', color: '#0A7800', fontSize: '30px' }} />
           </Dropdown>
+
           {/* 유저 섹션 */}
           <Dropdown overlay={menu} trigger={['click']} placement="bottomRight">
             <UserInfo>
