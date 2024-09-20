@@ -60,11 +60,12 @@ export default function TableCustom({
     keyProp = undefined,
     handleYearChange = () => { },
     year = undefined,
+    subData = [],
+    expandedRow = {}
 }) {modalPagination
     // 버튼 활성화 상태 결정
     const buttonStatus = buttons.map((button) => {
         if (button === 'Edit' || button === 'Delete' || button === 'ShowDetails') {
-            console.log(selectedRows);
             if (selectedRows.includes(null) || selectedRows.includes(undefined) || Object.keys(selectedRows[0] ?? {}).length === 0) {  // 선택한 row가 없으면 삭제 버튼의 onRowClick 이벤트 비활성화(variant='default')
                 return false;                               
             } else {
@@ -118,7 +119,18 @@ export default function TableCustom({
                     </Space>
                 )}
                 {table ? (
-                    <Table key={tableKey} data={data} variant={variant} onRowClick={onRowClick} pagination={pagination} modalPagination={modalPagination} columns={columns} handleYearChange={handleYearChange} />
+                    <Table 
+                        key={tableKey} 
+                        data={data} 
+                        variant={variant} 
+                        onRowClick={onRowClick} 
+                        pagination={pagination} 
+                        modalPagination={modalPagination} 
+                        columns={columns} 
+                        handleYearChange={handleYearChange} 
+                        subData={subData}
+                        expandedRow={expandedRow}
+                    />
                 ) : (<></>)}
             </div>
         </>
@@ -248,7 +260,6 @@ export function TableCustomDoubleClickEdit({
                 };
             });
 
-            console.log(requestBody);
             const response = await axiosInstance.put("/perf", requestBody);
 
             swalOptions.title = '성공!',

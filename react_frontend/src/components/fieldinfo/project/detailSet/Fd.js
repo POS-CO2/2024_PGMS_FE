@@ -155,12 +155,12 @@ export default function Fd({pjtId}) {
 
     // 설비 row 클릭 시 호출될 함수
     const handleEqClick = (eq) => {
-        setSelectedEq(eq ?? {});
+        setSelectedEq(eq.row ?? {});
     };
 
     // 설비LIB row 클릭 시 호출될 함수
-    const handleNotEqClick = (eq) => {
-        setSelectedEqLib(eq ?? {});
+    const handleEqLibClick = (eqLib) => {
+        setSelectedEqLib(eqLib.row ?? {});
     };
 
     const handleExcelUploadClick = (csvData, fileName) => {
@@ -201,14 +201,15 @@ export default function Fd({pjtId}) {
                     data={equips}
                     columns={equipColumns}                 
                     buttons={['Delete', 'DownloadExcel']}
-                    onClicks={[() => handleExcelUploadClick(equips, 'exported_table'), () => showModal('Delete')]}
+                    onClicks={[() => showModal('Delete'), () => handleExcelUploadClick(equips, 'exported_table')]}
                     onRowClick={handleEqClick}
                     selectedRows={[selectedEq]}
                     modals={[
                         {
                             modalType: 'Delete',
                             isModalOpen: isModalOpen.Delete,
-                            handleOk: () => handleOk('Delete') ({
+                            handleOk: (params) => handleOk('Delete') ({
+                                ...params,
                                 data: selectedEq, 
                                 setter: setEquips, 
                                 setterSelected: setSelectedEq
@@ -274,7 +275,7 @@ export default function Fd({pjtId}) {
                     </div>
 
                     <div className={pdsStyles.result_container}>
-                        <Table key={JSON.stringify(equips.length)} data={eqLibs} columns={equipColumns} onRowClick={handleNotEqClick} modalPagination={true} />
+                        <Table key={JSON.stringify(equips.length)} data={eqLibs} columns={equipColumns} onRowClick={handleEqLibClick} modalPagination={true} />
                         
                         <div className={pdsStyles.input_container} style={{ padding: '0.5rem', marginBottom: "1rem", marginTop: '20px' }}>
                             <div className={pdsStyles.search_title} style={{ marginRight: '0.2rem' }}>

@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { styled } from '@mui/material/styles';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
@@ -7,12 +7,13 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
-import { Box, Checkbox, TablePagination, TextField } from '@mui/material';
+import { pjtManagerColumns } from './assets/json/tableColumn';
+import { Box, Checkbox, TablePagination, TextField, Card, CardContent, Typography, CardMedia  } from '@mui/material';
 import InboxIcon from '@mui/icons-material/Inbox';
-import Typography from '@mui/material/Typography';
 
 // TableCell을 스타일링하는 컴포넌트
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
+    position: "relative",
   [`&.${tableCellClasses.head}`]: {
     backgroundColor: '#0A7800',
     color: '#FFFFFF',
@@ -21,6 +22,9 @@ const StyledTableCell = styled(TableCell)(({ theme }) => ({
     whiteSpace: 'nowrap', // 텍스트를 한 줄로 유지
     overflow: 'hidden', // 넘치는 내용을 숨기기
     textOverflow: 'ellipsis', // 넘치는 텍스트를 ...로 표시
+    minWidth: '5px', // min-width를 최소로 설정
+    width: 'auto', // 자동 크기 조정
+    maxWidth: '300px',
   },
   [`&.${tableCellClasses.body}`]: {
     fontSize: '0.9rem',
@@ -28,6 +32,28 @@ const StyledTableCell = styled(TableCell)(({ theme }) => ({
     whiteSpace: 'nowrap', // 텍스트를 한 줄로 유지
     overflow: 'hidden', // 넘치는 내용을 숨기기
     textOverflow: 'ellipsis', // 넘치는 텍스트를 ...로 표시
+    minWidth: '5px', // 최소 크기를 없앰
+    width: 'auto', // 자동 크기 조정
+    maxWidth: '300px',
+  },
+  '&:not(:last-child)::after': {
+    content: '""',
+    position: 'absolute',
+    top: '25%', // 위에서부터 시작할 위치 (전체 높이의 25%)
+    bottom: '25%', // 아래에서 끝날 위치 (전체 높이의 25%)
+    right: 0,
+    width: '0.06rem',
+    backgroundColor: '#FFF',
+  },
+  "& .resize-handle": {
+    position: "absolute",
+    right: 0,
+    top: 0,
+    bottom: 0,
+    width: "0.5rem",
+    cursor: "col-resize",
+    backgroundColor: "transparent",
+    zIndex: 1,
   },
 }));
 
@@ -59,6 +85,27 @@ const StyledCheckbox = styled(Checkbox)(({ theme, checked }) => ({
     },
 }));
 
+// 텍스트 길이에 따라 너비 계산하는 함수
+const calculateColumnWidths = (columns, data, fontWidth = 16) => {
+    const widths = {};
+
+    columns.forEach((col, index) => {
+        // hidden 컬럼은 건너뛰기
+        if (col.hidden) return;
+
+        // 각 열의 헤더 라벨과 데이터 중 가장 긴 텍스트 길이를 찾음
+        const maxTextLength = Math.max(
+            col.label.length, // 컬럼 라벨의 길이 고려
+            ...data.map((row) => (row[col.key] ? row[col.key].toString().length : 0)) // 데이터의 각 값을 문자열로 변환 후 길이 계산
+        );
+
+        // 최대 글자 수와 문자당 폭 (fontWidth)를 곱한 값으로 너비를 설정
+        // padding과 여백을 고려해 최소 너비를 설정
+        widths[`col${index}`] = Math.max(100, maxTextLength * fontWidth + 20); // 최소 100px 이상
+    });
+
+    return widths;
+};
 
 export default function CustomizedTables({
         data = [], 
@@ -72,12 +119,29 @@ export default function CustomizedTables({
         modalPagination = false,
         monthPagination = false,
         columns = [],
-        editedRows= []
+        editedRows= [],
+        subData = [], // 담당자 목록
+        expandedRow, // 확장된 행
     }) {
-    const [selectedRow, setSelectedRow] = useState({});       // default variant의 선택 상태
+    const [selectedRow, setSelectedRow] = useState(null);       // default variant의 선택 상태
     const [selectedRows, setSelectedRows] = useState([]); 
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(modalPagination ? 5 : (monthPagination ? 12 : 10));             // default page row length
+    const [columnWidths, setColumnWidths] = useState({});
+
+    // 데이터와 컬럼에 기반하여 초기 열 너비 설정
+    useEffect(() => {
+        if (data.length > 0 && columns.length > 0) {
+            const initialWidths = calculateColumnWidths(columns, data);
+            setColumnWidths(initialWidths);
+        }
+    }, [data, columns]);
+
+    const resizingColumn = useRef(null);
+    const startX = useRef(0);
+    const initialWidth = useRef(0);
+    const imageUrl = 'http://sanriokorea.co.kr/wp-content/themes/sanrio/images/kuromi.png';
+    
     const handleChangePage = (event, newPage) => {
         setPage(newPage);
     };
@@ -91,7 +155,7 @@ export default function CustomizedTables({
         if(variant === 'default') {
             const newSelectedRow = index === selectedRow ? null : index;
             setSelectedRow(newSelectedRow); // 같은 행 클릭 시 선택 해제
-            onRowClick(data[newSelectedRow]);
+            onRowClick({row: data[newSelectedRow], rowIndex: index});
         }
         if(variant === 'checkbox') {
             const addRow = (selectedRows) =>
@@ -102,13 +166,44 @@ export default function CustomizedTables({
 
             const newSelectedRows = addRow(selectedRows)
             setSelectedRows(newSelectedRows);                        // 행이 선택되지 않은 경우 prevSelectedRows 배열의 복사본을 만들고 그 배열에 index값을 추가
-            onRowClick(newSelectedRows.map(i => data[i]));
+            onRowClick({row: newSelectedRows.map(i => data[i])});
         }
     };
 
     const handleCheckboxClick = (e, index) => {
         e.stopPropagation();  // Checkbox 클릭 시 Row 클릭 이벤트가 발생하지 않도록 함
         handleRowClick(index);
+    };
+
+    // 마우스 드래그 시작 시 이벤트 처리
+    const handleMouseDown = (colKey, e) => {
+        resizingColumn.current = colKey;
+        startX.current = e.clientX;
+        initialWidth.current = columnWidths[colKey];
+
+        document.addEventListener("mousemove", handleMouseMove);
+        document.addEventListener("mouseup", handleMouseUp);
+    };
+
+    // 마우스 이동 시 컬럼 크기 조정
+    const handleMouseMove = (e) => {
+        if (resizingColumn.current) {
+            const newWidth = initialWidth.current + (e.clientX - startX.current);
+            const minWidth = 5; // 최소 너비 설정
+            const maxWidth = 500; // 최대 너비 설정
+
+            setColumnWidths((prevWidths) => ({
+                ...prevWidths,
+                [resizingColumn.current]: Math.max(minWidth, Math.min(newWidth, maxWidth)), // 최소와 최대 너비 적용
+            }));
+        }
+    };
+
+    // 마우스 드래그가 끝났을 때 이벤트 제거
+    const handleMouseUp = () => {
+        resizingColumn.current = null;
+        document.removeEventListener("mousemove", handleMouseMove);
+        document.removeEventListener("mouseup", handleMouseUp);
     };
 
     if (!data.length) {
@@ -132,12 +227,6 @@ export default function CustomizedTables({
         );
     }
 
-    // `id` 컬럼을 제외한 데이터 필터링
-    // const filteredData = data.map(row => {
-    //     const { id, ...rest } = row; // `id` 컬럼 제외
-    //     return rest;
-    // });
-
     const visibleColumns = columns.filter(col => !col.hidden);
 
     const filteredData = data.map(row => {
@@ -156,16 +245,28 @@ export default function CustomizedTables({
             boxSizing: 'border-box',
         }}>
             <TableContainer component={Paper} sx={{ 
-                    width: 'calc(100% - 10px)',
-                    margin: '0 auto',
-                    maxHeight: '100%'
+                width: '100%', // 부모 컨테이너의 너비에 맞춤
+                margin: '0 auto',
+                overflowX: 'auto', // 가로 스크롤 허용
             }}>
-                <Table sx={{ minWidth: 600 }} stickyHeader aria-label="customized table">
+                <Table sx={{ tableLayout: 'fixed' }} stickyHeader aria-label="customized table">
                     <TableHead>
                         <TableRow>
                         {variant === 'checkbox' && <StyledTableCell></StyledTableCell>}
-                        {visibleColumns.map(col => (
-                            <StyledTableCell key={col.key}>{col.label}</StyledTableCell>
+                        {visibleColumns.map((col, colIndex) => (
+                            <StyledTableCell 
+                                key={col.key}
+                                style={{ 
+                                    width: columnWidths[`col${colIndex + 1}`], 
+                                    minWidth: columnWidths[`col${colIndex + 1}`], // 최소 너비 설정
+                                }}
+                            >
+                                {col.label}
+                                <div
+                                    className="resize-handle"
+                                    onMouseDown={(e) => handleMouseDown(`col${colIndex + 1}`, e)}
+                                />
+                            </StyledTableCell>
                         ))}
                         </TableRow>
                     </TableHead>
@@ -173,49 +274,131 @@ export default function CustomizedTables({
                             {pagination ? (
                                 // 표에 data 채우기
                                 paginatedData.map((row, rowIndex) => (
-                                    <StyledTableRow 
-                                        key={rowIndex + (rowsPerPage * page)}
-                                        selected={variant === 'checkbox' 
+                                    <React.Fragment key={rowIndex}>
+                                        <StyledTableRow 
+                                            key={rowIndex + (rowsPerPage * page)}
+                                            selected={variant === 'checkbox' 
                                                 ? selectedRows.includes(rowIndex) 
                                                 : selectedRow === rowIndex + (rowsPerPage * page)}
-                                        variant={variant}
-                                        edited={editedRows.includes(rowIndex + (rowsPerPage * page))} // 수정된 행을 식별
-                                        onClick={() => handleRowClick(rowIndex + (rowsPerPage * page))}
-                                    >
-                                        {   // checkbox가 있는 테이블이면 체크박스 셀 추가
-                                            variant === 'checkbox' && (
-                                                <StyledTableCell>
-                                                    <StyledCheckbox 
-                                                        checked={selectedRows.includes(rowIndex + (rowsPerPage * page))}
-                                                        onClick={(e) => handleCheckboxClick(e, rowIndex + (rowsPerPage * page))}
-                                                    />
-                                                </StyledTableCell>
-                                            )
-                                        }
-
-                                        {   // 데이터 값 채우기
-                                            visibleColumns.map((col, colIndex) => (
-                                                <StyledTableCell 
-                                                    key={colIndex} 
-                                                    align="left"
-                                                    onDoubleClick={() => handleDoubleClick(rowIndex, colIndex)}
+                                                variant={variant}
+                                                edited={editedRows.includes(rowIndex + (rowsPerPage * page))} // 수정된 행을 식별
+                                                onClick={() => handleRowClick(rowIndex + (rowsPerPage * page))}
                                                 >
-                                                    {editingCell.row === rowIndex && editingCell.col === colIndex ? (
-                                                    <TextField
-                                                        value={row[col.key]}
-                                                        onChange={(e) => handleInputChange(e, rowIndex, colIndex)}
-                                                        onBlur={handleBlur}
-                                                        autoFocus
-                                                        size="small"
-                                                        sx={{width:"8rem"}}
-                                                    />  
-                                                ) : (
-                                                    row[col.key]
-                                                )}
+                                            {   // checkbox가 있는 테이블이면 체크박스 셀 추가
+                                                variant === 'checkbox' && (
+                                                    <StyledTableCell>
+                                                        <StyledCheckbox 
+                                                            checked={selectedRows.includes(rowIndex + (rowsPerPage * page))}
+                                                            onClick={(e) => handleCheckboxClick(e, rowIndex + (rowsPerPage * page))}
+                                                        />
+                                                    </StyledTableCell>
+                                                )
+                                            }
+
+                                            {   // 데이터 값 채우기
+                                                visibleColumns.map((col, colIndex) => (
+                                                    <StyledTableCell 
+                                                        key={colIndex} 
+                                                        align="left"
+                                                        onDoubleClick={() => handleDoubleClick(rowIndex, colIndex)}
+                                                    >
+                                                        {editingCell.row === rowIndex && editingCell.col === colIndex ? (
+                                                        <TextField
+                                                            value={row[col.key]}
+                                                            onChange={(e) => handleInputChange(e, rowIndex, colIndex)}
+                                                            onBlur={handleBlur}
+                                                            autoFocus
+                                                            size="small"
+                                                            sx={{width:"8rem"}}
+                                                        />  
+                                                    ) : (
+                                                        row[col.key]
+                                                    )}
+                                                    </StyledTableCell>
+                                                ))
+                                            }
+                                        </StyledTableRow>
+
+                                        {/* 클릭된 프로젝트 행 하단에 담당자 목록을 표시 */}
+                                        {expandedRow === rowIndex + (rowsPerPage * page) && (
+                                            <StyledTableRow>
+                                                <StyledTableCell colSpan={visibleColumns.length}>
+                                                <Box
+                                                    sx={{
+                                                        backgroundColor: '#FFF',
+                                                        padding: '1rem',
+                                                        display: 'flex',
+                                                        flexDirection: 'column',
+                                                        justifyContent: 'flex-start', 
+                                                        overflowX: 'auto',
+                                                        whiteSpace: 'nowrap',
+                                                    }}
+                                                >
+                                                    <Typography 
+                                                        variant="h6" 
+                                                        sx={{ 
+                                                            fontWeight: 'bold', 
+                                                            marginBottom: '1rem', // 제목과 카드들 사이에 간격 추가 
+                                                        }}
+                                                    >
+                                                        담당자 목록
+                                                    </Typography>
+                                                    {subData.length > 0 ? (
+                                                        <Box
+                                                            sx={{
+                                                                display: 'inline-flex',
+                                                                gap: '2rem', // 카드 간격
+                                                                padding: '1rem',
+                                                            }}
+                                                        >
+                                                            {subData.map((manager, mgrIndex) => (
+                                                                <Card 
+                                                                    key={mgrIndex} 
+                                                                    sx={{
+                                                                        minWidth: '16rem', // 고정된 카드 최소 너비
+                                                                        maxWidth: '16rem', // 고정된 카드 최대 너비
+                                                                        flexShrink: 0, // 가로 스크롤 시 크기가 줄어들지 않도록 설정
+                                                                        backgroundColor: '#F6FBD6',
+                                                                        padding: '1rem',
+                                                                        display: 'flex', 
+                                                                        alignItems: 'center',
+                                                                    }}
+                                                                >
+                                                                    <CardMedia
+                                                                        component="img"
+                                                                        sx={{ width: '4rem', height: '4rem', marginRight: '1rem', marginLeft: '1rem' }}  // 이미지 크기 설정
+                                                                        image={imageUrl} // 이미지 URL
+                                                                        alt={`${manager.userName} 프로필 이미지`}
+                                                                    />
+                                                                    <Box>
+                                                                        <CardContent>
+                                                                            {pjtManagerColumns
+                                                                                .filter((col) => !col.hidden) // 'hidden: true' 필드를 제외
+                                                                                .map((col) => (
+                                                                                <Typography key={col.key} variant="body2">
+                                                                                    <strong>{col.label}:</strong> {manager[col.key]}
+                                                                                </Typography>
+                                                                            ))}
+                                                                        </CardContent>
+                                                                    </Box>
+                                                                </Card>
+                                                            ))}
+                                                        </Box>
+                                                        ) : (
+                                                            
+                                                            // subData가 없을 때 보여줄 메시지
+                                                            <Typography 
+                                                                variant="body2" 
+                                                                color="textSecondary" 
+                                                                sx={{ fontSize: '1rem' }}>
+                                                                지정된 현장담당자가 없습니다.
+                                                            </Typography>
+                                                        )}
+                                                    </Box>
                                                 </StyledTableCell>
-                                            ))
-                                        }
-                                    </StyledTableRow>
+                                            </StyledTableRow>
+                                        )}
+                                    </React.Fragment>
                                 ))) :
                                 (
                                     filteredData.map((row, index) => (
@@ -253,7 +436,6 @@ export default function CustomizedTables({
                                                         ) : (
                                                             row[value.key]
                                                         )}
-                                                        {/* {value} */}
                                                     </StyledTableCell>
                                                 ))
                                             }

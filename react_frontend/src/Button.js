@@ -16,7 +16,7 @@ const buttonMap = {
   UploadExcel: UploadExcelButton,
   DownloadExcelForm: DownloadExcelFormButton,
   DownloadExcel: DownloadExcelButton,
-  ShowDetails: ShowDetailsButton
+  ShowDetails: ShowDetailsButton,
 };
 
 export const CustomButton = styled(Button)(({disabled}) => ({

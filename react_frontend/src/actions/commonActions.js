@@ -2,6 +2,7 @@ import { useRecoilCallback, useRecoilState } from 'recoil';
 import { modalState } from '../atoms/pdsAtoms'
 import axiosInstance from '../utils/AxiosInstance';
 import Swal from 'sweetalert2';
+import { ContinuousColorLegend } from '@mui/x-charts';
 
 // 조회 액션
 export const useSearchAction = () => {
@@ -88,7 +89,6 @@ export const useModalActions = () => {
 // 모달 내의 버튼(등록, 수정, 삭제) 액션
 export const useHandleOkAction = () => {
   return useRecoilCallback(({ set }) => (modalType) => async ({data, setter, setterSelected, url, requestBody, successMsg}) => {
-
     let swalOptions = {
       confirmButtonText: '확인'
     };
@@ -98,14 +98,13 @@ export const useHandleOkAction = () => {
 
     if (modalType.includes('Add')) {
       try {
-        //const response = await axiosInstance.post(url, requestBody);
-        console.log("handleOk", useHandleOkAction);
+        const response = await axiosInstance.post(url, requestBody);
 
-        // 등록한 데이터를 목록에 추가
-        // setter(prevRegs => [
-        //   ...(Array.isArray(response.data) ? response.data : [response.data]),  //배열이면 ...response.data, 배열이 아니면 배열로 강제변환
-        //   ...prevRegs
-        // ]);
+        //등록한 데이터를 목록에 추가
+        setter(prevRegs => [
+          ...(Array.isArray(response.data) ? response.data : [response.data]),  //배열이면 ...response.data, 배열이 아니면 배열로 강제변환
+          ...prevRegs
+        ]);
 
         swalOptions.title = '성공!',
         swalOptions.text = successMsg;
@@ -117,10 +116,10 @@ export const useHandleOkAction = () => {
         swalOptions.text = error.response.data.message;
         swalOptions.icon = 'error';
       }
-      
+      Swal.fire(swalOptions);
     } else if (modalType.includes('Edit')) {
       try {
-        //const response = await axiosInstance.patch(url, requestBody);
+        const response = await axiosInstance.patch(url, requestBody);
 
         // 수정한 데이터를 목록에 업데이트
         setter(originData => 
@@ -139,6 +138,7 @@ export const useHandleOkAction = () => {
         swalOptions.text = error.response.data.message;
         swalOptions.icon = 'error';
       }
+      Swal.fire(swalOptions);
     } else if (modalType === 'Delete') {
       // 삭제한 데이터를 목록에서 제거
       setter(originData => originData.filter(row => row.id !== data.id));
