@@ -60,7 +60,7 @@ const formItemComponents = {
     SearchAtModal
 };
 
-export default function SearchForms({ onFormSubmit, formFields, autoSubmitOnInit=false, onProjectSelect=null }) {
+export default function SearchForms({ onFormSubmit, formFields, autoSubmitOnInit=false, onProjectSelect=()=>{} }) {
     const [form] = Form.useForm();
     const [isInitialSubmit, setIsInitialSubmit] = useState(autoSubmitOnInit); // 첫 렌더링 여부를 추적하는 상태
 
