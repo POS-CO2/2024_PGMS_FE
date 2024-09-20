@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import SearchForms from "../../../SearchForms";
 import { formField_psq } from "../../../assets/json/searchFormData"
 import { CustomButton } from '../Ps_1_2';
-import Table from "../../../Table";
 import TableCustom from "../../../TableCustom.js";
 import ChartCustom from "../../../ChartCustom.js";
 import * as mainStyle from '../../../assets/css/main.css';
@@ -88,7 +87,7 @@ export default function Psq() {
                 { data: Array(12).fill(null), stack: 'A', label: 'Scope 1' },
                 { data: Array(12).fill(null), stack: 'A', label: 'Scope 2' }
             ]);
-
+            //setChartPerfs([]);
             setPerfsData([]);
 
         } else {
@@ -170,7 +169,6 @@ export default function Psq() {
         })
 
         setEmissionTableData(emissionPerfsData);
-        console.log(emissionPerfsData);
     };
 
     const valueFormatter = (item) => `${item.value}`;
