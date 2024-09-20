@@ -5,7 +5,6 @@ import { Chip, CircularProgress, Divider, Fab, IconButton, Snackbar } from "@mui
 import { ConfigProvider, Input } from "antd";
 import TextArea from "antd/es/input/TextArea";
 import axiosInstance from "../utils/AxiosInstance";
-import ScrollToBottom from 'react-scroll-to-bottom';
 import {useInView} from 'react-intersection-observer';
 
 export default function Chatting({ UserListIcon ,handleChatListClick, chatUser, me, chatContent, setChatContent, handleRead,handleReadAll, ws, fetchRoom, roomChange, setRoomChange, updateChatList}) {

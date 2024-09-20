@@ -59,7 +59,6 @@
     "jest": "^29.7.0",
     "jest-worker": "^29.7.0",
     "node-sass": "^9.0.0",
-    "react-scroll-to-bottom": "^4.2.0",
     "sass-loader": "^14.2.1",
     "style-loader": "^4.0.0",
     "webpack": "^5.92.1",
