@@ -1636,12 +1636,11 @@ export function EfmEditModal({ isModalOpen, handleOk, handleCancel, rowData }) {
         try {
             // POST 요청으로 서버에 데이터 전송
             const response = await axiosInstance.patch('/equip/coef', formData);
-            console.log("response", response);
 
             // handleOk을 호출하여 모달을 닫고 상위 컴포넌트에 알림
             handleOk(response.data);
             swalOptions.title = '성공!',
-            swalOptions.text = `배출계수가 성공적으로 등록되었습니다.`;
+            swalOptions.text = `${formData.applyDvs}(이)가 성공적으로 수정되었습니다.`;
             swalOptions.icon = 'success';
         } catch (error) {
             console.error('Failed to add user:', error);

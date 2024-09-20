@@ -2,7 +2,6 @@ import React, {useState, useRef, useEffect} from 'react';
 import { useNavigate, Outlet } from 'react-router-dom';
 import styled from 'styled-components';
 import Sidebar from './Sidebar';
-import Favorite from "./Favorite";
 import TabsContainer from './TabsContainer';
 import  * as mainStyles from './assets/css/main.css';
 
@@ -35,6 +34,8 @@ const ContentContainer = styled.div`
     overflow: hidden;
 `;
 
+
+// 백엔드에서 받은 메뉴 데이터를 라이브러리 형식에 맞춰 items(key, label, path)로 변환 
 const mapMenuDataToItems = (menuData) => {
     return menuData.map((menuItem, index) => {
       const icon = index === 0 ? <PieChartOutlined /> : index === 1 ? <MailOutlined /> : <AppstoreOutlined />;
@@ -100,7 +101,7 @@ export default function SiteLayout({handleLogout, menus, user}){
         const response = await axiosInstance.post(`/sys/log/click?menuId=${item.key}`);
     };
 
-    /* 마지막으로 선택한 대분류 토글만 내리기 */
+    // 마지막으로 선택한 대분류 토글만 내리기
     const handleOpenChange = (keys) => {
         const latestOpenKey = keys.find(key => !openKeys.includes(key));
         if (items.map(item => item.key).includes(latestOpenKey)) {
@@ -110,13 +111,14 @@ export default function SiteLayout({handleLogout, menus, user}){
         }
     };
 
+    // 메뉴를 클릭했을 때, key값으로 item을 찾음
     const findItemByKey = (items, key) =>
         items.reduce((acc, item) => {
         if (acc) return acc;
         if (item.key === key) return item;
         if (item.children) return findItemByKey(item.children, key);
         return null;
-        }, null);
+    }, null);
 
     if (loading) {
         return (
@@ -136,7 +138,6 @@ export default function SiteLayout({handleLogout, menus, user}){
                         ref={tabsContainerRef} 
                     />
                     <Outlet />
-                    <Favorite handleFavClick={handleFavClick} fav={fav}/>
                 </ContentContainer>
             </div>
         );
@@ -161,7 +162,6 @@ export default function SiteLayout({handleLogout, menus, user}){
                 <div style={{ overflowY: 'auto' }}>
                     <Outlet />
                 </div>
-                <Favorite handleFavClick={handleFavClick} fav={fav}/>
             </ContentContainer>
         </div>
     );

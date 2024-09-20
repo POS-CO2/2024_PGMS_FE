@@ -1,4 +1,6 @@
 import React, { useState, useEffect, useRef, forwardRef, useImperativeHandle } from 'react';
+import { useRecoilState } from "recoil";
+import { openTabsState, activeTabState } from './atoms/tabAtoms';
 import { Tabs, Dropdown, Menu, Button } from 'antd';
 import { CloseOutlined } from '@ant-design/icons';
 import GTranslateIcon from '@mui/icons-material/GTranslate';
@@ -187,8 +189,8 @@ const DraggableTabNode = ({ index, moveTabNode, children }) => {
 };
 
 const TabsContainer = forwardRef(({ handleLogout, user }, ref) => {
-  const [tabs, setTabs] = useState([]);
-  const [activeKey, setActiveKey] = useState('');
+  const [tabs, setTabs] = useRecoilState(openTabsState);
+  const [activeKey, setActiveKey] = useRecoilState(activeTabState);
   const navigate = useNavigate();
   const homeTabAdded = useRef(false); // 홈 탭이 추가되었는지 추적하는 플래그
 
@@ -355,6 +357,7 @@ const TabsContainer = forwardRef(({ handleLogout, user }, ref) => {
   return (
     <DndProvider backend={HTML5Backend}>
       <TabsWrapper>
+        {/* 탭 섹션 */}
         <TabContainer>
           <StyledTabs
             activeKey={activeKey}
@@ -366,9 +369,11 @@ const TabsContainer = forwardRef(({ handleLogout, user }, ref) => {
           />
         </TabContainer>
         <TopRightWrapper>
+          {/* 다국어 섹션 */}
           <Dropdown overlay={languageMenu} trigger={['click']} placement="bottomCenter">
             <GTranslateIcon style={{ cursor: 'pointer', color: '#0A7800', fontSize: '30px' }} />
           </Dropdown>
+          {/* 유저 섹션 */}
           <Dropdown overlay={menu} trigger={['click']} placement="bottomRight">
             <UserInfo>
               <Photo>

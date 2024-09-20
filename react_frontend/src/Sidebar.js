@@ -1,11 +1,7 @@
-import React, { useState } from 'react';
-import {
-  AppstoreOutlined,
-  MailOutlined,
-  LeftOutlined,
-  PieChartOutlined,
-} from '@ant-design/icons';
-import { Button, ConfigProvider, Menu } from 'antd';
+import React from 'react';
+import Favorite from './Favorite';
+import { LeftOutlined } from '@ant-design/icons';
+import { Button, ConfigProvider, Menu, List } from 'antd';
 import styled from 'styled-components';
 import Logo from './assets/logo.svg';
 
@@ -123,8 +119,12 @@ const theme = {
 }
 
 export default function Sidebar({ collapsed, toggleCollapsed, items, onMenuClick, openKeys, onOpenChange }) {
+  const favorites = ["활동량 관리", "프로젝트별 조회", "총량실적 조회", "프로젝트 관리", "설비LIB 관리"];
+
   return (
     <SidebarContainer $collapsed={collapsed}>
+
+      {/* 로고 섹션 */}
       <LogoContainer onClick={toggleCollapsed}>
         <LogoImage src={Logo} alt="로고" />
         <LogoTextContainer $collapsed={collapsed}>
@@ -135,6 +135,8 @@ export default function Sidebar({ collapsed, toggleCollapsed, items, onMenuClick
           {collapsed ? null : <StyledLeftOutlined />}
         </ToggleButton>
       </LogoContainer>
+
+      {/* 메뉴 섹션 */}
       <ConfigProvider theme={theme}>
         <StyledMenu
           mode="inline"
@@ -146,6 +148,10 @@ export default function Sidebar({ collapsed, toggleCollapsed, items, onMenuClick
           onOpenChange={onOpenChange}
         />
       </ConfigProvider>
+
+      {/* 즐겨찾기 섹션 */}
+      <Favorite favoriteData={favorites} items={items} />
+
     </SidebarContainer>
   );
 };

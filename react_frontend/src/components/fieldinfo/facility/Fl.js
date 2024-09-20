@@ -153,7 +153,7 @@ export default function Fl() {
                 setEqLibs(prevEqLibs => [...prevEqLibs, response.data]);
 
                 swalOptions.title = '성공!',
-                swalOptions.text = '설비LIB가 성공적으로 등록되었습니다.';
+                swalOptions.text = `${data.eqLibName}(이)가 성공적으로 등록되었습니다.`;
                 swalOptions.icon = 'success';
             } catch (error) {
                 console.log(error);
@@ -187,7 +187,7 @@ export default function Fl() {
                 setActves(prevActves => [...prevActves, ...response.data]);
 
                 swalOptions.title = '성공!',
-                swalOptions.text = '활동자료가 성공적으로 지정되었습니다.';
+                swalOptions.text = `${data.actvDataName}(이)가 성공적으로 지정되었습니다.`;
                 swalOptions.icon = 'success';
             } catch (error) {
                 console.log(error);
@@ -217,7 +217,7 @@ export default function Fl() {
                 setSelectedEqLib({});
 
                 swalOptions.title = '성공!',
-                swalOptions.text = '설비LIB이 성공적으로 수정되었습니다.';
+                swalOptions.text = `${data.eqLibName}(이)가 성공적으로 수정되었습니다.`;
                 swalOptions.icon = 'success';
             } catch (error) {
                 console.log(error);

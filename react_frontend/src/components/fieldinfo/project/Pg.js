@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
+import { useNavigate } from 'react-router-dom';
 import { useRecoilState } from "recoil";
 import { pjtMgrSearchForm } from '../../../atoms/searchFormAtoms';
+import { openTabsState, activeTabState } from '../../../atoms/tabAtoms';
 import Swal from 'sweetalert2';
 import { Card, Accordion, AccordionSummary, AccordionDetails } from '@mui/material';
 import * as mainStyles from "../../../assets/css/main.css"
@@ -23,6 +25,10 @@ export default function Pg() {
         Delete: false
     });
     const [expandedRow, setExpandedRow] = useState(null);           // 아코디언 확장 상태
+
+    // const navigate = useNavigate();
+    // const [openTabs, setOpenTabs] = useRecoilState(openTabsState);
+    // const [activeKey, setActiveKey] = useRecoilState(activeTabState);
 
     const fetchOptions = async (unitType) => {
         const response = await axiosInstance.get(`/sys/unit?unitType=${unitType}`);
@@ -134,7 +140,6 @@ export default function Pg() {
 
     // 프로젝트 등록 버튼 클릭 시 호출될 함수
     const handleOk = (modalType) => async (data) => {
-        console.log("data", data);
         const newPjts = data.row;
 
         setIsModalOpen(prevState => ({ ...prevState, [modalType]: false })); //모달 닫기
@@ -189,6 +194,17 @@ export default function Pg() {
         showModal('Delete');
     };
 
+    // const handleButtonClick = (path, label) => {
+    //     const newTab = { key: path, tab: label };
+    
+    //     if (!openTabs.find(tab => tab.key === path)) {
+    //       setOpenTabs([...openTabs, newTab]);  // 새로운 탭 추가
+    //     }
+        
+    //     setActiveKey(path);  // activeKey를 변경
+    //     navigate(path);  // 경로 이동
+    // };
+
     return (
         <>
             <div className={mainStyles.breadcrumb}>현장정보 &gt; 프로젝트 &gt; 프로젝트 관리</div>
@@ -231,6 +247,9 @@ export default function Pg() {
                                     }
                                 ]}
                             />
+                            {/* <button onClick={() => handleButtonClick('/pds', '프로젝트 상세설정')}>
+                                새 페이지 열기
+                            </button> */}
                         </Card>
                     )}
                 </div>
