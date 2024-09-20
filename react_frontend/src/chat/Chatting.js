@@ -8,7 +8,7 @@ import axiosInstance from "../utils/AxiosInstance";
 import ScrollToBottom from 'react-scroll-to-bottom';
 import {useInView} from 'react-intersection-observer';
 
-export default function Chatting({ UserListIcon ,handleChatListClick, chatUser, me, chatContent, setChatContent }) {
+export default function Chatting({ UserListIcon ,handleChatListClick, chatUser, me, chatContent, setChatContent, handleRead,handleReadAll, ws, fetchRoom, roomChange, setRoomChange, updateChatList}) {
 
     const [text, setText] = useState('');
     const [isLoading, setIsLoading] = useState(false);
@@ -47,17 +47,32 @@ export default function Chatting({ UserListIcon ,handleChatListClick, chatUser, 
             try {
                 const sendMessage = await axiosInstance.post(`/chat`, formData);
                 console.log('Message sent:', text);
-                setText('');    
+                if (sendMessage.data) {
+                    ws.send(JSON.stringify(formData));  // WebSocket으로 메시지를 전송
+                    console.log('Message sent via WebSocket:', formData);
+                    setText('');
+                    setRoomChange(!roomChange);
+                    await fetchRoom();
+                } 
             } catch (error) {
                 console.error(error);
             }
-            
         }
     };
     const handleKeyPress = (e) => {
-        if (e.key === 'Enter' && !e.shiftKey) { 
+        if (e.key === 'Enter' && !e.shiftKey) {
             e.preventDefault();
-            handleSend(); 
+            if (text.trim()) { 
+                handleSend();
+            }
+        }
+    };
+
+    const markAsRead = async (messageId) => {
+        try {
+            await axiosInstance.post(`/chat/check?objectId=${messageId}`);
+        } catch (error) {
+            console.error('Failed to mark message as read:', error);
         }
     };
 
@@ -66,6 +81,39 @@ export default function Chatting({ UserListIcon ,handleChatListClick, chatUser, 
             loadMoreMessages();
         }
     }, [inView]);
+
+    useEffect(() => {
+        if (!ws) return;
+
+
+        const handleMessage = (event) => {
+            const message = JSON.parse(event.data);
+            console.log(message);
+            if(message.type === 'READ'){
+                handleRead(message.messageId);
+            }
+            else if (message.type === 'READ_ALL'){
+                handleReadAll();
+            }
+            else if (message.type === 'KEYBOARD'){
+                
+            }
+            else if (message.type === 'CHAT') {
+                // updateChatList(message)
+                setChatContent((prevContent) => [message, ...prevContent]);
+                if (message.senderId !== me.id) markAsRead(message.id);
+            }
+            else {
+                return ;
+            }
+        };
+
+        ws.addEventListener('message', handleMessage);
+
+        return () => {
+            ws.removeEventListener('message', handleMessage)
+        };
+    }, [ws, me]);
 
 
     return (

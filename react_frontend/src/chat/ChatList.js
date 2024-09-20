@@ -1,19 +1,41 @@
 import React, { useEffect, useState } from 'react';
 import * as chatStyles from '../assets/css/chat.css'
-import { Badge } from '@mui/material';
-import Chatting from './Chatting';
-import axiosInstance from '../utils/AxiosInstance';
 
-export default function ChatList({ UserListIcon, handleChattingClick, room }){
+export default function ChatList({ UserListIcon, handleChattingClick, room, fetchRoom, roomChange, setRoomChange, ws }){
 
+    useEffect(() => {
+        if (!ws) return;
+
+
+        const handleMessage = (event) => {
+            const message = JSON.parse(event.data);
+            console.log(message);
+            if (message.type === 'CHAT') {
+                // updateChatList(message)
+                fetchRoom();
+            }
+            else {
+                return ;
+            }
+        };
+
+        ws.addEventListener('message', handleMessage);
+
+        return () => {
+            ws.removeEventListener('message', handleMessage)
+        };
+    }, [ws]);
+
+    useEffect(()=> {
+        fetchRoom();
+    },[])
 
     return (
         <div className={chatStyles.chatlist}>
-            {/* 채팅 목록 하나 */}
             {room.map(data => (
-                <div className={chatStyles.chat_block} key={data.users[0].id} onDoubleClick={() => handleChattingClick(data.users[0])}>
+                <div className={chatStyles.chat_block} onDoubleClick={() => handleChattingClick(data.users[0])}>
                     <div style={{display:"flex", flexDirection:"row", gap:"1rem"}} >
-                        <UserListIcon data={data.users}/>
+                        <UserListIcon data={data.users[0]}/>
                         <div>
                             <div style={{fontWeight:"500"}}>
                             {data.users[0].userName}
@@ -34,9 +56,7 @@ export default function ChatList({ UserListIcon, handleChattingClick, room }){
                         ) : (
                             <div className={chatStyles.chat_badge_zero}>
                             </div>    
-                        )
-                        }
-                        
+                        )}
                     </div>
                 </div>
             ))}

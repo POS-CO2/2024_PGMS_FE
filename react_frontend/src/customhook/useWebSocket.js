@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import axiosInstance from '../utils/AxiosInstance';
 
 const useWebSocket = (url) => {
     const [socket, setSocket] = useState(null);
@@ -15,7 +16,7 @@ const useWebSocket = (url) => {
 
         ws.onmessage = (event) => {
             const newMessage = JSON.parse(event.data);
-            setMessages((prevMessages) => [...prevMessages, newMessage]);
+            setMessages(newMessage);
         };
 
         ws.onclose = () => {
@@ -34,9 +35,14 @@ const useWebSocket = (url) => {
         };
     }, [url]);
 
-    const sendMessage = (message) => {
+    const sendMessage = async (message, targetId) => {
         if (socket && isConnected) {
             socket.send(JSON.stringify(message));
+            const formData = {
+                receiverId : targetId,
+                message,
+            }
+            const post = await axiosInstance.post(`/chat`, formData);
         }
     };
 
