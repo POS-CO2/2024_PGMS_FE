@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import * as chatStyles from '../assets/css/chat.css'
-import { ArrowBackIosNew, Send } from "@mui/icons-material";
-import { Chip, CircularProgress, Divider, IconButton } from "@mui/material";
+import { ArrowBackIosNew, ArrowDownward, Send } from "@mui/icons-material";
+import { Chip, CircularProgress, Divider, Fab, IconButton, Snackbar } from "@mui/material";
 import { ConfigProvider, Input } from "antd";
 import TextArea from "antd/es/input/TextArea";
 import axiosInstance from "../utils/AxiosInstance";
@@ -13,6 +13,7 @@ export default function Chatting({ UserListIcon ,handleChatListClick, chatUser, 
     const [text, setText] = useState('');
     const [isLoading, setIsLoading] = useState(false);
     const chatContainerRef = useRef(null);
+    const [showScrollToBottom, setShowScrollToBottom] = useState(false);
 
     const { ref: sentinelRef, inView} = useInView({
         threshold: 0,
@@ -60,6 +61,7 @@ export default function Chatting({ UserListIcon ,handleChatListClick, chatUser, 
         }
     };
     const handleKeyPress = (e) => {
+        if (e.isComposing || e.keyCode === 229) return; 
         if (e.key === 'Enter' && !e.shiftKey) {
             e.preventDefault();
             if (text.trim()) { 
@@ -67,6 +69,35 @@ export default function Chatting({ UserListIcon ,handleChatListClick, chatUser, 
             }
         }
     };
+
+    const handleScroll = () => {
+        const container = chatContainerRef.current;
+        if (container) {
+            const isAtBottom = container.scrollHeight - container.scrollTop <= container.clientHeight + 200;
+            setShowScrollToBottom(!isAtBottom);  
+        }
+    };
+
+    const scrollToBottom = () => {
+        const container = chatContainerRef.current;
+        if (container) {
+            container.scrollTop = container.scrollHeight;   
+            setShowScrollToBottom(false);  
+        }
+    };
+
+    useEffect(() => {
+        const container = chatContainerRef.current;
+        if (container) {
+            container.addEventListener('scroll', handleScroll);
+        }
+
+        return () => {
+            if (container) {
+                container.removeEventListener('scroll', handleScroll);
+            }
+        };
+    }, [chatContent]);
 
     const markAsRead = async (messageId) => {
         try {
@@ -134,6 +165,14 @@ export default function Chatting({ UserListIcon ,handleChatListClick, chatUser, 
             </div>
             <Divider variant="middle" />
             <div className={chatStyles.chatting_content} ref={chatContainerRef}>
+                {showScrollToBottom && (
+                    <Fab 
+                        size="small" 
+                        onClick={scrollToBottom} 
+                        style={{position: 'fixed', bottom: '120px', right: '16px', backgroundColor:"rgb(14,170,0)"}}>
+                        <ArrowDownward sx={{color:"white"}}/>
+                    </Fab>
+                )}
                 {chatContent.map((data, idx) => (
                     <div style={{display:"flex", flexDirection:"row", alignItems:"flex-end"}}>
                         <div key={idx} className={data.senderId === me.id ? chatStyles.mymessage : chatStyles.targetmessage} style={{position:"relative"}}>
@@ -157,8 +196,8 @@ export default function Chatting({ UserListIcon ,handleChatListClick, chatUser, 
                         placeholder="보낼 메시지를 입력하세요." 
                         onKeyDown={handleKeyPress}
                         autoSize={{
-                            minRows: 4,
-                            maxRows: 4,
+                            minRows: 2,
+                            maxRows: 3,
                         }} />
                         <IconButton onClick={handleSend}>
                             <Send sx={{color:"#6cbb66"}} />
