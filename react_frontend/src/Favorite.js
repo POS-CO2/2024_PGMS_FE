@@ -1,4 +1,8 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useRecoilState } from "recoil";
+import { favState } from './atoms/tabAtoms';
+import { openTabsState, activeTabState } from './atoms/tabAtoms';
 import styled from 'styled-components';
 import { ConfigProvider, List } from 'antd';
 import { StarOutlined } from '@ant-design/icons';
@@ -42,6 +46,12 @@ const FavoritesList = styled(List)`
     align-items: center;
     justify-content: flex-start;
     margin-left: 0.3rem;
+    cursor: pointer;
+    transition: color 0.3s ease;
+
+    &:hover {
+      color: #0EAA00; /* 호버 시 색상을 #0EAA00으로 변경 */
+    }
   }
 `;
 
@@ -55,43 +65,50 @@ const FavoriteItem = styled.div`
   justify-content: flex-start;
 `;
 
-const Favorite = ({ favoriteData, items }) => {
 
-    // 즐겨찾기 메뉴를 클릭했을때, label값으로 item을 찾음
-    const findItemByLabel = (items, key) =>
-        items.reduce((acc, item) => {
-        if (acc) return acc;
-        if (item.key === key) return item;
-        if (item.children) return findItemByKey(item.children, key);
-        return null;
-    }, null);
+const Favorite = () => {
+  const [fav, setFav] = useRecoilState(favState);
+  const navigate = useNavigate();
+  const [openTabs, setOpenTabs] = useRecoilState(openTabsState);
+  const [activeKey, setActiveKey] = useRecoilState(activeTabState);
 
-    return (
-        <ConfigProvider
-            theme={{
-                token:{
-                    fontFamily:"SUITE-Regular"
-                }
-            }} 
-        >
-            <FavoritesContainer>
-                <FavoritesTitle>즐겨찾기</FavoritesTitle>
-                <FavoritesList
-                    dataSource={favoriteData}
-                    renderItem={item => (
-                    <List.Item>
-                        <IconContainer>
-                            <StarOutlined />
-                        </IconContainer>
-                        <FavoriteItem>
-                            {item}
-                        </FavoriteItem>
-                    </List.Item>
-                    )}
-                />
-            </FavoritesContainer>
-        </ConfigProvider>
-    );
+  const onFavClick = (path, label) => {
+    const newTab = { key: path, tab: label };
+
+    if (!openTabs.find(tab => tab.key === path)) {
+      setOpenTabs([...openTabs, newTab]);  // 새로운 탭 추가
+    }
+    
+    setActiveKey(path);  // activeKey를 변경
+    navigate(path);  // 경로 이동
+  };
+
+  return (
+      <ConfigProvider
+          theme={{
+              token:{
+                  fontFamily:"SUITE-Regular"
+              }
+          }} 
+      >
+          <FavoritesContainer>
+              <FavoritesTitle>즐겨찾기</FavoritesTitle>
+              <FavoritesList
+                  dataSource={fav}
+                  renderItem={item => (
+                  <List.Item onClick={() => onFavClick(item.address, item.menuName)}>
+                      <IconContainer>
+                          <StarOutlined />
+                      </IconContainer>
+                      <FavoriteItem>
+                          {item.menuName}
+                      </FavoriteItem>
+                  </List.Item>
+                  )}
+              />
+          </FavoritesContainer>
+      </ConfigProvider>
+  );
 };
 
 export default Favorite;
