@@ -85,35 +85,39 @@ export default function Fl() {
         try {
             const response = await axiosInstance.get("/equip/lib", {params});
             setEqLibs(response.data);
+            setActves([]);
         } catch (error) {
             console.error("Error fetching equip lib data:", error);
         }
     };
 
     // 설비LIB row 클릭 시 호출될 함수
-    const handleEqLibClick = async (lib) => {
+    const handleEqLibClick = async (data) => {
+        const lib = data.row;
+
         // lib가 없으면 selectedEqLib를 빈 객체로 설정하고, 함수 종료
         if (!lib) {
             setSelectedEqLib({});
             setActves([]);
             return;
-        }
+        } else {
+            // lib가 있으면 selectedEqLib를 설정하고 API 호출
+            setSelectedEqLib(lib);
+    
+            try {
+                // 선택한 lib에 매핑된 활동자료 목록 조회
+                const response = await axiosInstance.get(`/equip/actv/${lib.id}`);
+                setActves(response.data);
+            } catch (error) {
+                console.error("Error fetching activity data:", error);
+            }
+        };
 
-        // lib가 있으면 selectedEqLib를 설정하고 API 호출
-        setSelectedEqLib(lib);
-
-        try {
-            // 선택한 lib에 매핑된 활동자료 목록 조회
-            const response = await axiosInstance.get(`/equip/actv/${lib.id}`);
-            setActves(response.data);
-        } catch (error) {
-            console.error("Error fetching activity data:", error);
-        }
-    };
+    }
 
     // 활동자료 row 클릭 시 호출될 함수
     const handleActvClick = (actv) => {
-        setSelectedActv(actv ?? {});
+        setSelectedActv(actv.row ?? {});
     };
 
     // 모달 열기
@@ -140,14 +144,7 @@ export default function Fl() {
 
                 const response = await axiosInstance.post("/equip/lib", requestBody);
 
-                // 기존 프로젝트에서 placeholderPjt를 제거하고 새 데이터를 병합
-                setEqLibs(prevEqLibs => {
-                    // placeholderProject 제거
-                    const cleanedEqLibs = prevEqLibs.filter(eqLib => eqLib.id !== '');
-
-                    // 새로 추가된 설비LIB을 병합
-                    return [...cleanedEqLibs, response.data];
-                });
+                setEqLibs(prevEqLibs => [...prevEqLibs, response.data]);
 
                 swalOptions.title = '성공!',
                 swalOptions.text = '설비LIB가 성공적으로 등록되었습니다.';
@@ -156,7 +153,7 @@ export default function Fl() {
                 console.log(error);
 
                 swalOptions.title = '실패!',
-                swalOptions.text = '설비LIB 등록에 실패하였습니다.';
+                swalOptions.text = error.response.data.message;
                 swalOptions.icon = 'error';
             }
             Swal.fire(swalOptions);
@@ -169,9 +166,11 @@ export default function Fl() {
                 console.log(error);
             }
         } else if (modalType === 'FadAdd') {
+            const newFads = data.row;
+
             try {
                 // data 배열을 순회하며 requestBody 배열 생성
-                const requestBody = data.map(actv => ({
+                const requestBody = newFads.map(actv => ({
                     equipLibId: selectedEqLib.id,
                     actvDataId: actv.id,
                 }));
@@ -179,13 +178,7 @@ export default function Fl() {
                 const response = await axiosInstance.post("/equip/libmap", requestBody);
 
                 // 기존 활동자료에서 placeholderActv를 제거하고 새 데이터를 병합
-                setActves(prevActves => {
-                    // placeholderProject 제거
-                    const cleanedActves = prevActves.filter(actv => actv.id !== '');
-
-                    // 새로 추가된 설비LIB을 병합
-                    return [...cleanedActves, ...response.data];
-                });
+                setActves(prevActves => [...prevActves, ...response.data]);
 
                 swalOptions.title = '성공!',
                 swalOptions.text = '활동자료가 성공적으로 지정되었습니다.';
@@ -194,7 +187,7 @@ export default function Fl() {
                 console.log(error);
 
                 swalOptions.title = '실패!',
-                swalOptions.text = '활동자료 지정에 실패하였습니다.';
+                swalOptions.text = error.response.data.message;
                 swalOptions.icon = 'error';
             }
         } else if (modalType === 'FlEdit') {
@@ -224,8 +217,8 @@ export default function Fl() {
                 console.log(error);
 
                 swalOptions.title = '실패!',
-                swalOptions.text = '설비LIB 수정에 실패하였습니다.';
-                swalOptions.icon = 'success';
+                swalOptions.text = error.response.data.message;
+                swalOptions.icon = 'error';
             }
         } else if (modalType === 'DeleteB') {
             try {
@@ -310,7 +303,7 @@ export default function Fl() {
                         />
                     </Card>
                     <Card sx={{ width: "50%", borderRadius: "0.5rem", paddingBottom: "20px" }}>
-                        {(!actves || actves.length === 0) ?
+                        {(!selectedEqLib || Object.keys(selectedEqLib).length === 0) ?
                         <div className={pdsStyles.card_container}>
                             <div className={pdsStyles.table_title} style={{ padding: "8px" }}>활동자료목록</div>
                         </div> : (

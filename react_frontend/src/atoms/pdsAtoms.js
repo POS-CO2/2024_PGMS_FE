@@ -14,6 +14,12 @@ export const modalState = atom({
 });
 
 // 담당자 목록
+export const pjtState = atom({
+  key: 'pjtState',
+  default: {},
+});
+
+// 담당자 목록
 export const managerState = atom({
     key: 'managerState',
     default: [],

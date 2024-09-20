@@ -80,14 +80,14 @@ export default function Pd({pjtId}) {                                           
         })
     }
 
-    // 사원 클릭 시 호출될 함수
-    const handleEmpClick = (emp) => {
-        setSelectedEmps(emp);
-    };
-
     // 담당자 클릭 시 호출될 함수
     const handleManagerClick = (manager) => {
-        setSelectedManager(manager ?? {});
+        setSelectedManager(manager.row ?? {});
+    };
+
+    // 사원 클릭 시 호출될 함수
+    const handleEmpClick = (emp) => {
+        setSelectedEmps(emp.row);
     };
   
     return (
@@ -105,11 +105,12 @@ export default function Pd({pjtId}) {                                           
                         {
                             modalType: 'Delete',
                             isModalOpen: isModalOpen.Delete,
-                            handleOk: () => handleOk('Delete') ({
+                            handleOk: (params) => handleOk('Delete')({
+                                ...params,
                                 data: selectedManager, 
                                 setter: setManagers, 
                                 setterSelected: setSelectedManager
-                              }),
+                            }),
                             handleCancel: closeModal('Delete'),
                             rowData: selectedManager,
                             rowDataName: 'userName',
@@ -122,7 +123,7 @@ export default function Pd({pjtId}) {                                           
                 <div className={pdsStyles.card_container}>
                     <div className={pdsStyles.contents_header}>
                         현장담당자 등록
-                        {(selectedEmps.length === 0 ? 
+                        {(emps.length === 0 ? 
                             <></> :
                             <AddButton onClick={handleSubmit} disabled={selectedEmps.length === 0} />
                         )}

@@ -34,7 +34,7 @@ const CustomButton = styled(Button)(({ selected }) => ({
 }));
 
 export const PdsStateMgr = ({pjtId}) => {
-    const [selectedButton, setSelectedButton] = useState('담당자 지정');
+    const [selectedButton, setSelectedButton] = useState('담당자 관리');
 
     const setManagers = useSetRecoilState(managerState);
     const setEquips = useSetRecoilState(eqState);
@@ -45,13 +45,13 @@ export const PdsStateMgr = ({pjtId}) => {
     // 프로젝트를 다시 선택하거나 다른 버튼을 클릭했을때 호출
     useEffect(() => {
       const triggerButtonClick = async () => {
-        if (selectedButton === '담당자 지정') {
+        if (selectedButton === '담당자 관리') {
           await handleOptionBtnClick([{
             button: selectedButton,
             url: `/pjt/manager?pjtId=${pjtId}`,
             setter: setManagers
           }]);
-        } else if (selectedButton === '설비 지정') {
+        } else if (selectedButton === '설비 관리') {
           await handleOptionBtnClick([
             {
               button: selectedButton,
@@ -106,17 +106,17 @@ export const PdsStateMgr = ({pjtId}) => {
             <div className={pdsStyles.button_container}>
                 <CustomButton
                     variant="outlined"
-                    selected={selectedButton === '담당자 지정'}
-                    onClick={() => setSelectedButton('담당자 지정')}
+                    selected={selectedButton === '담당자 관리'}
+                    onClick={() => setSelectedButton('담당자 관리')}
                 >
-                    담당자 지정
+                    담당자 관리
                 </CustomButton>
                 <CustomButton
                     variant="outlined"
-                    selected={selectedButton === '설비 지정'}
-                    onClick={() => setSelectedButton('설비 지정')}
+                    selected={selectedButton === '설비 관리'}
+                    onClick={() => setSelectedButton('설비 관리')}
                 >
-                    설비 지정
+                    설비 관리
                 </CustomButton>
                 <CustomButton
                     variant="outlined"
@@ -137,9 +137,9 @@ export const PdsStateMgr = ({pjtId}) => {
             <div className={pdsStyles.contents_container}>
               {(() => {
                 switch (selectedButton) {
-                    case '담당자 지정':
+                    case '담당자 관리':
                       return <Pd pjtId={pjtId} />;
-                    case '설비 지정':
+                    case '설비 관리':
                       return <Fd pjtId={pjtId} />;
                     case '배출원 관리':
                       return <Esd pjtId={pjtId} />;
