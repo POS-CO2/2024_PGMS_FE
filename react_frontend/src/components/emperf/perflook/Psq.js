@@ -137,11 +137,19 @@ export default function Psq() {
         setSelectedMonth({ key: '0', label: '- All -', });
         let pieChartUrl = `/perf/pjt-equip?pjtId=${data.searchProject.id}&year=${data.actvYear}&mth=${0}`;
         let pieChartPerfsData = await axiosInstance.get(pieChartUrl);
-        const colorPerItem = pieChartPerfsData.data.map((item, index) => ({
-            label: item.equipName,
-            value: item.totalQty,
-            color: colors[index % colors.length], // 색상을 순환하여 할당
-        }));
+
+        // 총 value 계산
+        const totalValue = pieChartPerfsData.data.reduce((total, item) => total + item.totalQty, 0);
+
+        const colorPerItem = pieChartPerfsData.data.map((item, index) => {
+            const percentage = totalValue ? ((item.totalQty / totalValue) * 100).toFixed(2) : 0; // 퍼센트 계산
+            return {
+                label: item.equipName,
+                value: item.totalQty,
+                color: colors[index % colors.length], // 색상을 순환하여 할당
+                arcLabel: `${percentage}%`, // 비율을 %로 표시
+            }
+        });
         setPieChartPerfs(colorPerItem);
         
         const emissionPerfsData = pieChartPerfsData.data.map(perf => {
@@ -180,15 +188,23 @@ export default function Psq() {
 
         let pieChartUrl = `/perf/pjt-equip?pjtId=${formData.searchProject.id}&year=${formData.actvYear}&mth=${selectedItem.key}`;
         let pieChartPerfsData = await axiosInstance.get(pieChartUrl);
-        const colorPerItem = pieChartPerfsData.data.map((item, index) => ({
-            label: item.equipName,
-            value : Number(selectedItem.key) === 0 
-                ? item.totalQty 
-                : (item.emissionQuantityList && item.emissionQuantityList[0] && item.emissionQuantityList[0].co2EmtnConvTotalQty) 
-                    ? item.emissionQuantityList[0].co2EmtnConvTotalQty 
-                    : null,
-            color: colors[index % colors.length], // 색상을 순환하여 할당
-        }));
+
+        // 총 value 계산
+        const totalValue = pieChartPerfsData.data.reduce((total, item) => total + item.totalQty, 0);
+
+        const colorPerItem = pieChartPerfsData.data.map((item, index) => {
+            const percentage = totalValue ? ((item.totalQty / totalValue) * 100).toFixed(2) : 0; // 퍼센트 계산
+            return {
+                label: item.equipName,
+                value : Number(selectedItem.key) === 0 
+                    ? item.totalQty 
+                    : (item.emissionQuantityList && item.emissionQuantityList[0] && item.emissionQuantityList[0].co2EmtnConvTotalQty) 
+                        ? item.emissionQuantityList[0].co2EmtnConvTotalQty 
+                        : null,
+                color: colors[index % colors.length], // 색상을 순환하여 할당
+                arcLabel: `${percentage}%`, // 비율을 %로 표시
+            }
+        });
         setPieChartPerfs(colorPerItem);
     };
 
@@ -296,7 +312,7 @@ export default function Psq() {
                                                 //innerRadius: 50,
                                                 outerRadius: 150,
                                                 valueFormatter,
-                                                //arcLabel: (item) => `${item.value}`,
+                                                arcLabel: (item) => `${item.arcLabel}`,
                                                 arcLabelMinAngle: 35,
                                             },
                                         ]}
