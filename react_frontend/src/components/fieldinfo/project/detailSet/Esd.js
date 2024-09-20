@@ -129,7 +129,7 @@ export default function Esd({pjtId}) {
                             handleOk: (params) => handleOk('DeleteA')({
                                 ...params,
                                 data: selectedES, 
-                                setter: setEmSources, 
+                                setter: setEmSources,
                                 setterSelected: setSelectedES
                             }),
                             handleCancel: closeModal('DeleteA'),
@@ -142,8 +142,8 @@ export default function Esd({pjtId}) {
                             isModalOpen: isModalOpen.EsmAdd,
                             handleOk: (params) => handleOk('EsmAdd')({
                                 ...params,
-                                setter: setFilteredSDs, 
-                                setterSelected: setSelectedSD
+                                setter: setEmSources, 
+                                setterSelected: setSelectedES
                             }),
                             handleCancel: closeModal('EsmAdd'),
                             rowData: pjtId
