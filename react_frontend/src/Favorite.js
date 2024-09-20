@@ -1,6 +1,6 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useRecoilState } from "recoil";
+import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import { favState } from './atoms/tabAtoms';
 import { openTabsState, activeTabState } from './atoms/tabAtoms';
 import styled from 'styled-components';
@@ -67,10 +67,10 @@ const FavoriteItem = styled.div`
 
 
 const Favorite = () => {
-  const [fav, setFav] = useRecoilState(favState);
+  const fav = useRecoilValue(favState);
   const navigate = useNavigate();
   const [openTabs, setOpenTabs] = useRecoilState(openTabsState);
-  const [activeKey, setActiveKey] = useRecoilState(activeTabState);
+  const setActiveKey = useSetRecoilState(activeTabState);
 
   const onFavClick = (path, label) => {
     const newTab = { key: path, tab: label };

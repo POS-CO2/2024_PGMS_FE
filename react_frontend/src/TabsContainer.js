@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef, forwardRef, useImperativeHandle } f
 import { useRecoilState } from "recoil";
 import { openTabsState, activeTabState } from './atoms/tabAtoms';
 import { Tabs, Dropdown, Menu, Button } from 'antd';
-import { CloseOutlined } from '@ant-design/icons';
+import { CloseOutlined, CloseCircleOutlined } from '@ant-design/icons';
 import GTranslateIcon from '@mui/icons-material/GTranslate';
 import { useNavigate } from 'react-router-dom';
 import { useDrag, useDrop, DndProvider } from 'react-dnd';
@@ -30,11 +30,6 @@ const TabContainer = styled.div`
   max-width: calc(100% - 160px);
   width: 100%;
   height: 50px;
-  padding-top: 6px;
-  // flex-direction: column;
-  // align-items: flex-start;
-  // flex-grow: 1;
-  // padding-top: 18px;
   padding-left: 28px;
   padding-right: 16px; /* 탭과 유저 정보 사이의 간격 */
   overflow: hidden;
@@ -57,6 +52,15 @@ const UserDetails = styled.div`
   display: flex;
   flex-direction: column;
   margin-left: 10px;
+`;
+
+const StyledCloseCircleOutlined = styled(CloseCircleOutlined)`
+  position: absolute;
+  margin-left: 12px;
+  bottom: 0; /* 하단 배치 */
+  right: 0;  /* 우측 정렬 (필요시) */
+  font-size: 1.2rem; /* 아이콘 크기 */
+  color: #777777; /* 아이콘 색상 */
 `;
 
 const Row = styled.div`
@@ -300,7 +304,7 @@ const TabsContainer = forwardRef(({ handleLogout, user }, ref) => {
           <div>
             {tab.key !== '' && ( // 홈 탭에는 닫기 버튼을 표시하지 않음
               <CloseOutlined
-                style={{ color:"red", paddingLeft:"5px"}}
+                style={{ color:"red", fontSize:"0.7rem", paddingLeft:"5px"}}
                 onClick={(e) => {
                   e.stopPropagation(); // 이벤트 전파를 막아 탭 전환을 방지
                   removeTab(tab.key);
@@ -362,7 +366,18 @@ const TabsContainer = forwardRef(({ handleLogout, user }, ref) => {
           <StyledTabs
             activeKey={activeKey}
             onChange={onTabChange}
-            items={tabsData}
+            items={[
+              ...tabsData,
+              {
+                label: (
+                  <StyledCloseCircleOutlined 
+                    style={{ marginLeft: 'auto' }} // 아이콘이 탭 리스트 마지막에 위치
+                    onClick={() => {/* 원하는 동작 */}}
+                  />
+                ),
+                key: 'close-icon', // 고유한 key 필요
+              },
+            ]}
             hideAdd
             moreIcon={null}
             style={{width:"100%", textOverflow:"ellipsis"}}

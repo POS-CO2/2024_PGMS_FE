@@ -118,31 +118,32 @@ export default function Esd({pjtId}) {
                     data={emSources}
                     columns={equipEmissionColumns}                 
                     buttons={['Delete', 'Add']}
-                    onClicks={[() => showModal('Delete'), () => showModal('EsmAdd')]}
+                    onClicks={[() => showModal('DeleteA'), () => showModal('EsmAdd')]}
                     onRowClick={handleESClick}
                     selectedRows={[selectedES]}
                     keyProp={emSources.length}
                     modals={[
-                        {
-                            modalType: 'Delete',
-                            isModalOpen: isModalOpen.Delete,
-                            handleOk: () => handleOk('Delete') ({
+                        isModalOpen.DeleteA && {
+                            modalType: 'DeleteA',
+                            isModalOpen: isModalOpen.DeleteA,
+                            handleOk: (params) => handleOk('DeleteA')({
+                                ...params,
                                 data: selectedES, 
                                 setter: setEmSources, 
                                 setterSelected: setSelectedES
-                              }),
-                            handleCancel: closeModal('Delete'),
+                            }),
+                            handleCancel: closeModal('DeleteA'),
                             rowData: selectedES,
                             rowDataName: 'equipName',
                             url: '/equip/emission'
                         },
-                        {
+                        isModalOpen.EsmAdd && {
                             modalType: 'EsmAdd',
                             isModalOpen: isModalOpen.EsmAdd,
-                            handleOk: () => handleOk('EsmAdd') ({
-                                data: selectedES, 
-                                setter: setEmSources, 
-                                setterSelected: setSelectedES,
+                            handleOk: (params) => handleOk('EsmAdd')({
+                                ...params,
+                                setter: setFilteredSDs, 
+                                setterSelected: setSelectedSD
                             }),
                             handleCancel: closeModal('EsmAdd'),
                             rowData: pjtId
@@ -160,7 +161,7 @@ export default function Esd({pjtId}) {
                         data={filteredSDs} 
                         columns={equipDocumentColumns}
                         buttons={['ShowDetails', 'Delete', 'Add']}
-                        onClicks={[() => showModal('SdShowDetails'), () => showModal('Delete'), () => showModal('SdAdd')]}
+                        onClicks={[() => showModal('SdShowDetails'), () => showModal('DeleteB'), () => showModal('SdAdd')]}
                         onRowClick={handleSDClick}
                         selectedRows={[selectedSD]}
                         handleYearChange={handleYearChange}
@@ -177,16 +178,16 @@ export default function Esd({pjtId}) {
                                 handleCancel: closeModal('SdShowDetails'),
                                 rowData: selectedSD
                             },
-                            isModalOpen.Delete && {
-                                modalType: 'Delete',
-                                isModalOpen: isModalOpen.Delete,
-                                handleOk: (params) => handleOk('Delete')({
+                            isModalOpen.DeleteB && {
+                                modalType: 'DeleteB',
+                                isModalOpen: isModalOpen.DeleteB,
+                                handleOk: (params) => handleOk('DeleteB')({
                                     ...params,
                                     data: selectedSD, 
                                     setter: setFilteredSDs, 
                                     setterSelected: setSelectedSD
                                 }),
-                                handleCancel: closeModal('Delete'),
+                                handleCancel: closeModal('DeleteB'),
                                 rowData: selectedSD,
                                 rowDataName: 'name',
                                 url: '/equip/document'
@@ -196,7 +197,6 @@ export default function Esd({pjtId}) {
                                 isModalOpen: isModalOpen.SdAdd,
                                 handleOk: (params) => handleOk('SdAdd')({
                                     ...params,
-                                    data: selectedSD, 
                                     setter: setFilteredSDs, 
                                     setterSelected: setSelectedSD
                                 }),

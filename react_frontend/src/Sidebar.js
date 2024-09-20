@@ -119,8 +119,6 @@ const theme = {
 }
 
 export default function Sidebar({ collapsed, toggleCollapsed, items, onMenuClick, openKeys, onOpenChange }) {
-  const favorites = ["활동량 관리", "프로젝트별 조회", "총량실적 조회", "프로젝트 관리", "설비LIB 관리"];
-
   return (
     <SidebarContainer $collapsed={collapsed}>
 
@@ -150,7 +148,7 @@ export default function Sidebar({ collapsed, toggleCollapsed, items, onMenuClick
       </ConfigProvider>
 
       {/* 즐겨찾기 섹션 */}
-      <Favorite favoriteData={favorites} items={items} />
+      <Favorite />
 
     </SidebarContainer>
   );

@@ -85,10 +85,17 @@ const StyledCheckbox = styled(Checkbox)(({ theme, checked }) => ({
 }));
 
 // 텍스트 길이에 따라 너비 계산하는 함수
-const calculateColumnWidths = (columns, data, fontWidth = 15) => {
+const calculateColumnWidths = (columns, data, fontWidth = 15, hasCheckbox = false) => {
     const widths = {};
 
     let visibleIndex = 0; // visible 열에 대한 인덱스를 따로 관리
+
+    // 체크박스가 있는 경우 첫 번째 열을 20px로 설정
+    if (hasCheckbox) {
+        widths[`col-checkbox`] = "4rem"; // 체크박스 열에 고정된 너비 할당
+        visibleIndex++;
+    }
+    
     columns.forEach((col, index) => {
         if (col.hidden) return; // hidden 열은 건너뛰기
 
@@ -131,7 +138,7 @@ export default function CustomizedTables({
     // 데이터와 컬럼에 기반하여 초기 열 너비 설정
     useEffect(() => {
         if (data.length > 0 && columns.length > 0) {
-            const initialWidths = calculateColumnWidths(columns, data);
+            const initialWidths = calculateColumnWidths(columns, data, 15, variant === 'checkbox');
             setColumnWidths(initialWidths);
         }
     }, [data, columns]);
@@ -251,7 +258,10 @@ export default function CustomizedTables({
                 <Table sx={{ tableLayout: 'fixed' }} stickyHeader aria-label="customized table">
                     <TableHead>
                         <TableRow>
-                        {variant === 'checkbox' && <StyledTableCell></StyledTableCell>}
+                        {variant === 'checkbox' && (
+                            <StyledTableCell style={{ width: columnWidths['col-checkbox'] }}>
+                            </StyledTableCell>
+                        )}
                         {visibleColumns.map((col, colIndex) => (
                             <StyledTableCell 
                                 key={col.key}
@@ -286,7 +296,7 @@ export default function CustomizedTables({
                                                 >
                                             {   // checkbox가 있는 테이블이면 체크박스 셀 추가
                                                 variant === 'checkbox' && (
-                                                    <StyledTableCell>
+                                                    <StyledTableCell style={{ width: columnWidths['col-checkbox'] }}>
                                                         <StyledCheckbox 
                                                             checked={selectedRows.includes(rowIndex + (rowsPerPage * page))}
                                                             onClick={(e) => handleCheckboxClick(e, rowIndex + (rowsPerPage * page))}
