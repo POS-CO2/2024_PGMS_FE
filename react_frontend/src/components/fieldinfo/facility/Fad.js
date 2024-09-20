@@ -19,29 +19,6 @@ export default function Fad() {
         Delete: false
     });
 
-    class Actv {
-        constructor(id = '', actvDataName = '', actvDataDvs = '', emtnActvType = '', calUnitCode = '', inputUnitCode = '', unitConvCoef = '') {
-            this.id = id;
-            this.actvDataName = actvDataName;
-            this.actvDataDvs = actvDataDvs;
-            this.emtnActvType = emtnActvType;
-            this.calUnitCode = calUnitCode;
-            this.inputUnitCode = inputUnitCode;
-            this.unitConvCoef = unitConvCoef;            ;
-        }
-    }
-
-    // selectedActv 변경될 때마다 실행될 useEffect
-    useEffect(() => {}, [selectedActv]);
-
-    // actves 상태가 변경될 때 실행될 useEffect
-    useEffect(() => {
-        if (actves.length === 0) {
-            const placeholderActv = new Actv();
-            setActves([placeholderActv]);
-        }
-    }, [actves]);
-
     // 조회 버튼 클릭시 호출될 함수
     const handleFormSubmit = async (data) => {
         setSearchResult(data.searchLib);
@@ -49,19 +26,12 @@ export default function Fad() {
         // 선택한 lib에 매핑된 활동자료 목록 조회
         const response = await axiosInstance.get(`/equip/actv/${data.searchLib.id}`);
 
-        // data가 빈 배열인지 확인
-        if (response.data.length === 0) {
-            // 빈 데이터인 경우, 기본 형태의 객체를 생성
-            const placeholderActv = new Actv();
-            setSelectedActv([placeholderActv]);
-        } else {
-            setActves(response.data);
-        }
+        setActves(response.data);
     };
 
     // 활동자료 row 클릭 시 호출될 함수
     const handleActvClick = (actv) => {
-        setSelectedActv(actv ?? {});
+        setSelectedActv(actv.row ?? {});
     };
 
     // 모달 열기

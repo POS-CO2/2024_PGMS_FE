@@ -38,7 +38,8 @@ export default function Mal() {
 
     const [showLog, setShowLog] = useState(false);
 
-    const handleRowClick = async (e) => {
+    const handleRowClick = async (data) => {
+        const e = data.row
         setShowLog(true);
         setSelectedUser(e);
         if (e) {

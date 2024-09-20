@@ -140,12 +140,38 @@ export const perfTotalColumns = [
     { key: 'total', label: '총배출량(kgGHG)', hidden: false },
 ]
 
+export const emissionPerfPjtColumns = [
+    { key: 'equipName', label: '배출원', hidden: false },
+    { key: '1', label: '1월', hidden: false },
+    { key: '2', label: '2월', hidden: false },
+    { key: '3', label: '3월', hidden: false },
+    { key: '4', label: '4월', hidden: false },
+    { key: '5', label: '5월', hidden: false },
+    { key: '6', label: '6월', hidden: false },
+    { key: '7', label: '7월', hidden: false },
+    { key: '8', label: '8월', hidden: false },
+    { key: '9', label: '9월', hidden: false },
+    { key: '10', label: '10월', hidden: false },
+    { key: '11', label: '11월', hidden: false },
+    { key: '12', label: '12월', hidden: false },
+    { key: 'formattedTotalQty', label: '총배출량', hidden: false },
+]
+
 export const perfPjtColumns = [
-    { key: 'actvYear', label: '활동시작년', hidden: true },
-    { key: 'actvMth', label: '월', hidden: false },
-    { key: 'scope1', label: 'Scope1배출량(kgGHG)', hidden: false },
-    { key: 'scope2', label: 'Scope2배출량(kgGHG)', hidden: false },
-    { key: 'total', label: '총배출량(kgGHG)', hidden: false },
+    { key: 'scope', label: 'scope 구분', hidden: false },
+    { key: '1', label: '1월', hidden: false },
+    { key: '2', label: '2월', hidden: false },
+    { key: '3', label: '3월', hidden: false },
+    { key: '4', label: '4월', hidden: false },
+    { key: '5', label: '5월', hidden: false },
+    { key: '6', label: '6월', hidden: false },
+    { key: '7', label: '7월', hidden: false },
+    { key: '8', label: '8월', hidden: false },
+    { key: '9', label: '9월', hidden: false },
+    { key: '10', label: '10월', hidden: false },
+    { key: '11', label: '11월', hidden: false },
+    { key: '12', label: '12월', hidden: false },
+    { key: 'total', label: '총배출량', hidden: false },
 ]
 
 export const equipEmissionColumns = [

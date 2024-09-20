@@ -25,7 +25,7 @@ const StyledButton = styled.button`
 /**
  * 프로젝트 찾기(searchProject), 설비LIB 찾기(searchLib)
  */
-export default function SearchAtModal({ name, label, required = false, modalType = "검색", form, onProjectSelect }) {
+export default function SearchAtModal({ name, label, required = false, modalType = "검색", form, onProjectSelect=()=>{} }) {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [inputValue, setInputValue] = useState("");
 

@@ -218,7 +218,7 @@ export default function Esm_Fp() {
                 <>
                     <div className={esmStyles.main_grid}>
                         <Card sx={{ width: "100%", height: "auto", borderRadius: "15px", marginBottom: "1rem" }}>
-                            <TableCustom title="조회결과" columns={pjtColumns} data={selectedPjt} pagination={false} />
+                            <TableCustom title="프로젝트 상세정보" columns={pjtColumns} data={selectedPjt} pagination={false} />
                         </Card>
                     </div>
 
