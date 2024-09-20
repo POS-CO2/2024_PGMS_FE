@@ -23,7 +23,8 @@ export default function Psq() {
     const [formFields, setFormFields] = useState(formField_psq);
     const [formData, setFormData] = useState(); // 검색 데이터
     const [selectedPjt, setSelectedPjt] = useState([]);
-    const [perfsData, setPerfsData] = useState(Array(12).fill({})); //const [perfsData, setPerfsData] = useState([]);
+    const [emissionTableData, setEmissionTableData] = useState([]); // 설비별 표
+    const [perfsData, setPerfsData] = useState(Array(12).fill({})); // scope1, scope2, total 표
     const [chartPerfs, setChartPerfs] = useState([]);
     const [actvYearDisabled, setActvYearDisabled] = useState(true);  // 드롭다운 비활성화 상태 관리
     const [pieChartPerfs, setPieChartPerfs] = useState([]);
@@ -38,8 +39,6 @@ export default function Psq() {
         { key: '7', label: '7월', }, { key: '8', label: '8월', }, { key: '9', label: '9월', }, { key: '10', label: '10월', }, { key: '11', label: '11월', }, { key: '12', label: '12월', },];
     const colors = ['#67b7dc', '#6794dc', '#6771dc', '#8067dc', '#a367dc', '#c767dc'];
 
-    const desktopOS = [{ label: 'Windows', value: 72.72, }, { label: 'OS X', value: 16.38, }, { label: 'Linux', value: 3.83, }, { label: 'Chrome OS', value: 2.42, }, { label: 'Other', value: 4.65, }, { label: 'test', value: 5.0, },];
-    
     // 프로젝트 선택 후 대상년도 드롭다운 옵션 설정
     const onProjectSelect = (selectedData, form) => {
         if (selectedData) {
@@ -78,6 +77,7 @@ export default function Psq() {
         setFormData(data);
         setSelectedPjt([data.searchProject]);
 
+        // scope1,2
         let url = `/perf/pjt?pjtId=${data.searchProject.id}&year=${data.actvYear}`;
         const response = await axiosInstance.get(url);
 
@@ -102,25 +102,38 @@ export default function Psq() {
             setChartPerfs(formattedChartPerfs);
 
             // 표
-            const scope1TableData = { scope: 'scope1' };
-            const scope2TableData = { scope: 'scope2' };
-            const totalTableData = { scope: 'total' };
+            const scope1TableData = { scope: 'scope1 (kgGHG)' };
+            const scope2TableData = { scope: 'scope2 (kgGHG)' };
+            const totalTableData = { scope: 'total (kgGHG)' };
 
-            // 각 월 데이터를 채워 넣기
+            let scope1Sum = 0;
+            let scope2Sum = 0;
+            let totalSum = 0;
+
+            // 각 월 데이터를 채워 넣고 합산 계산
             response.data.forEach((item, index) => {
-                scope1TableData[index] = item.scope1;
-                scope2TableData[index] = item.scope2;
-                totalTableData[index] = item.total;
+                scope1TableData[index+1] = item.scope1;
+                scope2TableData[index+1] = item.scope2;
+                totalTableData[index+1] = item.total;
+
+                scope1Sum += item.scope1;
+                scope2Sum += item.scope2;
+                totalSum += item.total;
             });
+
+            // 합산 값 추가
+            scope1TableData['total'] = scope1Sum;
+            scope2TableData['total'] = scope2Sum;
+            totalTableData['total'] = totalSum;
 
             // 최종 데이터 배열에 추가
             const formattedTableData = [scope1TableData, scope2TableData, totalTableData];
 
             // 상태값 업데이트
             setPerfsData(formattedTableData);
-            console.log(formattedTableData);
         }
 
+        // 설비별
         // 파이 차트 데이터 설정하기, default는 all(0)
         setSelectedMonth({ key: '0', label: '- All -', });
         let pieChartUrl = `/perf/pjt-equip?pjtId=${data.searchProject.id}&year=${data.actvYear}&mth=${0}`;
@@ -131,7 +144,33 @@ export default function Psq() {
             color: colors[index % colors.length], // 색상을 순환하여 할당
         }));
         setPieChartPerfs(colorPerItem);
-        console.log(colorPerItem);
+        
+        const emissionPerfsData = pieChartPerfsData.data.map(perf => {
+            // 기본 구조 설정
+            const perfData = {
+                equipName: perf.equipName,
+                formattedTotalQty: perf.formattedTotalQty,
+            };
+    
+            // emissionQuantityList 순회하며 월별 데이터를 추가
+            perf.emissionQuantityList.forEach(item => {
+                if (item && item.actvMth) {
+                    perfData[item.actvMth] = item['formattedCo2EmtnConvTotalQty'];
+                }
+            });
+            // 모든 월(1월부터 12월까지)의 데이터가 없을 경우 기본값으로 채워줌
+            for (let month = 1; month <= 12; month++) {
+                const monthKey = `${month}`;
+                if (!perfData.hasOwnProperty(monthKey)) {
+                    perfData[monthKey] = '';
+                }
+            }
+            
+            return perfData;
+        })
+
+        setEmissionTableData(emissionPerfsData);
+        console.log(emissionPerfsData);
     };
 
     const valueFormatter = (item) => `${item.value}`;
@@ -143,7 +182,6 @@ export default function Psq() {
 
         let pieChartUrl = `/perf/pjt-equip?pjtId=${formData.searchProject.id}&year=${formData.actvYear}&mth=${selectedItem.key}`;
         let pieChartPerfsData = await axiosInstance.get(pieChartUrl);
-        console.log(selectedItem.key);
         const colorPerItem = pieChartPerfsData.data.map((item, index) => ({
             label: item.equipName,
             value : Number(selectedItem.key) === 0 
@@ -154,24 +192,22 @@ export default function Psq() {
             color: colors[index % colors.length], // 색상을 순환하여 할당
         }));
         setPieChartPerfs(colorPerItem);
-        console.log(colorPerItem);
     };
 
-    const onDownloadExcelClick = (csvData) => {
-        const year = csvData[0].actvYear;
-        const fileName = `실적_${formData.searchProject.pjtName}_${year}`;
+    const onDownloadExcelClick = (title, csvData, columns) => {
+        const fileName = `${title}_${formData.searchProject.pjtName}_${formData.actvYear}`;
 
         // CSV 변환 함수
         const csvRows = [];
         
-        // 헤더 생성
-        const headers = Object.keys(csvData[0]);
+        // 헤더 생성 (columns 순서대로)
+        const headers = columns.map(column => column.label);
         csvRows.push(headers.join(','));
         
         // 데이터 생성
         for (const row of csvData) {
-            const values = headers.map(header => {
-                const escaped = ('' + row[header]).replace(/"/g, '\\"');
+            const values = columns.map(column => {
+                const escaped = ('' + row[column.key]).replace(/"/g, '\\"');
                 return `"${escaped}"`;
             });
             csvRows.push(values.join(','));
@@ -274,10 +310,10 @@ export default function Psq() {
                         {content === 'table' && 
                             <div className={psqStyles.table_container}>
                                 <Card className={psqStyles.table_card} sx={{ width: "100%", height: "fit-contents", borderRadius: "15px" }}>
-                                    <TableCustom columns={emissionPerfPjtColumns} title="프로젝트 실적 표" data={perfsData} buttons={['DownloadExcel']} onClicks={[() => onDownloadExcelClick(perfsData)]} monthPagination={true} pagination={false} />
+                                    <TableCustom columns={emissionPerfPjtColumns} title="배출원별 실적" data={emissionTableData} buttons={['DownloadExcel']} onClicks={[() => onDownloadExcelClick("배출원별 실적", emissionTableData, emissionPerfPjtColumns)]} pagination={false} />
                                 </Card>
-                                <Card className={psqStyles.table_card_not_custom} sx={{ width: "100%", height: "fit-contents", borderRadius: "15px" }}>
-                                    <Table columns={perfPjtColumns} data={perfsData} monthPagination={true} pagination={false} />
+                                <Card className={psqStyles.table_card} sx={{ width: "100%", height: "fit-contents", borderRadius: "15px" }}>
+                                    <TableCustom columns={perfPjtColumns} title="scope별 실적" data={perfsData} buttons={['DownloadExcel']} onClicks={[() => onDownloadExcelClick("scope별 실적", perfsData, perfPjtColumns)]} pagination={false} />
                                 </Card>
                             </div>
                         }
