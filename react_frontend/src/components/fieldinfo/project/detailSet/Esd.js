@@ -76,7 +76,9 @@ export default function Esd({pjtId}) {
     const handleOk = useHandleOkAction();
 
     // 배출원 row 클릭 시 호출될 함수
-    const handleESClick = async (es) => {
+    const handleESClick = async (data) => {
+        const es = data.row;
+        
         if (!es) {
             setSelectedES({});
             setSuppDocs([]);
@@ -99,7 +101,7 @@ export default function Esd({pjtId}) {
 
     // 증빙자료 row 클릭 시 호출될 함수
     const handleSDClick = (sd) => {
-        setSelectedSD(sd ?? {});
+        setSelectedSD(sd.row ?? {});
     };
 
     const handleYearChange = (year) => {
@@ -149,7 +151,7 @@ export default function Esd({pjtId}) {
                 />
             </Card>
             <Card sx={{ width: "50%", borderRadius: "0.5rem", paddingBottom: "20px" }}>
-                {(!filteredSDs || filteredSDs.length === 0) ?
+                {(!selectedES || Object.keys(selectedES).length === 0) ?
                 <div className={pdsStyles.card_container}>
                     <div className={pdsStyles.table_title} style={{ padding: "8px" }}>증빙자료목록</div>
                 </div> : (
@@ -164,7 +166,7 @@ export default function Esd({pjtId}) {
                         handleYearChange={handleYearChange}
                         year={year}
                         modals={[
-                            {
+                            isModalOpen.SdShowDetails && {
                                 modalType: 'SdShowDetails',
                                 isModalOpen: isModalOpen.SdShowDetails,
                                 handleOk: () => handleOk('SdShowDetails') ({
@@ -175,29 +177,31 @@ export default function Esd({pjtId}) {
                                 handleCancel: closeModal('SdShowDetails'),
                                 rowData: selectedSD
                             },
-                            {
+                            isModalOpen.Delete && {
                                 modalType: 'Delete',
                                 isModalOpen: isModalOpen.Delete,
-                                handleOk: () => handleOk('Delete') ({
+                                handleOk: (params) => handleOk('Delete')({
+                                    ...params,
                                     data: selectedSD, 
                                     setter: setFilteredSDs, 
                                     setterSelected: setSelectedSD
                                 }),
                                 handleCancel: closeModal('Delete'),
                                 rowData: selectedSD,
-                                rowDataName: 'actvDataName',
-                                url: '/equip/actv'
+                                rowDataName: 'name',
+                                url: '/equip/document'
                             },
-                            {
+                            isModalOpen.SdAdd && {
                                 modalType: 'SdAdd',
                                 isModalOpen: isModalOpen.SdAdd,
-                                handleOk: () => handleOk('SdAdd') ({
+                                handleOk: (params) => handleOk('SdAdd')({
+                                    ...params,
                                     data: selectedSD, 
                                     setter: setFilteredSDs, 
                                     setterSelected: setSelectedSD
                                 }),
                                 handleCancel: closeModal('SdAdd'),
-                                rowData: selectedSD
+                                rowData: selectedES
                             },
                         ]}
                     />

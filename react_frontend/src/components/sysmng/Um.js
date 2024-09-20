@@ -55,8 +55,9 @@ export default function Um() {
 
     const [selectedUser, setSelectedUser] = useState([]);
 
-    const handleRowClick = (e) => {
-        console.log(e);
+    const handleRowClick = (data) => {
+        const e = data.row;
+    
         setSelectedUser(e ?? {});
         if (e === undefined) {
             setInfoShow(false);

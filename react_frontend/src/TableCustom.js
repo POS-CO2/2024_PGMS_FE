@@ -60,6 +60,8 @@ export default function TableCustom({
     keyProp = undefined,
     handleYearChange = () => { },
     year = undefined,
+    subData = [],
+    expandedRow = {}
 }) {modalPagination
     // 버튼 활성화 상태 결정
     const buttonStatus = buttons.map((button) => {
@@ -117,7 +119,18 @@ export default function TableCustom({
                     </Space>
                 )}
                 {table ? (
-                    <Table key={tableKey} data={data} variant={variant} onRowClick={onRowClick} pagination={pagination} modalPagination={modalPagination} columns={columns} handleYearChange={handleYearChange} />
+                    <Table 
+                        key={tableKey} 
+                        data={data} 
+                        variant={variant} 
+                        onRowClick={onRowClick} 
+                        pagination={pagination} 
+                        modalPagination={modalPagination} 
+                        columns={columns} 
+                        handleYearChange={handleYearChange} 
+                        subData={subData}
+                        expandedRow={expandedRow}
+                    />
                 ) : (<></>)}
             </div>
         </>
@@ -247,7 +260,6 @@ export function TableCustomDoubleClickEdit({
                 };
             });
 
-            console.log(requestBody);
             const response = await axiosInstance.put("/perf", requestBody);
 
             swalOptions.title = '성공!',
