@@ -296,7 +296,7 @@ export default function Psq() {
                                                 //innerRadius: 50,
                                                 outerRadius: 150,
                                                 valueFormatter,
-                                                arcLabel: (item) => `${item.value}`,
+                                                //arcLabel: (item) => `${item.value}`,
                                                 arcLabelMinAngle: 35,
                                             },
                                         ]}
