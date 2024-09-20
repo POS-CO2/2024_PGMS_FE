@@ -19,22 +19,21 @@ const StyledTableCell = styled(TableCell)(({ theme }) => ({
     color: '#FFFFFF',
     fontSize: '0.9rem',
     fontFamily: 'SUITE-Regular',
+    overflow: 'hidden',
     whiteSpace: 'nowrap', // 텍스트를 한 줄로 유지
-    overflow: 'hidden', // 넘치는 내용을 숨기기
     textOverflow: 'ellipsis', // 넘치는 텍스트를 ...로 표시
     minWidth: '5px', // min-width를 최소로 설정
     width: 'auto', // 자동 크기 조정
-    maxWidth: '300px',
   },
   [`&.${tableCellClasses.body}`]: {
     fontSize: '0.9rem',
     fontFamily: 'SUITE-Regular',
+    overflow: 'hidden',
     whiteSpace: 'nowrap', // 텍스트를 한 줄로 유지
-    overflow: 'hidden', // 넘치는 내용을 숨기기
     textOverflow: 'ellipsis', // 넘치는 텍스트를 ...로 표시
     minWidth: '5px', // 최소 크기를 없앰
     width: 'auto', // 자동 크기 조정
-    maxWidth: '300px',
+    maxWidth: 'none',
   },
   '&:not(:last-child)::after': {
     content: '""',
@@ -86,22 +85,22 @@ const StyledCheckbox = styled(Checkbox)(({ theme, checked }) => ({
 }));
 
 // 텍스트 길이에 따라 너비 계산하는 함수
-const calculateColumnWidths = (columns, data, fontWidth = 16) => {
+const calculateColumnWidths = (columns, data, fontWidth = 15) => {
     const widths = {};
 
+    let visibleIndex = 0; // visible 열에 대한 인덱스를 따로 관리
     columns.forEach((col, index) => {
-        // hidden 컬럼은 건너뛰기
-        if (col.hidden) return;
+        if (col.hidden) return; // hidden 열은 건너뛰기
 
-        // 각 열의 헤더 라벨과 데이터 중 가장 긴 텍스트 길이를 찾음
+        // 각 열의 헤더와 데이터 중 가장 긴 텍스트 길이를 찾아서 너비 계산
         const maxTextLength = Math.max(
-            col.label.length, // 컬럼 라벨의 길이 고려
-            ...data.map((row) => (row[col.key] ? row[col.key].toString().length : 0)) // 데이터의 각 값을 문자열로 변환 후 길이 계산
+            col.label.length,
+            ...data.map((row) => (row[col.key] ? row[col.key].toString().length : 0))
         );
 
-        // 최대 글자 수와 문자당 폭 (fontWidth)를 곱한 값으로 너비를 설정
-        // padding과 여백을 고려해 최소 너비를 설정
-        widths[`col${index}`] = Math.max(100, maxTextLength * fontWidth + 20); // 최소 100px 이상
+        // 최소 너비는 100px, 텍스트 길이에 따른 너비 계산
+        widths[`col${visibleIndex}`] = Math.max(100, maxTextLength * fontWidth + 20);
+        visibleIndex++; // visible 열에 대한 인덱스를 증가시킴
     });
 
     return widths;
@@ -257,14 +256,15 @@ export default function CustomizedTables({
                             <StyledTableCell 
                                 key={col.key}
                                 style={{ 
-                                    width: columnWidths[`col${colIndex + 1}`], 
-                                    minWidth: columnWidths[`col${colIndex + 1}`], // 최소 너비 설정
+                                    width: columnWidths[`col${colIndex}`],
+                                    minWidth: 5,  // 최소 너비 설정
+                                    maxWidth: 'none',  // 최대 너비는 제한하지 않음
                                 }}
                             >
                                 {col.label}
                                 <div
                                     className="resize-handle"
-                                    onMouseDown={(e) => handleMouseDown(`col${colIndex + 1}`, e)}
+                                    onMouseDown={(e) => handleMouseDown(`col${colIndex}`, e)}
                                 />
                             </StyledTableCell>
                         ))}
@@ -301,6 +301,11 @@ export default function CustomizedTables({
                                                         key={colIndex} 
                                                         align="left"
                                                         onDoubleClick={() => handleDoubleClick(rowIndex, colIndex)}
+                                                        style={{ 
+                                                            width: columnWidths[`col${colIndex}`],
+                                                            minWidth: 5,  // 최소 너비 설정
+                                                            maxWidth: 'none',  // 최대 너비는 제한하지 않음
+                                                        }}
                                                     >
                                                         {editingCell.row === rowIndex && editingCell.col === colIndex ? (
                                                         <TextField
@@ -426,7 +431,16 @@ export default function CustomizedTables({
                                             }
                                             {   // 데이터 값 채우기
                                                 visibleColumns.map((value, idx) => (
-                                                    <StyledTableCell key={idx} align="left" onDoubleClick={() => {handleDoubleClick(index, idx)}}>
+                                                    <StyledTableCell 
+                                                        key={idx} 
+                                                        align="left" 
+                                                        onDoubleClick={() => {handleDoubleClick(index, idx)}}
+                                                        style={{ 
+                                                            width: columnWidths[`col${idx}`],
+                                                            minWidth: 5,  // 최소 너비 설정
+                                                            maxWidth: 'none',  // 최대 너비는 제한하지 않음
+                                                        }}
+                                                    >
                                                         {editingCell.row === index && editingCell.col === idx ? (
                                                             <TextField
                                                                 value={row[value.key]}
