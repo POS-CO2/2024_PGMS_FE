@@ -13,6 +13,10 @@ export default function Chatting({ UserListIcon ,handleChatListClick, chatUser, 
     const [isLoading, setIsLoading] = useState(false);
     const chatContainerRef = useRef(null);
     const [showScrollToBottom, setShowScrollToBottom] = useState(false);
+    const [isTyping, setIsTyping] = useState(false);
+    const [showIsTyping, setShowIsTyping] = useState(false);
+    const typingTimeoutRef = useRef(null);
+    const typingIndicatorTimeoutRef = useRef(null);
 
     const { ref: sentinelRef, inView} = useInView({
         threshold: 0,
@@ -37,6 +41,20 @@ export default function Chatting({ UserListIcon ,handleChatListClick, chatUser, 
         }
     }
 
+    const handleKeyboard = async (e) => {
+        setText(e.target.value)
+        setIsTyping(true);
+        const keyboardRequest = await axiosInstance.post(`/chat/keyboard?targetId=${chatUser.id}`);
+
+        if (typingTimeoutRef.current) {
+            console.log(typingTimeoutRef.current);
+            clearTimeout(typingTimeoutRef.current);
+        }
+
+        typingTimeoutRef.current = setTimeout(() => {
+            setIsTyping(false);
+        }, 2000);
+    }
 
     const handleSend = async () => {
         if (text.trim()) {
@@ -125,11 +143,22 @@ export default function Chatting({ UserListIcon ,handleChatListClick, chatUser, 
             else if (message.type === 'READ_ALL'){
                 handleReadAll();
             }
-            else if (message.type === 'KEYBOARD'){
-                
+            else if (message.type === 'KEYBOARD' && message.receiverId === me.id){
+                console.log(message);
+                setShowIsTyping(true);
+
+                if (typingIndicatorTimeoutRef.current) {
+                    console.log(typingIndicatorTimeoutRef.current);
+                    clearTimeout(typingIndicatorTimeoutRef.current);
+                }
+
+                typingIndicatorTimeoutRef.current = setTimeout(() => {
+                    setShowIsTyping(false);
+                }, 2000);
             }
             else if (message.type === 'CHAT') {
                 // updateChatList(message)
+                setShowIsTyping(false);
                 setChatContent((prevContent) => [message, ...prevContent]);
                 if (message.senderId !== me.id) markAsRead(message.id);
             }
@@ -172,6 +201,9 @@ export default function Chatting({ UserListIcon ,handleChatListClick, chatUser, 
                         <ArrowDownward sx={{color:"white"}}/>
                     </Fab>
                 )}
+                {showIsTyping &&
+                    <div style={{fontSize:"0.8rem", color:"grey"}}>입력중..</div>
+                }
                 {chatContent.map((data, idx) => (
                     <div style={{display:"flex", flexDirection:"row", alignItems:"flex-end"}}>
                         <div key={idx} className={data.senderId === me.id ? chatStyles.mymessage : chatStyles.targetmessage} style={{position:"relative"}}>
@@ -191,7 +223,7 @@ export default function Chatting({ UserListIcon ,handleChatListClick, chatUser, 
                     <div style={{display:"flex", flexDirection:"row", width:"100%", height:"100%", gap:"1rem", margin:"0.3rem 0.5rem", justifyContent:"space-between", alignItems:"center"}}>
                         <TextArea 
                         value={text} 
-                        onChange={(e) => setText(e.target.value)} 
+                        onChange={(e) => handleKeyboard(e)} 
                         placeholder="보낼 메시지를 입력하세요." 
                         onKeyDown={handleKeyPress}
                         autoSize={{
