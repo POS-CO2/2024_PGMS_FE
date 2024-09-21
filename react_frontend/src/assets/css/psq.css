@@ -1,0 +1,17 @@
+.title_container {
+    display: inline-flex;
+}
+
+.table_container {
+    display: block;
+    width: 100%;
+}
+
+.table_card {
+    margin-bottom: 1rem;
+}
+
+.table_card_not_custom {
+    margin-bottom: 1rem;
+    padding: 20px;
+}
