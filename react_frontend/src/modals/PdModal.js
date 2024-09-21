@@ -147,6 +147,7 @@ export function FlAddModal({ isModalOpen, handleOk, handleCancel, dropDown }) {
     const [selectedEqDvs, setSelectedEqDvs] = useState('');
     const [selectedEqType, setSelectedEqType] = useState('');
     const [selectedEqSpecUnit, setSelectedEqSpecUnit] = useState('');
+    const [errors, setErrors] = useState({});
 
     // 옵션을 가져오는 함수
     const getOptions = (fieldName) => {
@@ -163,79 +164,97 @@ export function FlAddModal({ isModalOpen, handleOk, handleCancel, dropDown }) {
             eqSpecUnit: selectedEqSpecUnit
         };
 
+        // 입력 값 검증
+        let newErrors = {};
+        if (!formData.eqLibName) newErrors.eqLibName = '설비명을 입력해 주세요.';
+        if (!formData.eqDvs) newErrors.eqDvs = '설비구분을 선택해 주세요.';
+        if (!formData.eqType) newErrors.eqType = '설비유형을 선택해 주세요.';
+        if (!formData.eqSpecUnit) newErrors.eqSpecUnit = '설비사양단위를 선택해 주세요.';
+
+        if (Object.keys(newErrors).length > 0) {
+            setErrors(newErrors);
+            return;
+        }
+
+        setErrors({});
+
+        // 입력값 검증 통과하면 등록 수행
         handleOk(formData);
     };
 
     return (
-        <ConfigProvider
-        theme={{token:{fontFamily:"SUITE-Regular"}}}>
-        <Modal
-            open={isModalOpen}
-            onCancel={handleCancel}
-            style={{ width: '25rem', maxWidth: '25rem', important: true }}
-            footer={null}                                                   //Ant Design의 기본 footer 제거(Cancel, OK 버튼)
-        >
-            <div className={rmStyles.title}>설비LIB 등록</div>
+        <ConfigProvider theme={{token:{fontFamily:"SUITE-Regular"}}}>
+            <Modal
+                open={isModalOpen}
+                onCancel={handleCancel}
+                style={{ width: '25rem', maxWidth: '25rem', important: true }}
+                footer={null}                                                   //Ant Design의 기본 footer 제거(Cancel, OK 버튼)
+            >
+                <div className={rmStyles.title}>설비LIB 등록</div>
 
-            <div className={rmStyles.submit_container}>
-                <div className={rmStyles.search_item}>
-                    <div className={rmStyles.search_title}>설비라이브러리명</div>
-                    <Input
-                        value={eqLibName}
-                        allowClear={{ clearIcon: <CloseOutlined style={{color: "red"}} /> }}
-                        onChange={(e) => setEqLibName(e.target.value)}
-                        style={{ width: '21rem' }}
-                    />
+                <div className={rmStyles.submit_container}>
+                    <div className={rmStyles.search_item}>
+                        <div className={rmStyles.search_title}>설비라이브러리명</div>
+                        <Input
+                            value={eqLibName}
+                            allowClear={{ clearIcon: <CloseOutlined style={{color: "red"}} /> }}
+                            onChange={(e) => setEqLibName(e.target.value)}
+                            style={{ width: '21rem' }}
+                        />
+                        {errors.eqLibName && <div className={modalStyles.error_message}>{errors.eqLibName}</div>}
+                    </div>
+                    <div className={rmStyles.search_item}>
+                        <div className={rmStyles.search_title}>설비구분</div>
+                        <Select
+                            value={selectedEqDvs}
+                            allowClear={{ clearIcon: <CloseOutlined style={{color: "red"}} /> }}
+                            onChange={(value) => setSelectedEqDvs(value)}
+                            style={{ width: '21rem' }}
+                        >
+                            {getOptions('equipDvs').map(option => (
+                                <Select.Option key={option.value} value={option.value}>
+                                    {option.label}
+                                </Select.Option>
+                            ))}
+                        </Select>
+                        {errors.eqDvs && <div className={modalStyles.error_message}>{errors.eqDvs}</div>}
+                    </div>
+                    <div className={rmStyles.search_item}>
+                        <div className={rmStyles.search_title}>설비유형</div>
+                        <Select
+                            value={selectedEqType}
+                            allowClear={{ clearIcon: <CloseOutlined style={{color: "red"}} /> }}
+                            onChange={(value) => setSelectedEqType(value)}
+                            style={{ width: '21rem' }}
+                        >
+                            {getOptions('equipType').map(option => (
+                                <Select.Option key={option.value} value={option.value}>
+                                    {option.label}
+                                </Select.Option>
+                            ))}
+                        </Select>
+                        {errors.eqType && <div className={modalStyles.error_message}>{errors.eqType}</div>}
+                    </div>
+                    <div className={rmStyles.search_item}>
+                        <div className={rmStyles.search_title}>설비사양단위</div>
+                        <Select
+                            value={selectedEqSpecUnit}
+                            allowClear={{ clearIcon: <CloseOutlined style={{color: "red"}} /> }}
+                            onChange={(value) => setSelectedEqSpecUnit(value)}
+                            style={{ width: '21rem' }}
+                        >
+                            {getOptions('equipSpecUnit').map(option => (
+                                <Select.Option key={option.value} value={option.value}>
+                                    {option.label}
+                                </Select.Option>
+                            ))}
+                        </Select>
+                        {errors.eqSpecUnit && <div className={modalStyles.error_message}>{errors.eqSpecUnit}</div>}
+                    </div>
                 </div>
-                <div className={rmStyles.search_item}>
-                    <div className={rmStyles.search_title}>설비구분</div>
-                    <Select
-                        value={selectedEqDvs}
-                        allowClear={{ clearIcon: <CloseOutlined style={{color: "red"}} /> }}
-                        onChange={(value) => setSelectedEqDvs(value)}
-                        style={{ width: '21rem' }}
-                    >
-                        {getOptions('equipDvs').map(option => (
-                            <Select.Option key={option.value} value={option.value}>
-                                {option.label}
-                            </Select.Option>
-                        ))}
-                    </Select>
-                </div>
-                <div className={rmStyles.search_item}>
-                    <div className={rmStyles.search_title}>설비유형</div>
-                    <Select
-                        value={selectedEqType}
-                        allowClear={{ clearIcon: <CloseOutlined style={{color: "red"}} /> }}
-                        onChange={(value) => setSelectedEqType(value)}
-                        style={{ width: '21rem' }}
-                    >
-                        {getOptions('equipType').map(option => (
-                            <Select.Option key={option.value} value={option.value}>
-                                {option.label}
-                            </Select.Option>
-                        ))}
-                    </Select>
-                </div>
-                <div className={rmStyles.search_item}>
-                    <div className={rmStyles.search_title}>설비사양단위</div>
-                    <Select
-                        value={selectedEqSpecUnit}
-                        allowClear={{ clearIcon: <CloseOutlined style={{color: "red"}} /> }}
-                        onChange={(value) => setSelectedEqSpecUnit(value)}
-                        style={{ width: '21rem' }}
-                    >
-                        {getOptions('equipSpecUnit').map(option => (
-                            <Select.Option key={option.value} value={option.value}>
-                                {option.label}
-                            </Select.Option>
-                        ))}
-                    </Select>
-                </div>
-            </div>
 
-            <button className={rmStyles.select_button} onClick={handleSelect}>등록</button>
-        </Modal>
+                <button className={rmStyles.select_button} onClick={handleSelect}>등록</button>
+            </Modal>
         </ConfigProvider>
     )
 }
@@ -245,6 +264,7 @@ export function FlEditModal({ isModalOpen, handleOk, handleCancel, rowData, drop
     const [selectedEqDvs, setSelectedEqDvs] = useState('');
     const [selectedEqType, setSelectedEqType] = useState('');
     const [selectedEqSpecUnit, setSelectedEqSpecUnit] = useState('');
+    const [errors, setErrors] = useState({});
 
     // 옵션을 가져오는 함수
     const getOptions = (fieldName) => {
@@ -275,6 +295,21 @@ export function FlEditModal({ isModalOpen, handleOk, handleCancel, rowData, drop
             eqSpecUnit: selectedEqSpecUnit
         };
 
+        // 입력 값 검증
+        let newErrors = {};
+        if (!formData.eqLibName) newErrors.eqLibName = '설비명을 입력해 주세요.';
+        if (!formData.eqDvs) newErrors.eqDvs = '설비구분을 선택해 주세요.';
+        if (!formData.eqType) newErrors.eqType = '설비유형을 선택해 주세요.';
+        if (!formData.eqSpecUnit) newErrors.eqSpecUnit = '설비사양단위를 선택해 주세요.';
+
+        if (Object.keys(newErrors).length > 0) {
+            setErrors(newErrors);
+            return;
+        }
+
+        setErrors({});
+
+        // 입력값 검증 통과하면 등록 수행
         handleOk(formData);
     };
 
@@ -298,6 +333,7 @@ export function FlEditModal({ isModalOpen, handleOk, handleCancel, rowData, drop
                         onChange={(e) => setEqLibName(e.target.value)}
                         style={{ width: '21rem' }}
                     />
+                    {errors.eqLibName && <div className={modalStyles.error_message}>{errors.eqLibName}</div>}
                 </div>
                 <div className={rmStyles.search_item}>
                     <div className={rmStyles.search_title}>설비구분</div>
@@ -313,6 +349,7 @@ export function FlEditModal({ isModalOpen, handleOk, handleCancel, rowData, drop
                             </Select.Option>
                         ))}
                     </Select>
+                    {errors.eqDvs && <div className={modalStyles.error_message}>{errors.eqDvs}</div>}
                 </div>
                 <div className={rmStyles.search_item}>
                     <div className={rmStyles.search_title}>설비유형</div>
@@ -328,6 +365,7 @@ export function FlEditModal({ isModalOpen, handleOk, handleCancel, rowData, drop
                             </Select.Option>
                         ))}
                     </Select>
+                    {errors.eqType && <div className={modalStyles.error_message}>{errors.eqType}</div>}
                 </div>
                 <div className={rmStyles.search_item}>
                     <div className={rmStyles.search_title}>설비사양단위</div>
@@ -343,6 +381,7 @@ export function FlEditModal({ isModalOpen, handleOk, handleCancel, rowData, drop
                             </Select.Option>
                         ))}
                     </Select>
+                    {errors.eqSpecUnit && <div className={modalStyles.error_message}>{errors.eqSpecUnit}</div>}
                 </div>
             </div>
             
@@ -360,6 +399,7 @@ export function FamAddModal({ isModalOpen, handleOk, handleCancel, dropDown }) {
     const [calUnit, setCalUnit] = useState('');
     const [unitConvCoef, setUnitConvCoef] = useState('');
     const [actvUnits, setActvUnits] = useState([]);
+    const [errors, setErrors] = useState({});
 
     useEffect(() => {
         const fetchActvUnit = async () => {
@@ -373,18 +413,6 @@ export function FamAddModal({ isModalOpen, handleOk, handleCancel, dropDown }) {
     
         fetchActvUnit();
     }, []);
-
-    //// 모달이 열릴 때 폼 필드 초기화
-    useEffect(() => {
-        if (isModalOpen) {
-            setActvName('');
-            setSelectedActvDvs('');
-            setSelectedEmtnActv('');
-            setSelectedInputUnit('');
-            setCalUnit('');
-            setUnitConvCoef('');
-        }
-    }, [isModalOpen]);
 
     // 옵션을 가져오는 함수
     const getOptions = (fieldName) => {
@@ -417,6 +445,21 @@ export function FamAddModal({ isModalOpen, handleOk, handleCancel, dropDown }) {
             unitConvCoef: unitConvCoef
         };
 
+        // 입력 값 검증
+        let newErrors = {};
+        if (!formData.actvDataName) newErrors.actvDataName = '활동자료명을 입력해 주세요.';
+        if (!formData.actvDataDvs) newErrors.actvDataDvs = '활동자료구분을 선택해 주세요.';
+        if (!formData.emtnActvType) newErrors.emtnActvType = '배출활동유형을 선택해 주세요.';
+        if (!formData.inputUnit) newErrors.inputUnit = '입력단위를 선택해 주세요.';
+
+        if (Object.keys(newErrors).length > 0) {
+            setErrors(newErrors);
+            return;
+        }
+
+        setErrors({});
+
+        // 입력값 검증 통과하면 등록 수행
         handleOk(formData);
     };
 
@@ -438,6 +481,7 @@ export function FamAddModal({ isModalOpen, handleOk, handleCancel, dropDown }) {
                         onChange={(e) => setActvName(e.target.value)}
                         style={{ width: '21rem' }}
                     />
+                    {errors.actvDataName && <div className={modalStyles.error_message}>{errors.actvDataName}</div>}
                 </div>
                 <div className={rmStyles.search_item}>
                     <div className={rmStyles.search_title}>활동자료구분</div>
@@ -453,6 +497,7 @@ export function FamAddModal({ isModalOpen, handleOk, handleCancel, dropDown }) {
                             </Select.Option>
                         ))}
                     </Select>
+                    {errors.actvDataDvs && <div className={modalStyles.error_message}>{errors.actvDataDvs}</div>}
                 </div>
                 <div className={rmStyles.search_item}>
                     <div className={rmStyles.search_title}>배출활동유형</div>
@@ -468,6 +513,7 @@ export function FamAddModal({ isModalOpen, handleOk, handleCancel, dropDown }) {
                             </Select.Option>
                         ))}
                     </Select>
+                    {errors.emtnActvType && <div className={modalStyles.error_message}>{errors.emtnActvType}</div>}
                 </div>
                 <div className={rmStyles.search_item}>
                     <div className={rmStyles.search_title}>입력단위</div>
@@ -483,6 +529,7 @@ export function FamAddModal({ isModalOpen, handleOk, handleCancel, dropDown }) {
                             </Select.Option>
                         ))}
                     </Select>
+                    {errors.inputUnit && <div className={modalStyles.error_message}>{errors.inputUnit}</div>}
                 </div>
                 <div className={rmStyles.search_item}>
                     <div className={rmStyles.search_title}>산정단위</div>
@@ -519,6 +566,7 @@ export function FamEditModal({ isModalOpen, handleOk, handleCancel, rowData, dro
     const [calUnit, setCalUnit] = useState('');
     const [unitConvCoef, setUnitConvCoef] = useState('');
     const [actvUnits, setActvUnits] = useState([]);
+    const [errors, setErrors] = useState({});
 
     useEffect(() => {
         const fetchActvUnit = async () => {
@@ -578,6 +626,21 @@ export function FamEditModal({ isModalOpen, handleOk, handleCancel, rowData, dro
             unitConvCoef: unitConvCoef
         };
 
+        // 입력 값 검증
+        let newErrors = {};
+        if (!formData.actvDataName) newErrors.actvDataName = '활동자료명을 입력해 주세요.';
+        if (!formData.actvDataDvs) newErrors.actvDataDvs = '활동자료구분을 선택해 주세요.';
+        if (!formData.emtnActvType) newErrors.emtnActvType = '배출활동유형을 선택해 주세요.';
+        if (!formData.inputUnit) newErrors.inputUnit = '입력단위를 선택해 주세요.';
+
+        if (Object.keys(newErrors).length > 0) {
+            setErrors(newErrors);
+            return;
+        }
+
+        setErrors({});
+
+        // 입력값 검증 통과하면 등록 수행
         handleOk(formData);
     };
 
@@ -599,6 +662,7 @@ export function FamEditModal({ isModalOpen, handleOk, handleCancel, rowData, dro
                         onChange={(e) => setActvName(e.target.value)}
                         style={{ width: '21rem' }}
                     />
+                    {errors.actvDataName && <div className={modalStyles.error_message}>{errors.actvDataName}</div>}
                 </div>
                 <div className={rmStyles.search_item}>
                     <div className={rmStyles.search_title}>활동자료구분</div>
@@ -614,6 +678,7 @@ export function FamEditModal({ isModalOpen, handleOk, handleCancel, rowData, dro
                             </Select.Option>
                         ))}
                     </Select>
+                    {errors.actvDataDvs && <div className={modalStyles.error_message}>{errors.actvDataDvs}</div>}
                 </div>
                 <div className={rmStyles.search_item}>
                     <div className={rmStyles.search_title}>배출활동유형</div>
@@ -629,6 +694,7 @@ export function FamEditModal({ isModalOpen, handleOk, handleCancel, rowData, dro
                             </Select.Option>
                         ))}
                     </Select>
+                    {errors.emtnActvType && <div className={modalStyles.error_message}>{errors.emtnActvType}</div>}
                 </div>
                 <div className={rmStyles.search_item}>
                     <div className={rmStyles.search_title}>입력단위</div>
@@ -644,6 +710,7 @@ export function FamEditModal({ isModalOpen, handleOk, handleCancel, rowData, dro
                             </Select.Option>
                         ))}
                     </Select>
+                    {errors.inputUnit && <div className={modalStyles.error_message}>{errors.inputUnit}</div>}
                 </div>
                 <div className={rmStyles.search_item}>
                     <div className={rmStyles.search_title}>산정단위</div>
@@ -1169,7 +1236,7 @@ export function DeleteModal({ isModalOpen, handleOk, handleCancel, rowData, rowD
                 await axiosInstance.patch(`/pjt?id=${rowData.id}`);
             }
             else {
-                await axiosInstance.delete(`${url}?id=${rowData.id}`);
+                const res = await axiosInstance.delete(`${url}?id=${rowData.id}`);
             }
             
             swalOptions.title = '성공!',
@@ -1641,8 +1708,6 @@ export function EfmEditModal({ isModalOpen, handleOk, handleCancel, rowData }) {
             // POST 요청으로 서버에 데이터 전송
             const response = await axiosInstance.patch('/equip/coef', formData);
 
-            console.log("response", response);
-            console.log(formData); 
             // handleOk을 호출하여 모달을 닫고 상위 컴포넌트에 알림
             handleOk(response.data);
             swalOptions.title = '성공!',

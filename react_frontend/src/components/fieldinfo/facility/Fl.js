@@ -15,6 +15,8 @@ export default function Fl() {
     const [selectedEqLib, setSelectedEqLib] = useState({});     // 선택된 설비 LIB
     const [actves, setActves] = useState([]);
     const [selectedActv, setSelectedActv] = useState({});
+    const [selectedEqLibIdx, setSelectedEqLibIdx] = useState([]);
+    const [selectedActvIdx, setSelectedActvIdx] = useState([]);
     const [isModalOpen, setIsModalOpen] = useState({
         FlAdd: false,
         FlEdit: false,
@@ -144,10 +146,12 @@ export default function Fl() {
 
                 const response = await axiosInstance.post("/equip/lib", requestBody);
 
-                setEqLibs(prevEqLibs => [...prevEqLibs, response.data]);
+                setEqLibs(prevEqLibs => [response.data, ...prevEqLibs]);
+                setSelectedEqLib({});
+                setSelectedEqLibIdx([0]);
 
                 swalOptions.title = '성공!',
-                swalOptions.text = '설비LIB가 성공적으로 등록되었습니다.';
+                swalOptions.text = `${data.eqLibName}(이)가 성공적으로 등록되었습니다.`;
                 swalOptions.icon = 'success';
             } catch (error) {
                 console.log(error);
@@ -157,39 +161,6 @@ export default function Fl() {
                 swalOptions.icon = 'error';
             }
             Swal.fire(swalOptions);
-        } else if (modalType === 'DeleteA') {
-            try {
-                // 선택된 설비LIB를 eqLib 리스트에서 제거
-                setEqLibs(prevEqLibs => prevEqLibs.filter(eqLib => eqLib.id !== selectedEqLib.id));
-                setSelectedEqLib({});
-            } catch (error) {
-                console.log(error);
-            }
-        } else if (modalType === 'FadAdd') {
-            const newFads = data.row;
-
-            try {
-                // data 배열을 순회하며 requestBody 배열 생성
-                const requestBody = newFads.map(actv => ({
-                    equipLibId: selectedEqLib.id,
-                    actvDataId: actv.id,
-                }));
-
-                const response = await axiosInstance.post("/equip/libmap", requestBody);
-
-                // 기존 활동자료에서 placeholderActv를 제거하고 새 데이터를 병합
-                setActves(prevActves => [...prevActves, ...response.data]);
-
-                swalOptions.title = '성공!',
-                swalOptions.text = '활동자료가 성공적으로 지정되었습니다.';
-                swalOptions.icon = 'success';
-            } catch (error) {
-                console.log(error);
-
-                swalOptions.title = '실패!',
-                swalOptions.text = error.response.data.message;
-                swalOptions.icon = 'error';
-            }
         } else if (modalType === 'FlEdit') {
             try {
                 const requestBody = {
@@ -208,10 +179,48 @@ export default function Fl() {
                         eqLib.id === selectedEqLib.id ? response.data : eqLib
                     )
                 );
-                setSelectedEqLib({});
 
                 swalOptions.title = '성공!',
-                swalOptions.text = '설비LIB이 성공적으로 수정되었습니다.';
+                swalOptions.text = `${selectedEqLib.equipLibName}(이)가 성공적으로 수정되었습니다.`;
+                swalOptions.icon = 'success';
+            } catch (error) {
+                console.log(error);
+
+                swalOptions.title = '실패!',
+                swalOptions.text = error.response.data.message;
+                swalOptions.icon = 'error';
+            }
+        } else if (modalType === 'DeleteA') {
+            try {
+                // 선택된 설비LIB를 eqLib 리스트에서 제거
+                setEqLibs(prevEqLibs => prevEqLibs.filter(eqLib => eqLib.id !== selectedEqLib.id));
+                setSelectedEqLib({});
+                setSelectedEqLibIdx([]);
+            } catch (error) {
+                console.log(error);
+            }
+        } else if (modalType === 'FadAdd') {
+            const newFads = data.row;
+            const actvDataNameList = [];
+
+            try {
+                // data 배열을 순회하며 requestBody 배열 생성
+                const requestBody = newFads.map(actv => {
+                    actvDataNameList.push(actv.actvDataName);  // actvDataName을 리스트에 추가
+                    return {
+                        equipLibId: selectedEqLib.id,
+                        actvDataId: actv.id
+                    };
+                });
+                const response = await axiosInstance.post("/equip/libmap", requestBody);
+
+                // 기존 활동자료에서 새 데이터를 병합
+                setActves(prevActves => [...response.data, ...prevActves]);
+                setSelectedActv({});
+                setSelectedActvIdx([...Array(newFads.length).keys()]) //지정된 활동자료 만큼의 인덱스 추출(3개(n)를 지정했으면 [0, 1, 2(n-1)] 배열을 만듦)
+
+                swalOptions.title = '성공!',
+                swalOptions.text = `${actvDataNameList.join(', ')}(이)가 성공적으로 지정되었습니다.`;
                 swalOptions.icon = 'success';
             } catch (error) {
                 console.log(error);
@@ -225,6 +234,7 @@ export default function Fl() {
                 // 선택된 활동자료를 actves 리스트에서 제거
                 setActves(prevActves => prevActves.filter(actv => actv.id !== selectedActv.id));
                 setSelectedActv({});
+                setSelectedActvIdx([]);
             } catch (error) {
                 console.log(error);
             }
@@ -237,27 +247,6 @@ export default function Fl() {
         setIsModalOpen(prevState => ({ ...prevState, [modalType]: false }));
     };
 
-    // 버튼 클릭 시 모달 열림 설정
-    const onEqLibAddClick = () => {
-        showModal('FlAdd');
-    };
-
-    const onEditClick = () => {
-        showModal('FlEdit');
-    };
-
-    const onActvAddClick = () => {
-        showModal('FadAdd');
-    };
-
-    const onEqLibDeleteClick = () => {
-        showModal('DeleteA');
-    };
-
-    const onActvDeleteClick = () => {
-        showModal('DeleteB');
-    };
-
     return (
         <>
             <div className={mainStyles.breadcrumb}>현장정보 &gt; 설비 &gt; 설비 LIB 관리</div>
@@ -268,12 +257,14 @@ export default function Fl() {
                     <Card sx={{ width: "50%", height: "auto", borderRadius: "0.5rem" }}>
                         <TableCustom 
                             title='설비LIB목록' 
-                            data={eqLibs}                   
+                            data={eqLibs}
+                            selectedRowIdx={selectedEqLibIdx}     
                             columns={equipLibColumns}
                             buttons={['Delete', 'Edit', 'Add']}
-                            onClicks={[onEqLibDeleteClick, onEditClick, onEqLibAddClick]}
+                            onClicks={[() => showModal('DeleteA'), () => showModal('FlEdit'), () => showModal('FlAdd')]}
                             onRowClick={(e) => handleEqLibClick(e)}
                             selectedRows={[selectedEqLib]}
+                            keyProp={eqLibs.length}
                             modals={[
                                 {
                                     'modalType': 'DeleteA',
@@ -282,7 +273,7 @@ export default function Fl() {
                                     'handleCancel': handleCancel('DeleteA'),
                                     'rowData': selectedEqLib,
                                     'rowDataName': 'equipLibName',
-                                    'url': '/equip'
+                                    'url': '/equip/lib'
                                 },
                                 {
                                     'modalType': 'FlEdit',
@@ -310,11 +301,13 @@ export default function Fl() {
                             <TableCustom 
                                 title='활동자료목록' 
                                 data={actves}
+                                selectedRowIdx={selectedActvIdx}  
                                 columns={equipActvColumns}   
                                 buttons={['Delete', 'Add']}
-                                onClicks={[onActvDeleteClick, onActvAddClick]}
+                                onClicks={[() => showModal('DeleteB'), () => showModal('FadAdd')]}
                                 onRowClick={handleActvClick}
                                 selectedRows={[selectedActv]}
+                                keyProp={actves.length}
                                 modals={[
                                     {
                                         'modalType': 'DeleteB',

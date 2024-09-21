@@ -48,6 +48,7 @@ export default function TableCustom({
     title = "Default Title",
     variant = 'default',
     data = [],
+    selectedRowIdx = [],
     buttons = [],
     onClicks = [],
     onRowClick = () => { },  // 기본값으로 빈 함수 설정
@@ -122,6 +123,7 @@ export default function TableCustom({
                     <Table 
                         key={tableKey} 
                         data={data} 
+                        selectedRowIdx={selectedRowIdx}
                         variant={variant} 
                         onRowClick={onRowClick} 
                         pagination={pagination} 
