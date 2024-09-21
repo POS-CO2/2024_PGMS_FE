@@ -2,8 +2,6 @@ import React, { useState, useEffect } from 'react';
 import SearchForms from '../../SearchForms';
 import { formField_mal, formField_um } from '../../assets/json/searchFormData';
 import TableCustom from '../../TableCustom';
-import { table_um_list } from '../../assets/json/selectedPjt';
-import { ButtonGroup, ButtonGroupMm } from '../../Button';
 import * as sysStyles from '../../assets/css/sysmng.css';
 import * as mainStyle from '../../assets/css/main.css';
 import { Card, TextField, Button, Hidden } from '@mui/material';

@@ -12,7 +12,7 @@ import WarningAmberIcon from '@mui/icons-material/WarningAmber';
 import Table from "../Table";
 import { CustomButton } from '../Button';
 import styled from 'styled-components';
-import { pjtColumns, userColumns, equipColumns, equipActvColumns, equipEmissionColumns } from '../assets/json/tableColumn.js';
+import { pjtColumns, equipColumns, equipActvColumns, equipEmissionColumns } from '../assets/json/tableColumn.js';
 import * as modalStyles from "../assets/css/pdModal.css";
 import * as rmStyles from "../assets/css/rmModal.css";
 import * as delStyle from "../assets/css/delModal.css";
@@ -21,7 +21,6 @@ import * as sdStyles from "../assets/css/sdModal.css";
 import * as pdsStyles from "../assets/css/pds.css";
 import * as sysStyles from "../assets/css/sysmng.css"
 import * as ps12Styles from "../assets/css/ps12UploadExcelModal.css";
-import { selectMonth } from "../assets/json/sd";
 
 const StyledInput = styled(Input)`
   background: #ECF1F4 !important;
@@ -37,6 +36,21 @@ const StyledInput = styled(Input)`
     box-shadow: none !important;
   }
 `;
+
+const selectMonth = [
+    { value: '1', label: '1' },
+    { value: '2', label: '2' },
+    { value: '3', label: '3' },
+    { value: '4', label: '4' },
+    { value: '5', label: '5' },
+    { value: '6', label: '6' },
+    { value: '7', label: '7' },
+    { value: '8', label: '8' },
+    { value: '9', label: '9' },
+    { value: '10', label: '10' },
+    { value: '11', label: '11' },
+    { value: '12', label: '12' }
+];
 
 export function PgAddModal({ isModalOpen, handleOk, handleCancel }) {
     const [selectedPjts, setSelectedPjts] = useState([]);     // 선택된 프로젝트

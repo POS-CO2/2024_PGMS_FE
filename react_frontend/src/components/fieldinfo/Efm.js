@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import SearchForms from '../../SearchForms';
 import { formField_efm } from '../../assets/json/searchFormData';
-import { table_efm_list, table_fm_res } from '../../assets/json/selectedPjt';
 import TableCustom from '../../TableCustom';
 import { AllButton } from '../../Button';
 import * as sysStyles from '../../assets/css/sysmng.css';

@@ -3,7 +3,6 @@ import SearchForms from '../../SearchForms';
 import * as tableStyles from '../../assets/css/table.css'
 import { formField_cm } from '../../assets/json/searchFormData';
 import TableCustom from '../../TableCustom';
-import { table_cm_group, table_cm_code } from '../../assets/json/selectedPjt';
 import * as sysStyles from '../../assets/css/sysmng.css';
 import * as mainStyle from '../../assets/css/main.css';
 import { Card } from '@mui/material';
