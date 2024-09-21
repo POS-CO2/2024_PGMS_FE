@@ -212,7 +212,7 @@ export function TableCustomDoubleClickEdit({
 
         } catch (error) {
             swalOptions.title = '실패!',
-            swalOptions.text = '매출액 수정에 실패하였습니다.';
+            swalOptions.text = error.response.data.message,
             swalOptions.icon = 'error';
         }
         setEditedRows([]);
@@ -330,7 +330,7 @@ export function TableCustomDoubleClickEdit({
 
         } catch (error) {
             swalOptions.title = '실패!',
-            swalOptions.text = '활동량 수정에 실패하였습니다.';
+            swalOptions.text = error.response.data.message,
             swalOptions.icon = 'error';
         }
         setEditedRows([]);

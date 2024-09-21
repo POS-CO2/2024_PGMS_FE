@@ -159,13 +159,13 @@ export default function Pg() {
                 setProjects(prevPjts => [...prevPjts, ...response.data]);
 
                 swalOptions.title = '성공!',
-                swalOptions.text = '프로젝트가 성공적으로 등록되었습니다.';
+                swalOptions.text = error.response.data.message,
                 swalOptions.icon = 'success';
             } catch (error) {
                 console.log(error);
 
                 swalOptions.title = '실패!',
-                swalOptions.text = '프로젝트 등록에 실패하였습니다.';
+                swalOptions.text = error.response.data.message,
                 swalOptions.icon = 'error';
             }
             Swal.fire(swalOptions);
