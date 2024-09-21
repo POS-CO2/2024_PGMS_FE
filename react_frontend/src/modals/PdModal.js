@@ -927,13 +927,11 @@ export function Ps12UploadExcelModal({ isModalOpen, handleOk, handleCancel }) { 
                 }
             });
 
-            console.log(response.data);
             handleOk(response.data, true); // 새로 입력된 데이터를 handleOk 함수로 전달, 두번째 인자-closeModal=true
             swalOptions.title = '성공!',
             swalOptions.text = `성공적으로 등록되었습니다.`;
             swalOptions.icon = 'success';
         } catch (error) {
-            console.error('Error saving document:', error);
             swalOptions.title = '실패!',
             swalOptions.text = error.response.data.message;
             swalOptions.icon = 'error';
@@ -1063,8 +1061,6 @@ export function CmAddModal({ isModalOpen, handleOk, handleCancel }) {
             swalOptions.icon = 'success';
             handleOk(data);
         } catch (error) {
-            console.error('Failed to add user:', error);
-
             swalOptions.title = '실패!',
             swalOptions.text = `${formData.codeGrpName} 등록에 실패하였습니다.`;
             swalOptions.icon = 'error';
@@ -1158,7 +1154,6 @@ export function CmEditModal({ isModalOpen, handleOk, handleCancel, rowData }) {
             swalOptions.text = `${formData.codeGrpName}이 성공적으로 수정되었습니다.`;
             swalOptions.icon = 'success';
         } catch (error) {
-            console.error('Failed to add user:', error);
             swalOptions.title = '실패!',
             swalOptions.text = `${formData.codeGrpName} 등록에 실패하였습니다.`;
             swalOptions.icon = 'error';
@@ -1244,7 +1239,6 @@ export function DeleteModal({ isModalOpen, handleOk, handleCancel, rowData, rowD
             swalOptions.icon = 'success';
             handleOk();
         } catch (error) {
-            console.error('Failed to delete:', error);
             swalOptions.title = '실패!',
             swalOptions.text = error.response.data.message;
             swalOptions.icon = 'error';
@@ -1316,7 +1310,6 @@ export function CmListAddModal({ isModalOpen, handleOk, handleCancel, rowData })
             swalOptions.text = `${formData.codeName}가 성공적으로 등록되었습니다.`;
             swalOptions.icon = 'success';
         } catch (error) {
-            console.error('Failed to add user:', error);
             swalOptions.title = '실패!',
             swalOptions.text = `${formData.codeName} 등록에 실패하였습니다.`;
             swalOptions.icon = 'error';
@@ -1427,7 +1420,6 @@ export function CmListEditModal({ isModalOpen, handleOk, handleCancel, rowData }
             swalOptions.text = `${formData.codeName}이 성공적으로 수정되었습니다.`;
             swalOptions.icon = 'success';
         } catch (error) {
-            console.error('Failed to add user:', error);
             swalOptions.title = '실패!',
             swalOptions.text = `${formData.codeName} 등록에 실패하였습니다.`;
             swalOptions.icon = 'error';
@@ -1523,7 +1515,7 @@ export function EfmAddModal({ isModalOpen, handleOk, handleCancel, rowData }) {
             unitCode,
             coef,
         };
-        console.log("formData", formData);
+
         let newError = {};
         if(!formData.applyYear) newError.applyYear = '적용년도를 입력해주세요.';
         if(!formData.applyDvs) newError.applyDvs = '적용구분을 입력해주세요.';
@@ -1537,14 +1529,13 @@ export function EfmAddModal({ isModalOpen, handleOk, handleCancel, rowData }) {
         try {
             // POST 요청으로 서버에 데이터 전송
             const {data} = await axiosInstance.post('/equip/coef', formData);
-            console.log("data2", data);
+
             // handleOk을 호출하여 모달을 닫고 상위 컴포넌트에 알림
             handleOk(data);
             swalOptions.title = '성공!',
             swalOptions.text = `배출계수가 성공적으로 등록되었습니다.`;
             swalOptions.icon = 'success';
         } catch (error) {
-            console.error('Failed to add user:', error);
             swalOptions.title = '실패!',
             swalOptions.text = error.response.data.message;
             swalOptions.icon = 'error';
@@ -1556,10 +1547,7 @@ export function EfmAddModal({ isModalOpen, handleOk, handleCancel, rowData }) {
         const fetchData = async () => {
             const appDvsResponse = await axiosInstance.get(`/sys/unit?unitType=적용구분`);
             setApplyDvs(appDvsResponse.data);
-            // const ghgResponse = await axiosInstance.get(`/sys/unit?unitType=온실가스코드`);
-            // setGhgCode(ghgResponse.data);
-            // console.log("2",ghgResponse.data);
-            // const coefResponse = await axiosInstance.get(`/sys/unit?unitType=계수종류코드`);
+
             const coefResponse = [
                 {
                     "code": 2,
@@ -1637,7 +1625,7 @@ export function EfmAddModal({ isModalOpen, handleOk, handleCancel, rowData }) {
                 </div>
                 <div className={sysStyles.text_field}>
                     <div className={sysStyles.text}>{"가스코드"}</div>
-                    <Select value={selectedGhgCode} onChange={(value) => {setSelectedGhgCode(value); console.log(value);}} style={{width:"18rem", height:"2rem",fontSize:"4rem"}}>
+                    <Select value={selectedGhgCode} onChange={(value) => {setSelectedGhgCode(value)}} style={{width:"18rem", height:"2rem",fontSize:"4rem"}}>
                     {ghgCode.map(option => (
                         <Select.Option key={option.code} value={option.code}>
                             {option.name}
@@ -1714,7 +1702,6 @@ export function EfmEditModal({ isModalOpen, handleOk, handleCancel, rowData }) {
             swalOptions.text = `배출계수가 성공적으로 등록되었습니다.`;
             swalOptions.icon = 'success';
         } catch (error) {
-            console.error('Failed to add user:', error);
             swalOptions.title = '실패!',
             swalOptions.text = error.response.data.message;
             swalOptions.icon = 'error';
@@ -1764,7 +1751,6 @@ export function EfmEditModal({ isModalOpen, handleOk, handleCancel, rowData }) {
         }
         const matchedUnit = afterSelectedCoefClassCode[value === 2 ? 0 : value];
         if (matchedUnit) {
-            console.log(matchedUnit);
             setGhgCode(matchedUnit.gas);
             setUnitCode(matchedUnit.unit);
         }
@@ -1795,7 +1781,7 @@ export function EfmEditModal({ isModalOpen, handleOk, handleCancel, rowData }) {
                 </div>
                 <div className={sysStyles.text_field}>
                     <div className={sysStyles.text}>{"적용구분"}</div>
-                    <Select value={selectedApplyDvs} onChange={(value) => {setSelectedApplyDvs(value); console.log(value);}} style={{width:"18rem", height:"2rem", fontSize:"4rem"}}>
+                    <Select value={selectedApplyDvs} onChange={(value) => {setSelectedApplyDvs(value)}} style={{width:"18rem", height:"2rem", fontSize:"4rem"}}>
                     {applyDvs.map(option => (
                         <Select.Option key={option.code} value={option.code}>
                             {option.name}
@@ -1903,7 +1889,6 @@ export function FmAddModal({ isModalOpen, handleOk, handleCancel, rowData }) {
             swalOptions.text = `${formData.equipName}가 성공적으로 등록되었습니다.`;
             swalOptions.icon = 'success';
         } catch (error) {
-            console.error('Failed to add user:', error);
             swalOptions.title = '실패!',
             swalOptions.text = `${formData.equipName} 등록에 실패하였습니다.`;
             swalOptions.icon = 'error';
@@ -2042,7 +2027,6 @@ export function UmAddModal({ isModalOpen, handleOk, handleCancel }) {
             swalOptions.text = `${formData.userName}가 성공적으로 등록되었습니다.`;
             swalOptions.icon = 'success';
         } catch (error) {
-            console.error('Failed to add user:', error);
             swalOptions.title = '실패!',
             swalOptions.text = `${formData.userName} 등록에 실패하였습니다.`;
             swalOptions.icon = 'error';
@@ -2165,7 +2149,6 @@ export function MmAddModal({ isModalOpen, handleOk, handleCancel, rowData }) {
             swalOptions.text = `${formData.menuName}가 성공적으로 등록되었습니다.`;
             swalOptions.icon = 'success';
         } catch (error) {
-            console.error('Failed to add menu:', error);
             swalOptions.title = '실패!',
             swalOptions.text = `${formData.menuName} 등록에 실패하였습니다.`;
             swalOptions.icon = 'error';
@@ -2325,7 +2308,6 @@ export function EsmAddModal({ isModalOpen, handleOk, handleCancel, rowData }) {
             swalOptions.text = `배출원이 성공적으로 등록되었습니다.`;
             swalOptions.icon = 'success';
         } catch (error) {
-            console.error('Failed to add user:', error);
             swalOptions.title = '실패!',
             swalOptions.text = `배출원 등록에 실패하였습니다.`;
             swalOptions.icon = 'error';
@@ -2429,7 +2411,6 @@ export function SdAddModal({ isModalOpen, handleOk, handleCancel, rowData }) {
 
             return response.data; // 파일 업로드 후 S3에서 반환된 파일 정보 배열
         } catch (error) {
-            console.error('Error uploading files to S3:', error);
             swalOptions.title = '실패!',
             swalOptions.text = `증빙자료 등록에 실패하였습니다.`;
             swalOptions.icon = 'error';
@@ -2684,7 +2665,6 @@ export function SdShowDetailsModal({ isModalOpen, handleOk, handleCancel }) {
             }
             return []; // 파일이 없으면 빈 배열 반환
         } catch (error) {
-            console.error('Error uploading files to S3:', error);
             swalOptions.title = '실패!',
             swalOptions.text = `증빙자료 등록에 실패하였습니다.`;
             swalOptions.icon = 'error';
