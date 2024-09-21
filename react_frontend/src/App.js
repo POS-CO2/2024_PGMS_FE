@@ -7,7 +7,6 @@ import SiteLayout from './SiteLayout';
 import Main from './Main';
 import Main_Hp from './Main_Hp';
 import Main_Admin from './Main_Admin';
-import Efm from './components/fieldinfo/Efm';
 import Ps_1_2 from './components/emperf/Ps_1_2';
 import Ps_1_2_Fp from './components/emperf/Ps_1_2_Fp';
 import Psq from './components/emperf/perflook/Psq';
@@ -15,13 +14,9 @@ import Psq_Fp from './components/emperf/perflook/Psq_Fp';
 import Tep from './components/emperf/perflook/Tep';
 import Pds from './components/fieldinfo/project/detailSet/Pds';
 import Pg from './components/fieldinfo/project/Pg';
-import Fm from './components/fieldinfo/facility/Fm';
-import Fad from './components/fieldinfo/facility/Fad';
 import Adm from './components/fieldinfo/facility/Adm';
 import Fl from './components/fieldinfo/facility/Fl';
-import Esm from './components/fieldinfo/emission/Esm';
 import Esm_Fp from './components/fieldinfo/emission/Esm_Fp';
-import Sd from './components/fieldinfo/emission/Sd';
 import Cm from './components/sysmng/Cm';
 import Mm from './components/sysmng/Mm';
 import Um from './components/sysmng/Um';
@@ -101,7 +96,6 @@ export default function App() {
                                     <Route index path='' element={<Main_Admin />} />
                                     <Route path='/ps_1_2' element={<Ps_1_2 />} />
                                     <Route path='/psq' element={<Psq />} />
-                                    <Route path='/esm' element={<Esm />} />
                                 </>
                                 :
                                 (user. role === 'HP'
@@ -110,7 +104,6 @@ export default function App() {
                                     <Route index path='' element={<Main_Hp />} /> 
                                     <Route path='/ps_1_2' element={<Ps_1_2 />} />
                                     <Route path='/psq' element={<Psq />} />
-                                    <Route path='/esm' element={<Esm />} />
                                 </>
                                 :
                                 <>
@@ -121,16 +114,12 @@ export default function App() {
                                 </>
                                 )
                             }
-                            <Route path='/efm' element={<Efm />} />
                             <Route path='/tep' element={<Tep />} />
                             <Route path='/pmg' element={<Pmg />} />
                             <Route path='/pds' element={<Pds />} />
                             <Route path='/pg' element={<Pg />} />
-                            <Route path='/fm' element={<Fm />} />
-                            <Route path='/fad' element={<Fad />} />
                             <Route path='/adm' element={<Adm />} />
                             <Route path='/fl' element={<Fl />} />
-                            <Route path='/sd' element={<Sd />} />
                             <Route path='/cm' element={<Cm />} />
                             <Route path='/um' element={<Um />} />
                             <Route path='/mm' element={<Mm menus={menu} handleMenuSet={handleMenuSet} />} />
