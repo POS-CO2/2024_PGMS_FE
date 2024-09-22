@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { Modal, Button, Upload, Select, Input, ConfigProvider } from 'antd';
 import Swal from 'sweetalert2';
 import { useRecoilValue, useRecoilState } from 'recoil';
-import { pjtState, selectedSuppDocState } from '../atoms/pdsAtoms';
+import { selectedPjtState, selectedSuppDocState } from '../atoms/pdsAtoms';
 import axiosInstance from '../utils/AxiosInstance';
 import { TextField, Autocomplete } from '@mui/material';
 import { PaperClipOutlined, CloseOutlined } from '@ant-design/icons';
@@ -1500,7 +1500,7 @@ export function EfmAddModal({ isModalOpen, handleOk, handleCancel, rowData }) {
     const [coef, setCoef] = useState(0);
     const [error, setError] = useState({});
 
-
+    console.log("HOCHUL")
     const handleSelect = async() => {
         let swalOptions = {
             confirmButtonText: '확인'
@@ -1699,7 +1699,7 @@ export function EfmEditModal({ isModalOpen, handleOk, handleCancel, rowData }) {
             // handleOk을 호출하여 모달을 닫고 상위 컴포넌트에 알림
             handleOk(response.data);
             swalOptions.title = '성공!',
-            swalOptions.text = `배출계수가 성공적으로 등록되었습니다.`;
+            swalOptions.text = `${formData.applyDvs}(이)가 성공적으로 수정되었습니다.`;
             swalOptions.icon = 'success';
         } catch (error) {
             swalOptions.title = '실패!',
@@ -2270,49 +2270,28 @@ export function EsmAddModal({ isModalOpen, handleOk, handleCancel, rowData }) {
 
     // 배출원 row 클릭 시 호출될 함수
     const handleEmtnClick = (row) => {
-        setSelectedEmtnCands(row);
-        console.log(row);
+        setSelectedEmtnCands(row.row);
     };
 
     // 등록 버튼 클릭 시 호출될 함수
     const handleSelect = async () => {
-        let swalOptions = {
-            confirmButtonText: '확인'
-        };
-
         // selectedEmtnCands가 null이거나 비었으면 모달 닫고 함수 종료
         if (!selectedEmtnCands || selectedEmtnCands.length === 0) {
             handleCancel();
             return;
         }
 
-        try {
-            // POST 요청으로 서버에 데이터 전송
-            const requests = selectedEmtnCands.map((selectedEmtnCand) => {
-                const regData = {
-                    equipId: selectedEmtnCand.equipId,
-                    actvDataId: selectedEmtnCand.actvDataId,
-                };
+        const requestBody = selectedEmtnCands.map((selectedEmtnCand) => ({
+            equipId: selectedEmtnCand.equipId,
+            actvDataId: selectedEmtnCand.actvDataId,
+        }));
 
-                // 각 항목에 대해 POST 요청을 보내고, 요청 결과를 Promise 배열로 수집
-                return axiosInstance.post('/equip/emission', regData);
-            });
-
-            // 모든 요청이 완료될 때까지 대기
-            const responses = await Promise.all(requests);
-            const responseEmtnCands = responses.map(response => response.data);
-
-            // handleOk을 호출하여 모달을 닫고 상위 컴포넌트에 알림
-            handleOk(responseEmtnCands);
-            swalOptions.title = '성공!',
-            swalOptions.text = `배출원이 성공적으로 등록되었습니다.`;
-            swalOptions.icon = 'success';
-        } catch (error) {
-            swalOptions.title = '실패!',
-            swalOptions.text = `배출원 등록에 실패하였습니다.`;
-            swalOptions.icon = 'error';
-        }
-        Swal.fire(swalOptions);
+        // handleOk을 호출하여 모달을 닫고 상위 컴포넌트에 알림
+        handleOk({
+            url: "/equip/emission",
+            requestBody: requestBody,
+            successMsg: `배출원이 성공적으로 등록되었습니다.`,
+        });
     };
 
     return (
@@ -2349,7 +2328,7 @@ export function EsmAddModal({ isModalOpen, handleOk, handleCancel, rowData }) {
 }
 
 export function SdAddModal({ isModalOpen, handleOk, handleCancel, rowData }) { 
-    const project = useRecoilValue(pjtState);
+    const project = useRecoilValue(selectedPjtState);
     const [yearSelectOptions, setYearSelectOptions] = useState([]);
     const [formData, setFormData] = useState({
         actvYear: new Date().getFullYear().toString(),
@@ -2566,7 +2545,7 @@ export function SdAddModal({ isModalOpen, handleOk, handleCancel, rowData }) {
 }
 
 export function SdShowDetailsModal({ isModalOpen, handleOk, handleCancel }) {
-    const project = useRecoilValue(pjtState);
+    const project = useRecoilValue(selectedPjtState);
     const [selectedSD, setSelectedSD] = useRecoilState(selectedSuppDocState);
     const [yearSelectOptions, setYearSelectOptions] = useState([]);
     const [formData, setFormData] = useState({
@@ -2721,7 +2700,7 @@ export function SdShowDetailsModal({ isModalOpen, handleOk, handleCancel }) {
         handleOk({
             url: "/equip/document",
             requestBody: documentData,
-            successMsg: `${documentData.name}이 성공적으로 수정되었습니다.`,
+            successMsg: `${documentData.name}(이)가 성공적으로 수정되었습니다.`,
         });
 
     };
@@ -2852,6 +2831,7 @@ export function SdShowDetailsModal({ isModalOpen, handleOk, handleCancel }) {
                                     
                                     return (
                                         <div key={index} className={sdStyles.file_item}>
+                                            {displayName}
                                             <button
                                                 type="button"
                                                 className={sdStyles.remove_button}

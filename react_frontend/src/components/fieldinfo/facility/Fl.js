@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from "react";
-import Swal from 'sweetalert2'
+import { useRecoilState } from "recoil";
+import { eqLibSearchForm } from '../../../atoms/searchFormAtoms';
+import Swal from 'sweetalert2';
 import { Card } from '@mui/material';
 import TableCustom from "../../../TableCustom";
 import SearchForms from "../../../SearchForms";
@@ -11,6 +13,7 @@ import * as pdsStyles from "../../../assets/css/pds.css";
 
 export default function Fl() {
     const [formFields, setFormFields] = useState(formField_fl);
+    const [formData, setFormData] = useRecoilState(eqLibSearchForm);
     const [eqLibs, setEqLibs] = useState([]);
     const [selectedEqLib, setSelectedEqLib] = useState({});     // 선택된 설비 LIB
     const [actves, setActves] = useState([]);
@@ -70,9 +73,11 @@ export default function Fl() {
                 console.error(error);
             }
         };
-    
+        
         fetchDropDown();
-        fetchEqLib();
+
+        // formData값이 없으면 설비LIB을 findAll, 있으면(이전 탭의 검색기록이 있으면) 그 값을 불러옴
+        Object.keys(formData).length === 0 ? fetchEqLib() : handleFormSubmit(formData);
     }, []);
 
     // 조회 버튼 클릭시 호출될 함수
@@ -88,6 +93,7 @@ export default function Fl() {
             const response = await axiosInstance.get("/equip/lib", {params});
             setEqLibs(response.data);
             setActves([]);
+            setFormData(data);
         } catch (error) {
             console.error("Error fetching equip lib data:", error);
         }
@@ -161,6 +167,42 @@ export default function Fl() {
                 swalOptions.icon = 'error';
             }
             Swal.fire(swalOptions);
+<<<<<<< HEAD
+=======
+        } else if (modalType === 'DeleteA') {
+            try {
+                // 선택된 설비LIB를 eqLib 리스트에서 제거
+                setEqLibs(prevEqLibs => prevEqLibs.filter(eqLib => eqLib.id !== selectedEqLib.id));
+                setSelectedEqLib({});
+            } catch (error) {
+                console.log(error);
+            }
+        } else if (modalType === 'FadAdd') {
+            const newFads = data.row;
+
+            try {
+                // data 배열을 순회하며 requestBody 배열 생성
+                const requestBody = newFads.map(actv => ({
+                    equipLibId: selectedEqLib.id,
+                    actvDataId: actv.id,
+                }));
+
+                const response = await axiosInstance.post("/equip/libmap", requestBody);
+
+                // 기존 활동자료에서 placeholderActv를 제거하고 새 데이터를 병합
+                setActves(prevActves => [...prevActves, ...response.data]);
+
+                swalOptions.title = '성공!',
+                swalOptions.text = `${data.actvDataName}(이)가 성공적으로 지정되었습니다.`;
+                swalOptions.icon = 'success';
+            } catch (error) {
+                console.log(error);
+
+                swalOptions.title = '실패!',
+                swalOptions.text = error.response.data.message;
+                swalOptions.icon = 'error';
+            }
+>>>>>>> 7216d1e180cbc03325dee360e53e41510aea25d7
         } else if (modalType === 'FlEdit') {
             try {
                 const requestBody = {
@@ -181,6 +223,7 @@ export default function Fl() {
                 );
 
                 swalOptions.title = '성공!',
+<<<<<<< HEAD
                 swalOptions.text = `${selectedEqLib.equipLibName}(이)가 성공적으로 수정되었습니다.`;
                 swalOptions.icon = 'success';
             } catch (error) {
@@ -221,6 +264,9 @@ export default function Fl() {
 
                 swalOptions.title = '성공!',
                 swalOptions.text = `${actvDataNameList.join(', ')}(이)가 성공적으로 지정되었습니다.`;
+=======
+                swalOptions.text = `${data.eqLibName}(이)가 성공적으로 수정되었습니다.`;
+>>>>>>> 7216d1e180cbc03325dee360e53e41510aea25d7
                 swalOptions.icon = 'success';
             } catch (error) {
                 console.log(error);
@@ -250,7 +296,11 @@ export default function Fl() {
     return (
         <>
             <div className={mainStyles.breadcrumb}>현장정보 &gt; 설비 &gt; 설비 LIB 관리</div>
-            <SearchForms onFormSubmit={handleFormSubmit} formFields={formFields} />
+            <SearchForms 
+                initialValues={formData} 
+                onFormSubmit={handleFormSubmit} 
+                formFields={formFields} 
+            />
             
             <div className={pdsStyles.main_grid}>
                 <div className={pdsStyles.contents_container}>

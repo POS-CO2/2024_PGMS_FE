@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from 'react';
+import { useRecoilState } from "recoil";
+import { userMgrSearchForm } from '../../atoms/searchFormAtoms';
 import SearchForms from '../../SearchForms';
 import { formField_mal, formField_um } from '../../assets/json/searchFormData';
 import TableCustom from '../../TableCustom';
@@ -6,20 +8,19 @@ import { table_um_list } from '../../assets/json/selectedPjt';
 import { ButtonGroup, ButtonGroupMm } from '../../Button';
 import * as sysStyles from '../../assets/css/sysmng.css';
 import * as mainStyle from '../../assets/css/main.css';
-import { Card, TextField, Button, Hidden } from '@mui/material';
+import { Card, TextField,  } from '@mui/material';
 import { Dropdown } from '@mui/base';
 import axiosInstance from '../../utils/AxiosInstance';
 import { ConfigProvider, Select } from 'antd';
 import Swal from 'sweetalert2';
 import { userColumns } from '../../assets/json/tableColumn';
 
-
 export default function Um() {
     const [formFields, setFormFields] = useState(formField_mal);
+    const [formData, setFormData] = useRecoilState(userMgrSearchForm);
     const [userList, setUserList] = useState([]);
     const [userShow, setUserShow] = useState(true);
     const [password, setPassword] = useState(null);
-    
 
     const access = [
         {
@@ -36,7 +37,40 @@ export default function Um() {
         },
     ]
 
+    useEffect(() => {
+        const fetchUserList = async () => {
+            try {
+                const {data} = await axiosInstance.get("/sys/user");
+                setUserList(data);
+            } catch (error) {
+                console.log(error);
+            }
+        };
+
+        const fetchDeptCode = async () => {
+            try {
+                const res = await axiosInstance.get("/sys/unit?unitType=부서코드");
+                const options = res.data.map(dept => ({
+                    value: dept.code,
+                    label: dept.name,
+                }));
+                setDept(options);
+                const updateFormFields = formField_mal.map(field => 
+                field.name === 'deptCode' ? {...field, options } : field);
+                setFormFields(updateFormFields);
+            } catch (error) {
+                console.error(error);
+            }
+        };
+
+        fetchDeptCode();
+        
+        // formData값이 없으면 코드 사용자 목록을 findAll, 있으면(이전 탭의 검색기록이 있으면) 그 값을 불러옴
+        Object.keys(formData).length === 0 ? fetchUserList() : handleFormSubmit(formData);
+    },[]);
+
     const handleFormSubmit = async (e) => {
+        setFormData(e);
         setUserShow(false);
         const {data} = await axiosInstance.get(`/sys/user`, {
             params: {
@@ -101,11 +135,6 @@ export default function Um() {
 
     const [editable, setEditable] = useState(true);
     
-    const handleEditable = () => {
-        setEditable(true); // 되게함
-        
-    }
-    
     const handleEditClick = async () => {
         const selectedDept = dept.find(option => option.label === selectedUser.deptCode) || {};
         let swalOptions = {
@@ -155,43 +184,20 @@ export default function Um() {
     };
 
     const [dept, setDept] = useState([]);
-
-    useEffect(() => {
-        (async () => {
-            const {data} = await axiosInstance.get("/sys/user");
-            setUserList(data);
-        })();
-
-        const fetchDeptCode = async () => {
-            try {
-                const res = await axiosInstance.get("/sys/unit?unitType=부서코드");
-                const options = res.data.map(dept => ({
-                    value: dept.code,
-                    label: dept.name,
-                }));
-                setDept(options);
-                const updateFormFields = formField_mal.map(field => 
-                field.name === 'deptCode' ? {...field, options } : field);
-                
-                setFormFields(updateFormFields);
-            } catch (error) {
-                console.error(error);
-            }
-        };
-
-        fetchDeptCode();
-    },[]);
-
     
     return (
         <>
             <div className={mainStyle.breadcrumb}>
                 {"시스템관리 > 사용자 관리"}
             </div>
-            <SearchForms onFormSubmit={handleFormSubmit} formFields={formFields}/>
+            <SearchForms 
+                initialValues={formData} 
+                onFormSubmit={handleFormSubmit} 
+                formFields={formFields}
+            />
             <div className={sysStyles.main_grid}>
                 <Card className={sysStyles.card_box} sx={{width:"50%", height:"80vh", borderRadius:"15px"}}>
-                    {userShow && <TableCustom title="사용자 목록" columns={userColumns} data={userList} buttons={['Delete', 'Add']} selectedRows={[selectedUser]} onClicks={[handleDeleteClick, handleAddClick]} onRowClick={(e) => handleRowClick(e)} modals={
+                    {userShow && <TableCustom title="사용자목록" columns={userColumns} data={userList} buttons={['Delete', 'Add']} selectedRows={[selectedUser]} onClicks={[handleDeleteClick, handleAddClick]} onRowClick={(e) => handleRowClick(e)} modals={
                         [
                             isModalOpen.UmAdd && {
                                 "modalType" : 'UmAdd',
@@ -215,7 +221,7 @@ export default function Um() {
                     {infoShow ? (
                         <ConfigProvider
                         theme={{token:{fontFamily:"SUITE-Regular"}}}>
-                            <TableCustom title='사용자 상세 정보' buttons={['DoubleClickEdit']} onClicks={[handleEditClick]} table={false} 
+                            <TableCustom title='사용자 상세정보' buttons={['DoubleClickEdit']} onClicks={[handleEditClick]} table={false} 
                             selectedRows={[selectedUser]}/>
                             <div className={sysStyles.card_box}>
                             <div className={sysStyles.text_field} style={{marginTop:"2rem",width:"50%"}}>
@@ -257,7 +263,7 @@ export default function Um() {
                         </div>
                         </ConfigProvider>
                     ) : (
-                        <TableCustom title='사용자 상세 정보' table={false} />
+                        <TableCustom title='사용자 상세정보' table={false} />
                     )}
                 </Card>
             </div>
