@@ -1,7 +1,5 @@
 import { atom } from 'recoil';
 
-// ### 상태 ###
-
 // 모달 상태
 export const modalState = atom({
   key: 'modalState',
@@ -9,14 +7,21 @@ export const modalState = atom({
     EsmAdd: false, // 배출원 등록
     SdAdd: false, // 증빙자료 등록
     SdShowDetails: false, // 증빙자료 상세보기
-    Delete: false,
+    DeleteA: false,
+    DeleteB: false,
   },
 });
 
-// 담당자 목록
-export const pjtState = atom({
-  key: 'pjtState',
+// 선택된 프로젝트
+export const selectedPjtState = atom({
+  key: 'selectedPjtState',
   default: {},
+});
+
+// 선택된 버튼
+export const selectedButtonState = atom({
+  key: 'selectedButtonState',
+  default: '담당자 관리',
 });
 
 // 담당자 목록

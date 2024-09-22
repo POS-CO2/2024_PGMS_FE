@@ -139,7 +139,7 @@ export const useHandleOkAction = () => {
         swalOptions.icon = 'error';
       }
       Swal.fire(swalOptions);
-    } else if (modalType === 'Delete') {
+    } else if (modalType.includes('Delete')) {
       // 삭제한 데이터를 목록에서 제거
       setter(originData => originData.filter(row => row.id !== data.id));
     }

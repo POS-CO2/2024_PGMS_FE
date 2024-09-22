@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from "react";
-import { RecoilRoot, useSetRecoilState } from 'recoil';
-import { pjtState } from '../../../../atoms/pdsAtoms';
+import React, { useState } from "react";
+import { RecoilRoot, useRecoilState } from 'recoil';
+import { selectedPjtState } from '../../../../atoms/pdsAtoms';
 import { Input, Select } from 'antd';
 import { Card } from '@mui/material';
 import { styled } from '@mui/material/styles';
@@ -60,9 +60,8 @@ const CustomSelect = styled(Select)`
 `;
 
 export default function Pds() {
-    const [searchedPjt, setSearchedPjt] = useState({});                         // 프로젝트 조회 결과
+    const [searchedPjt, setSearchedPjt] = useRecoilState(selectedPjtState);                         // 프로젝트 조회 결과
     const [isSearchPjtModalOpen, setIsSearchPjtModalOpen] = useState(false);
-    const setProject = useSetRecoilState(pjtState);
 
     const showSearchPjtModal = () => {
         setIsSearchPjtModalOpen(true);
@@ -76,7 +75,6 @@ export default function Pds() {
     const searchProject = (data) => {
         setIsSearchPjtModalOpen(false);
         setSearchedPjt(data);
-        setProject(data);
     };
 
     return (
