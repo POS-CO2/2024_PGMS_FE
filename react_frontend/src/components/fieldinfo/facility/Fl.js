@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useRecoilState } from "recoil";
 import { eqLibSearchForm } from '../../../atoms/searchFormAtoms';
-import { selectedEqLibState } from '../../../atoms/flAtoms';
+import { selectedEqLibState } from '../../../atoms/selectedRowAtoms';
 import Swal from 'sweetalert2';
 import { Card } from '@mui/material';
 import TableCustom from "../../../TableCustom";
@@ -9,7 +9,7 @@ import SearchForms from "../../../SearchForms";
 import {formField_fl} from "../../../assets/json/searchFormData";
 import { equipLibColumns, equipActvColumns } from '../../../assets/json/tableColumn';
 import axiosInstance from '../../../utils/AxiosInstance';
-import * as mainStyles from "../../../assets/css/main.css"
+import * as mainStyles from "../../../assets/css/main.css";
 import * as pdsStyles from "../../../assets/css/pds.css";
 
 export default function Fl() {
@@ -21,12 +21,12 @@ export default function Fl() {
     const [selectedActv, setSelectedActv] = useState({});
 
     // localStorage에서 값을 가져오고, 파싱하여 배열로 변환
-    const [selectedEqLibIdx, setSelectedEqLibIdx] = useState(() => {
+    const [submittedEqLibIdx, setSubmittedEqLibIdx] = useState(() => {
         const leftTableSub = localStorage.getItem("leftTableSub");
         return leftTableSub ? JSON.parse(leftTableSub) : [];
     });
     
-    const [selectedActvIdx, setSelectedActvIdx] = useState(() => {
+    const [submittedActvIdx, setSubmittedActvIdx] = useState(() => {
         const rightTableSub = localStorage.getItem("rightTableSub");
         return rightTableSub ? JSON.parse(rightTableSub) : [];
     });
@@ -97,12 +97,12 @@ export default function Fl() {
     }, []);
 
     useEffect(() => {
-        localStorage.setItem("leftTableSub", JSON.stringify(selectedEqLibIdx));
-    }, [selectedEqLibIdx]);
+        localStorage.setItem("leftTableSub", JSON.stringify(submittedEqLibIdx));
+    }, [submittedEqLibIdx]);
 
     useEffect(() => {
-        localStorage.setItem("rightTableSub", JSON.stringify(selectedActvIdx));
-    }, [selectedActvIdx]);
+        localStorage.setItem("rightTableSub", JSON.stringify(submittedActvIdx));
+    }, [submittedActvIdx]);
 
     useEffect(() => {
         localStorage.removeItem("leftTableSub");
@@ -188,7 +188,7 @@ export default function Fl() {
 
                 setEqLibs(prevEqLibs => [response.data, ...prevEqLibs]);
                 setSelectedEqLib({});
-                setSelectedEqLibIdx([0]);
+                setSubmittedEqLibIdx([0]);
 
                 swalOptions.title = '성공!',
                 swalOptions.text = `${data.eqLibName}(이)가 성공적으로 등록되었습니다.`;
@@ -235,7 +235,7 @@ export default function Fl() {
                 // 선택된 설비LIB를 eqLib 리스트에서 제거
                 setEqLibs(prevEqLibs => prevEqLibs.filter(eqLib => eqLib.id !== selectedEqLib.id));
                 setSelectedEqLib({});
-                setSelectedEqLibIdx([]);
+                setSubmittedEqLibIdx([]);
             } catch (error) {
                 console.log(error);
             }
@@ -257,7 +257,7 @@ export default function Fl() {
                 // 기존 활동자료에서 새 데이터를 병합
                 setActves(prevActves => [...response.data, ...prevActves]);
                 setSelectedActv({});
-                setSelectedActvIdx([...Array(newFads.length).keys()]) //지정된 활동자료 만큼의 인덱스 추출(3개(n)를 지정했으면 [0, 1, 2(n-1)] 배열을 만듦)
+                setSubmittedActvIdx([...Array(newFads.length).keys()]) //지정된 활동자료 만큼의 인덱스 추출(3개(n)를 지정했으면 [0, 1, 2(n-1)] 배열을 만듦)
 
                 swalOptions.title = '성공!',
                 swalOptions.text = `${actvDataNameList.join(', ')}(이)가 성공적으로 지정되었습니다.`;
@@ -274,7 +274,7 @@ export default function Fl() {
                 // 선택된 활동자료를 actves 리스트에서 제거
                 setActves(prevActves => prevActves.filter(actv => actv.id !== selectedActv.id));
                 setSelectedActv({});
-                setSelectedActvIdx([]);
+                setSubmittedActvIdx([]);
             } catch (error) {
                 console.log(error);
             }
@@ -283,6 +283,7 @@ export default function Fl() {
         // Swal.fire 실행 후, 성공 메시지가 표시되면 페이지 새로고침
         Swal.fire(swalOptions).then(() => {
             // 성공 후 페이지 새로고침
+            setFormData({}); //새로고침 전 검색창 초기화
             window.location.reload();
         });
     };
@@ -307,7 +308,7 @@ export default function Fl() {
                         <TableCustom 
                             title='설비LIB목록' 
                             data={eqLibs}
-                            submittedRowIdx={selectedEqLibIdx}     
+                            submittedRowIdx={submittedEqLibIdx}     
                             columns={equipLibColumns}
                             buttons={['Delete', 'Edit', 'Add']}
                             onClicks={[() => showModal('DeleteA'), () => showModal('FlEdit'), () => showModal('FlAdd')]}
@@ -350,7 +351,7 @@ export default function Fl() {
                             <TableCustom 
                                 title='활동자료목록' 
                                 data={actves}
-                                submittedRowIdx={selectedActvIdx}  
+                                submittedRowIdx={submittedActvIdx}  
                                 columns={equipActvColumns}   
                                 buttons={['Delete', 'Add']}
                                 onClicks={[() => showModal('DeleteB'), () => showModal('FadAdd')]}

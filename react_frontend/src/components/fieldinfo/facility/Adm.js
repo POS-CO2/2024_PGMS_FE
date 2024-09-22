@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useRecoilState } from "recoil";
 import { actvSearchForm } from '../../../atoms/searchFormAtoms';
+import { selectedActvState, selectedEFState } from '../../../atoms/selectedRowAtoms';
 import Swal from 'sweetalert2';
 import { Card } from '@mui/material';
 import TableCustom from "../../../TableCustom";
@@ -14,12 +15,23 @@ import * as pdsStyles from "../../../assets/css/pds.css";
 export default function Adm() {
     const [formFields, setFormFields] = useState(formField_fam);
     const [formData, setFormData] = useRecoilState(actvSearchForm);
-    const [actves, setActves] = useState([]);                     // 활동자료목록
-    const [selectedActv, setSelectedActv] = useState({});         // 선택된 활동자료
+    const [actves, setActves] = useState([]);                                           // 활동자료목록
+    const [selectedActv, setSelectedActv] = useRecoilState(selectedActvState);          // 선택된 활동자료
     const [emissionFactors, setEmissionFactors] = useState([]);
     const [filteredEfs, setFilteredEfs] = useState([]);
-    const [selectedEF, setSelectedEF] = useState({});
+    const [selectedEF, setSelectedEF] = useRecoilState(selectedEFState);                // 선택된 배출계수
     const [year, setYear] = useState(new Date().getFullYear());
+
+    // localStorage에서 값을 가져오고, 파싱하여 배열로 변환
+    const [selectedEqLibIdx, setSelectedEqLibIdx] = useState(() => {
+        const leftTableSub = localStorage.getItem("leftTableSub");
+        return leftTableSub ? JSON.parse(leftTableSub) : [];
+    });
+    
+    const [selectedActvIdx, setSelectedActvIdx] = useState(() => {
+        const rightTableSub = localStorage.getItem("rightTableSub");
+        return rightTableSub ? JSON.parse(rightTableSub) : [];
+    });
     
     const [isModalOpen, setIsModalOpen] = useState({
         FamAdd: false,
