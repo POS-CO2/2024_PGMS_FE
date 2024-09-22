@@ -56,12 +56,7 @@ export default function App() {
 
     const handleLogout = () => {
         setToken(null);
-        localStorage.removeItem("token");
-        localStorage.removeItem("menu");
-        localStorage.removeItem("user");
-        localStorage.removeItem("tabs");
-        localStorage.removeItem("activeTab");
-        //localStorage.removeItem("fav");
+        localStorage.clear();
     };
 
     const handleMenuSet = () => {

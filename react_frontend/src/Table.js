@@ -115,7 +115,8 @@ const calculateColumnWidths = (columns, data, fontWidth = 15, hasCheckbox = fals
 
 export default function CustomizedTables({
         data = [], 
-        selectedRowIdx = [],
+        submittedRowIdx = [],
+        selectedRowId = null,
         variant = 'default', 
         onRowClick = () => { }, 
         handleDoubleClick = () => { },
@@ -135,6 +136,20 @@ export default function CustomizedTables({
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(modalPagination ? 5 : (monthPagination ? 12 : 10));             // default page row length
     const [columnWidths, setColumnWidths] = useState({});
+        
+    // selectedRowId와 일치하는 행을 찾아 인덱스를 selectedRow로 설정하고 페이지를 이동
+  useEffect(() => {
+    if (selectedRowId !== null) {
+      const rowIndex = data.findIndex(row => row.id === selectedRowId);
+      if (rowIndex !== -1) {
+        setSelectedRow(rowIndex);
+
+        // rowIndex에 해당하는 페이지로 이동
+        const newPage = Math.floor(rowIndex / rowsPerPage); // 페이지 계산
+        setPage(newPage); // 페이지 이동
+      }
+    }
+  }, [selectedRowId, data, rowsPerPage]);
 
     // 데이터와 컬럼에 기반하여 초기 열 너비 설정
     useEffect(() => {
@@ -288,7 +303,7 @@ export default function CustomizedTables({
                                     <React.Fragment key={rowIndex}>
                                         <StyledTableRow 
                                             key={rowIndex + (rowsPerPage * page)}
-                                            submitted={selectedRowIdx.includes(rowIndex)}
+                                            submitted={submittedRowIdx.includes(rowIndex + (rowsPerPage * page))}
                                             selected={variant === 'checkbox' 
                                                 ? selectedRows.includes(rowIndex) 
                                                 : selectedRow === rowIndex + (rowsPerPage * page)}
@@ -423,7 +438,7 @@ export default function CustomizedTables({
                                     filteredData.map((row, index) => (
                                         <StyledTableRow 
                                             key={index}
-                                            submitted={selectedRowIdx.includes(index)}
+                                            submitted={submittedRowIdx.includes(index)}
                                             selected={
                                                 variant === 'checkbox' 
                                                 ? selectedRows.includes(index) 

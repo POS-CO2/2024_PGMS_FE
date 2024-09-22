@@ -48,7 +48,7 @@ export default function TableCustom({
     title = "Default Title",
     variant = 'default',
     data = [],
-    selectedRowIdx = [],
+    submittedRowIdx = [],
     buttons = [],
     onClicks = [],
     onRowClick = () => { },  // 기본값으로 빈 함수 설정
@@ -123,7 +123,8 @@ export default function TableCustom({
                     <Table 
                         key={tableKey} 
                         data={data} 
-                        selectedRowIdx={selectedRowIdx}
+                        submittedRowIdx={submittedRowIdx}
+                        selectedRowId={selectedRows.length === 1 && selectedRows[0].id} //variant가 default(단건 선택)일 떄만 id전달 => 수정 완료후 표시
                         variant={variant} 
                         onRowClick={onRowClick} 
                         pagination={pagination} 

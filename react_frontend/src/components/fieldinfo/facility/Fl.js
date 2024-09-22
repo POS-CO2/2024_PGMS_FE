@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useRecoilState } from "recoil";
 import { eqLibSearchForm } from '../../../atoms/searchFormAtoms';
+import { selectedEqLibState } from '../../../atoms/flAtoms';
 import Swal from 'sweetalert2';
 import { Card } from '@mui/material';
 import TableCustom from "../../../TableCustom";
@@ -15,11 +16,21 @@ export default function Fl() {
     const [formFields, setFormFields] = useState(formField_fl);
     const [formData, setFormData] = useRecoilState(eqLibSearchForm);
     const [eqLibs, setEqLibs] = useState([]);
-    const [selectedEqLib, setSelectedEqLib] = useState({});     // 선택된 설비 LIB
+    const [selectedEqLib, setSelectedEqLib] = useRecoilState(selectedEqLibState);     // 선택된 설비 LIB
     const [actves, setActves] = useState([]);
     const [selectedActv, setSelectedActv] = useState({});
-    const [selectedEqLibIdx, setSelectedEqLibIdx] = useState([]);
-    const [selectedActvIdx, setSelectedActvIdx] = useState([]);
+
+    // localStorage에서 값을 가져오고, 파싱하여 배열로 변환
+    const [selectedEqLibIdx, setSelectedEqLibIdx] = useState(() => {
+        const leftTableSub = localStorage.getItem("leftTableSub");
+        return leftTableSub ? JSON.parse(leftTableSub) : [];
+    });
+    
+    const [selectedActvIdx, setSelectedActvIdx] = useState(() => {
+        const rightTableSub = localStorage.getItem("rightTableSub");
+        return rightTableSub ? JSON.parse(rightTableSub) : [];
+    });
+
     const [isModalOpen, setIsModalOpen] = useState({
         FlAdd: false,
         FlEdit: false,
@@ -41,6 +52,11 @@ export default function Fl() {
             try {
                 const response = await axiosInstance.get("/equip/lib");
                 setEqLibs(response.data);
+
+                // 설비 LIB 로드가 완료된 후에만 selectedEqLib를 확인하여 활동 자료를 불러옴
+                if (Object.keys(selectedEqLib).length !== 0) {
+                    fetchActvList(selectedEqLib);
+                }
             } catch (error) {
                 console.log(error);
             }
@@ -80,6 +96,32 @@ export default function Fl() {
         Object.keys(formData).length === 0 ? fetchEqLib() : handleFormSubmit(formData);
     }, []);
 
+    useEffect(() => {
+        localStorage.setItem("leftTableSub", JSON.stringify(selectedEqLibIdx));
+    }, [selectedEqLibIdx]);
+
+    useEffect(() => {
+        localStorage.setItem("rightTableSub", JSON.stringify(selectedActvIdx));
+    }, [selectedActvIdx]);
+
+    useEffect(() => {
+        localStorage.removeItem("leftTableSub");
+    }, [formData, selectedEqLib]);
+
+    useEffect(() => {
+        localStorage.removeItem("rightTableSub");
+    }, [formData, selectedEqLib]);
+
+    const fetchActvList = async (lib) => {
+        try {
+            // 선택한 lib에 매핑된 활동자료 목록 조회
+            const response = await axiosInstance.get(`/equip/actv/${lib.id}`);
+            setActves(response.data);
+        } catch (error) {
+            console.error("Error fetching activity data:", error);
+        }
+    }
+
     // 조회 버튼 클릭시 호출될 함수
     const handleFormSubmit = async (data) => {
         const params = {
@@ -111,16 +153,8 @@ export default function Fl() {
         } else {
             // lib가 있으면 selectedEqLib를 설정하고 API 호출
             setSelectedEqLib(lib);
-    
-            try {
-                // 선택한 lib에 매핑된 활동자료 목록 조회
-                const response = await axiosInstance.get(`/equip/actv/${lib.id}`);
-                setActves(response.data);
-            } catch (error) {
-                console.error("Error fetching activity data:", error);
-            }
+            fetchActvList(lib);
         };
-
     }
 
     // 활동자료 row 클릭 시 호출될 함수
@@ -167,42 +201,6 @@ export default function Fl() {
                 swalOptions.icon = 'error';
             }
             Swal.fire(swalOptions);
-<<<<<<< HEAD
-=======
-        } else if (modalType === 'DeleteA') {
-            try {
-                // 선택된 설비LIB를 eqLib 리스트에서 제거
-                setEqLibs(prevEqLibs => prevEqLibs.filter(eqLib => eqLib.id !== selectedEqLib.id));
-                setSelectedEqLib({});
-            } catch (error) {
-                console.log(error);
-            }
-        } else if (modalType === 'FadAdd') {
-            const newFads = data.row;
-
-            try {
-                // data 배열을 순회하며 requestBody 배열 생성
-                const requestBody = newFads.map(actv => ({
-                    equipLibId: selectedEqLib.id,
-                    actvDataId: actv.id,
-                }));
-
-                const response = await axiosInstance.post("/equip/libmap", requestBody);
-
-                // 기존 활동자료에서 placeholderActv를 제거하고 새 데이터를 병합
-                setActves(prevActves => [...prevActves, ...response.data]);
-
-                swalOptions.title = '성공!',
-                swalOptions.text = `${data.actvDataName}(이)가 성공적으로 지정되었습니다.`;
-                swalOptions.icon = 'success';
-            } catch (error) {
-                console.log(error);
-
-                swalOptions.title = '실패!',
-                swalOptions.text = error.response.data.message;
-                swalOptions.icon = 'error';
-            }
->>>>>>> 7216d1e180cbc03325dee360e53e41510aea25d7
         } else if (modalType === 'FlEdit') {
             try {
                 const requestBody = {
@@ -223,7 +221,6 @@ export default function Fl() {
                 );
 
                 swalOptions.title = '성공!',
-<<<<<<< HEAD
                 swalOptions.text = `${selectedEqLib.equipLibName}(이)가 성공적으로 수정되었습니다.`;
                 swalOptions.icon = 'success';
             } catch (error) {
@@ -264,9 +261,6 @@ export default function Fl() {
 
                 swalOptions.title = '성공!',
                 swalOptions.text = `${actvDataNameList.join(', ')}(이)가 성공적으로 지정되었습니다.`;
-=======
-                swalOptions.text = `${data.eqLibName}(이)가 성공적으로 수정되었습니다.`;
->>>>>>> 7216d1e180cbc03325dee360e53e41510aea25d7
                 swalOptions.icon = 'success';
             } catch (error) {
                 console.log(error);
@@ -285,7 +279,12 @@ export default function Fl() {
                 console.log(error);
             }
         }
-        Swal.fire(swalOptions);
+
+        // Swal.fire 실행 후, 성공 메시지가 표시되면 페이지 새로고침
+        Swal.fire(swalOptions).then(() => {
+            // 성공 후 페이지 새로고침
+            window.location.reload();
+        });
     };
 
     // 모달 닫기
@@ -308,7 +307,7 @@ export default function Fl() {
                         <TableCustom 
                             title='설비LIB목록' 
                             data={eqLibs}
-                            selectedRowIdx={selectedEqLibIdx}     
+                            submittedRowIdx={selectedEqLibIdx}     
                             columns={equipLibColumns}
                             buttons={['Delete', 'Edit', 'Add']}
                             onClicks={[() => showModal('DeleteA'), () => showModal('FlEdit'), () => showModal('FlAdd')]}
@@ -351,7 +350,7 @@ export default function Fl() {
                             <TableCustom 
                                 title='활동자료목록' 
                                 data={actves}
-                                selectedRowIdx={selectedActvIdx}  
+                                submittedRowIdx={selectedActvIdx}  
                                 columns={equipActvColumns}   
                                 buttons={['Delete', 'Add']}
                                 onClicks={[() => showModal('DeleteB'), () => showModal('FadAdd')]}
