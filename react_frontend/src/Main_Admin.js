@@ -369,6 +369,7 @@ export default function Main_Admin() {
         return days.reverse(); // 과거 -> 현재 순으로 정렬
     };
 
+    // 메뉴별 접속횟수관리 
     useEffect(() => {
         const xAxisChart = getLast7Days();
         setDateArray(xAxisChart);
@@ -384,6 +385,12 @@ export default function Main_Admin() {
         
     }, []);
 
+    // 서버관리
+    useEffect(() => {
+
+    }, [])
+
+    // 예외 관리
     useEffect(() => {
         if (main === "errorlog") {
             const fetchData = async () => {
