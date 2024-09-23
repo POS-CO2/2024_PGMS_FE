@@ -197,3 +197,62 @@ export const sourceData = [
         "formattedTotalEmissionQty": "2,114.2896"
     }
 ]
+
+// 기후별 분석
+// 평균기온
+export const tempData = [
+    {
+        "regCode": "서울",
+        "year": 2024,
+        "mth": 1,
+        "avgTm": -0.3,
+        "co2EmtnConvTotalQty": 689.1,
+        "formattedAvgTm": "-0.3",
+        "formattedCo2EmtnConvTotalQty": "689.1"
+    },
+    {
+        "regCode": "서울",
+        "year": 2024,
+        "mth": 2,
+        "avgTm": 3.9,
+        "co2EmtnConvTotalQty": 598.8,
+        "formattedAvgTm": "3.9",
+        "formattedCo2EmtnConvTotalQty": "598.8"
+    },
+    {
+        "regCode": "서울",
+        "year": 2024,
+        "mth": 3,
+        "avgTm": 7.3,
+        "co2EmtnConvTotalQty": 499.4,
+        "formattedAvgTm": "7.3",
+        "formattedCo2EmtnConvTotalQty": "499.4"
+    },
+    {
+        "regCode": "서울",
+        "year": 2024,
+        "mth": 4,
+        "avgTm": 16.9,
+        "co2EmtnConvTotalQty": 399.8,
+        "formattedAvgTm": "16.9",
+        "formattedCo2EmtnConvTotalQty": "399.8"
+    },
+    {
+        "regCode": "서울",
+        "year": 2024,
+        "mth": 5,
+        "avgTm": 18.1,
+        "co2EmtnConvTotalQty": 328.1,
+        "formattedAvgTm": "18.1",
+        "formattedCo2EmtnConvTotalQty": "328.1"
+    },
+    {
+        "regCode": "서울",
+        "year": 2024,
+        "mth": 6,
+        "avgTm": 23.81,
+        "co2EmtnConvTotalQty": 159.9,
+        "formattedAvgTm": "23.81",
+        "formattedCo2EmtnConvTotalQty": "159.9"
+    }
+]

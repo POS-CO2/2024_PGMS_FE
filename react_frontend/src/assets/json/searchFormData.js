@@ -158,6 +158,16 @@ export const formField_ea = [
     ] }
 ];
 
+export const formField_ca = [
+    { type: 'SelectCalendar', name: 'calendar', label: '분석기간', required: true },
+    { type: 'DropDown', name: 'regCode', label: '지역', required: true, options: [] },
+    { type: 'DropDown', name: 'selected', label: '영향인자', required: true, options: [
+        { value: '평균기온', label: '평균기온' },
+        { value: '강수량', label: '강수량' },
+        { value: '습도', label: '습도' }
+    ] }
+];
+
 // 필요한 서치바 여기서 만들어서 데이터 임포트 해서 사용하기
 // import {formField_ps12} from "../../assets/json/searchFormData.js"
 // import { formField_ps12 } from './searchFormData';

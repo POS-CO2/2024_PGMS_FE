@@ -265,3 +265,13 @@ export const equipAnalSourceColumns = [
     { key: 'totalEmissionQty', label: '총배출량', hidden: true },
     { key: 'formattedTotalEmissionQty', label: '총배출량', hidden: false },
 ]
+
+export const climateAnalColumns = [
+    { key: 'year', label: '대상연도', hidden: false },
+    { key: 'mth', label: '대상월', hidden: false },
+    { key: 'regCode', label: '지역', hidden: false },
+    { key: 'avgTm', label: '영향인자값', hidden: true }, // 선택한 영향인자로 동적 변경
+    { key: 'co2EmtnConvTotalQty', label: '총배출량', hidden: true },
+    { key: 'formattedAvgTm', label: '영향인자값', hidden: false }, // 선택한 영향인자로 동적 변경
+    { key: 'formattedCo2EmtnConvTotalQty', label: '총배출량(tCO2)', hidden: false },
+]
