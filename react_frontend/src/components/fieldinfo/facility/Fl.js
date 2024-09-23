@@ -201,7 +201,7 @@ export default function Fl() {
                 console.log(error);
 
                 swalOptions.title = '실패!',
-                swalOptions.text = error.response.data.message;
+                swalOptions.text = error.response.data.message,
                 swalOptions.icon = 'error';
             }
             Swal.fire(swalOptions);
@@ -270,7 +270,7 @@ export default function Fl() {
                 console.log(error);
 
                 swalOptions.title = '실패!',
-                swalOptions.text = error.response.data.message;
+                swalOptions.text = error.response.data.message,
                 swalOptions.icon = 'error';
             }
         } else if (modalType === 'DeleteB') {
@@ -322,7 +322,7 @@ export default function Fl() {
                             selectedRows={[selectedEqLib]}
                             keyProp={eqLibs.length}
                             modals={[
-                                {
+                                isModalOpen.DeleteA && {
                                     'modalType': 'DeleteA',
                                     'isModalOpen': isModalOpen.DeleteA,
                                     'handleOk': handleOk('DeleteA'),
@@ -331,7 +331,7 @@ export default function Fl() {
                                     'rowDataName': 'equipLibName',
                                     'url': '/equip/lib'
                                 },
-                                {
+                                isModalOpen.FlEdit && {
                                     'modalType': 'FlEdit',
                                     'isModalOpen': isModalOpen.FlEdit,
                                     'handleOk': handleOk('FlEdit'),
@@ -339,7 +339,7 @@ export default function Fl() {
                                     'rowData': selectedEqLib,
                                     'dropDown': formFields
                                 },
-                                {
+                                isModalOpen.FlAdd && {
                                     'modalType': 'FlAdd',
                                     'isModalOpen': isModalOpen.FlAdd,
                                     'handleOk': handleOk('FlAdd'),
@@ -365,7 +365,7 @@ export default function Fl() {
                                 selectedRows={[selectedActv]}
                                 keyProp={actves.length}
                                 modals={[
-                                    {
+                                    isModalOpen.DeleteB && {
                                         'modalType': 'DeleteB',
                                         'isModalOpen': isModalOpen.DeleteB,
                                         'handleOk': handleOk('DeleteB'),
@@ -377,7 +377,7 @@ export default function Fl() {
                                         'rowDataName': 'actvDataName',
                                         'url': '/equip/libmap'
                                     },
-                                    {
+                                    isModalOpen.FadAdd && {
                                         'modalType': 'FadAdd',
                                         'isModalOpen': isModalOpen.FadAdd,
                                         'handleOk': handleOk('FadAdd'),

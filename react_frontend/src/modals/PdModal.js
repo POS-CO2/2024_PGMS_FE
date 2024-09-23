@@ -12,7 +12,7 @@ import WarningAmberIcon from '@mui/icons-material/WarningAmber';
 import Table from "../Table";
 import { CustomButton } from '../Button';
 import styled from 'styled-components';
-import { pjtColumns, userColumns, equipColumns, equipActvColumns, equipEmissionColumns } from '../assets/json/tableColumn.js';
+import { pjtColumns, equipColumns, equipActvColumns, equipEmissionColumns } from '../assets/json/tableColumn.js';
 import * as modalStyles from "../assets/css/pdModal.css";
 import * as rmStyles from "../assets/css/rmModal.css";
 import * as delStyle from "../assets/css/delModal.css";
@@ -21,7 +21,6 @@ import * as sdStyles from "../assets/css/sdModal.css";
 import * as pdsStyles from "../assets/css/pds.css";
 import * as sysStyles from "../assets/css/sysmng.css"
 import * as ps12Styles from "../assets/css/ps12UploadExcelModal.css";
-import { selectMonth } from "../assets/json/sd";
 
 const StyledInput = styled(Input)`
   background: #ECF1F4 !important;
@@ -37,6 +36,21 @@ const StyledInput = styled(Input)`
     box-shadow: none !important;
   }
 `;
+
+const selectMonth = [
+    { value: '1', label: '1' },
+    { value: '2', label: '2' },
+    { value: '3', label: '3' },
+    { value: '4', label: '4' },
+    { value: '5', label: '5' },
+    { value: '6', label: '6' },
+    { value: '7', label: '7' },
+    { value: '8', label: '8' },
+    { value: '9', label: '9' },
+    { value: '10', label: '10' },
+    { value: '11', label: '11' },
+    { value: '12', label: '12' }
+];
 
 export function PgAddModal({ isModalOpen, handleOk, handleCancel }) {
     const [selectedPjts, setSelectedPjts] = useState([]);     // 선택된 프로젝트
@@ -1062,7 +1076,7 @@ export function CmAddModal({ isModalOpen, handleOk, handleCancel }) {
             handleOk(data);
         } catch (error) {
             swalOptions.title = '실패!',
-            swalOptions.text = `${formData.codeGrpName} 등록에 실패하였습니다.`;
+            swalOptions.text = error.response.data.message,
             swalOptions.icon = 'error';
         }
         Swal.fire(swalOptions);
@@ -1155,7 +1169,7 @@ export function CmEditModal({ isModalOpen, handleOk, handleCancel, rowData }) {
             swalOptions.icon = 'success';
         } catch (error) {
             swalOptions.title = '실패!',
-            swalOptions.text = `${formData.codeGrpName} 등록에 실패하였습니다.`;
+            swalOptions.text = error.response.data.message,
             swalOptions.icon = 'error';
         }
         Swal.fire(swalOptions);
@@ -1240,7 +1254,7 @@ export function DeleteModal({ isModalOpen, handleOk, handleCancel, rowData, rowD
             handleOk();
         } catch (error) {
             swalOptions.title = '실패!',
-            swalOptions.text = error.response.data.message;
+            swalOptions.text = error.response.data.message,
             swalOptions.icon = 'error';
         }
         Swal.fire(swalOptions);
@@ -1311,7 +1325,7 @@ export function CmListAddModal({ isModalOpen, handleOk, handleCancel, rowData })
             swalOptions.icon = 'success';
         } catch (error) {
             swalOptions.title = '실패!',
-            swalOptions.text = `${formData.codeName} 등록에 실패하였습니다.`;
+            swalOptions.text = error.response.data.message,
             swalOptions.icon = 'error';
         }
         Swal.fire(swalOptions);
@@ -1421,7 +1435,7 @@ export function CmListEditModal({ isModalOpen, handleOk, handleCancel, rowData }
             swalOptions.icon = 'success';
         } catch (error) {
             swalOptions.title = '실패!',
-            swalOptions.text = `${formData.codeName} 등록에 실패하였습니다.`;
+            swalOptions.text = error.response.data.message,
             swalOptions.icon = 'error';
         }
         Swal.fire(swalOptions);
@@ -1890,7 +1904,7 @@ export function FmAddModal({ isModalOpen, handleOk, handleCancel, rowData }) {
             swalOptions.icon = 'success';
         } catch (error) {
             swalOptions.title = '실패!',
-            swalOptions.text = `${formData.equipName} 등록에 실패하였습니다.`;
+            swalOptions.text = error.response.data.message,
             swalOptions.icon = 'error';
         }
         Swal.fire(swalOptions);
@@ -2028,7 +2042,7 @@ export function UmAddModal({ isModalOpen, handleOk, handleCancel }) {
             swalOptions.icon = 'success';
         } catch (error) {
             swalOptions.title = '실패!',
-            swalOptions.text = `${formData.userName} 등록에 실패하였습니다.`;
+            swalOptions.text = error.response.data.message,
             swalOptions.icon = 'error';
 
         }
@@ -2150,7 +2164,7 @@ export function MmAddModal({ isModalOpen, handleOk, handleCancel, rowData }) {
             swalOptions.icon = 'success';
         } catch (error) {
             swalOptions.title = '실패!',
-            swalOptions.text = `${formData.menuName} 등록에 실패하였습니다.`;
+            swalOptions.text = error.response.data.message,
             swalOptions.icon = 'error';
         }
         Swal.fire(swalOptions);
@@ -2391,7 +2405,7 @@ export function SdAddModal({ isModalOpen, handleOk, handleCancel, rowData }) {
             return response.data; // 파일 업로드 후 S3에서 반환된 파일 정보 배열
         } catch (error) {
             swalOptions.title = '실패!',
-            swalOptions.text = `증빙자료 등록에 실패하였습니다.`;
+            swalOptions.text = error.response.data.message,
             swalOptions.icon = 'error';
         }
         Swal.fire(swalOptions);
@@ -2645,7 +2659,7 @@ export function SdShowDetailsModal({ isModalOpen, handleOk, handleCancel }) {
             return []; // 파일이 없으면 빈 배열 반환
         } catch (error) {
             swalOptions.title = '실패!',
-            swalOptions.text = `증빙자료 등록에 실패하였습니다.`;
+            swalOptions.text = error.response.data.message,
             swalOptions.icon = 'error';
             Swal.fire(swalOptions);
             return []; // 실패 시 빈 배열 반환

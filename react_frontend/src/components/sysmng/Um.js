@@ -4,8 +4,6 @@ import { userMgrSearchForm } from '../../atoms/searchFormAtoms';
 import SearchForms from '../../SearchForms';
 import { formField_mal, formField_um } from '../../assets/json/searchFormData';
 import TableCustom from '../../TableCustom';
-import { table_um_list } from '../../assets/json/selectedPjt';
-import { ButtonGroup, ButtonGroupMm } from '../../Button';
 import * as sysStyles from '../../assets/css/sysmng.css';
 import * as mainStyle from '../../assets/css/main.css';
 import { Card, TextField,  } from '@mui/material';
@@ -161,9 +159,8 @@ export default function Um() {
             swalOptions.text = `${formData.userName}이 성공적으로 수정되었습니다.`;
             swalOptions.icon = 'success';
         } catch (error) {
-            console.error('Failed to add user:', error);
             swalOptions.title = '실패!',
-            swalOptions.text = `${formData.userName} 등록에 실패하였습니다.`;
+            swalOptions.text = error.response.data.message,
             swalOptions.icon = 'error';
 
         }

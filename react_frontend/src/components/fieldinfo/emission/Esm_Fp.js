@@ -232,13 +232,14 @@ export default function Esm_Fp() {
                                 onClicks={[onEmsDeleteClick, onEmsAddClick]}
                                 onRowClick={handleEmtnClick}
                                 modals={[
-                                    {
+                                    isModalOpen.EsmAdd && {
                                         modalType: 'EsmAdd',
                                         isModalOpen: isModalOpen.EsmAdd,
                                         handleOk: handleOk('EsmAdd'),
                                         handleCancel: handleCancel('EsmAdd'),
                                         rowData: selectedPjt,
-                                    }, {
+                                    }, 
+                                    isModalOpen.DeleteA && {
                                         modalType: 'DeleteA',
                                         isModalOpen: isModalOpen.DeleteA,
                                         handleOk: handleOk('DeleteA'),

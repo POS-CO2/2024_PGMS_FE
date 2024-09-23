@@ -186,7 +186,7 @@ export default function Adm() {
                 console.log(error);
 
                 swalOptions.title = '실패!',
-                swalOptions.text = '활동자료 등록에 실패하였습니다.';
+                swalOptions.text = error.response.data.message,
                 swalOptions.icon = 'error';
             }
             Swal.fire(swalOptions);
@@ -223,7 +223,7 @@ export default function Adm() {
                 console.log(error);
 
                 swalOptions.title = '실패!',
-                swalOptions.text = '활동자료 수정에 실패하였습니다.';
+                swalOptions.text = error.response.data.message,
                 swalOptions.icon = 'error';
             }
             Swal.fire(swalOptions);
@@ -275,7 +275,7 @@ export default function Adm() {
                             onRowClick={handleActvClick}
                             selectedRows={[selectedActv]}
                             modals={[
-                                {
+                                isModalOpen.DeleteA && {
                                     'modalType': 'DeleteA',
                                     'isModalOpen': isModalOpen.DeleteA,
                                     'handleOk': handleOk('DeleteA'),
@@ -284,7 +284,7 @@ export default function Adm() {
                                     'rowDataName': 'actvDataName',
                                     'url': '/equip/actv'
                                 },
-                                {
+                                isModalOpen.FamEdit && {
                                     'modalType': 'FamEdit',
                                     'isModalOpen': isModalOpen.FamEdit,
                                     'handleOk': handleOk('FamEdit'),
@@ -292,7 +292,7 @@ export default function Adm() {
                                     'rowData': selectedActv,
                                     'dropDown': formFields
                                 },
-                                {
+                                isModalOpen.FamAdd && {
                                     'modalType': 'FamAdd',
                                     'isModalOpen': isModalOpen.FamAdd,
                                     'handleOk': handleOk('FamAdd'),

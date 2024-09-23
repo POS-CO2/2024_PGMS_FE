@@ -205,7 +205,7 @@ export default function Fd({pjtId}) {
                     onRowClick={handleEqClick}
                     selectedRows={[selectedEq]}
                     modals={[
-                        {
+                        isModalOpen.Delete && {
                             modalType: 'Delete',
                             isModalOpen: isModalOpen.Delete,
                             handleOk: (params) => handleOk('Delete') ({
