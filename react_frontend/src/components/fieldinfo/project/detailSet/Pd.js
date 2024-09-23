@@ -102,7 +102,7 @@ export default function Pd({pjtId}) {                                           
                     onRowClick={handleManagerClick}
                     selectedRows={[selectedManager]}
                     modals={[
-                        {
+                        isModalOpen.Delete && {
                             modalType: 'Delete',
                             isModalOpen: isModalOpen.Delete,
                             handleOk: (params) => handleOk('Delete')({

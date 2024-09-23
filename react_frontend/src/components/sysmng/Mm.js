@@ -377,7 +377,7 @@ export default function Mm({menus, handleMenuSet}) {
         } catch (error) {
             console.error(error);
             swalOptions.title = '실패!',
-            swalOptions.text = `${formData.menuName} 등록에 실패하였습니다.`;
+            swalOptions.text = error.response.data.message,
             swalOptions.icon = 'error';
         }
         handleMenuSet();

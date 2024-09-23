@@ -1,4 +1,7 @@
 import React, { useState, useEffect } from 'react';
+import { useRecoilState } from "recoil";
+import { emissionSourceForm } from '../../atoms/searchFormAtoms';
+import { ps12SelectedBtnState } from '../../atoms/buttonAtoms';
 import SearchForms from "../../SearchForms";
 import { formField_ps12 } from "../../assets/json/searchFormData";
 import TableCustom, {TableCustomDoubleClickEdit} from "../../TableCustom.js";
@@ -35,19 +38,24 @@ export const CustomButton = styled(Button)(({ theme, selected }) => ({
 
 export default function Ps_1_2() {
     const [formFields, setFormFields] = useState(formField_ps12);
-    const [formData, setFormData] = useState(); // 검색 데이터
+    const [formData, setFormData] = useRecoilState(emissionSourceForm);
     const [selectedPjt, setSelectedPjt] = useState([]);
     const [usagePerfs, setUsagePerfs] = useState([]);
     const [amountUsedPerfs, setAmountUsedPerfs] = useState([]);
+    const [emtnActvType, setEmtnActvType] = useState([]);
     const [actvYearDisabled, setActvYearDisabled] = useState(true);  // 드롭다운 비활성화 상태 관리
+    const [content, setContent] = useRecoilState(ps12SelectedBtnState);
 
-    const [content, setContent] = useState('actvQty'); // actvQty || fee
-    const handleButtonClick = (value) => {
-        setContent(value);
+    // 특정 필드만 업데이트하는 함수
+    const updateFormField = (fieldName, newProperties) => {
+        setFormFields(prevFields => 
+            prevFields.map(field =>
+                field.name === fieldName ? { ...field, ...newProperties } : field
+            )
+        );
     };
 
     // 배출활동유형 드롭다운 옵션 설정
-    const [emtnActvType, setEmtnActvType] = useState([]);
     useEffect(() => {
         const fetchEmtnActvTypeCode = async () => {
             try {
@@ -57,17 +65,28 @@ export default function Ps_1_2() {
                     label: emtnActvType.name,
                 }));
                 setEmtnActvType(options);
-                const updateFormFields = formFields.map(field =>
-                    field.name === 'emtnActvType' ? { ...field, options } : field
-                );
+                
+                // emtnActvType 필드만 업데이트
+                updateFormField('emtnActvType', { options });
 
-                setFormFields(updateFormFields);
+                setFormFields(prevFields => prevFields);
             } catch (error) {
                 console.error(error);
             }
         };
+
         fetchEmtnActvTypeCode();
+
+        // formData값이 있으면(이전 탭의 검색기록이 있으면) 그 값을 불러옴
+        if(Object.keys(formData).length !== 0) {
+            handleFormSubmit(formData);
+        }
+        handleButtonClick(content);
     }, []);
+
+    const handleButtonClick = (value) => {
+        setContent(value);
+    };
 
     // 프로젝트 선택 후 대상년도 드롭다운 옵션 설정
     const onProjectSelect = (selectedData, form) => {
@@ -92,6 +111,8 @@ export default function Ps_1_2() {
             // 옵션 데이터가 있으면 드롭다운을 활성화, default값 설정
             if (yearOptions.length > 0) {
                 setActvYearDisabled(false);
+            }
+            if (Object.keys(formData).length === 0) {
                 form.setFieldsValue({ actvYear: yearOptions[0].value });
             }
         }
@@ -138,7 +159,6 @@ export default function Ps_1_2() {
             url += `&emtnActvType=${data.emtnActvType}`;
         }
         const response = await axiosInstance.get(url);
-        console.log(response.data);
 
         // data가 빈 배열인지 확인
         if (response.data.length === 0) {
@@ -316,9 +336,12 @@ export default function Ps_1_2() {
                 {"배출실적 > 활동량 관리"}
             </div>
 
-            <SearchForms onFormSubmit={handleFormSubmit}
+            <SearchForms 
+                initialValues={formData} 
+                onFormSubmit={handleFormSubmit}
                 formFields={formFields.map(field => field.name === 'actvYear' ? { ...field, disabled: actvYearDisabled } : field)} // actvYear 필드의 disabled 상태 반영
-                onProjectSelect={onProjectSelect} />
+                onProjectSelect={onProjectSelect} 
+            />
             
             {(!formData || Object.keys(formData).length === 0) ? (
                 <></>

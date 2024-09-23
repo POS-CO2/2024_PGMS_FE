@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import * as formItemStyles from '../assets/css/formItem.css';
 import { Form, Button, Input } from 'antd';
 import ModalComponent from "./ModalComponent";
@@ -24,15 +24,21 @@ const StyledButton = styled.button`
 /**
  * 프로젝트 찾기(searchProject), 설비LIB 찾기(searchLib)
  */
-export default function SearchAtModal({ name, label, required = false, modalType = "검색", form, onProjectSelect=()=>{} }) {
+export default function SearchAtModal({ initialValues={}, name, label, required = false, modalType = "검색", form, onProjectSelect=()=>{} }) {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [inputValue, setInputValue] = useState("");
+
+    useEffect(() => {
+        if(Object.keys(initialValues).length !== 0) {
+            setInputValue(initialValues.searchProject.pjtCode + '/' + initialValues.searchProject.pjtName);
+        }
+    }, [initialValues])
 
     const showModal = (e) => {
         e.preventDefault(); // 기본 동작 방지
         setIsModalOpen(true);
     };
-
+    
     const searchProject = (data) => {
         setIsModalOpen(false);
         const selectedData = data;

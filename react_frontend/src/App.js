@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router } from 'react-router-dom';
 import { Routes, Route } from 'react-router';
-import { RecoilRoot } from 'recoil';
+import { useRecoilState } from 'recoil';
+import { favState } from './atoms/tabAtoms';
 import { login } from './utils/Api';
 import SiteLayout from './SiteLayout';
 import Main from './Main';
@@ -21,7 +22,6 @@ import Cm from './components/sysmng/Cm';
 import Mm from './components/sysmng/Mm';
 import Um from './components/sysmng/Um';
 import Mal from './components/sysmng/Mal';
-import Pmg from './components/emperf/Pmg';
 import Login from './components/login/Login';
 import Sa from './components/analfc/Sa';
 import Ea from './components/analfc/Ea';
@@ -34,6 +34,7 @@ export default function App() {
     const [menu, setMenu] = useState([]);
     const [user, setUser] = useState([]);
     const [loading, setLoading] = useState(true); // 로딩 상태 추가
+    const [favorites, setFavorites] = useRecoilState(favState);
 
     const handleLogin = async (id, password) => {
         try {
@@ -42,6 +43,7 @@ export default function App() {
             localStorage.setItem('user', JSON.stringify(data.user));
             localStorage.setItem('menu', JSON.stringify(data.menu));
             window.location.href = "/";
+
         } catch (error) {
             console.log(error);
             if (error.response?.status === 400) {
@@ -57,6 +59,7 @@ export default function App() {
         localStorage.removeItem("user");
         localStorage.removeItem("tabs");
         localStorage.removeItem("activeTab");
+        //localStorage.removeItem("fav");
     };
 
     const handleMenuSet = () => {
@@ -67,14 +70,26 @@ export default function App() {
         })();
     };
 
+    // 즐겨찾기 API 호출
+    const fetchFavorites = async () => {
+        try {
+            const response = await axiosInstance.get('/sys/log/cnt'); // 즐겨찾기 API 호출
+            setFavorites(response.data.logMenuList.slice(0, 5)); // API 응답을 즐겨찾기 상태에 저장
+        } catch (error) {
+            console.error('Failed to fetch favorites:', error);
+        }
+    };
+
     useEffect(() => {
         const jwt = localStorage.getItem("token");
         const roleMenu = localStorage.getItem("menu");
         const loginUser = localStorage.getItem("user");
+        
         if (jwt) {
             setToken(jwt);
             setMenu(JSON.parse(roleMenu));
             setUser(JSON.parse(loginUser));
+            fetchFavorites();
         }
         setLoading(false); // 로딩 완료 설정
     }, []);
