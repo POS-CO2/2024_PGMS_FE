@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useRecoilState } from "recoil";
 import { eqLibSearchForm } from '../../../atoms/searchFormAtoms';
 import { selectedEqLibState } from '../../../atoms/selectedRowAtoms';
@@ -93,7 +93,11 @@ export default function Fl() {
         fetchDropDown();
 
         // formData값이 없으면 설비LIB을 findAll, 있으면(이전 탭의 검색기록이 있으면) 그 값을 불러옴
-        Object.keys(formData).length === 0 ? fetchEqLib() : handleFormSubmit(formData);
+        if(Object.keys(formData).length === 0) {
+            fetchEqLib();
+        } else {
+            handleFormSubmit(formData);
+        }
     }, []);
 
     useEffect(() => {
@@ -103,14 +107,6 @@ export default function Fl() {
     useEffect(() => {
         localStorage.setItem("rightTableSub", JSON.stringify(submittedActvIdx));
     }, [submittedActvIdx]);
-
-    useEffect(() => {
-        localStorage.removeItem("leftTableSub");
-    }, [formData, selectedEqLib]);
-
-    useEffect(() => {
-        localStorage.removeItem("rightTableSub");
-    }, [formData, selectedEqLib]);
 
     const fetchActvList = async (lib) => {
         try {
@@ -134,7 +130,15 @@ export default function Fl() {
         try {
             const response = await axiosInstance.get("/equip/lib", {params});
             setEqLibs(response.data);
-            setActves([]);
+
+            //설비LIB 목록에 selectedEqLib 있는지 확인
+            const targetRow = response.data.find(row => row.id === selectedEqLib.id);
+            if (targetRow) {
+                fetchActvList(selectedEqLib);
+            } else {
+                setActves([]);
+            }
+            setSubmittedEqLibIdx([]);
             setFormData(data);
         } catch (error) {
             console.error("Error fetching equip lib data:", error);
@@ -283,8 +287,10 @@ export default function Fl() {
         // Swal.fire 실행 후, 성공 메시지가 표시되면 페이지 새로고침
         Swal.fire(swalOptions).then(() => {
             // 성공 후 페이지 새로고침
-            setFormData({}); //새로고침 전 검색창 초기화
-            window.location.reload();
+            //setFormData({}); //새로고침 전 검색창 초기화
+            if(modalType !== 'DeleteA' && modalType !== 'DeleteB') {
+                window.location.reload();
+            }
         });
     };
 
