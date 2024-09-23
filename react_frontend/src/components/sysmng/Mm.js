@@ -24,17 +24,13 @@ import {
 import { TreeItem2Icon } from '@mui/x-tree-view/TreeItem2Icon';
 import { TreeItem2Provider } from '@mui/x-tree-view/TreeItem2Provider';
 import { TreeItem2DragAndDropOverlay } from '@mui/x-tree-view/TreeItem2DragAndDropOverlay';
-import { ButtonGroup, ButtonGroupMm } from '../../Button';
 import { useState, useEffect } from 'react';
-import Paper from '@mui/material/Paper';
 import { Accordion, AccordionDetails, AccordionSummary, Button, Card, Divider, TextField } from '@mui/material';
 import TableCustom from '../../TableCustom';
-import { table_mm } from '../../assets/json/selectedPjt';
 import * as mainStyle from '../../assets/css/main.css';
 import { ConfigProvider, Input, Select } from 'antd';
 import axiosInstance from '../../utils/AxiosInstance';
 import Swal from 'sweetalert2';
-import { menuTableColumns } from '../../assets/json/tableColumn';
 import { ExpandMore, Public } from '@mui/icons-material';
 
 function DotIcon() {

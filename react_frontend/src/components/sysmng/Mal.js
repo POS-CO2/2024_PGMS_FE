@@ -3,12 +3,10 @@ import { useRecoilState } from "recoil";
 import { accessLogSearchForm } from '../../atoms/searchFormAtoms';
 import SearchForms from '../../SearchForms';
 import { formField_mal } from '../../assets/json/searchFormData';
-import { table_mal_list, table_um_list } from '../../assets/json/selectedPjt';
 import TableCustom from '../../TableCustom';
 import * as sysStyles from '../../assets/css/sysmng.css';
 import * as mainStyle from '../../assets/css/main.css';
 import { Card } from '@mui/material';
-import axios from 'axios';
 import axiosInstance from '../../utils/AxiosInstance';
 import { menuLogColumns, userColumns } from '../../assets/json/tableColumn';
 

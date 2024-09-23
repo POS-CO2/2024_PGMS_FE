@@ -17,9 +17,7 @@ import Pds from './components/fieldinfo/project/detailSet/Pds';
 import Pg from './components/fieldinfo/project/Pg';
 import Adm from './components/fieldinfo/facility/Adm';
 import Fl from './components/fieldinfo/facility/Fl';
-import Esm from './components/fieldinfo/emission/Esm';
 import Esm_Fp from './components/fieldinfo/emission/Esm_Fp';
-import Sd from './components/fieldinfo/emission/Sd';
 import Cm from './components/sysmng/Cm';
 import Mm from './components/sysmng/Mm';
 import Um from './components/sysmng/Um';
@@ -101,56 +99,56 @@ export default function App() {
     }
 
     return (
-        <Router>
-            <Routes>
-                {token ? (
-                    <Route path='/' element={<SiteLayout handleLogout={handleLogout} menus={menu} user={user} />}>
-                        {
-                            user.role === 'ADMIN'
-                            ?
-                            <>
-                                <Route index path='' element={<Main_Admin />} />
-                                <Route path='/ps_1_2' element={<Ps_1_2 />} />
-                                <Route path='/psq' element={<Psq />} />
-                                <Route path='/esm' element={<Esm />} />
-                            </>
-                            :
-                            (user. role === 'HP'
-                            ?
-                            <>
-                                <Route index path='' element={<Main_Hp />} /> 
-                                <Route path='/ps_1_2' element={<Ps_1_2 />} />
-                                <Route path='/psq' element={<Psq />} />
-                                <Route path='/esm' element={<Esm />} />
-                            </>
-                            :
-                            <>
-                                <Route index path='' element={<Main />} />
-                                <Route path='/ps_1_2' element={<Ps_1_2_Fp />} />
-                                <Route path='/psq' element={<Psq_Fp />} />
-                                <Route path='/esm' element={<Esm_Fp />} />
-                            </>
-                            )
-                        }
-                        <Route path='/tep' element={<Tep />} />
-                        <Route path='/pds' element={<Pds />} />
-                        <Route path='/pg' element={<Pg />} />
-                        <Route path='/adm' element={<Adm />} />
-                        <Route path='/fl' element={<Fl />} />
-                        <Route path='/sd' element={<Sd />} />
-                        <Route path='/cm' element={<Cm />} />
-                        <Route path='/um' element={<Um />} />
-                        <Route path='/mm' element={<Mm menus={menu} handleMenuSet={handleMenuSet} />} />
-                        <Route path='/mal' element={<Mal />} />
-                        <Route path='/SalesAnal' element={<Sa />} />
-                        <Route path='/EquipAnal' element={<Ea />} />
-                        <Route path='/ClimateAnal' element={<Ca />} />
-                        <Route path='*' element={<Error404 />} />
-                    </Route>
-                ) : (
-                    <Route path='*' element={<Login handleLogin={handleLogin} />} />
-                )}
-            </Routes>
-        </Router>
+        <RecoilRoot>
+            <Router>
+                <Routes>
+                    {token ? (
+                        <Route path='/' element={<SiteLayout handleLogout={handleLogout} menus={menu} user={user} />}>
+                            {
+                                user.role === 'ADMIN'
+                                ?
+                                <>
+                                    <Route index path='' element={<Main_Admin />} />
+                                    <Route path='/ps_1_2' element={<Ps_1_2 />} />
+                                    <Route path='/psq' element={<Psq />} />
+                                </>
+                                :
+                                (user. role === 'HP'
+                                ?
+                                <>
+                                    <Route index path='' element={<Main_Hp />} /> 
+                                    <Route path='/ps_1_2' element={<Ps_1_2 />} />
+                                    <Route path='/psq' element={<Psq />} />
+                                </>
+                                :
+                                <>
+                                    <Route index path='' element={<Main />} />
+                                    <Route path='/ps_1_2' element={<Ps_1_2_Fp />} />
+                                    <Route path='/psq' element={<Psq_Fp />} />
+                                    <Route path='/esm' element={<Esm_Fp />} />
+                                </>
+                                )
+                            }
+                            <Route path='/tep' element={<Tep />} />
+                            <Route path='/pmg' element={<Pmg />} />
+                            <Route path='/pds' element={<Pds />} />
+                            <Route path='/pg' element={<Pg />} />
+                            <Route path='/adm' element={<Adm />} />
+                            <Route path='/fl' element={<Fl />} />
+                            <Route path='/cm' element={<Cm />} />
+                            <Route path='/um' element={<Um />} />
+                            <Route path='/mm' element={<Mm menus={menu} handleMenuSet={handleMenuSet} />} />
+                            <Route path='/mal' element={<Mal />} />
+                            <Route path='/SalesAnal' element={<Sa />} />
+                            <Route path='/EquipAnal' element={<Ea />} />
+                            <Route path='/ClimateAnal' element={<Ca />} />
+                            <Route path='*' element={<Error404 />} />
+                        </Route>
+                    ) : (
+                        <Route path='*' element={<Login handleLogin={handleLogin} />} />
+                    )}
+                </Routes>
+            </Router>
+        </RecoilRoot>
     );
 }
