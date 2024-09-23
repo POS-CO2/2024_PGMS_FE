@@ -4,14 +4,14 @@ import styled from 'styled-components';
 import Sidebar from './Sidebar';
 import TabsContainer from './TabsContainer';
 import  * as mainStyles from './assets/css/main.css';
-
 import {
-    AppstoreOutlined,
-    MailOutlined,
+    TruckOutlined,
+    BankOutlined,
     PieChartOutlined,
+    SettingOutlined,
   } from '@ant-design/icons';
 import axiosInstance from './utils/AxiosInstance';
-import { Badge, Box, SpeedDial, SpeedDialAction, SpeedDialIcon } from '@mui/material';
+import { Badge, Box } from '@mui/material';
 import { ChatBubble } from '@mui/icons-material';
 import Chat from './Chat';
 
@@ -37,11 +37,14 @@ const ContentContainer = styled.div`
     overflow: hidden;
 `;
 
-
 // 백엔드에서 받은 메뉴 데이터를 라이브러리 형식에 맞춰 items(key, label, path)로 변환 
 const mapMenuDataToItems = (menuData) => {
+    console.log("menuData", menuData);
     return menuData.map((menuItem, index) => {
-      const icon = index === 0 ? <PieChartOutlined /> : index === 1 ? <MailOutlined /> : <AppstoreOutlined />;
+      const icon = menuItem.name === '배출실적' ? <TruckOutlined /> : 
+        menuItem.name === '현장정보' ? <BankOutlined /> : 
+        menuItem.name === '분석및예측' ? <PieChartOutlined /> :
+        menuItem.name === '시스템관리' ? <SettingOutlined /> : <></>;
   
       // 하위 메뉴를 재귀적으로 매핑
       const mapChildren = (children) => {
@@ -55,7 +58,7 @@ const mapMenuDataToItems = (menuData) => {
           } else {
             return {
                 key: `${childItem.id}`,
-                label: childItem.name,
+                label: `${childItem.name}${childItem.accessUser !== 'FP' ? '*' : ''}`,  //현장이 볼 수 없는 메뉴명 뒤에 * 붙이기
                 path: childItem.url,  // 하위 메뉴가 없을 경우 path를 직접 설정
             };
           }
@@ -63,7 +66,11 @@ const mapMenuDataToItems = (menuData) => {
     };
         return {
             key: `sub${menuItem.id}`,
-            label: menuItem.name,
+            label: 
+                <>
+                    {menuItem.name}
+                    {menuItem.accessUser !== 'FP' ? '*' : ''}   {/*현장이 볼 수 없는 메뉴명 뒤에 * 붙이기 */}
+                </>,
             icon: icon,
             children: mapChildren(menuItem.menu),
         };

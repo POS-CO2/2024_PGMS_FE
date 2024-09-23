@@ -147,8 +147,8 @@ export default function Sidebar({ collapsed, toggleCollapsed, items, onMenuClick
         />
       </ConfigProvider>
 
-      {/* 즐겨찾기 섹션 */}
-      <Favorite />
+      {/* 즐겨찾기 섹션 (사이드바가 접혔을 때는 숨기기) */}
+      {!collapsed && <Favorite />}
 
     </SidebarContainer>
   );
