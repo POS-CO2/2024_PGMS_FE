@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import * as gridStyles from './assets/css/gridAdmin.css';
-import { Card, Divider, IconButton } from '@mui/material';
-import { Code, Menu, ManageAccounts, Terminal, PeopleAlt, Engineering, Business, Settings, Today, AddCircleTwoTone, RemoveCircleTwoTone } from '@mui/icons-material';
+import { Card, CircularProgress, Divider, IconButton } from '@mui/material';
+import { Code, Menu, ManageAccounts, Terminal, PeopleAlt, Engineering, Business, Settings, Today, AddCircleTwoTone, RemoveCircleTwoTone, Person, RemoveCircleOutline, MoreHoriz } from '@mui/icons-material';
 import { SwiperSlide, Swiper } from 'swiper/react';
 import { Pagination, Navigation } from 'swiper/modules';
 import styled from 'styled-components';
@@ -12,9 +12,10 @@ import TerminalLogo from './assets/images/terminal.png';
 import ContainerLogo from './assets/images/container.png';
 import ContainerAddLogo from './assets/images/containeradd.png';
 import ApiLogo from './assets/images/api.png';
-import { ConfigProvider, Tabs, DatePicker } from 'antd';
-import TabsContainer from './TabsContainer';
+import { ConfigProvider, Tabs, DatePicker, Input, Select, Collapse } from 'antd';
 import dayjs from 'dayjs';
+import axiosInstance from './utils/AxiosInstance';
+import useFetchData from './customhook/useFetchData';
 
 const { RangePicker } = DatePicker;
 
@@ -22,6 +23,28 @@ const StyledDatePicker = styled(RangePicker)`
     .ant-picker {
         height: 80%;
     }
+`;
+
+const StyledCollapse = styled(Collapse)`
+
+    .ant-collapse-item {
+        height: 100%;
+    }
+
+    .ant-collapse-header {
+        height: 100%;
+        align-items: center !important;
+    }
+
+    .ant-collapse-expand-icon {
+        height: 100%;
+    }
+
+    .ant-collapse-header-text {
+        height: 100%;
+        align-items: center;
+    }
+
 `;
 
 const TabsWrapper = styled.div`
@@ -102,8 +125,8 @@ const StyledRoot = styled.div`
 
 const StyledChart = styled.div`
     .apexcharts-canvas {
-        width: 100%;
-        height: 100%;
+        width: 80% !important;
+        height: 100% !important;
     }
 `;
 
@@ -133,13 +156,14 @@ const StyledRoot2 = styled.div`
 
 const ChartOptions = (title, xdata) => {
     const chartOption = {
-      chart: {
+    chart: {
+        offsetY: 20,
         type: "line",
         toolbar: {
-          show: false
+            show: false
         },
-        width: "100%",
-        height: "100%",
+        width: "auto",
+        height: 'auto',
         responsive: [{
             breakpoint: 600,
             options: {
@@ -151,7 +175,7 @@ const ChartOptions = (title, xdata) => {
                 position: 'bottom'
                 }
             }
-            }]
+            }],
         },
         grid: {
             show: false,
@@ -161,7 +185,7 @@ const ChartOptions = (title, xdata) => {
             }
         },
         xaxis: {
-            categories: xdata
+            categories: xdata,
         },
         yaxis: {
             title: {
@@ -197,7 +221,8 @@ const ChartOptions = (title, xdata) => {
             style: {
                 fontSize:  '25px',
                 fontWeight:  'bold',
-                color:  'rgb(55,57,78)'
+                color:  'rgb(55,57,78)',
+                fontFamily: "SUITE-Regular",
             },
         }
     }
@@ -212,14 +237,31 @@ export default function Main_Admin() {
     const defaultEndDate = dayjs(today).format('YYYY-MM-DD') + 'T23:59:59.999';
 
     const [showMenuBar, setShowMenuBar] = useState(false);
-    const [main, setMain] = useState(1);
+    const [main, setMain] = useState("server");
     const [dateArray, setDateArray] = useState([]);
+    const [menuLogArray, setMenuLogArray] = useState([]);
     const [serviceTab, setServiceTab] = useState("common");
     const [selectedPeriod, setSelectedPeriod] = useState({
         start: defaultStartDate,
         end: defaultEndDate,
     });
+    const [count, setCount] = useState(10);
+    const [errorCode, setErrorCode] = useState("");
+    const [errorLog, setErrorLog] = useState([]);
+    const [logLoading, setLogLoading] = useState(false);
 
+    const userCnt = useFetchData(`/sys/session`, 100000);
+    // const menuLogCnt = useFetchData(`/sys/log/board?startDate=${dateArray[0]}`);
+    const service = useFetchData(`/sys/containers?clusterName=pgms_common`);
+    console.log(service);
+    const handleCountChange = (value) => {
+        setCount(value);
+    }
+
+    const handleErrorCodeChange = (value) => {
+        setErrorCode(value);
+    }
+    
     const handleDateChange = (value) => {
         if (value) {
             const startDate = dayjs(value[0]).format('YYYY-MM-DD') + 'T00:00:00.000';
@@ -237,33 +279,62 @@ export default function Main_Admin() {
         }
     }
     
-    const handleTabChange = (key) => {
-        console.log(key);
+    // 탭 체인지
+    const handleTabChange = async (key) => {
         setServiceTab(key);
     }
 
     const tabItems = [
         {
-            key: "pgms_common_service",
+            key: "common",
             label: "공통",
         },
         {
-            key: "pgms_equipment_service",
+            key: "equipment",
             label: "설비",
         },
         {
-            key: "pgms_project_service",
+            key: "project",
             label: "프로젝트",
         },
         {
-            key: "pgms_anal_servie",
+            key: "anal",
             label: "분석 및 예측",
         },
         {
-            key: "pgms_socekt_service",
+            key: "socket",
             label: "채팅",
         },
     ]
+
+    const logItems = errorLog.map(data => ({
+        key: data.id,
+        label: <p>
+            {`서비스 명:`} <span style={{color:"white", fontWeight:"bold", fontSize:"1.2rem", padding:"0 0.5rem"}}>{data.serviceName}</span> 
+        {`에러 코드:`} <span style={{color:"white", fontWeight:"bold", fontSize:"1.2rem", padding:"0 0.5rem"}}>{data.errorCode}</span> 
+        {`사번:`} <span style={{color:"white", fontWeight:"bold", fontSize:"1.2rem", padding:"0 0.5rem"}}>{data.loginId ?? "x"}</span>
+        {`발생 일시:`} <span style={{color:"white", fontWeight:"bold", fontSize:"1.2rem", padding:"0 0.5rem"}}>{data.createDate}</span>
+        </p>,
+        children: <p>{data.message}</p>,
+    }))
+
+    const loadMoreLog = async () => {
+        if (!logLoading && errorLog.length > 0) {
+            setLogLoading(true);
+            try{
+                const lastLogId = errorLog[errorLog.length - 1].id;
+                const response = await axiosInstance.get(`/sys/error?serviceName=${serviceTab}&errorCode=${errorCode ?? ""}&startDate=${selectedPeriod.start ?? ""}&endDate=${selectedPeriod.end ?? ""}&count=${count}&objectId=${lastLogId}`);
+                const newLogs = response.data;
+
+                if (newLogs.length > 0) {
+                    setErrorLog((prevContent) => [...prevContent, ...newLogs]);
+                }
+            } catch(error) {
+                console.error(error);
+            }
+            setLogLoading(false);
+        }
+    }
 
     const handleMouseOver = () => {
         setShowMenuBar(true);
@@ -273,11 +344,11 @@ export default function Main_Admin() {
     }
 
     const handleServerClick = () => {
-        setMain(1);
+        setMain("server");
     }
 
     const handleErrorLogClick = () => {
-        setMain(2);
+        setMain("errorlog");
     }
     
     const getLast7Days = () => {
@@ -287,11 +358,12 @@ export default function Main_Admin() {
         for (let i = 0; i < 7; i++) {
             const priorDate = new Date();
             priorDate.setDate(today.getDate() - i);
-        
+            
+            const year = priorDate.getFullYear();
             const month = priorDate.getMonth() + 1;
             const day = priorDate.getDate();
         
-            days.push(`${month}/${day}`);
+            days.push(`${year}-${String(month).padStart(2, '0')}-${day}`);
         }
     
         return days.reverse(); // 과거 -> 현재 순으로 정렬
@@ -300,173 +372,29 @@ export default function Main_Admin() {
     useEffect(() => {
         const xAxisChart = getLast7Days();
         setDateArray(xAxisChart);
-
-    }, []);
-<<<<<<< HEAD
-=======
-
-    useEffect(() => {
-        const fetchSelectedProjectData = async () => {
-            if (!selectedMyPjt) return;
-            setPjtStartYear(selectedMyPjt.ctrtFrYear);
-            setPjtStartMonth(selectedMyPjt.ctrtFrMth);
-            setPjtEndYear(selectedMyPjt.ctrtToYear);
-            setPjtEndMonth(selectedMyPjt.ctrtToMth);
-
+        const fetchMenuLog = async () => {
             try {
-                const chartResponse = await axiosInstance.get(`/perf/pjt?pjtId=${selectedMyPjt.pjtId}&year=${toYear}`);
-                const scope1Data = chartResponse.data.map(perf => perf.scope1 || null);
-                const scope2Data = chartResponse.data.map(perf => perf.scope2 || null);
-                const formattedChartPerfs = [
-                    { data: scope1Data, stack: 'A', label: 'Scope 1' },
-                    { data: scope2Data, stack: 'A', label: 'Scope 2' }
-                ];
-                setScope(formattedChartPerfs);
-                setScopeOne(Math.floor(scope1Data[toMonth-1] / scope1Data[toMonth-2] * 100) ?? 0);
-                setScopeTwo(Math.floor(scope2Data[toMonth-1] / scope2Data[toMonth-2] * 100) ?? 0);
-
-                const documentResponse = await axiosInstance.get(`/equip/document-status?pjtId=${selectedMyPjt.pjtId}`);
-                setDocumentStatus(documentResponse.data);
-
-                const emissionResponse = await axiosInstance.get(`/equip/emission?projectId=${selectedMyPjt.pjtId}`);
-                const ae = emissionResponse.data;
-                setAfterEmission(ae);
-                const beforeEmissionResponse = await axiosInstance.get(`/equip/emission/cand?projectId=${selectedMyPjt.pjtId}`);
-                const be = beforeEmissionResponse.data;
-                setBeforeEmission(be);
-                getMock(ae, be);
+                const menuCntResponse = await axiosInstance.get(`/sys/log/board?startDate=${xAxisChart[0]}`);
+                setMenuLogArray(menuCntResponse.data);
             } catch (error) {
                 console.error(error);
             }
-        };
-        fetchSelectedProjectData();
-    }, [selectedMyPjt]);
+        }
+        fetchMenuLog();
+        
+    }, []);
 
     useEffect(() => {
-        const fetchEmission = async () => {
-            if (!selectedMyPjt) return;
-            try {
-                const emissionResponse = await axiosInstance.get(`/equip/emission?projectId=${selectedMyPjt.pjtId}`);
-                const ae = emissionResponse.data;
-                if (JSON.stringify(ae) !== JSON.stringify(afterEmission)) {
-                    setAfterEmission(ae);
-                }
-            } catch (error) {
-                
+        if (main === "errorlog") {
+            const fetchData = async () => {
+                const logResponse = await axiosInstance.get(`/sys/error?serviceName=${serviceTab}&errorCode=${errorCode ?? ""}&startDate=${selectedPeriod.start ?? ""}&endDate=${selectedPeriod.end ?? ""}&count=${count}`);
+                setErrorLog(logResponse.data);
             }
+            
+            fetchData();
         }
-        fetchEmission();
-    }, [targetKeys]);
+    }, [selectedPeriod, errorCode, count, serviceTab, main])
 
-    const filterOption = (inputValue, option) => option.description.indexOf(inputValue) > -1;
-
-    const handleChange = async (newTargetKeys, direction, moveKeys) => {
-        let swalOptions = {
-            confirmButtonText: '확인'
-        };
-        if (direction === "right") {
-            for (const key of moveKeys){
-                const formDatas = {
-                    equipId: key[0],
-                    actvDataId: key[1],
-                }
-                try {
-                    const {data} = await axiosInstance.post(`/equip/emission`, formDatas);    
-                    swalOptions.title = '성공!',
-                    swalOptions.text = `배출원이 성공적으로 등록되었습니다.`;
-                    swalOptions.icon = 'success';
-                    setTargetKeys(newTargetKeys);
-                } catch (error) {
-                    console.error(error);
-                    swalOptions.title = '실패!',
-                    swalOptions.text = error.response.data.message,
-                    swalOptions.icon = 'error';
-                }
-                
-            }
-        }
-        else {
-            for (const key of moveKeys){
-                const deleteData = afterEmission.find(item => item.equipId === key[0] && item.actvDataId === key[1]);
-                console.log(deleteData);
-                if (deleteData) {
-                    try {
-                        const {data} = await axiosInstance.delete(`/equip/emission?id=${deleteData.id}`);    
-                        swalOptions.title = '성공!',
-                        swalOptions.text = `배출원이 성공적으로 삭제되었습니다.`;
-                        swalOptions.icon = 'success';
-                        setTargetKeys(newTargetKeys);
-                    } catch (error) {
-                        console.error(error);
-                        swalOptions.title = '실패!',
-                        swalOptions.text = error.response.data.message,
-                        swalOptions.icon = 'error';
-                    }
-                }
-                else{
-                    console.error("no id");
-                }
-                
-            }
-        }
-        Swal.fire(swalOptions);
-
-        // setTargetKeys(newTargetKeys);
-    };
-
-    const handleDropClick = (e) => {
-        const selectedItem = myPjt.find(item => item.pjtName === e);
-        setSelectedMyPjt(selectedItem);
-
-        
-    }
-
-
-    const handleSearch = (dir, value) => {
-        console.log('search:', dir, value);
-    };
-
-    const settings = {
-        width: 200,
-        height: 200,
-    };
-
-    const scopeSettings1 = {
-        width: 175,
-        height: 175,
-        value: scopeOne,
-    };
-    const scopeSettings2 = {
-        width: 175,
-        height: 175,
-        value: scopeTwo,
-    };
-
-    const [year, setYear] = useState(null);
-
-    const handleYear = (event) => {
-        setYear(event.target.value);
-    }
-
-    const twoColors = {
-        '0%': '#108ee9',
-        '100%': '#87d068',
-    };
-
-    const getStrokeColor = (value) => {
-        if (value <= 50) return green['A700'];
-        if (value <= 100) return yellow['800'];
-        return red['A700'];
-    };
-
-    const progressPjt = () => {
-        const entirePjt = calculateTotalMonths(pjtStartYear, pjtStartMonth, pjtEndYear, pjtEndMonth);
-        let nowPjt = calculateTotalMonths(pjtStartYear, pjtStartMonth, toYear, toMonth);
-        let result = Math.floor(nowPjt / entirePjt * 100);
-        return result;
-    }
-
->>>>>>> main
     return (
             <div className={gridStyles.main_grid}>
                 <div className={gridStyles.left_box}>
@@ -489,14 +417,16 @@ export default function Main_Admin() {
                 </div>
                 <div className={gridStyles.mid_box}> 
                     <div className={gridStyles.real_board}>
-                        
-                            {main === 1 ? (
+                            {main === "server" ? (
                                 // 서버관리
                                 <Card sx={{width:"98%", height:"100%", borderRadius:"10px"}}>
                                     <div className={gridStyles.server_header}>
                                         서버관리
                                     </div>
                                     <div className={gridStyles.server_list}>
+                                        {
+
+                                        }
                                         <div className={gridStyles.server}>
                                             <div className={gridStyles.server_info}>
                                                 <div className={gridStyles.server_logo}>
@@ -878,7 +808,98 @@ export default function Main_Admin() {
                                         </div>
                                     </div>
                                     <div className={gridStyles.log_content}>
-                                        
+                                            <div className={gridStyles.log_content_header}>
+                                                <ConfigProvider
+                                                    theme={{
+                                                        token:{
+                                                            colorPrimary:"#0eaa00",
+                                                            fontFamily:"SUITE-Regular",
+                                                        }
+                                                }}>
+                                                {/* <div style={{width:"fit-content", fontSize:"1.2rem", fontWeight:"500", display:"flex", alignItems:"center", justifyContent:"center", color:"white", gap:"0.5rem"}}>
+                                                    <Person sx={{color:"white"}} />UserId 
+                                                </div>
+                                                <Input placeholder='UserId' value={userId} onChange={(e) => setUserId(e.target.value)} style={{width:"10%"}}/> */}
+                                                <div style={{width:"fit-content", fontSize:"1.2rem", fontWeight:"500", display:"flex", alignItems:"center", justifyContent:"center", color:"white", gap:"0.5rem"}}>
+                                                    <RemoveCircleOutline sx={{color:"white"}} /> ErrorCode
+                                                </div>
+                                                <Select 
+                                                    showSearch
+                                                    placeholder="ErrorCode"
+                                                    optionFilterProp='label'
+                                                    onChange={handleErrorCodeChange}
+                                                    onSearch={(value) => console.log(value)}
+                                                    options={[
+                                                        {
+                                                            value: 400,
+                                                            label: "400",
+                                                        },
+                                                        {
+                                                            value: 405,
+                                                            label: "405",
+                                                        },
+                                                        {
+                                                            value: 500,
+                                                            label: "500",
+                                                        },
+                                                    ]}
+                                                    style={{width:"10%"}}
+                                                />
+                                                <div style={{width:"fit-content", fontSize:"1.2rem", fontWeight:"500", display:"flex", alignItems:"center", justifyContent:"center", color:"white", gap:"0.5rem"}}>
+                                                    <Terminal sx={{color:"white"}} /> 출력개수
+                                                </div>
+                                                <Select 
+                                                    placeholder="ErrorCode"
+                                                    onChange={handleCountChange}
+                                                    options={[
+                                                        {
+                                                            value: 10,
+                                                            label: "10",
+                                                        },
+                                                        {
+                                                            value: 20,
+                                                            label: "20",
+                                                        },
+                                                        {
+                                                            value: 40,
+                                                            label: "40",
+                                                        },
+                                                    ]}
+                                                    defaultValue={10}
+                                                    style={{width:"10%"}}
+                                                />
+                                                </ConfigProvider>
+                                            </div>
+                                            <div>
+                                                <ConfigProvider
+                                                theme={{
+                                                    components:{
+                                                        Collapse:{
+                                                            contentBg: "black",
+                                                        }
+                                                    },
+                                                    token:{
+                                                        colorPrimary:"#0eaa00",
+                                                        fontFamily:"SUITE-Regular",
+                                                        colorText:"#20de07",
+                                                        colorBorder:"black",
+                                                        fontSize:"1.1rem"
+                                                    }
+                                                }}>
+                                                    <StyledCollapse accordion items={logItems} style={{alignItems:"center"}}/>
+                                                </ConfigProvider>
+                                            </div>
+                                            {logLoading ? (
+                                                <div style={{margin:"0 auto"}}>
+                                                    <CircularProgress color="success" />
+                                                </div>
+                                            ) : (
+                                                <div style={{margin:"0 auto"}}>
+                                                    <IconButton sx={{color:"grey", fontSize:"0.8rem", fontWeight:"500"}} onClick={loadMoreLog}>
+                                                        <MoreHoriz sx={{color:"white"}}/> LoadMore
+                                                    </IconButton>
+                                                </div>
+                                            )}
                                     </div>
                                 </Card>
                             )}
@@ -933,7 +954,11 @@ export default function Main_Admin() {
                             </div>
                             <div className={gridStyles.right_box_user}>
                                 <div className={gridStyles.online_dot}>●</div>
-                                <div className={gridStyles.online_user}>19,830</div>
+                                <div className={gridStyles.online_user}>
+                                    {!userCnt.isLoading ? userCnt.data.TOTAL : (
+                                        <CircularProgress />
+                                    )}
+                                </div>
                                 <div className={gridStyles.online_icon}>
                                     <PeopleAlt fontSize='large' sx={{color:"gray"}} />
                                 </div>
@@ -941,15 +966,15 @@ export default function Main_Admin() {
                             <div className={gridStyles.right_box_access}>
                                 <div className={gridStyles.online_access}>
                                     <Engineering fontSize='small' sx={{color:"gray"}} />
-                                    1999
+                                    {userCnt.data.FP}
                                 </div>
                                 <div className={gridStyles.online_access}>
                                     <Business fontSize='small' sx={{color:"gray"}} />
-                                    204
+                                    {userCnt.data.HP}
                                 </div>
                                 <div className={gridStyles.online_access}>
                                     <Settings fontSize='small' sx={{color:"gray"}} />
-                                    4
+                                    {userCnt.data.ADMIN}
                                 </div>
                             </div>
                         </Card>
@@ -970,74 +995,25 @@ export default function Main_Admin() {
                                     navigation={true}           // 이전/다음 버튼 네비게이션
                                     modules={[Navigation, Pagination]}
                                 >
-                                    <SwiperSlide style={{width:"100%", height:"100%"}}>
-                                        <Card sx={{backgroundColor:"white", width:"90%", height:"100%", margin:"1rem auto", borderRadius:"15px", display:"flex", flexDirection:"column", backgroundColor:"rgb(241,244,248)"}}>
-                                            <StyledChart>
-                                                <ApexCharts
-                                                    options={ChartOptions("메뉴관리", dateArray)}
-                                                    series={[{
-                                                        name: "접속자",
-                                                        data: [4, 5, 6, 3, 2, 9, 6] // 차트 데이터
-                                                    }]}
-                                                    type="line"
-                                                    height="100%"
-                                                />
-                                            </StyledChart>
-                                        </Card>
-                                    </SwiperSlide>
-                                    <SwiperSlide style={{width:"100%", height:"100%"}}>
-                                        <Card sx={{backgroundColor:"white", width:"90%", height:"100%", margin:"1rem auto", borderRadius:"15px", display:"flex", flexDirection:"column", backgroundColor:"rgb(241,244,248)"}}>
-                                            <StyledChart>
-                                                <ApexCharts
-                                                    options={ChartOptions("배출원관리", dateArray)}
-                                                    series={[{
-                                                        name: "접속자",
-                                                        data: [4, 10, 6, 1, 5, 6, 6] // 차트 데이터
-                                                    }]}
-                                                    type="line"
-                                                    height="100%"
-                                                />
-                                            </StyledChart>
-                                        </Card>
-                                    </SwiperSlide>
-                                    <SwiperSlide style={{width:"100%", height:"100%"}}>
-                                        <Card sx={{backgroundColor:"white", width:"90%", height:"100%", margin:"1rem auto", borderRadius:"15px", display:"flex", flexDirection:"column", backgroundColor:"rgb(241,244,248)"}}>
-                                        <StyledChart>
-                                                <ApexCharts
-                                                    options={ChartOptions("실적조회", dateArray)}
-                                                    series={[{
-                                                        name: "접속자",
-                                                        data: [2, 15, 6, 9, 6, 7, 2] // 차트 데이터
-                                                    }]}
-                                                    type="line"
-                                                    height="100%"
-                                                />
-                                            </StyledChart>
-                                        </Card>
-                                    </SwiperSlide>
-                                    <SwiperSlide style={{width:"100%", height:"100%"}}>
-                                        <Card sx={{backgroundColor:"white", width:"90%", height:"100%", margin:"1rem auto", borderRadius:"15px", display:"flex", flexDirection:"column", backgroundColor:"rgb(241,244,248)"}}>
-                                        <StyledChart>
-                                                <ApexCharts
-                                                    options={ChartOptions("설비지정", dateArray)}
-                                                    series={[{
-                                                        name: "접속자",
-                                                        data: [4, 5, 6, 3, 2, 9, 6] // 차트 데이터
-                                                    }]}
-                                                    type="line"
-                                                    height="100%"
-                                                />
-                                            </StyledChart>
-                                        </Card>
-                                    </SwiperSlide>
-                                    <SwiperSlide style={{width:"100%", height:"100%"}}>
-                                        <Card sx={{backgroundColor:"white", width:"90%", height:"100%", margin:"1rem auto", borderRadius:"15px", display:"flex", flexDirection:"column", backgroundColor:"rgb(241,244,248)"}}>
-                                        </Card>
-                                    </SwiperSlide>
-                                    <SwiperSlide style={{width:"100%", height:"100%"}}>
-                                        <Card sx={{backgroundColor:"white", width:"90%", height:"100%", margin:"1rem auto", borderRadius:"15px", display:"flex", flexDirection:"column", backgroundColor:"rgb(241,244,248)"}}>
-                                        </Card>
-                                    </SwiperSlide>
+                                    {
+                                        menuLogArray.map(data => (
+                                            <SwiperSlide style={{width:"100%", height:"100%"}}>
+                                                <Card sx={{backgroundColor:"white", width:"90%", height:"100%", margin:"1rem auto", borderRadius:"15px", display:"flex", flexDirection:"column", backgroundColor:"rgb(241,244,248)"}}>
+                                                    <StyledChart style={{width:"80%", margin:"0 auto"}}>
+                                                        <ApexCharts
+                                                            options={ChartOptions(data.menuName, dateArray)}
+                                                            series={[{
+                                                                name: "접속자",
+                                                                data: data.dateCountList.map(d => d.count) // 차트 데이터
+                                                            }]}
+                                                            type="line"
+                                                            height="100%"
+                                                        />
+                                                    </StyledChart>
+                                                </Card>
+                                            </SwiperSlide>
+                                        ))
+                                    }
                                     <SwiperSlide style={{width:"100%", height:"100%"}}>
                                     </SwiperSlide>
                                 </Swiper>
