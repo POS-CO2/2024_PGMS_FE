@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import * as gridStyles from './assets/css/gridAdmin.css';
 import { Card, Divider, IconButton } from '@mui/material';
-import { Code, Menu, ManageAccounts, Terminal, PeopleAlt, Engineering, Business, Settings, Today, AddCircleTwoTone } from '@mui/icons-material';
+import { Code, Menu, ManageAccounts, Terminal, PeopleAlt, Engineering, Business, Settings, Today, AddCircleTwoTone, RemoveCircleTwoTone } from '@mui/icons-material';
 import { SwiperSlide, Swiper } from 'swiper/react';
 import { Pagination, Navigation } from 'swiper/modules';
 import styled from 'styled-components';
@@ -12,6 +12,72 @@ import TerminalLogo from './assets/images/terminal.png';
 import ContainerLogo from './assets/images/container.png';
 import ContainerAddLogo from './assets/images/containeradd.png';
 import ApiLogo from './assets/images/api.png';
+import { ConfigProvider, Tabs, DatePicker } from 'antd';
+import TabsContainer from './TabsContainer';
+import dayjs from 'dayjs';
+
+const { RangePicker } = DatePicker;
+
+const StyledDatePicker = styled(RangePicker)`
+    .ant-picker {
+        height: 80%;
+    }
+`;
+
+const TabsWrapper = styled.div`
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    overflow: hidden; /* 탭이 영역을 벗어나지 않도록 설정 */
+    width: 60%;
+    height: 100%;
+`;
+
+const TabContainer = styled.div`
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    flex-grow: 1;
+    padding-top: 16px;
+    padding-left: 14px;
+    padding-right: 16px; /* 탭과 유저 정보 사이의 간격 */
+    overflow: hidden;
+`;
+
+const StyledTabs = styled(Tabs)`
+    .ant-tabs .ant-tabs-top{
+        height: 100%;
+    }
+
+
+
+    .ant-tabs-tab .ant-tabs-tab-btn{
+        font-size:1.1rem;
+        font-weight: 600;
+        color: white;
+    }
+
+    .ant-tabs-tab:hover .ant-tabs-tab-btn {
+        font-size:20px;
+        color: #66C65E; /* 탭 호버 시 레이블 색상 변경 */
+    }
+
+    .ant-tabs-tab.ant-tabs-tab-active .ant-tabs-tab-btn {
+        color: #0EAA00; /* 활성화된 탭 레이블의 색상 변경 */
+    }
+
+    .ant-tabs-nav {
+        height:100%;
+    }
+
+    .ant-tabs-nav-wrap {
+        height: 100%;
+    }
+
+    .ant-tabs-nav-list {
+        height: 100% !important;
+    }
+`;
 
 const StyledRoot = styled.div`
     .swiper {
@@ -140,10 +206,64 @@ const ChartOptions = (title, xdata) => {
 
 
 export default function Main_Admin() {
-    
+    const today = new Date();
+
+    const defaultStartDate = dayjs(today).format('YYYY-MM-DD') + 'T00:00:00.000';
+    const defaultEndDate = dayjs(today).format('YYYY-MM-DD') + 'T23:59:59.999';
+
     const [showMenuBar, setShowMenuBar] = useState(false);
     const [main, setMain] = useState(1);
     const [dateArray, setDateArray] = useState([]);
+    const [serviceTab, setServiceTab] = useState("common");
+    const [selectedPeriod, setSelectedPeriod] = useState({
+        start: defaultStartDate,
+        end: defaultEndDate,
+    });
+
+    const handleDateChange = (value) => {
+        if (value) {
+            const startDate = dayjs(value[0]).format('YYYY-MM-DD') + 'T00:00:00.000';
+            const endDate = dayjs(value[1]).format('YYYY-MM-DD') + 'T23:59:59.999';
+
+            setSelectedPeriod({
+                start: startDate,
+                end: endDate,
+            });
+        } else {
+            setSelectedPeriod({
+                start: defaultStartDate,
+                end: defaultEndDate,
+            });
+        }
+    }
+    
+    const handleTabChange = (key) => {
+        console.log(key);
+        setServiceTab(key);
+    }
+
+    const tabItems = [
+        {
+            key: "pgms_common_service",
+            label: "공통",
+        },
+        {
+            key: "pgms_equipment_service",
+            label: "설비",
+        },
+        {
+            key: "pgms_project_service",
+            label: "프로젝트",
+        },
+        {
+            key: "pgms_anal_servie",
+            label: "분석 및 예측",
+        },
+        {
+            key: "pgms_socekt_service",
+            label: "채팅",
+        },
+    ]
 
     const handleMouseOver = () => {
         setShowMenuBar(true);
@@ -159,10 +279,10 @@ export default function Main_Admin() {
     const handleErrorLogClick = () => {
         setMain(2);
     }
-
+    
     const getLast7Days = () => {
         const days = [];
-        const today = new Date();
+        
     
         for (let i = 0; i < 7; i++) {
             const priorDate = new Date();
@@ -180,10 +300,8 @@ export default function Main_Admin() {
     useEffect(() => {
         const xAxisChart = getLast7Days();
         setDateArray(xAxisChart);
-        console.log(xAxisChart);
 
     }, []);
-    console.log(dateArray);
     return (
             <div className={gridStyles.main_grid}>
                 <div className={gridStyles.left_box}>
@@ -273,10 +391,17 @@ export default function Main_Admin() {
                                                     <SwiperSlide style={{width:"100%", height:"100%"}}>
                                                         <div className={gridStyles.container}>
                                                             <img src={ContainerAddLogo} style={{width:"60%", height:"60%", color:"grey", filter:"brightness(0) invert(0.7) opacity(0.5)"}} />
-                                                            <div className={gridStyles.container_status} >
-                                                                <IconButton color='success' >
-                                                                    <AddCircleTwoTone />
-                                                                </IconButton>
+                                                            <div style={{display:"flex", flexDirection:"row"}}>
+                                                                <div className={gridStyles.container_status} >
+                                                                    <IconButton color='success' >
+                                                                        <AddCircleTwoTone />
+                                                                    </IconButton>
+                                                                </div>
+                                                                <div className={gridStyles.container_status} >
+                                                                    <IconButton color='error' >
+                                                                        <RemoveCircleTwoTone />
+                                                                    </IconButton>
+                                                                </div>
                                                             </div>
                                                         </div>
                                                     </SwiperSlide>
@@ -325,10 +450,17 @@ export default function Main_Admin() {
                                                     <SwiperSlide style={{width:"100%", height:"100%"}}>
                                                         <div className={gridStyles.container}>
                                                             <img src={ContainerAddLogo} style={{width:"60%", height:"60%", color:"grey", filter:"brightness(0) invert(0.7) opacity(0.5)"}} />
-                                                            <div className={gridStyles.container_status} >
-                                                                <IconButton color='success' >
-                                                                    <AddCircleTwoTone />
-                                                                </IconButton>
+                                                            <div style={{display:"flex", flexDirection:"row"}}>
+                                                                <div className={gridStyles.container_status} >
+                                                                    <IconButton color='success' >
+                                                                        <AddCircleTwoTone />
+                                                                    </IconButton>
+                                                                </div>
+                                                                <div className={gridStyles.container_status} >
+                                                                    <IconButton color='error' >
+                                                                        <RemoveCircleTwoTone />
+                                                                    </IconButton>
+                                                                </div>
                                                             </div>
                                                         </div>
                                                     </SwiperSlide>
@@ -368,10 +500,17 @@ export default function Main_Admin() {
                                                     <SwiperSlide style={{width:"100%", height:"100%"}}>
                                                         <div className={gridStyles.container}>
                                                             <img src={ContainerAddLogo} style={{width:"60%", height:"60%", color:"grey", filter:"brightness(0) invert(0.7) opacity(0.5)"}} />
-                                                            <div className={gridStyles.container_status} >
-                                                                <IconButton color='success' >
-                                                                    <AddCircleTwoTone />
-                                                                </IconButton>
+                                                            <div style={{display:"flex", flexDirection:"row"}}>
+                                                                <div className={gridStyles.container_status} >
+                                                                    <IconButton color='success' >
+                                                                        <AddCircleTwoTone />
+                                                                    </IconButton>
+                                                                </div>
+                                                                <div className={gridStyles.container_status} >
+                                                                    <IconButton color='error' >
+                                                                        <RemoveCircleTwoTone />
+                                                                    </IconButton>
+                                                                </div>
                                                             </div>
                                                         </div>
                                                     </SwiperSlide>
@@ -429,10 +568,17 @@ export default function Main_Admin() {
                                                     <SwiperSlide style={{width:"100%", height:"100%"}}>
                                                         <div className={gridStyles.container}>
                                                             <img src={ContainerAddLogo} style={{width:"60%", height:"60%", color:"grey", filter:"brightness(0) invert(0.7) opacity(0.5)"}} />
-                                                            <div className={gridStyles.container_status} >
-                                                                <IconButton color='success' >
-                                                                    <AddCircleTwoTone />
-                                                                </IconButton>
+                                                            <div style={{display:"flex", flexDirection:"row"}}>
+                                                                <div className={gridStyles.container_status} >
+                                                                    <IconButton color='success' >
+                                                                        <AddCircleTwoTone />
+                                                                    </IconButton>
+                                                                </div>
+                                                                <div className={gridStyles.container_status} >
+                                                                    <IconButton color='error' >
+                                                                        <RemoveCircleTwoTone />
+                                                                    </IconButton>
+                                                                </div>
                                                             </div>
                                                         </div>
                                                     </SwiperSlide>
@@ -499,10 +645,17 @@ export default function Main_Admin() {
                                                     <SwiperSlide style={{width:"100%", height:"100%"}}>
                                                         <div className={gridStyles.container}>
                                                             <img src={ContainerAddLogo} style={{width:"60%", height:"60%", color:"grey", filter:"brightness(0) invert(0.7) opacity(0.5)"}} />
-                                                            <div className={gridStyles.container_status} >
-                                                                <IconButton color='success' >
-                                                                    <AddCircleTwoTone />
-                                                                </IconButton>
+                                                            <div style={{display:"flex", flexDirection:"row"}}>
+                                                                <div className={gridStyles.container_status} >
+                                                                    <IconButton color='success' >
+                                                                        <AddCircleTwoTone />
+                                                                    </IconButton>
+                                                                </div>
+                                                                <div className={gridStyles.container_status} >
+                                                                    <IconButton color='error' >
+                                                                        <RemoveCircleTwoTone />
+                                                                    </IconButton>
+                                                                </div>
                                                             </div>
                                                         </div>
                                                     </SwiperSlide>
@@ -516,7 +669,43 @@ export default function Main_Admin() {
                                 // 로그관리
                                 <Card sx={{width:"98%", height:"100%", borderRadius:"10px", backgroundColor:"rgb(30,30,30)", border:"3px solid rgb(100,100,100)", display:"flex", flexDirection:"column"}}>
                                     <div className={gridStyles.log_header}>
-                                        <div></div>
+                                        <div style={{display:"flex", flexDirection:"row", gap:"2rem", alignItems:"center"}}>
+                                            <ConfigProvider
+                                            locale={{locale:"ko"}}
+                                            theme={{
+                                                components:{
+                                                    DatePicker:{
+                                                        // activeBorderColor: "#66C65E",
+                                                        activeBorderColor:"#0EAA00",
+                                                        cellActiveWithRangeBg : "#c3e59e",
+                                                        cellRangeBorderColor:"#0EAA00",
+                                                        hoverBorderColor:"#0EAA00",
+                                                        multipleItemBg:"#0EAA00",
+                                                        addonBg:"#0EAA00",
+                                                        multipleItemBorderColor:"#0EAA00"
+
+                                                    },
+                                                },
+                                                token:{
+                                                    colorPrimary: "#0EAA00",
+                                                    fontFamily:"SUITE-Regular",
+                                                }
+                                            }}>
+                                                <TabsWrapper>
+                                                    <TabContainer>
+                                                        <StyledTabs 
+                                                            defaultActiveKey='common'
+                                                            onChange={handleTabChange}
+                                                            items={tabItems}
+                                                        />
+                                                    </TabContainer>
+                                                </TabsWrapper>
+                                                <StyledDatePicker 
+                                                    defaultValue={[dayjs(today), dayjs(today)]}
+                                                    onChange={handleDateChange}
+                                                />
+                                            </ConfigProvider>
+                                        </div>
                                         <div style={{display:"flex", justifyContent:"space-between", alignItems:"center", gap:"1rem", paddingRight:"1rem"}}>
                                             <div style={{width:"20px", height:"20px", borderRadius:"50%", backgroundColor:"rgb(245,191,79)", textAlign:"center", verticalAlign:"middle", color:"white", fontWeight:"bold"}}></div>
                                             <div style={{width:"20px", height:"20px", borderRadius:"50%", backgroundColor:"rgb(97,197,84)", textAlign:"center", verticalAlign:"middle", color:"white", fontWeight:"bold"}}></div>
@@ -524,122 +713,7 @@ export default function Main_Admin() {
                                         </div>
                                     </div>
                                     <div className={gridStyles.log_content}>
-                                    `2024-09-12T04:36:37.657Z ERROR 1474668 --- [nio-8080-exec-4] pgms.controller.ControllerAdvice         : 에러 메시지: class java.lang.String cannot be cast to class pgms.domain.vo.UserVo (java.lang.String is in module java.base of loader 'bootstrap'; pgms.domain.vo.UserVo is in unnamed module of loader org.springframework.boot.loader.LaunchedURLClassLoader @6d03e736)
-
-java.lang.ClassCastException: class java.lang.String cannot be cast to class pgms.domain.vo.UserVo (java.lang.String is in module java.base of loader 'bootstrap'; pgms.domain.vo.UserVo is in unnamed module of loader org.springframework.boot.loader.LaunchedURLClassLoader @6d03e736)
-	at pgms.controller.SystemController.updateMenu(SystemController.java:492) ~[classes!/:0.0.1-SNAPSHOT]
-	at jdk.internal.reflect.GeneratedMethodAccessor284.invoke(Unknown Source) ~[na:na]
-	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43) ~[na:na]
-	at java.base/java.lang.reflect.Method.invoke(Method.java:569) ~[na:na]
-	at org.springframework.aop.support.AopUtils.invokeJoinpointUsingReflection(AopUtils.java:343) ~[spring-aop-6.0.11.jar!/:6.0.11]
-	at org.springframework.aop.framework.ReflectiveMethodInvocation.invokeJoinpoint(ReflectiveMethodInvocation.java:196) ~[spring-aop-6.0.11.jar!/:6.0.11]
-	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:163) ~[spring-aop-6.0.11.jar!/:6.0.11]
-	at org.springframework.aop.framework.CglibAopProxy$CglibMethodInvocation.proceed(CglibAopProxy.java:756) ~[spring-aop-6.0.11.jar!/:6.0.11]
-	at org.springframework.aop.interceptor.ExposeInvocationInterceptor.invoke(ExposeInvocationInterceptor.java:97) ~[spring-aop-6.0.11.jar!/:6.0.11]
-	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:184) ~[spring-aop-6.0.11.jar!/:6.0.11]
-	at org.springframework.aop.framework.CglibAopProxy$CglibMethodInvocation.proceed(CglibAopProxy.java:756) ~[spring-aop-6.0.11.jar!/:6.0.11]
-	at org.springframework.aop.framework.CglibAopProxy$DynamicAdvisedInterceptor.intercept(CglibAopProxy.java:708) ~[spring-aop-6.0.11.jar!/:6.0.11]
-	at pgms.controller.SystemController$$SpringCGLIB$$0.updateMenu() ~[classes!/:0.0.1-SNAPSHOT]
-	at jdk.internal.reflect.GeneratedMethodAccessor284.invoke(Unknown Source) ~[na:na]
-	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43) ~[na:na]
-	at java.base/java.lang.reflect.Method.invoke(Method.java:569) ~[na:na]
-	at org.springframework.web.method.support.InvocableHandlerMethod.doInvoke(InvocableHandlerMethod.java:205) ~[spring-web-6.0.11.jar!/:6.0.11]
-	at org.springframework.web.method.support.InvocableHandlerMethod.invokeForRequest(InvocableHandlerMethod.java:150) ~[spring-web-6.0.11.jar!/:6.0.11]
-	at org.springframework.web.servlet.mvc.method.annotation.ServletInvocableHandlerMethod.invokeAndHandle(ServletInvocableHandlerMethod.java:118) ~[spring-webmvc-6.0.11.jar!/:6.0.11]
-	at org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter.invokeHandlerMethod(RequestMappingHandlerAdapter.java:884) ~[spring-webmvc-6.0.11.jar!/:6.0.11]
-	at org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter.handleInternal(RequestMappingHandlerAdapter.java:797) ~[spring-webmvc-6.0.11.jar!/:6.0.11]
-	at org.springframework.web.servlet.mvc.method.AbstractHandlerMethodAdapter.handle(AbstractHandlerMethodAdapter.java:87) ~[spring-webmvc-6.0.11.jar!/:6.0.11]
-	at org.springframework.web.servlet.DispatcherServlet.doDispatch(DispatcherServlet.java:1081) ~[spring-webmvc-6.0.11.jar!/:6.0.11]
-	at org.springframework.web.servlet.DispatcherServlet.doService(DispatcherServlet.java:974) ~[spring-webmvc-6.0.11.jar!/:6.0.11]
-	at org.springframework.web.servlet.FrameworkServlet.processRequest(FrameworkServlet.java:1011) ~[spring-webmvc-6.0.11.jar!/:6.0.11]
-	at org.springframework.web.servlet.FrameworkServlet.service(FrameworkServlet.java:888) ~[spring-webmvc-6.0.11.jar!/:6.0.11]
-	at jakarta.servlet.http.HttpServlet.service(HttpServlet.java:658) ~[tomcat-embed-core-10.1.12.jar!/:na]
-	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:205) ~[tomcat-embed-core-10.1.12.jar!/:na]
-	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:149) ~[tomcat-embed-core-10.1.12.jar!/:na]
-	at org.apache.tomcat.websocket.server.WsFilter.doFilter(WsFilter.java:51) ~[tomcat-embed-websocket-10.1.12.jar!/:na]
-	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:174) ~[tomcat-embed-core-10.1.12.jar!/:na]
-	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:149) ~[tomcat-embed-core-10.1.12.jar!/:na]
-	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:110) ~[spring-web-6.0.11.jar!/:6.0.11]
-	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:174) ~[tomcat-embed-core-10.1.12.jar!/:na]
-	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:149) ~[tomcat-embed-core-10.1.12.jar!/:na]
-	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:101) ~[spring-web-6.0.11.jar!/:6.0.11]
-	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:174) ~[tomcat-embed-core-10.1.12.jar!/:na]
-	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:149) ~[tomcat-embed-core-10.1.12.jar!/:na]
-	at org.springframework.security.web.FilterChainProxy.lambda$doFilterInternal$3(FilterChainProxy.java:231) ~[spring-security-web-6.1.3.jar!/:6.1.3]
-	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:365) ~[spring-security-web-6.1.3.jar!/:6.1.3]
-	at org.springframework.security.web.access.intercept.AuthorizationFilter.doFilter(AuthorizationFilter.java:100) ~[spring-security-web-6.1.3.jar!/:6.1.3]
-	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374) ~[spring-security-web-6.1.3.jar!/:6.1.3]
-	at org.springframework.security.web.access.ExceptionTranslationFilter.doFilter(ExceptionTranslationFilter.java:126) ~[spring-security-web-6.1.3.jar!/:6.1.3]
-	at org.springframework.security.web.access.ExceptionTranslationFilter.doFilter(ExceptionTranslationFilter.java:120) ~[spring-security-web-6.1.3.jar!/:6.1.3]
-	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374) ~[spring-security-web-6.1.3.jar!/:6.1.3]
-	at org.springframework.security.web.session.SessionManagementFilter.doFilter(SessionManagementFilter.java:131) ~[spring-security-web-6.1.3.jar!/:6.1.3]
-	at org.springframework.security.web.session.SessionManagementFilter.doFilter(SessionManagementFilter.java:85) ~[spring-security-web-6.1.3.jar!/:6.1.3]
-	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374) ~[spring-security-web-6.1.3.jar!/:6.1.3]
-	at org.springframework.security.web.authentication.AnonymousAuthenticationFilter.doFilter(AnonymousAuthenticationFilter.java:100) ~[spring-security-web-6.1.3.jar!/:6.1.3]
-	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374) ~[spring-security-web-6.1.3.jar!/:6.1.3]
-	at org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter.doFilter(SecurityContextHolderAwareRequestFilter.java:179) ~[spring-security-web-6.1.3.jar!/:6.1.3]
-	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374) ~[spring-security-web-6.1.3.jar!/:6.1.3]
-	at org.springframework.security.web.savedrequest.RequestCacheAwareFilter.doFilter(RequestCacheAwareFilter.java:63) ~[spring-security-web-6.1.3.jar!/:6.1.3]
-	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374) ~[spring-security-web-6.1.3.jar!/:6.1.3]
-	at pgms.config.security.filter.JwtAuthenticationFilter.doFilterInternal(JwtAuthenticationFilter.java:50) ~[classes!/:0.0.1-SNAPSHOT]
-	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116) ~[spring-web-6.0.11.jar!/:6.0.11]
-	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374) ~[spring-security-web-6.1.3.jar!/:6.1.3]
-	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:101) ~[spring-web-6.0.11.jar!/:6.0.11]
-	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374) ~[spring-security-web-6.1.3.jar!/:6.1.3]
-	at org.springframework.security.web.authentication.logout.LogoutFilter.doFilter(LogoutFilter.java:107) ~[spring-security-web-6.1.3.jar!/:6.1.3]
-	at org.springframework.security.web.authentication.logout.LogoutFilter.doFilter(LogoutFilter.java:93) ~[spring-security-web-6.1.3.jar!/:6.1.3]
-	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374) ~[spring-security-web-6.1.3.jar!/:6.1.3]
-	at org.springframework.web.filter.CorsFilter.doFilterInternal(CorsFilter.java:91) ~[spring-web-6.0.11.jar!/:6.0.11]
-	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116) ~[spring-web-6.0.11.jar!/:6.0.11]
-	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374) ~[spring-security-web-6.1.3.jar!/:6.1.3]
-	at org.springframework.security.web.header.HeaderWriterFilter.doHeadersAfter(HeaderWriterFilter.java:90) ~[spring-security-web-6.1.3.jar!/:6.1.3]
-	at org.springframework.security.web.header.HeaderWriterFilter.doFilterInternal(HeaderWriterFilter.java:75) ~[spring-security-web-6.1.3.jar!/:6.1.3]
-	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116) ~[spring-web-6.0.11.jar!/:6.0.11]
-	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374) ~[spring-security-web-6.1.3.jar!/:6.1.3]
-	at org.springframework.security.web.context.SecurityContextHolderFilter.doFilter(SecurityContextHolderFilter.java:82) ~[spring-security-web-6.1.3.jar!/:6.1.3]
-	at org.springframework.security.web.context.SecurityContextHolderFilter.doFilter(SecurityContextHolderFilter.java:69) ~[spring-security-web-6.1.3.jar!/:6.1.3]
-	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374) ~[spring-security-web-6.1.3.jar!/:6.1.3]
-	at org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter.doFilterInternal(WebAsyncManagerIntegrationFilter.java:62) ~[spring-security-web-6.1.3.jar!/:6.1.3]
-	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116) ~[spring-web-6.0.11.jar!/:6.0.11]
-	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374) ~[spring-security-web-6.1.3.jar!/:6.1.3]
-	at org.springframework.security.web.session.DisableEncodeUrlFilter.doFilterInternal(DisableEncodeUrlFilter.java:42) ~[spring-security-web-6.1.3.jar!/:6.1.3]
-	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116) ~[spring-web-6.0.11.jar!/:6.0.11]
-	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374) ~[spring-security-web-6.1.3.jar!/:6.1.3]
-	at org.springframework.security.web.FilterChainProxy.doFilterInternal(FilterChainProxy.java:233) ~[spring-security-web-6.1.3.jar!/:6.1.3]
-	at org.springframework.security.web.FilterChainProxy.doFilter(FilterChainProxy.java:191) ~[spring-security-web-6.1.3.jar!/:6.1.3]
-	at org.springframework.web.filter.DelegatingFilterProxy.invokeDelegate(DelegatingFilterProxy.java:352) ~[spring-web-6.0.11.jar!/:6.0.11]
-	at org.springframework.web.filter.DelegatingFilterProxy.doFilter(DelegatingFilterProxy.java:268) ~[spring-web-6.0.11.jar!/:6.0.11]
-	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:174) ~[tomcat-embed-core-10.1.12.jar!/:na]
-	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:149) ~[tomcat-embed-core-10.1.12.jar!/:na]
-	at org.springframework.web.filter.RequestContextFilter.doFilterInternal(RequestContextFilter.java:100) ~[spring-web-6.0.11.jar!/:6.0.11]
-	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116) ~[spring-web-6.0.11.jar!/:6.0.11]
-	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:174) ~[tomcat-embed-core-10.1.12.jar!/:na]
-	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:149) ~[tomcat-embed-core-10.1.12.jar!/:na]
-	at org.springframework.web.filter.FormContentFilter.doFilterInternal(FormContentFilter.java:93) ~[spring-web-6.0.11.jar!/:6.0.11]
-	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116) ~[spring-web-6.0.11.jar!/:6.0.11]
-	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:174) ~[tomcat-embed-core-10.1.12.jar!/:na]
-	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:149) ~[tomcat-embed-core-10.1.12.jar!/:na]
-	at org.springframework.web.filter.CharacterEncodingFilter.doFilterInternal(CharacterEncodingFilter.java:201) ~[spring-web-6.0.11.jar!/:6.0.11]
-	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116) ~[spring-web-6.0.11.jar!/:6.0.11]
-	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:174) ~[tomcat-embed-core-10.1.12.jar!/:na]
-	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:149) ~[tomcat-embed-core-10.1.12.jar!/:na]
-	at org.apache.catalina.core.StandardWrapperValve.invoke(StandardWrapperValve.java:166) ~[tomcat-embed-core-10.1.12.jar!/:na]
-	at org.apache.catalina.core.StandardContextValve.invoke(StandardContextValve.java:90) ~[tomcat-embed-core-10.1.12.jar!/:na]
-	at org.apache.catalina.authenticator.AuthenticatorBase.invoke(AuthenticatorBase.java:482) ~[tomcat-embed-core-10.1.12.jar!/:na]
-	at org.apache.catalina.core.StandardHostValve.invoke(StandardHostValve.java:115) ~[tomcat-embed-core-10.1.12.jar!/:na]
-	at org.apache.catalina.valves.ErrorReportValve.invoke(ErrorReportValve.java:93) ~[tomcat-embed-core-10.1.12.jar!/:na]
-	at org.apache.catalina.core.StandardEngineValve.invoke(StandardEngineValve.java:74) ~[tomcat-embed-core-10.1.12.jar!/:na]
-	at org.apache.catalina.connector.CoyoteAdapter.service(CoyoteAdapter.java:341) ~[tomcat-embed-core-10.1.12.jar!/:na]
-	at org.apache.coyote.http11.Http11Processor.service(Http11Processor.java:391) ~[tomcat-embed-core-10.1.12.jar!/:na]
-	at org.apache.coyote.AbstractProcessorLight.process(AbstractProcessorLight.java:63) ~[tomcat-embed-core-10.1.12.jar!/:na]
-	at org.apache.coyote.AbstractProtocol$ConnectionHandler.process(AbstractProtocol.java:894) ~[tomcat-embed-core-10.1.12.jar!/:na]
-	at org.apache.tomcat.util.net.NioEndpoint$SocketProcessor.doRun(NioEndpoint.java:1740) ~[tomcat-embed-core-10.1.12.jar!/:na]
-	at org.apache.tomcat.util.net.SocketProcessorBase.run(SocketProcessorBase.java:52) ~[tomcat-embed-core-10.1.12.jar!/:na]
-	at org.apache.tomcat.util.threads.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1191) ~[tomcat-embed-core-10.1.12.jar!/:na]
-	at org.apache.tomcat.util.threads.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:659) ~[tomcat-embed-core-10.1.12.jar!/:na]
-	at org.apache.tomcat.util.threads.TaskThread$WrappingRunnable.run(TaskThread.java:61) ~[tomcat-embed-core-10.1.12.jar!/:na]
-	at java.base/java.lang.Thread.run(Thread.java:840) ~[na:na]
-`
+                                        
                                     </div>
                                 </Card>
                             )}
