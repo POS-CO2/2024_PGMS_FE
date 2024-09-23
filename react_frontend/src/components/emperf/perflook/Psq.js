@@ -1,4 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useRecoilState } from "recoil";
+import { projectPerfForm } from '../../../atoms/searchFormAtoms';
+import { psqSelectedBtnState } from '../../../atoms/buttonAtoms';
 import SearchForms from "../../../SearchForms";
 import { formField_psq } from "../../../assets/json/searchFormData"
 import { CustomButton } from '../Ps_1_2';
@@ -20,15 +23,23 @@ import { emissionPerfPjtColumns, perfPjtColumns, pjtColumns } from '../../../ass
 
 export default function Psq() {
     const [formFields, setFormFields] = useState(formField_psq);
-    const [formData, setFormData] = useState(); // 검색 데이터
-    const [selectedPjt, setSelectedPjt] = useState([]);
+    const [formData, setFormData] = useRecoilState(projectPerfForm);
+    const [content, setContent] = useRecoilState(psqSelectedBtnState);
+    const [selectedPjt, setSelectedPjt] = useState({});
     const [emissionTableData, setEmissionTableData] = useState([]); // 설비별 표
     const [perfsData, setPerfsData] = useState(Array(12).fill({})); // scope1, scope2, total 표
     const [chartPerfs, setChartPerfs] = useState([]);
     const [actvYearDisabled, setActvYearDisabled] = useState(true);  // 드롭다운 비활성화 상태 관리
     const [pieChartPerfs, setPieChartPerfs] = useState([]);
 
-    const [content, setContent] = useState('chart'); // chart || table
+    useEffect(() => {
+        // formData값이 있으면(이전 탭의 검색기록이 있으면) 그 값을 불러옴
+        if(Object.keys(formData).length !== 0) {
+            handleFormSubmit(formData);
+        }
+        handleButtonClick(content);
+    }, [])
+
     const handleButtonClick = (value) => {
         setContent(value);
     };
@@ -61,6 +72,8 @@ export default function Psq() {
             // 옵션 데이터가 있으면 드롭다운을 활성화, default값 설정
             if (yearOptions.length > 0) {
                 setActvYearDisabled(false);
+            }
+            if (Object.keys(formData).length === 0) {
                 form.setFieldsValue({ actvYear: yearOptions[0].value });
             }
         }
@@ -245,17 +258,20 @@ export default function Psq() {
             <div className={mainStyle.breadcrumb}>
                 {"배출실적 > 실적조회 > 프로젝트별 조회"}
             </div>
-            <SearchForms onFormSubmit={handleFormSubmit}
+            <SearchForms 
+                initialValues={formData} 
+                onFormSubmit={handleFormSubmit}
                 formFields={formFields.map(field => field.name === 'actvYear' ? { ...field, disabled: actvYearDisabled } : field)} // actvYear 필드의 disabled 상태 반영
-                onProjectSelect={onProjectSelect} />
+                onProjectSelect={onProjectSelect} 
+            />
             
-            {(!formData || Object.keys(formData).length === 0) ? (
+            {(!selectedPjt || Object.keys(selectedPjt).length === 0) ? (
                 <></>
              ) : (
                 <>
                     <div className={esmStyles.main_grid}>
                         <Card sx={{ width: "100%", height: "auto", borderRadius: "15px", marginBottom: "1rem" }}>
-                            <TableCustom title="프로젝트 상세정보" columns={pjtColumns} data={selectedPjt} pagination={false}/>
+                            <TableCustom title="조회결과" columns={pjtColumns} data={selectedPjt} pagination={false}/>
                         </Card>
                     </div>
 

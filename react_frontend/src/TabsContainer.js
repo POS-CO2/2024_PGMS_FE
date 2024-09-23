@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useRef, forwardRef, useImperativeHandle } from 'react';
-import { Tabs, Dropdown, Menu, Button } from 'antd';
-import { CloseOutlined } from '@ant-design/icons';
+import { useRecoilState } from "recoil";
+import { openTabsState, activeTabState } from './atoms/tabAtoms';
+import { Tabs, Dropdown, Menu, Button, Tooltip } from 'antd';
+import { CloseOutlined, CloseCircleOutlined } from '@ant-design/icons';
 import GTranslateIcon from '@mui/icons-material/GTranslate';
 import { useNavigate } from 'react-router-dom';
 import { useDrag, useDrop, DndProvider } from 'react-dnd';
@@ -26,6 +28,11 @@ const TabContainer = styled.div`
   flex-direction: column;
   align-items: flex-start;
   flex-grow: 1;
+  flex-wrap: nowrap;
+  flex-shrink: 1;
+  max-width: calc(100% - 160px);
+  width: 100%;
+  height: 50px;
   padding-left: 28px;
   padding-right: 16px; /* 탭과 유저 정보 사이의 간격 */
   overflow: hidden;
@@ -48,6 +55,12 @@ const UserDetails = styled.div`
   display: flex;
   flex-direction: column;
   margin-left: 10px;
+`;
+
+const StyledCloseCircleOutlined = styled(CloseCircleOutlined)`
+  font-size: 1.3rem; /* 아이콘 크기 */
+  color: #777777; /* 아이콘 색상 */
+  margin-right: 0.5rem;
 `;
 
 const Row = styled.div`
@@ -180,8 +193,8 @@ const DraggableTabNode = ({ index, moveTabNode, children }) => {
 };
 
 const TabsContainer = forwardRef(({ handleLogout, user }, ref) => {
-  const [tabs, setTabs] = useState([]);
-  const [activeKey, setActiveKey] = useState('');
+  const [tabs, setTabs] = useRecoilState(openTabsState);
+  const [activeKey, setActiveKey] = useRecoilState(activeTabState);
   const navigate = useNavigate();
   const homeTabAdded = useRef(false); // 홈 탭이 추가되었는지 추적하는 플래그
 
@@ -239,6 +252,8 @@ const TabsContainer = forwardRef(({ handleLogout, user }, ref) => {
       navigate(path);
     }
     localStorage.setItem('activeTab', path);
+    localStorage.removeItem("leftTableSub");
+    localStorage.removeItem("rightTableSub");
   };
 
   const removeTab = targetKey => {
@@ -274,6 +289,14 @@ const TabsContainer = forwardRef(({ handleLogout, user }, ref) => {
     navigate(newActiveKey);
   };
 
+  // 홈 탭만 남기고 나머지 탭 제거
+  const closeAllTabs = () => {
+    const homeTab = tabs.find(tab => tab.key === '');
+    setTabs([homeTab]); // 홈 탭만 남기고 나머지 모두 제거
+    setActiveKey(''); // 홈 탭으로 activeKey를 설정
+    navigate(''); // 홈 탭으로 이동
+  };
+
   const moveTabNode = (dragIndex, hoverIndex) => {
     const newTabs = [...tabs];
     const draggedTab = newTabs.splice(dragIndex, 1)[0];
@@ -291,7 +314,7 @@ const TabsContainer = forwardRef(({ handleLogout, user }, ref) => {
           <div>
             {tab.key !== '' && ( // 홈 탭에는 닫기 버튼을 표시하지 않음
               <CloseOutlined
-                style={{ color:"gray", paddingLeft:"5px"}}
+                style={{ color:"red", fontSize:"0.7rem", paddingLeft:"5px"}}
                 onClick={(e) => {
                   e.stopPropagation(); // 이벤트 전파를 막아 탭 전환을 방지
                   removeTab(tab.key);
@@ -348,6 +371,7 @@ const TabsContainer = forwardRef(({ handleLogout, user }, ref) => {
   return (
     <DndProvider backend={HTML5Backend}>
       <TabsWrapper>
+        {/* 탭 섹션 */}
         <TabContainer>
           <StyledTabs
             activeKey={activeKey}
@@ -358,10 +382,22 @@ const TabsContainer = forwardRef(({ handleLogout, user }, ref) => {
             style={{width:"100%", textOverflow:"ellipsis"}}
           />
         </TabContainer>
+
+        {/* 탭 모두 닫기 섹션 */}
         <TopRightWrapper>
+          <Tooltip title="탭 모두 닫기">
+            <StyledCloseCircleOutlined
+              style={{ cursor: "pointer" }} // 커서 모양을 추가
+              onClick={closeAllTabs}
+            />
+          </Tooltip>
+
+          {/* 다국어 섹션 */}
           <Dropdown overlay={languageMenu} trigger={['click']} placement="bottomCenter">
             <GTranslateIcon style={{ cursor: 'pointer', color: '#0A7800', fontSize: '30px' }} />
           </Dropdown>
+
+          {/* 유저 섹션 */}
           <Dropdown overlay={menu} trigger={['click']} placement="bottomRight">
             <UserInfo>
               <Photo>

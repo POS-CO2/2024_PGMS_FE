@@ -1,21 +1,37 @@
 import React, { useEffect, useState } from 'react';
+import { useRecoilState } from "recoil";
+import { codeMgrSearchForm } from '../../atoms/searchFormAtoms';
 import SearchForms from '../../SearchForms';
 import * as tableStyles from '../../assets/css/table.css'
 import { formField_cm } from '../../assets/json/searchFormData';
 import TableCustom from '../../TableCustom';
-import { table_cm_group, table_cm_code } from '../../assets/json/selectedPjt';
 import * as sysStyles from '../../assets/css/sysmng.css';
 import * as mainStyle from '../../assets/css/main.css';
 import { Card } from '@mui/material';
 import axiosInstance from '../../utils/AxiosInstance';
 import { codeColumns, codeGroupColumns } from '../../assets/json/tableColumn';
 
-
 export default function Cm() {
+    const [formData, setFormData] = useRecoilState(codeMgrSearchForm);
     const [codeGroup, setCodeGroup] = useState([]);
     const [showCodeGroup, setShowCodeGroup] = useState(true);
 
+    useEffect(() => {
+        const fetchCodeGroup = async () => {
+            try {
+                const {data} = await axiosInstance.get("/sys/codegroup");
+                setCodeGroup(data ?? {});
+            } catch (error) {
+                console.log(error);
+            }
+        };
+
+        // formData값이 없으면 코드 그룹ID 목록을 findAll, 있으면(이전 탭의 검색기록이 있으면) 그 값을 불러옴
+        Object.keys(formData).length === 0 ? fetchCodeGroup() : handleFormSubmit(formData);
+    }, []);
+
     const handleFormSubmit = async (e) => {
+        setFormData(e);
         setShowCodeGroup(false);
         const {data} = await axiosInstance.get(`/sys/codegroup`, {
             params: {
@@ -37,16 +53,16 @@ export default function Cm() {
     const [code, setCode] = useState([]);
 
     const handleCodeGroupRowClick = async (e) => {
-        if (e === undefined || e === null){
+        if (e.row === undefined || e.row === null){
             setShowCode(false);
-            setSelectedCodeGroup(e);
+            setSelectedCodeGroup(e.row);
         }
         else {
             setShowCode(true);
-            setSelectedCodeGroup(e);
+            setSelectedCodeGroup(e.row);
         
-            const {data} = await axiosInstance.get(`/sys/code?codeGrpNo=${e.codeGrpNo}`);
-            setCode(data);
+            const response = await axiosInstance.get(`/sys/code?codeGrpNo=${e.row.codeGrpNo}`);
+            setCode(response.data);
         }
     }
 
@@ -132,19 +148,16 @@ export default function Cm() {
         showModal('CMListEdit');
     }
 
-    useEffect(() => {
-        (async () => {
-            const {data} = await axiosInstance.get("/sys/codegroup");
-            setCodeGroup(data ?? {});
-        })();
-    },[]);
-
     return (
         <>
             <div className={mainStyle.breadcrumb}>
                 {"시스템관리 > 코드 관리"}
             </div>
-            <SearchForms onFormSubmit={handleFormSubmit} formFields={formField_cm} />
+            <SearchForms 
+                initialValues={formData} 
+                onFormSubmit={handleFormSubmit} 
+                formFields={formField_cm} 
+            />
             <div className={sysStyles.main_grid}>
             <Card className={sysStyles.card_box} sx={{width:"50%", height:"80vh", borderRadius:"15px"}}>
             <TableCustom title="코드그룹ID" data={codeGroup} buttons={["Delete", "Edit", "Add"]} selectedRows={[selectedCodeGroup]} onRowClick={(e) => handleCodeGroupRowClick(e)} onClicks={[handleDeleteAClick, handleEditClick, handleAddClick]} columns={codeGroupColumns} modals={

@@ -302,6 +302,171 @@ export default function Main_Admin() {
         setDateArray(xAxisChart);
 
     }, []);
+<<<<<<< HEAD
+=======
+
+    useEffect(() => {
+        const fetchSelectedProjectData = async () => {
+            if (!selectedMyPjt) return;
+            setPjtStartYear(selectedMyPjt.ctrtFrYear);
+            setPjtStartMonth(selectedMyPjt.ctrtFrMth);
+            setPjtEndYear(selectedMyPjt.ctrtToYear);
+            setPjtEndMonth(selectedMyPjt.ctrtToMth);
+
+            try {
+                const chartResponse = await axiosInstance.get(`/perf/pjt?pjtId=${selectedMyPjt.pjtId}&year=${toYear}`);
+                const scope1Data = chartResponse.data.map(perf => perf.scope1 || null);
+                const scope2Data = chartResponse.data.map(perf => perf.scope2 || null);
+                const formattedChartPerfs = [
+                    { data: scope1Data, stack: 'A', label: 'Scope 1' },
+                    { data: scope2Data, stack: 'A', label: 'Scope 2' }
+                ];
+                setScope(formattedChartPerfs);
+                setScopeOne(Math.floor(scope1Data[toMonth-1] / scope1Data[toMonth-2] * 100) ?? 0);
+                setScopeTwo(Math.floor(scope2Data[toMonth-1] / scope2Data[toMonth-2] * 100) ?? 0);
+
+                const documentResponse = await axiosInstance.get(`/equip/document-status?pjtId=${selectedMyPjt.pjtId}`);
+                setDocumentStatus(documentResponse.data);
+
+                const emissionResponse = await axiosInstance.get(`/equip/emission?projectId=${selectedMyPjt.pjtId}`);
+                const ae = emissionResponse.data;
+                setAfterEmission(ae);
+                const beforeEmissionResponse = await axiosInstance.get(`/equip/emission/cand?projectId=${selectedMyPjt.pjtId}`);
+                const be = beforeEmissionResponse.data;
+                setBeforeEmission(be);
+                getMock(ae, be);
+            } catch (error) {
+                console.error(error);
+            }
+        };
+        fetchSelectedProjectData();
+    }, [selectedMyPjt]);
+
+    useEffect(() => {
+        const fetchEmission = async () => {
+            if (!selectedMyPjt) return;
+            try {
+                const emissionResponse = await axiosInstance.get(`/equip/emission?projectId=${selectedMyPjt.pjtId}`);
+                const ae = emissionResponse.data;
+                if (JSON.stringify(ae) !== JSON.stringify(afterEmission)) {
+                    setAfterEmission(ae);
+                }
+            } catch (error) {
+                
+            }
+        }
+        fetchEmission();
+    }, [targetKeys]);
+
+    const filterOption = (inputValue, option) => option.description.indexOf(inputValue) > -1;
+
+    const handleChange = async (newTargetKeys, direction, moveKeys) => {
+        let swalOptions = {
+            confirmButtonText: '확인'
+        };
+        if (direction === "right") {
+            for (const key of moveKeys){
+                const formDatas = {
+                    equipId: key[0],
+                    actvDataId: key[1],
+                }
+                try {
+                    const {data} = await axiosInstance.post(`/equip/emission`, formDatas);    
+                    swalOptions.title = '성공!',
+                    swalOptions.text = `배출원이 성공적으로 등록되었습니다.`;
+                    swalOptions.icon = 'success';
+                    setTargetKeys(newTargetKeys);
+                } catch (error) {
+                    console.error(error);
+                    swalOptions.title = '실패!',
+                    swalOptions.text = error.response.data.message,
+                    swalOptions.icon = 'error';
+                }
+                
+            }
+        }
+        else {
+            for (const key of moveKeys){
+                const deleteData = afterEmission.find(item => item.equipId === key[0] && item.actvDataId === key[1]);
+                console.log(deleteData);
+                if (deleteData) {
+                    try {
+                        const {data} = await axiosInstance.delete(`/equip/emission?id=${deleteData.id}`);    
+                        swalOptions.title = '성공!',
+                        swalOptions.text = `배출원이 성공적으로 삭제되었습니다.`;
+                        swalOptions.icon = 'success';
+                        setTargetKeys(newTargetKeys);
+                    } catch (error) {
+                        console.error(error);
+                        swalOptions.title = '실패!',
+                        swalOptions.text = error.response.data.message,
+                        swalOptions.icon = 'error';
+                    }
+                }
+                else{
+                    console.error("no id");
+                }
+                
+            }
+        }
+        Swal.fire(swalOptions);
+
+        // setTargetKeys(newTargetKeys);
+    };
+
+    const handleDropClick = (e) => {
+        const selectedItem = myPjt.find(item => item.pjtName === e);
+        setSelectedMyPjt(selectedItem);
+
+        
+    }
+
+
+    const handleSearch = (dir, value) => {
+        console.log('search:', dir, value);
+    };
+
+    const settings = {
+        width: 200,
+        height: 200,
+    };
+
+    const scopeSettings1 = {
+        width: 175,
+        height: 175,
+        value: scopeOne,
+    };
+    const scopeSettings2 = {
+        width: 175,
+        height: 175,
+        value: scopeTwo,
+    };
+
+    const [year, setYear] = useState(null);
+
+    const handleYear = (event) => {
+        setYear(event.target.value);
+    }
+
+    const twoColors = {
+        '0%': '#108ee9',
+        '100%': '#87d068',
+    };
+
+    const getStrokeColor = (value) => {
+        if (value <= 50) return green['A700'];
+        if (value <= 100) return yellow['800'];
+        return red['A700'];
+    };
+
+    const progressPjt = () => {
+        const entirePjt = calculateTotalMonths(pjtStartYear, pjtStartMonth, pjtEndYear, pjtEndMonth);
+        let nowPjt = calculateTotalMonths(pjtStartYear, pjtStartMonth, toYear, toMonth);
+        let result = Math.floor(nowPjt / entirePjt * 100);
+        return result;
+    }
+
+>>>>>>> main
     return (
             <div className={gridStyles.main_grid}>
                 <div className={gridStyles.left_box}>

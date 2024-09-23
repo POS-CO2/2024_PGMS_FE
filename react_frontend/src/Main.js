@@ -350,7 +350,7 @@ export default function Main() {
                 } catch (error) {
                     console.error(error);
                     swalOptions.title = '실패!',
-                    swalOptions.text = `${error.response.data.message}`;
+                    swalOptions.text = error.response.data.message,
                     swalOptions.icon = 'error';
                 }
                 
@@ -370,7 +370,7 @@ export default function Main() {
                     } catch (error) {
                         console.error(error);
                         swalOptions.title = '실패!',
-                        swalOptions.text = `${error.response.data.message}`;
+                        swalOptions.text = error.response.data.message,
                         swalOptions.icon = 'error';
                     }
                 }

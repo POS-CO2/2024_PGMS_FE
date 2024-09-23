@@ -48,6 +48,7 @@ export default function TableCustom({
     title = "Default Title",
     variant = 'default',
     data = [],
+    submittedRowIdx = [],
     buttons = [],
     onClicks = [],
     onRowClick = () => { },  // 기본값으로 빈 함수 설정
@@ -122,6 +123,8 @@ export default function TableCustom({
                     <Table 
                         key={tableKey} 
                         data={data} 
+                        submittedRowIdx={submittedRowIdx}
+                        selectedRowId={selectedRows.length === 1 && selectedRows[0].id} //variant가 default(단건 선택)일 떄만 id전달 => 수정 완료후 표시
                         variant={variant} 
                         onRowClick={onRowClick} 
                         pagination={pagination} 
@@ -212,7 +215,7 @@ export function TableCustomDoubleClickEdit({
 
         } catch (error) {
             swalOptions.title = '실패!',
-            swalOptions.text = '매출액 수정에 실패하였습니다.';
+            swalOptions.text = error.response.data.message,
             swalOptions.icon = 'error';
         }
         setEditedRows([]);
@@ -330,7 +333,7 @@ export function TableCustomDoubleClickEdit({
 
         } catch (error) {
             swalOptions.title = '실패!',
-            swalOptions.text = '활동량 수정에 실패하였습니다.';
+            swalOptions.text = error.response.data.message,
             swalOptions.icon = 'error';
         }
         setEditedRows([]);

@@ -1,4 +1,7 @@
 import React, { useState, useEffect } from "react";
+import { useRecoilState } from "recoil";
+import { actvSearchForm } from '../../../atoms/searchFormAtoms';
+import { selectedActvState, selectedEFState } from '../../../atoms/selectedRowAtoms';
 import Swal from 'sweetalert2';
 import { Card } from '@mui/material';
 import TableCustom from "../../../TableCustom";
@@ -11,18 +14,32 @@ import * as pdsStyles from "../../../assets/css/pds.css";
 
 export default function Adm() {
     const [formFields, setFormFields] = useState(formField_fam);
-    const [actves, setActves] = useState([]);                     // 활동자료목록
-    const [selectedActv, setSelectedActv] = useState({});         // 선택된 활동자료
+    const [formData, setFormData] = useRecoilState(actvSearchForm);
+    const [actves, setActves] = useState([]);                                           // 활동자료목록
+    const [selectedActv, setSelectedActv] = useRecoilState(selectedActvState);          // 선택된 활동자료
     const [emissionFactors, setEmissionFactors] = useState([]);
     const [filteredEfs, setFilteredEfs] = useState([]);
-    const [selectedEF, setSelectedEF] = useState({});
+    const [selectedEF, setSelectedEF] = useRecoilState(selectedEFState);                // 선택된 배출계수
     const [year, setYear] = useState(new Date().getFullYear());
-    const yearProps = { year, setYear };
+
+    // localStorage에서 값을 가져오고, 파싱하여 배열로 변환
+    const [selectedEqLibIdx, setSelectedEqLibIdx] = useState(() => {
+        const leftTableSub = localStorage.getItem("leftTableSub");
+        return leftTableSub ? JSON.parse(leftTableSub) : [];
+    });
+    
+    const [selectedActvIdx, setSelectedActvIdx] = useState(() => {
+        const rightTableSub = localStorage.getItem("rightTableSub");
+        return rightTableSub ? JSON.parse(rightTableSub) : [];
+    });
     
     const [isModalOpen, setIsModalOpen] = useState({
         FamAdd: false,
         FamEdit: false,
-        Delete: false
+        EfmAdd: false,
+        EfmEdit: false,
+        DeleteA: false,
+        DeleteB: false,
     });
 
     const fetchOptions = async (unitType) => {
@@ -72,7 +89,9 @@ export default function Adm() {
         };
     
         fetchDropDown();
-        fetchActv();
+
+        // formData값이 있으면 활동자료를 findAll, 없으면(이전 탭의 검색기록이 있으면) 그 값을 불러옴
+        Object.keys(formData).length === 0 ? fetchActv() : handleFormSubmit(formData);
     }, []);
 
     //조회 버튼 클릭시 호출될 함수
@@ -90,6 +109,7 @@ export default function Adm() {
             const response = await axiosInstance.get("/equip/actv", {params});
             setActves(response.data);
             setEmissionFactors([]);
+            setFormData(data);
         } catch (error) {
             console.error("Error fetching actv data:", error);
         }
@@ -121,7 +141,7 @@ export default function Adm() {
 
     // 배출계수 row 클릭 시 호출될 함수
     const handleEFClick = (ef) => {
-        setSelectedEF(ef ?? {});
+        setSelectedEF(ef.row ?? {});
     };
 
     // 모달 열기
@@ -166,18 +186,14 @@ export default function Adm() {
                 console.log(error);
 
                 swalOptions.title = '실패!',
-                swalOptions.text = '활동자료 등록에 실패하였습니다.';
+                swalOptions.text = error.response.data.message,
                 swalOptions.icon = 'error';
             }
             Swal.fire(swalOptions);
-        } else if (modalType === 'Delete') {
-            try {
-                // 선택된 활동자료를 actves 리스트에서 제거
-                setActves(prevActves => prevActves.filter(actv => actv.id !== selectedActv.id));
-                setSelectedActv({});
-            } catch (error) {
-                console.log(error);
-            }
+        } else if (modalType === 'DeleteA') {
+            // 선택된 활동자료를 actves 리스트에서 제거
+            setActves(prevActves => prevActves.filter(actv => actv.id !== selectedActv.id));
+            setSelectedActv({});
         } else if (modalType === 'FamEdit') {
             try {
                 const requestBody = {
@@ -207,29 +223,29 @@ export default function Adm() {
                 console.log(error);
 
                 swalOptions.title = '실패!',
-                swalOptions.text = '활동자료 수정에 실패하였습니다.';
+                swalOptions.text = error.response.data.message,
                 swalOptions.icon = 'error';
             }
             Swal.fire(swalOptions);
-        } 
+        } else if (modalType === 'EfmAdd') {
+            setFilteredEfs(prevList => [data, ...prevList]);
+            setSelectedEF(data);
+        } else if (modalType === 'EfmEdit') {
+            setFilteredEfs(prevList =>
+                prevList.map(item =>
+                    item.id === data.id ? { ...item, ...data } : item
+                )
+            );
+        } else if (modalType === 'DeleteB') {
+            // 선택된 활동자료를 actves 리스트에서 제거
+            setFilteredEfs(prevList => prevList.filter(item => item.id !== selectedEF.id));
+            setSelectedEF({});
+        }
     };
 
     // 모달 닫기
     const handleCancel = (modalType) => () => {
         setIsModalOpen(prevState => ({ ...prevState, [modalType]: false }));
-    };
-
-    // 버튼 클릭 시 모달 열림 설정
-    const onAddClick = () => {
-        showModal('FamAdd');
-    };
-
-    const onEditClick = () => {
-        showModal('FamEdit');
-    };
-
-    const onDeleteClick = () => {
-        showModal('Delete');
     };
 
     const handleYearChange = (year) => {
@@ -241,7 +257,11 @@ export default function Adm() {
     return (
         <>
             <div className={mainStyles.breadcrumb}>현장정보 &gt; 설비 &gt; 활동자료 관리</div>
-            <SearchForms onFormSubmit={handleFormSubmit} formFields={formFields} />
+            <SearchForms 
+                initialValues={formData} 
+                onFormSubmit={handleFormSubmit} 
+                formFields={formFields} 
+            />
 
             <div className={pdsStyles.main_grid}>
                 <div className={pdsStyles.contents_container}>
@@ -251,20 +271,20 @@ export default function Adm() {
                             data={actves} 
                             columns={equipActvColumns}
                             buttons={['Delete', 'Edit', 'Add']}
-                            onClicks={[onDeleteClick, onEditClick, onAddClick]}
+                            onClicks={[() => showModal('DeleteA'), () => showModal('FamEdit'), () => showModal('FamAdd')]}
                             onRowClick={handleActvClick}
                             selectedRows={[selectedActv]}
                             modals={[
-                                {
-                                    'modalType': 'Delete',
-                                    'isModalOpen': isModalOpen.Delete,
-                                    'handleOk': handleOk('Delete'),
-                                    'handleCancel': handleCancel('Delete'),
+                                isModalOpen.DeleteA && {
+                                    'modalType': 'DeleteA',
+                                    'isModalOpen': isModalOpen.DeleteA,
+                                    'handleOk': handleOk('DeleteA'),
+                                    'handleCancel': handleCancel('DeleteA'),
                                     'rowData': selectedActv,
                                     'rowDataName': 'actvDataName',
                                     'url': '/equip/actv'
                                 },
-                                {
+                                isModalOpen.FamEdit && {
                                     'modalType': 'FamEdit',
                                     'isModalOpen': isModalOpen.FamEdit,
                                     'handleOk': handleOk('FamEdit'),
@@ -272,7 +292,7 @@ export default function Adm() {
                                     'rowData': selectedActv,
                                     'dropDown': formFields
                                 },
-                                {
+                                isModalOpen.FamAdd && {
                                     'modalType': 'FamAdd',
                                     'isModalOpen': isModalOpen.FamAdd,
                                     'handleOk': handleOk('FamAdd'),
@@ -292,8 +312,39 @@ export default function Adm() {
                                 title="배출계수목록" 
                                 data={filteredEfs}
                                 columns={equipCoefColumns}
+                                buttons={["Delete", "Edit", "Add"]} 
+                                selectedRows={[selectedEF]} 
+                                onRowClick={handleEFClick} 
+                                onClicks={[() => showModal('DeleteB'), () => showModal('EfmEdit'), () => showModal('EfmAdd')]}
                                 handleYearChange={handleYearChange}
                                 year={year}
+                                modals={
+                                    [
+                                        isModalOpen.EfmAdd && {
+                                            "modalType" : 'EfmAdd',
+                                            'isModalOpen': isModalOpen.EfmAdd,
+                                            'handleOk': handleOk('EfmAdd'),
+                                            'handleCancel': handleCancel('EfmAdd'),
+                                            'rowData': selectedActv,
+                                        },
+                                        isModalOpen.EfmEdit && {
+                                            "modalType" : 'EfmEdit',
+                                            'isModalOpen': isModalOpen.EfmEdit,
+                                            'handleOk': handleOk('EfmEdit'),
+                                            'handleCancel': handleCancel('EfmEdit'),
+                                            'rowData': {...selectedEF, "inputUnitCode" : selectedActv.inputUnitCode, "actvDataId": selectedActv.id},
+                                        },
+                                        isModalOpen.DeleteB && {
+                                            "modalType" : 'DeleteB',
+                                            'isModalOpen': isModalOpen.DeleteB,
+                                            'handleOk': handleOk('DeleteB'),
+                                            'handleCancel': handleCancel('DeleteB'),
+                                            'rowData': selectedEF,
+                                            'rowDataName': "applyDvs",
+                                            'url': '/equip/coef',
+                                        },
+                                    ]
+                                }
                             />
                         )}
                     </Card>
