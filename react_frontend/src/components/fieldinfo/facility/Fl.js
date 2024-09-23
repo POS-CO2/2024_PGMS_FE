@@ -200,7 +200,6 @@ export default function Fl() {
                 swalOptions.text = error.response.data.message,
                 swalOptions.icon = 'error';
             }
-            Swal.fire(swalOptions);
         } else if (modalType === 'FlEdit') {
             try {
                 const requestBody = {
@@ -283,7 +282,6 @@ export default function Fl() {
         // Swal.fire 실행 후, 성공 메시지가 표시되면 페이지 새로고침
         Swal.fire(swalOptions).then(() => {
             // 성공 후 페이지 새로고침
-            //setFormData({}); //새로고침 전 검색창 초기화
             if(modalType !== 'DeleteA' && modalType !== 'DeleteB') {
                 window.location.reload();
             }
