@@ -57,7 +57,7 @@ const StyledTableCell = styled(TableCell)(({ theme }) => ({
 }));
 
 // TableRow를 스타일링하는 컴포넌트
-const StyledTableRow = styled(TableRow)(({ theme, selected, variant, edited }) => ({
+const StyledTableRow = styled(TableRow)(({ theme, selected, variant, edited, submitted }) => ({
     '&:last-child td, &:last-child th': {
         border: 0,
     },
@@ -68,7 +68,7 @@ const StyledTableRow = styled(TableRow)(({ theme, selected, variant, edited }) =
         backgroundColor: selected && variant === 'default' ? '#B7E4B3 !important' : '#FFFFFF', // 선택된 상태에서 배경색 강제 적용 (default variant만)
     },
 
-    backgroundColor: edited ? '#FFF5E5' : 'transparent', // 수정된 행일 경우 배경색 변경
+    backgroundColor: (submitted || edited) ? '#FFF5E5' : 'transparent', // 수정된 행일 경우 배경색 변경
 }));
 
 // Checkbox를 스타일링하는 컴포넌트
@@ -115,6 +115,8 @@ const calculateColumnWidths = (columns, data, fontWidth = 15, hasCheckbox = fals
 
 export default function CustomizedTables({
         data = [], 
+        submittedRowIdx = [],
+        selectedRowId = null,
         variant = 'default', 
         onRowClick = () => { }, 
         handleDoubleClick = () => { },
@@ -129,11 +131,25 @@ export default function CustomizedTables({
         subData = [], // 담당자 목록
         expandedRow, // 확장된 행
     }) {
-    const [selectedRow, setSelectedRow] = useState(null);       // default variant의 선택 상태
-    const [selectedRows, setSelectedRows] = useState([]); 
+    const [selectedRow, setSelectedRow] = useState(null);   //variant = 'default' 의 선택상태
+    const [selectedRows, setSelectedRows] = useState([]);
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(modalPagination ? 5 : (monthPagination ? 12 : 10));             // default page row length
     const [columnWidths, setColumnWidths] = useState({});
+        
+    // selectedRowId와 일치하는 행을 찾아 인덱스를 selectedRow로 설정하고 페이지를 이동
+  useEffect(() => {
+    if (selectedRowId !== null) {
+      const rowIndex = data.findIndex(row => row.id === selectedRowId);
+      if (rowIndex !== -1) {
+        setSelectedRow(rowIndex);
+
+        // rowIndex에 해당하는 페이지로 이동
+        const newPage = Math.floor(rowIndex / rowsPerPage); // 페이지 계산
+        setPage(newPage); // 페이지 이동
+      }
+    }
+  }, [selectedRowId, data, rowsPerPage]);
 
     // 데이터와 컬럼에 기반하여 초기 열 너비 설정
     useEffect(() => {
@@ -287,6 +303,7 @@ export default function CustomizedTables({
                                     <React.Fragment key={rowIndex}>
                                         <StyledTableRow 
                                             key={rowIndex + (rowsPerPage * page)}
+                                            submitted={submittedRowIdx.includes(rowIndex + (rowsPerPage * page))}
                                             selected={variant === 'checkbox' 
                                                 ? selectedRows.includes(rowIndex) 
                                                 : selectedRow === rowIndex + (rowsPerPage * page)}
@@ -421,6 +438,7 @@ export default function CustomizedTables({
                                     filteredData.map((row, index) => (
                                         <StyledTableRow 
                                             key={index}
+                                            submitted={submittedRowIdx.includes(index)}
                                             selected={
                                                 variant === 'checkbox' 
                                                 ? selectedRows.includes(index) 

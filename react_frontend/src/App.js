@@ -54,12 +54,7 @@ export default function App() {
 
     const handleLogout = () => {
         setToken(null);
-        localStorage.removeItem("token");
-        localStorage.removeItem("menu");
-        localStorage.removeItem("user");
-        localStorage.removeItem("tabs");
-        localStorage.removeItem("activeTab");
-        //localStorage.removeItem("fav");
+        localStorage.clear();
     };
 
     const handleMenuSet = () => {
@@ -99,56 +94,53 @@ export default function App() {
     }
 
     return (
-        <RecoilRoot>
-            <Router>
-                <Routes>
-                    {token ? (
-                        <Route path='/' element={<SiteLayout handleLogout={handleLogout} menus={menu} user={user} />}>
-                            {
-                                user.role === 'ADMIN'
-                                ?
-                                <>
-                                    <Route index path='' element={<Main_Admin />} />
-                                    <Route path='/ps_1_2' element={<Ps_1_2 />} />
-                                    <Route path='/psq' element={<Psq />} />
-                                </>
-                                :
-                                (user. role === 'HP'
-                                ?
-                                <>
-                                    <Route index path='' element={<Main_Hp />} /> 
-                                    <Route path='/ps_1_2' element={<Ps_1_2 />} />
-                                    <Route path='/psq' element={<Psq />} />
-                                </>
-                                :
-                                <>
-                                    <Route index path='' element={<Main />} />
-                                    <Route path='/ps_1_2' element={<Ps_1_2_Fp />} />
-                                    <Route path='/psq' element={<Psq_Fp />} />
-                                    <Route path='/esm' element={<Esm_Fp />} />
-                                </>
-                                )
-                            }
-                            <Route path='/tep' element={<Tep />} />
-                            <Route path='/pmg' element={<Pmg />} />
-                            <Route path='/pds' element={<Pds />} />
-                            <Route path='/pg' element={<Pg />} />
-                            <Route path='/adm' element={<Adm />} />
-                            <Route path='/fl' element={<Fl />} />
-                            <Route path='/cm' element={<Cm />} />
-                            <Route path='/um' element={<Um />} />
-                            <Route path='/mm' element={<Mm menus={menu} handleMenuSet={handleMenuSet} />} />
-                            <Route path='/mal' element={<Mal />} />
-                            <Route path='/SalesAnal' element={<Sa />} />
-                            <Route path='/EquipAnal' element={<Ea />} />
-                            <Route path='/ClimateAnal' element={<Ca />} />
-                            <Route path='*' element={<Error404 />} />
-                        </Route>
-                    ) : (
-                        <Route path='*' element={<Login handleLogin={handleLogin} />} />
-                    )}
-                </Routes>
-            </Router>
-        </RecoilRoot>
+        <Router>
+            <Routes>
+                {token ? (
+                    <Route path='/' element={<SiteLayout handleLogout={handleLogout} menus={menu} user={user} />}>
+                        {
+                            user.role === 'ADMIN'
+                            ?
+                            <>
+                                <Route index path='' element={<Main_Admin />} />
+                                <Route path='/ps_1_2' element={<Ps_1_2 />} />
+                                <Route path='/psq' element={<Psq />} />
+                            </>
+                            :
+                            (user. role === 'HP'
+                            ?
+                            <>
+                                <Route index path='' element={<Main_Hp />} /> 
+                                <Route path='/ps_1_2' element={<Ps_1_2 />} />
+                                <Route path='/psq' element={<Psq />} />
+                            </>
+                            :
+                            <>
+                                <Route index path='' element={<Main />} />
+                                <Route path='/ps_1_2' element={<Ps_1_2_Fp />} />
+                                <Route path='/psq' element={<Psq_Fp />} />
+                                <Route path='/esm' element={<Esm_Fp />} />
+                            </>
+                            )
+                        }
+                        <Route path='/tep' element={<Tep />} />
+                        <Route path='/pds' element={<Pds />} />
+                        <Route path='/pg' element={<Pg />} />
+                        <Route path='/adm' element={<Adm />} />
+                        <Route path='/fl' element={<Fl />} />
+                        <Route path='/cm' element={<Cm />} />
+                        <Route path='/um' element={<Um />} />
+                        <Route path='/mm' element={<Mm menus={menu} handleMenuSet={handleMenuSet} />} />
+                        <Route path='/mal' element={<Mal />} />
+                        <Route path='/SalesAnal' element={<Sa />} />
+                        <Route path='/EquipAnal' element={<Ea />} />
+                        <Route path='/ClimateAnal' element={<Ca />} />
+                        <Route path='*' element={<Error404 />} />
+                    </Route>
+                ) : (
+                    <Route path='*' element={<Login handleLogin={handleLogin} />} />
+                )}
+            </Routes>
+        </Router>
     );
 }

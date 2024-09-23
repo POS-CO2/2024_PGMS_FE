@@ -249,6 +249,8 @@ const TabsContainer = forwardRef(({ handleLogout, user }, ref) => {
       navigate(path);
     }
     localStorage.setItem('activeTab', path);
+    localStorage.removeItem("leftTableSub");
+    localStorage.removeItem("rightTableSub");
   };
 
   const removeTab = targetKey => {

@@ -1,6 +1,7 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useRecoilState } from "recoil";
 import { eqLibSearchForm } from '../../../atoms/searchFormAtoms';
+import { selectedEqLibState } from '../../../atoms/selectedRowAtoms';
 import Swal from 'sweetalert2';
 import { Card } from '@mui/material';
 import TableCustom from "../../../TableCustom";
@@ -8,16 +9,28 @@ import SearchForms from "../../../SearchForms";
 import {formField_fl} from "../../../assets/json/searchFormData";
 import { equipLibColumns, equipActvColumns } from '../../../assets/json/tableColumn';
 import axiosInstance from '../../../utils/AxiosInstance';
-import * as mainStyles from "../../../assets/css/main.css"
+import * as mainStyles from "../../../assets/css/main.css";
 import * as pdsStyles from "../../../assets/css/pds.css";
 
 export default function Fl() {
     const [formFields, setFormFields] = useState(formField_fl);
     const [formData, setFormData] = useRecoilState(eqLibSearchForm);
     const [eqLibs, setEqLibs] = useState([]);
-    const [selectedEqLib, setSelectedEqLib] = useState({});     // 선택된 설비 LIB
+    const [selectedEqLib, setSelectedEqLib] = useRecoilState(selectedEqLibState);     // 선택된 설비 LIB
     const [actves, setActves] = useState([]);
     const [selectedActv, setSelectedActv] = useState({});
+
+    // localStorage에서 값을 가져오고, 파싱하여 배열로 변환
+    const [submittedEqLibIdx, setSubmittedEqLibIdx] = useState(() => {
+        const leftTableSub = localStorage.getItem("leftTableSub");
+        return leftTableSub ? JSON.parse(leftTableSub) : [];
+    });
+    
+    const [submittedActvIdx, setSubmittedActvIdx] = useState(() => {
+        const rightTableSub = localStorage.getItem("rightTableSub");
+        return rightTableSub ? JSON.parse(rightTableSub) : [];
+    });
+
     const [isModalOpen, setIsModalOpen] = useState({
         FlAdd: false,
         FlEdit: false,
@@ -39,6 +52,11 @@ export default function Fl() {
             try {
                 const response = await axiosInstance.get("/equip/lib");
                 setEqLibs(response.data);
+
+                // 설비 LIB 로드가 완료된 후에만 selectedEqLib를 확인하여 활동 자료를 불러옴
+                if (Object.keys(selectedEqLib).length !== 0) {
+                    fetchActvList(selectedEqLib);
+                }
             } catch (error) {
                 console.log(error);
             }
@@ -75,8 +93,30 @@ export default function Fl() {
         fetchDropDown();
 
         // formData값이 없으면 설비LIB을 findAll, 있으면(이전 탭의 검색기록이 있으면) 그 값을 불러옴
-        Object.keys(formData).length === 0 ? fetchEqLib() : handleFormSubmit(formData);
+        if(Object.keys(formData).length === 0) {
+            fetchEqLib();
+        } else {
+            handleFormSubmit(formData);
+        }
     }, []);
+
+    useEffect(() => {
+        localStorage.setItem("leftTableSub", JSON.stringify(submittedEqLibIdx));
+    }, [submittedEqLibIdx]);
+
+    useEffect(() => {
+        localStorage.setItem("rightTableSub", JSON.stringify(submittedActvIdx));
+    }, [submittedActvIdx]);
+
+    const fetchActvList = async (lib) => {
+        try {
+            // 선택한 lib에 매핑된 활동자료 목록 조회
+            const response = await axiosInstance.get(`/equip/actv/${lib.id}`);
+            setActves(response.data);
+        } catch (error) {
+            console.error("Error fetching activity data:", error);
+        }
+    }
 
     // 조회 버튼 클릭시 호출될 함수
     const handleFormSubmit = async (data) => {
@@ -90,7 +130,15 @@ export default function Fl() {
         try {
             const response = await axiosInstance.get("/equip/lib", {params});
             setEqLibs(response.data);
-            setActves([]);
+
+            //설비LIB 목록에 selectedEqLib 있는지 확인
+            const targetRow = response.data.find(row => row.id === selectedEqLib.id);
+            if (targetRow) {
+                fetchActvList(selectedEqLib);
+            } else {
+                setActves([]);
+            }
+            setSubmittedEqLibIdx([]);
             setFormData(data);
         } catch (error) {
             console.error("Error fetching equip lib data:", error);
@@ -109,16 +157,8 @@ export default function Fl() {
         } else {
             // lib가 있으면 selectedEqLib를 설정하고 API 호출
             setSelectedEqLib(lib);
-    
-            try {
-                // 선택한 lib에 매핑된 활동자료 목록 조회
-                const response = await axiosInstance.get(`/equip/actv/${lib.id}`);
-                setActves(response.data);
-            } catch (error) {
-                console.error("Error fetching activity data:", error);
-            }
+            fetchActvList(lib);
         };
-
     }
 
     // 활동자료 row 클릭 시 호출될 함수
@@ -150,7 +190,9 @@ export default function Fl() {
 
                 const response = await axiosInstance.post("/equip/lib", requestBody);
 
-                setEqLibs(prevEqLibs => [...prevEqLibs, response.data]);
+                setEqLibs(prevEqLibs => [response.data, ...prevEqLibs]);
+                setSelectedEqLib({});
+                setSubmittedEqLibIdx([0]);
 
                 swalOptions.title = '성공!',
                 swalOptions.text = `${data.eqLibName}(이)가 성공적으로 등록되었습니다.`;
@@ -163,39 +205,6 @@ export default function Fl() {
                 swalOptions.icon = 'error';
             }
             Swal.fire(swalOptions);
-        } else if (modalType === 'DeleteA') {
-            try {
-                // 선택된 설비LIB를 eqLib 리스트에서 제거
-                setEqLibs(prevEqLibs => prevEqLibs.filter(eqLib => eqLib.id !== selectedEqLib.id));
-                setSelectedEqLib({});
-            } catch (error) {
-                console.log(error);
-            }
-        } else if (modalType === 'FadAdd') {
-            const newFads = data.row;
-
-            try {
-                // data 배열을 순회하며 requestBody 배열 생성
-                const requestBody = newFads.map(actv => ({
-                    equipLibId: selectedEqLib.id,
-                    actvDataId: actv.id,
-                }));
-
-                const response = await axiosInstance.post("/equip/libmap", requestBody);
-
-                // 기존 활동자료에서 placeholderActv를 제거하고 새 데이터를 병합
-                setActves(prevActves => [...prevActves, ...response.data]);
-
-                swalOptions.title = '성공!',
-                swalOptions.text = `${data.actvDataName}(이)가 성공적으로 지정되었습니다.`;
-                swalOptions.icon = 'success';
-            } catch (error) {
-                console.log(error);
-
-                swalOptions.title = '실패!',
-                swalOptions.text = error.response.data.message,
-                swalOptions.icon = 'error';
-            }
         } else if (modalType === 'FlEdit') {
             try {
                 const requestBody = {
@@ -214,10 +223,48 @@ export default function Fl() {
                         eqLib.id === selectedEqLib.id ? response.data : eqLib
                     )
                 );
-                setSelectedEqLib({});
 
                 swalOptions.title = '성공!',
-                swalOptions.text = `${data.eqLibName}(이)가 성공적으로 수정되었습니다.`;
+                swalOptions.text = `${selectedEqLib.equipLibName}(이)가 성공적으로 수정되었습니다.`;
+                swalOptions.icon = 'success';
+            } catch (error) {
+                console.log(error);
+
+                swalOptions.title = '실패!',
+                swalOptions.text = error.response.data.message;
+                swalOptions.icon = 'error';
+            }
+        } else if (modalType === 'DeleteA') {
+            try {
+                // 선택된 설비LIB를 eqLib 리스트에서 제거
+                setEqLibs(prevEqLibs => prevEqLibs.filter(eqLib => eqLib.id !== selectedEqLib.id));
+                setSelectedEqLib({});
+                setSubmittedEqLibIdx([]);
+            } catch (error) {
+                console.log(error);
+            }
+        } else if (modalType === 'FadAdd') {
+            const newFads = data.row;
+            const actvDataNameList = [];
+
+            try {
+                // data 배열을 순회하며 requestBody 배열 생성
+                const requestBody = newFads.map(actv => {
+                    actvDataNameList.push(actv.actvDataName);  // actvDataName을 리스트에 추가
+                    return {
+                        equipLibId: selectedEqLib.id,
+                        actvDataId: actv.id
+                    };
+                });
+                const response = await axiosInstance.post("/equip/libmap", requestBody);
+
+                // 기존 활동자료에서 새 데이터를 병합
+                setActves(prevActves => [...response.data, ...prevActves]);
+                setSelectedActv({});
+                setSubmittedActvIdx([...Array(newFads.length).keys()]) //지정된 활동자료 만큼의 인덱스 추출(3개(n)를 지정했으면 [0, 1, 2(n-1)] 배열을 만듦)
+
+                swalOptions.title = '성공!',
+                swalOptions.text = `${actvDataNameList.join(', ')}(이)가 성공적으로 지정되었습니다.`;
                 swalOptions.icon = 'success';
             } catch (error) {
                 console.log(error);
@@ -231,37 +278,25 @@ export default function Fl() {
                 // 선택된 활동자료를 actves 리스트에서 제거
                 setActves(prevActves => prevActves.filter(actv => actv.id !== selectedActv.id));
                 setSelectedActv({});
+                setSubmittedActvIdx([]);
             } catch (error) {
                 console.log(error);
             }
         }
-        Swal.fire(swalOptions);
+
+        // Swal.fire 실행 후, 성공 메시지가 표시되면 페이지 새로고침
+        Swal.fire(swalOptions).then(() => {
+            // 성공 후 페이지 새로고침
+            //setFormData({}); //새로고침 전 검색창 초기화
+            if(modalType !== 'DeleteA' && modalType !== 'DeleteB') {
+                window.location.reload();
+            }
+        });
     };
 
     // 모달 닫기
     const handleCancel = (modalType) => () => {
         setIsModalOpen(prevState => ({ ...prevState, [modalType]: false }));
-    };
-
-    // 버튼 클릭 시 모달 열림 설정
-    const onEqLibAddClick = () => {
-        showModal('FlAdd');
-    };
-
-    const onEditClick = () => {
-        showModal('FlEdit');
-    };
-
-    const onActvAddClick = () => {
-        showModal('FadAdd');
-    };
-
-    const onEqLibDeleteClick = () => {
-        showModal('DeleteA');
-    };
-
-    const onActvDeleteClick = () => {
-        showModal('DeleteB');
     };
 
     return (
@@ -278,12 +313,14 @@ export default function Fl() {
                     <Card sx={{ width: "50%", height: "auto", borderRadius: "0.5rem" }}>
                         <TableCustom 
                             title='설비LIB목록' 
-                            data={eqLibs}                   
+                            data={eqLibs}
+                            submittedRowIdx={submittedEqLibIdx}     
                             columns={equipLibColumns}
                             buttons={['Delete', 'Edit', 'Add']}
-                            onClicks={[onEqLibDeleteClick, onEditClick, onEqLibAddClick]}
+                            onClicks={[() => showModal('DeleteA'), () => showModal('FlEdit'), () => showModal('FlAdd')]}
                             onRowClick={(e) => handleEqLibClick(e)}
                             selectedRows={[selectedEqLib]}
+                            keyProp={eqLibs.length}
                             modals={[
                                 isModalOpen.DeleteA && {
                                     'modalType': 'DeleteA',
@@ -292,7 +329,7 @@ export default function Fl() {
                                     'handleCancel': handleCancel('DeleteA'),
                                     'rowData': selectedEqLib,
                                     'rowDataName': 'equipLibName',
-                                    'url': '/equip'
+                                    'url': '/equip/lib'
                                 },
                                 isModalOpen.FlEdit && {
                                     'modalType': 'FlEdit',
@@ -320,11 +357,13 @@ export default function Fl() {
                             <TableCustom 
                                 title='활동자료목록' 
                                 data={actves}
+                                submittedRowIdx={submittedActvIdx}  
                                 columns={equipActvColumns}   
                                 buttons={['Delete', 'Add']}
-                                onClicks={[onActvDeleteClick, onActvAddClick]}
+                                onClicks={[() => showModal('DeleteB'), () => showModal('FadAdd')]}
                                 onRowClick={handleActvClick}
                                 selectedRows={[selectedActv]}
+                                keyProp={actves.length}
                                 modals={[
                                     isModalOpen.DeleteB && {
                                         'modalType': 'DeleteB',
