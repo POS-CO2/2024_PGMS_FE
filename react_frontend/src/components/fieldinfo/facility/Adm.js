@@ -263,7 +263,7 @@ export default function Adm() {
                             onRowClick={handleActvClick}
                             selectedRows={[selectedActv]}
                             modals={[
-                                {
+                                isModalOpen.DeleteA && {
                                     'modalType': 'DeleteA',
                                     'isModalOpen': isModalOpen.DeleteA,
                                     'handleOk': handleOk('DeleteA'),
@@ -272,7 +272,7 @@ export default function Adm() {
                                     'rowDataName': 'actvDataName',
                                     'url': '/equip/actv'
                                 },
-                                {
+                                isModalOpen.FamEdit && {
                                     'modalType': 'FamEdit',
                                     'isModalOpen': isModalOpen.FamEdit,
                                     'handleOk': handleOk('FamEdit'),
@@ -280,7 +280,7 @@ export default function Adm() {
                                     'rowData': selectedActv,
                                     'dropDown': formFields
                                 },
-                                {
+                                isModalOpen.FamAdd && {
                                     'modalType': 'FamAdd',
                                     'isModalOpen': isModalOpen.FamAdd,
                                     'handleOk': handleOk('FamAdd'),

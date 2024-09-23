@@ -7,6 +7,7 @@ export const modalState = atom({
     EsmAdd: false, // 배출원 등록
     SdAdd: false, // 증빙자료 등록
     SdShowDetails: false, // 증빙자료 상세보기
+    Delete: false,
     DeleteA: false,
     DeleteB: false,
   },

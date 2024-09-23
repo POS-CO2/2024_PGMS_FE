@@ -285,7 +285,7 @@ export default function Fl() {
                             onRowClick={(e) => handleEqLibClick(e)}
                             selectedRows={[selectedEqLib]}
                             modals={[
-                                {
+                                isModalOpen.DeleteA && {
                                     'modalType': 'DeleteA',
                                     'isModalOpen': isModalOpen.DeleteA,
                                     'handleOk': handleOk('DeleteA'),
@@ -294,7 +294,7 @@ export default function Fl() {
                                     'rowDataName': 'equipLibName',
                                     'url': '/equip'
                                 },
-                                {
+                                isModalOpen.FlEdit && {
                                     'modalType': 'FlEdit',
                                     'isModalOpen': isModalOpen.FlEdit,
                                     'handleOk': handleOk('FlEdit'),
@@ -302,7 +302,7 @@ export default function Fl() {
                                     'rowData': selectedEqLib,
                                     'dropDown': formFields
                                 },
-                                {
+                                isModalOpen.FlAdd && {
                                     'modalType': 'FlAdd',
                                     'isModalOpen': isModalOpen.FlAdd,
                                     'handleOk': handleOk('FlAdd'),
@@ -326,7 +326,7 @@ export default function Fl() {
                                 onRowClick={handleActvClick}
                                 selectedRows={[selectedActv]}
                                 modals={[
-                                    {
+                                    isModalOpen.DeleteB && {
                                         'modalType': 'DeleteB',
                                         'isModalOpen': isModalOpen.DeleteB,
                                         'handleOk': handleOk('DeleteB'),
@@ -338,7 +338,7 @@ export default function Fl() {
                                         'rowDataName': 'actvDataName',
                                         'url': '/equip/libmap'
                                     },
-                                    {
+                                    isModalOpen.FadAdd && {
                                         'modalType': 'FadAdd',
                                         'isModalOpen': isModalOpen.FadAdd,
                                         'handleOk': handleOk('FadAdd'),

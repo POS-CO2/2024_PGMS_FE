@@ -230,7 +230,7 @@ export default function Pg() {
                                 subData={managers}
                                 expandedRow={expandedRow}
                                 modals={[
-                                    {
+                                    isModalOpen.Delete && {
                                         'modalType': 'Delete',
                                         'isModalOpen': isModalOpen.Delete,
                                         'handleOk': handleOk('Delete'),
@@ -239,7 +239,7 @@ export default function Pg() {
                                         'rowDataName': 'pjtName',
                                         'url': '/pjt'
                                     },
-                                    {
+                                    isModalOpen.PgAdd && {
                                         'modalType': 'PgAdd',
                                         'isModalOpen': isModalOpen.PgAdd,
                                         'handleOk': handleOk('PgAdd'),
