@@ -12,10 +12,10 @@ export const emissionSourceForm = atom({
 
 // 프로젝트별 조회 메뉴의 서치폼
 export const projectPerfForm = atom({
-    key: 'projectScopeForm',
+    key: 'projectPerfForm',
     default: {},
     effects: [
-        localStorageEffect('projectScopeForm'), // 로컬 스토리지와 동기화
+        localStorageEffect('projectPerfForm'), // 로컬 스토리지와 동기화
     ],
 });
 

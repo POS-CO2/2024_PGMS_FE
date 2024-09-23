@@ -18,7 +18,6 @@ import Esd_Fp from './components/fieldinfo/project/detailSet/Esd_Fp';
 import Pg from './components/fieldinfo/project/Pg';
 import Adm from './components/fieldinfo/facility/Adm';
 import Fl from './components/fieldinfo/facility/Fl';
-import Esm_Fp from './components/fieldinfo/emission/Esm_Fp';
 import Cm from './components/sysmng/Cm';
 import Mm from './components/sysmng/Mm';
 import Um from './components/sysmng/Um';
@@ -120,7 +119,6 @@ export default function App() {
                                 <Route index path='' element={<Main />} />
                                 <Route path='/ps_1_2' element={<Ps_1_2_Fp />} />
                                 <Route path='/psq' element={<Psq_Fp />} />
-                                <Route path='/esm' element={<Esm_Fp />} />
                             </>
                             )
                         }
