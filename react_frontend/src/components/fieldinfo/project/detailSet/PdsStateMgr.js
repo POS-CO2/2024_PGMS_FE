@@ -109,14 +109,14 @@ export const PdsStateMgr = ({pjtId}) => {
                     selected={selectedButton === '담당자 관리'}
                     onClick={() => setSelectedButton('담당자 관리')}
                 >
-                    담당자 관리
+                    담당자 관리*
                 </CustomButton>
                 <CustomButton
                     variant="outlined"
                     selected={selectedButton === '설비 관리'}
                     onClick={() => setSelectedButton('설비 관리')}
                 >
-                    설비 관리
+                    설비 관리*
                 </CustomButton>
                 <CustomButton
                     variant="outlined"
@@ -130,7 +130,7 @@ export const PdsStateMgr = ({pjtId}) => {
                     selected={selectedButton === '매출액 관리'}
                     onClick={() => setSelectedButton('매출액 관리')}
                 >
-                    매출액 관리
+                    매출액 관리*
                 </CustomButton>
             </div>
 

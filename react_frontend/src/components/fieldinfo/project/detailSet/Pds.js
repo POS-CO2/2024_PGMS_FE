@@ -1,63 +1,11 @@
 import React, { useState } from "react";
-import { RecoilRoot, useRecoilState } from 'recoil';
+import { useRecoilState } from 'recoil';
 import { selectedPjtState } from '../../../../atoms/pdsAtoms';
-import { Input, Select } from 'antd';
 import { Card } from '@mui/material';
-import { styled } from '@mui/material/styles';
 import SearchProjectModal from "../../../../FormItem/SearchProjectModal";
 import * as pdsStyles from "../../../../assets/css/pds.css";
 import * as mainStyles from "../../../../assets/css/main.css";
 import PdsStateMgr from "./PdsStateMgr";
-
-const { Option } = Select;
-
-const CustomInput = styled(Input)`
-    background-color: transparent !important;
-
-    &:focus, &:hover, &.ant-input-focused, &:focus-within {
-        outline: none;
-        box-shadow: 0 0 0 0.5px #0EAA00 !important;
-        border-color: #0EAA00 !important;
-    }
-
-    &:hover {
-        border-color: #0EAA00 !important;
-    }
-
-    input {
-        &:focus {
-            box-shadow: none !important;
-            border-color: #0EAA00 !important;
-    }
-
-    &:hover {
-        border-color: #0EAA00 !important;
-    }
-`;
-
-const CustomSelect = styled(Select)`
-    .ant-select-selector {
-        background-color: transparent !important;
-        border-color: #D9D9D9 !important;
-        transition: border-color 0.3s;
-
-        &:hover {
-            border-color: #0EAA00 !important;
-        }
-
-        &:focus, &:focus-within {
-            outline: none;
-            box-shadow: 0 0 0 0.5px #0EAA00 !important;
-            border-color: #0EAA00 !important;
-        }
-    }
-
-    .ant-select-selection-item {
-        &:hover {
-            border-color: #0EAA00 !important;
-        }
-    }
-`;
 
 export default function Pds() {
     const [searchedPjt, setSearchedPjt] = useRecoilState(selectedPjtState);                         // 프로젝트 조회 결과
