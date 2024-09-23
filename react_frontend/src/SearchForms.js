@@ -64,6 +64,7 @@ const formItemComponents = {
 export default function SearchForms({ initialValues={}, onFormSubmit, formFields, autoSubmitOnInit=false, onProjectSelect=()=>{} }) {
     const [form] = Form.useForm();
     const [isInitialSubmit, setIsInitialSubmit] = useState(autoSubmitOnInit); // 첫 렌더링 여부를 추적하는 상태
+    const [isFormChanged, setIsFormChanged] = useState(false); // 폼 변경 여부 상태
 
     // 폼 초기값 설정
     useEffect(() => {
@@ -92,9 +93,15 @@ export default function SearchForms({ initialValues={}, onFormSubmit, formFields
         }
     }, [isInitialSubmit, formFields, form]);
 
+    // 폼 변경을 감지해서 버튼 색상 변경
+    const handleFieldsChange = () => {
+        setIsFormChanged(true); // 폼이 변경되면 상태 업데이트
+    };
+
     // 조회 버튼 클릭 시 호출될 함수
     const handleFinish = (values) => {
         onFormSubmit(values);
+        setIsFormChanged(false);
     };
 
     const handleProjectSelect = (selectedData) => {
@@ -104,7 +111,13 @@ export default function SearchForms({ initialValues={}, onFormSubmit, formFields
     };
 
     return (
-        <StyledForm form={form} layout="vertical" className={searchFormStyles.form_container} onFinish={handleFinish}>
+        <StyledForm 
+            form={form} 
+            layout="vertical" 
+            className={searchFormStyles.form_container} 
+            onFinish={handleFinish}
+            onFieldsChange={handleFieldsChange}
+        >
             {formFields.map((field, index) => {
                 const FormItemComponent = formItemComponents[field.type];
                 return (
@@ -127,7 +140,7 @@ export default function SearchForms({ initialValues={}, onFormSubmit, formFields
                     />
                 )
             })}
-            <SearchBtn/>
+            <SearchBtn isFormChanged={isFormChanged} />
         </StyledForm>
     );
 };
