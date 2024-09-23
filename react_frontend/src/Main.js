@@ -5,7 +5,7 @@ import { OrbitControls, Html } from '@react-three/drei';
 import * as THREE from 'three';
 import { TextureLoader } from 'three';
 import earthTextureUrl from './assets/images/earth.jpg';
-import { GaugeContainer, GaugeValueArc, GaugeReferenceArc, useGaugeState, Gauge, gaugeClasses} from '@mui/x-charts';
+import { GaugeContainer, GaugeValueArc, GaugeReferenceArc, useGaugeState, Gauge, gaugeClasses, BarChart} from '@mui/x-charts';
 import { Card,CardContent, FormControl, InputLabel, MenuItem, Chip, ButtonGroup, Button, IconButton } from '@mui/material';
 import { CustomBarChart, CustomLineChart } from './Chart';
 import { temp_data } from './assets/json/chartData';
@@ -15,7 +15,7 @@ import DataSaverOffOutlinedIcon from '@mui/icons-material/DataSaverOffOutlined';
 import SpeedIcon from '@mui/icons-material/Speed';
 import LeaderboardOutlinedIcon from '@mui/icons-material/LeaderboardOutlined';
 import SummarizeOutlinedIcon from '@mui/icons-material/SummarizeOutlined';
-import { ArrowBackIos, ArrowForward, ArrowForwardIos, Girl, MarginRounded, Star } from '@mui/icons-material';
+import { ArrowBackIos, ArrowForward, ArrowForwardIos, Girl, GppGoodTwoTone, MarginRounded, Star, WarningRounded, WarningTwoTone } from '@mui/icons-material';
 import { color } from 'three/webgpu';
 import { Transfer, Select, Progress, ConfigProvider } from 'antd';
 import axiosInstance from './utils/AxiosInstance';
@@ -185,6 +185,8 @@ export default function Main() {
     const [scopeTwo, setScopeTwo] = useState(0);
     const [documentStatus, setDocumentStatus] = useState([]);
     const [dpPjt, setDpPjt] = useState([]);
+    const [scopeOneData, setScopeOneData] = useState([]);
+    const [scopeTwoData, setScopeTwoData] = useState([]);
 
     let today = new Date();
     let toYear = today.getFullYear();
@@ -244,9 +246,11 @@ export default function Main() {
                     ];
                     setScope(formattedChartPerfs);
                     // 실적스코프 전월대비 구하기
-                    setScopeOne(Math.floor(scope1Data[toMonth-1] / scope1Data[toMonth-2] * 100) ?? 0);
-                    setScopeTwo(Math.floor(scope2Data[toMonth-1] / scope2Data[toMonth-2] * 100) ?? 0);
-
+                    setScopeOne(Math.floor(scope1Data[toMonth-1] / scope1Data[toMonth-2] * 100 - 100) ?? 0);
+                    setScopeOneData([scope1Data[toMonth-2] ?? 0, scope1Data[toMonth-1] ?? 0]);
+                    setScopeTwo(Math.floor(scope2Data[toMonth-1] / scope2Data[toMonth-2] * 100 - 100) ?? 0);
+                    setScopeTwoData([scope2Data[toMonth-2] ?? 0, scope2Data[toMonth-1] ?? 0]);
+                    
                     // 증빙자료 제출현황 3개월치 구하기
                     const documentResponse = await axiosInstance.get(`/equip/document-status?pjtId=${initialPjt.pjtId}`);
                     setDocumentStatus(documentResponse.data);
@@ -292,8 +296,10 @@ export default function Main() {
                     { data: scope2Data, stack: 'A', label: 'Scope 2' }
                 ];
                 setScope(formattedChartPerfs);
-                setScopeOne(Math.floor(scope1Data[toMonth-1] / scope1Data[toMonth-2] * 100) ?? 0);
-                setScopeTwo(Math.floor(scope2Data[toMonth-1] / scope2Data[toMonth-2] * 100) ?? 0);
+                setScopeOne(Math.floor(scope1Data[toMonth-1] / scope1Data[toMonth-2] * 100 - 100) ?? 0);
+                setScopeOneData([scope1Data[toMonth-2] ?? 0, scope1Data[toMonth-1] ?? 0]);
+                setScopeTwo(Math.floor(scope2Data[toMonth-1] / scope2Data[toMonth-2] * 100 - 100) ?? 0);
+                setScopeTwoData([scope2Data[toMonth-2] ?? 0, scope2Data[toMonth-1] ?? 0]);
 
                 const documentResponse = await axiosInstance.get(`/equip/document-status?pjtId=${selectedMyPjt.pjtId}`);
                 setDocumentStatus(documentResponse.data);
@@ -457,6 +463,7 @@ export default function Main() {
         setSelectedMyPjt(e);
         Swal.fire(swalOptions);
     }
+    console.log(scopeOneData);
 
     return (
             <div className={gridStyles.grid_container}>
@@ -488,56 +495,50 @@ export default function Main() {
                                     <LeaderboardOutlinedIcon fontSize='large' sx={{marginRight:"0.5rem"}}/>전월 대비 실적Scope
                                 </div>
                                 <div className={gridStyles.box1_1_gauge}>
-                                    <div>
-                                        <Gauge
-                                        {...scopeSettings1}
-                                        cornerRadius="50%"
-                                        sx={(theme) => ({
-                                            [`& .${gaugeClasses.valueText}`]: {
-                                            fontSize: 40,
-                                            color: "rgb(55, 57, 78)",
-                                            fontWeight: 700,
-                                            },
-                                            [`& .${gaugeClasses.valueArc}`]: {
-                                            fill: getStrokeColor(scopeSettings1.value),
-                                            },
-                                            [`& .${gaugeClasses.referenceArc}`]: {
-                                            fill: theme.palette.text.disabled,
-                                            },
-                                        })}
-                                        text={
-                                            ({ value }) => `${value}%`
+                                    <div style={{height:"100%", marginTop:"2rem"}}>
+                                        {
+                                            scopeOne >= 0 ? (
+                                                <div style={{display:"flex", flexDirection:"row",width:"100%", height:"100%", justifyContent:"space-around", alignItems:"center", fontSize:"3rem", fontWeight:"bold", color:"red", gap:"1rem"}}>
+                                                    <WarningTwoTone fontSize='large' sx={{color:"red"}}/>
+                                                    <div>
+                                                    +{scopeOne}%
+                                                    </div>
+                                                </div>
+                                            ) : (
+                                                <div style={{display:"flex", flexDirection:"row",width:"100%", height:"100%", justifyContent:"space-around", alignItems:"center", fontSize:"3rem", fontWeight:"bold", color:"#0eaa00", gap:"1rem"}}>
+                                                    <GppGoodTwoTone fontSize='large' sx={{color:"#0eaa00"}} />
+                                                    <div>
+                                                        {scopeOneo}%
+                                                    </div>
+                                                </div>
+                                            )
                                         }
-                                        />
                                         <div className={gridStyles.box1_1_logo}>
                                             <SpeedIcon fontSize='large' sx={{marginRight:"0.5rem"}}/>실적Scope1
                                         </div>
                                     </div>
-                                    <dib>
-                                    <Gauge
-                                    {...scopeSettings2}
-                                    cornerRadius="50%"
-                                    sx={(theme) => ({
-                                        [`& .${gaugeClasses.valueText}`]: {
-                                        fontSize: 40,
-                                        color: 'white',
-                                        fontWeight: 700,
-                                        },
-                                        [`& .${gaugeClasses.valueArc}`]: {
-                                        fill: getStrokeColor(scopeSettings2.value),
-                                        },
-                                        [`& .${gaugeClasses.referenceArc}`]: {
-                                        fill: theme.palette.text.disabled,
-                                        },
-                                    })}
-                                    text={
-                                        ({ value }) => `${value}%`
-                                    }
-                                    />
+                                    <div style={{height:"100%", marginTop:"2rem"}}>
+                                        {
+                                            scopeTwo >= 0 ? (
+                                                <div style={{display:"flex", flexDirection:"row",width:"100%", height:"100%", justifyContent:"space-around", alignItems:"center", fontSize:"3rem", fontWeight:"bold", color:"red", gap:"1rem"}}>
+                                                    <WarningTwoTone fontSize='large' sx={{color:"red"}}/>
+                                                    <div>
+                                                    +{scopeTwo}%
+                                                    </div>
+                                                </div>
+                                            ) : (
+                                                <div style={{display:"flex", flexDirection:"row",width:"100%", height:"100%", justifyContent:"space-around", alignItems:"center", fontSize:"3rem", fontWeight:"bold", color:"#0eaa00", gap:"1rem"}}>
+                                                    <GppGoodTwoTone fontSize='large' sx={{color:"#0eaa00"}} />
+                                                    <div>
+                                                        {scopeTwo}%
+                                                    </div>
+                                                </div>
+                                            )
+                                        }
                                     <div className={gridStyles.box1_1_logo}>
                                         <SpeedIcon fontSize='large' sx={{marginRight:"0.5rem"}}/>실적Scope2
                                     </div>
-                                    </dib>
+                                    </div>
                                 </div>
                             </div>
                         </Card>
