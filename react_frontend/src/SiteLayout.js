@@ -8,12 +8,8 @@ import {
     TruckOutlined,
     BankOutlined,
     PieChartOutlined,
-<<<<<<< HEAD
-} from '@ant-design/icons';
-=======
     SettingOutlined,
   } from '@ant-design/icons';
->>>>>>> main
 import axiosInstance from './utils/AxiosInstance';
 import { Badge, Box } from '@mui/material';
 import { ChatBubble } from '@mui/icons-material';
