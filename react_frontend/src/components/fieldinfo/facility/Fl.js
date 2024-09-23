@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from "react";
-import Swal from 'sweetalert2'
+import { useRecoilState } from "recoil";
+import { eqLibSearchForm } from '../../../atoms/searchFormAtoms';
+import Swal from 'sweetalert2';
 import { Card } from '@mui/material';
 import TableCustom from "../../../TableCustom";
 import SearchForms from "../../../SearchForms";
@@ -11,6 +13,7 @@ import * as pdsStyles from "../../../assets/css/pds.css";
 
 export default function Fl() {
     const [formFields, setFormFields] = useState(formField_fl);
+    const [formData, setFormData] = useRecoilState(eqLibSearchForm);
     const [eqLibs, setEqLibs] = useState([]);
     const [selectedEqLib, setSelectedEqLib] = useState({});     // 선택된 설비 LIB
     const [actves, setActves] = useState([]);
@@ -68,9 +71,11 @@ export default function Fl() {
                 console.error(error);
             }
         };
-    
+        
         fetchDropDown();
-        fetchEqLib();
+
+        // formData값이 없으면 설비LIB을 findAll, 있으면(이전 탭의 검색기록이 있으면) 그 값을 불러옴
+        Object.keys(formData).length === 0 ? fetchEqLib() : handleFormSubmit(formData);
     }, []);
 
     // 조회 버튼 클릭시 호출될 함수
@@ -86,6 +91,7 @@ export default function Fl() {
             const response = await axiosInstance.get("/equip/lib", {params});
             setEqLibs(response.data);
             setActves([]);
+            setFormData(data);
         } catch (error) {
             console.error("Error fetching equip lib data:", error);
         }
@@ -147,7 +153,7 @@ export default function Fl() {
                 setEqLibs(prevEqLibs => [...prevEqLibs, response.data]);
 
                 swalOptions.title = '성공!',
-                swalOptions.text = '설비LIB가 성공적으로 등록되었습니다.';
+                swalOptions.text = `${data.eqLibName}(이)가 성공적으로 등록되었습니다.`;
                 swalOptions.icon = 'success';
             } catch (error) {
                 console.log(error);
@@ -181,7 +187,7 @@ export default function Fl() {
                 setActves(prevActves => [...prevActves, ...response.data]);
 
                 swalOptions.title = '성공!',
-                swalOptions.text = '활동자료가 성공적으로 지정되었습니다.';
+                swalOptions.text = `${data.actvDataName}(이)가 성공적으로 지정되었습니다.`;
                 swalOptions.icon = 'success';
             } catch (error) {
                 console.log(error);
@@ -211,7 +217,7 @@ export default function Fl() {
                 setSelectedEqLib({});
 
                 swalOptions.title = '성공!',
-                swalOptions.text = '설비LIB이 성공적으로 수정되었습니다.';
+                swalOptions.text = `${data.eqLibName}(이)가 성공적으로 수정되었습니다.`;
                 swalOptions.icon = 'success';
             } catch (error) {
                 console.log(error);
@@ -261,7 +267,11 @@ export default function Fl() {
     return (
         <>
             <div className={mainStyles.breadcrumb}>현장정보 &gt; 설비 &gt; 설비 LIB 관리</div>
-            <SearchForms onFormSubmit={handleFormSubmit} formFields={formFields} />
+            <SearchForms 
+                initialValues={formData} 
+                onFormSubmit={handleFormSubmit} 
+                formFields={formFields} 
+            />
             
             <div className={pdsStyles.main_grid}>
                 <div className={pdsStyles.contents_container}>
