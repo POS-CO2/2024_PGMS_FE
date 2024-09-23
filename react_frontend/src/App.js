@@ -14,6 +14,7 @@ import Psq from './components/emperf/perflook/Psq';
 import Psq_Fp from './components/emperf/perflook/Psq_Fp';
 import Tep from './components/emperf/perflook/Tep';
 import Pds from './components/fieldinfo/project/detailSet/Pds';
+import Esd_Fp from './components/fieldinfo/project/detailSet/Esd_Fp';
 import Pg from './components/fieldinfo/project/Pg';
 import Adm from './components/fieldinfo/facility/Adm';
 import Fl from './components/fieldinfo/facility/Fl';
@@ -107,7 +108,7 @@ export default function App() {
                                 <Route path='/psq' element={<Psq />} />
                             </>
                             :
-                            (user. role === 'HP'
+                            (user.role === 'HP'
                             ?
                             <>
                                 <Route index path='' element={<Main_Hp />} /> 
@@ -124,7 +125,7 @@ export default function App() {
                             )
                         }
                         <Route path='/tep' element={<Tep />} />
-                        <Route path='/pds' element={<Pds />} />
+                        <Route path='/pds' element={user.role === 'FP' ? <Esd_Fp /> : <Pds />} />
                         <Route path='/pg' element={<Pg />} />
                         <Route path='/adm' element={<Adm />} />
                         <Route path='/fl' element={<Fl />} />

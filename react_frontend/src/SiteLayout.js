@@ -39,8 +39,7 @@ const ContentContainer = styled.div`
 
 // 백엔드에서 받은 메뉴 데이터를 라이브러리 형식에 맞춰 items(key, label, path)로 변환 
 const mapMenuDataToItems = (menuData) => {
-    console.log("menuData", menuData);
-    return menuData.map((menuItem, index) => {
+    return menuData.map((menuItem) => {
       const icon = menuItem.name === '배출실적' ? <TruckOutlined /> : 
         menuItem.name === '현장정보' ? <BankOutlined /> : 
         menuItem.name === '분석및예측' ? <PieChartOutlined /> :
