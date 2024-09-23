@@ -8,6 +8,7 @@ import SelectCalendar from "./FormItem/SelectCalendar";
 import SearchAtModal from "./FormItem/SearchAtModal";
 import SearchBtn from "./FormItem/SearchBtn";
 import styled from 'styled-components';
+import { ContinuousColorLegend } from '@mui/x-charts';
 
 /**
  * 모든 FormItem에
@@ -60,9 +61,18 @@ const formItemComponents = {
     SearchAtModal
 };
 
-export default function SearchForms({ onFormSubmit, formFields, autoSubmitOnInit=false, onProjectSelect=()=>{} }) {
+export default function SearchForms({ initialValues={}, onFormSubmit, formFields, autoSubmitOnInit=false, onProjectSelect=()=>{} }) {
     const [form] = Form.useForm();
     const [isInitialSubmit, setIsInitialSubmit] = useState(autoSubmitOnInit); // 첫 렌더링 여부를 추적하는 상태
+    const [isFormChanged, setIsFormChanged] = useState(false); // 폼 변경 여부 상태
+
+    // 폼 초기값 설정
+    useEffect(() => {
+        form.setFieldsValue(initialValues);
+        if(Object.keys(initialValues).length !== 0) {
+            onProjectSelect(initialValues.searchProject, form)
+        }
+    }, [initialValues]);
 
     // 초기 렌더링 시 폼을 제출하는 함수 //default일 때 자동 폼 제출
     const autoSubmitForm = () => {
@@ -83,9 +93,15 @@ export default function SearchForms({ onFormSubmit, formFields, autoSubmitOnInit
         }
     }, [isInitialSubmit, formFields, form]);
 
+    // 폼 변경을 감지해서 버튼 색상 변경
+    const handleFieldsChange = () => {
+        setIsFormChanged(true); // 폼이 변경되면 상태 업데이트
+    };
+
     // 조회 버튼 클릭 시 호출될 함수
     const handleFinish = (values) => {
         onFormSubmit(values);
+        setIsFormChanged(false);
     };
 
     const handleProjectSelect = (selectedData) => {
@@ -95,12 +111,19 @@ export default function SearchForms({ onFormSubmit, formFields, autoSubmitOnInit
     };
 
     return (
-        <StyledForm form={form} layout="vertical" className={searchFormStyles.form_container} onFinish={handleFinish}>
+        <StyledForm 
+            form={form} 
+            layout="vertical" 
+            className={searchFormStyles.form_container} 
+            onFinish={handleFinish}
+            onFieldsChange={handleFieldsChange}
+        >
             {formFields.map((field, index) => {
                 const FormItemComponent = formItemComponents[field.type];
                 return (
                     <FormItemComponent
                         key={index}
+                        initialValues={initialValues}
                         name={field.name}
                         label={field.label}
                         required={field.required}
@@ -117,7 +140,7 @@ export default function SearchForms({ onFormSubmit, formFields, autoSubmitOnInit
                     />
                 )
             })}
-            <SearchBtn/>
+            <SearchBtn isFormChanged={isFormChanged} />
         </StyledForm>
     );
 };

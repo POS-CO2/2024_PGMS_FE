@@ -13,7 +13,7 @@ import { Card } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import { CloseOutlined } from '@ant-design/icons';
 import { AddButton } from '../../../../Button';
-import { equipColumns } from '../../../../assets/json/tableColumn';
+import { equipColumns, equipLibColumns } from '../../../../assets/json/tableColumn';
 import Table from "../../../../Table";
 import TableCustom from "../../../../TableCustom";
 import * as pdsStyles from "../../../../assets/css/pds.css";
@@ -205,7 +205,7 @@ export default function Fd({pjtId}) {
                     onRowClick={handleEqClick}
                     selectedRows={[selectedEq]}
                     modals={[
-                        {
+                        isModalOpen.Delete && {
                             modalType: 'Delete',
                             isModalOpen: isModalOpen.Delete,
                             handleOk: (params) => handleOk('Delete') ({
@@ -275,7 +275,7 @@ export default function Fd({pjtId}) {
                     </div>
 
                     <div className={pdsStyles.result_container}>
-                        <Table key={JSON.stringify(equips.length)} data={eqLibs} columns={equipColumns} onRowClick={handleEqLibClick} modalPagination={true} />
+                        <Table key={JSON.stringify(equips.length)} data={eqLibs} columns={equipLibColumns} onRowClick={handleEqLibClick} modalPagination={true} />
                         
                         <div className={pdsStyles.input_container} style={{ padding: '0.5rem', marginBottom: "1rem", marginTop: '20px' }}>
                             <div className={pdsStyles.search_title} style={{ marginRight: '0.2rem' }}>

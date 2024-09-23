@@ -2,16 +2,18 @@ import React, {useState, useRef, useEffect} from 'react';
 import { useNavigate, Outlet } from 'react-router-dom';
 import styled from 'styled-components';
 import Sidebar from './Sidebar';
-import Favorite from "./Favorite";
 import TabsContainer from './TabsContainer';
 import  * as mainStyles from './assets/css/main.css';
-
 import {
-    AppstoreOutlined,
-    MailOutlined,
+    TruckOutlined,
+    BankOutlined,
     PieChartOutlined,
+    SettingOutlined,
   } from '@ant-design/icons';
 import axiosInstance from './utils/AxiosInstance';
+import { Badge, Box } from '@mui/material';
+import { ChatBubble } from '@mui/icons-material';
+import Chat from './Chat';
 
 const StyledTabsContainer = styled(TabsContainer)`
     flex: 1;
@@ -35,9 +37,13 @@ const ContentContainer = styled.div`
     overflow: hidden;
 `;
 
+// 백엔드에서 받은 메뉴 데이터를 라이브러리 형식에 맞춰 items(key, label, path)로 변환 
 const mapMenuDataToItems = (menuData) => {
-    return menuData.map((menuItem, index) => {
-      const icon = index === 0 ? <PieChartOutlined /> : index === 1 ? <MailOutlined /> : <AppstoreOutlined />;
+    return menuData.map((menuItem) => {
+      const icon = menuItem.name === '배출실적' ? <TruckOutlined /> : 
+        menuItem.name === '현장정보' ? <BankOutlined /> : 
+        menuItem.name === '분석및예측' ? <PieChartOutlined /> :
+        menuItem.name === '시스템관리' ? <SettingOutlined /> : <></>;
   
       // 하위 메뉴를 재귀적으로 매핑
       const mapChildren = (children) => {
@@ -51,7 +57,7 @@ const mapMenuDataToItems = (menuData) => {
           } else {
             return {
                 key: `${childItem.id}`,
-                label: childItem.name,
+                label: `${childItem.name}${childItem.accessUser !== 'FP' ? '*' : ''}`,  //현장이 볼 수 없는 메뉴명 뒤에 * 붙이기
                 path: childItem.url,  // 하위 메뉴가 없을 경우 path를 직접 설정
             };
           }
@@ -59,7 +65,11 @@ const mapMenuDataToItems = (menuData) => {
     };
         return {
             key: `sub${menuItem.id}`,
-            label: menuItem.name,
+            label: 
+                <>
+                    {menuItem.name}
+                    {menuItem.accessUser !== 'FP' ? '*' : ''}   {/*현장이 볼 수 없는 메뉴명 뒤에 * 붙이기 */}
+                </>,
             icon: icon,
             children: mapChildren(menuItem.menu),
         };
@@ -72,6 +82,7 @@ export default function SiteLayout({handleLogout, menus, user}){
 
     const [collapsed, setCollapsed] = useState(false);
     const [openKeys, setOpenKeys] = useState([]);
+    const [chatOpen, setChatOpen] = useState(false);
     const navigate = useNavigate();
     const tabsContainerRef = useRef(null);
     
@@ -100,7 +111,7 @@ export default function SiteLayout({handleLogout, menus, user}){
         const response = await axiosInstance.post(`/sys/log/click?menuId=${item.key}`);
     };
 
-    /* 마지막으로 선택한 대분류 토글만 내리기 */
+    // 마지막으로 선택한 대분류 토글만 내리기
     const handleOpenChange = (keys) => {
         const latestOpenKey = keys.find(key => !openKeys.includes(key));
         if (items.map(item => item.key).includes(latestOpenKey)) {
@@ -110,13 +121,22 @@ export default function SiteLayout({handleLogout, menus, user}){
         }
     };
 
+    // 메뉴를 클릭했을 때, key값으로 item을 찾음
     const findItemByKey = (items, key) =>
         items.reduce((acc, item) => {
         if (acc) return acc;
         if (item.key === key) return item;
         if (item.children) return findItemByKey(item.children, key);
         return null;
-        }, null);
+    }, null);
+
+    const handleChatClick = () => {
+        setChatOpen(true);
+    }
+
+    const handleCloseClick = () => {
+        setChatOpen(false);
+    }
 
     if (loading) {
         return (
@@ -136,11 +156,21 @@ export default function SiteLayout({handleLogout, menus, user}){
                         ref={tabsContainerRef} 
                     />
                     <Outlet />
-                    <Favorite handleFavClick={handleFavClick} fav={fav}/>
                 </ContentContainer>
             </div>
         );
     }
+    const [totCnt, setTotCnt] = useState(0);
+
+    const getTotalUnReadCnt = async () => {
+        const {data} = await axiosInstance.get(`/chat/unread`);
+
+        setTotCnt(data);
+    }
+
+    useEffect(() => {
+        getTotalUnReadCnt();
+    },[chatOpen])
 
     return (
         <div id={mainStyles.root}>
@@ -161,7 +191,17 @@ export default function SiteLayout({handleLogout, menus, user}){
                 <div style={{ overflowY: 'auto' }}>
                     <Outlet />
                 </div>
-                <Favorite handleFavClick={handleFavClick} fav={fav}/>
+                {
+                    chatOpen ? (
+                        <Chat handleCloseClick={handleCloseClick}/>
+                    ) : (
+                            <Box component="span" onClick={handleChatClick} sx={{borderRadius:"50%", backgroundColor:"rgb(14, 170, 0)", position:"fixed", bottom: "16px", right:"16px", width:"70px", height:"70px", display:"flex", justifyContent:"center", alignItems:"center", cursor:"pointer"}}>
+                                <Badge color='error' badgeContent={totCnt} >
+                                    <ChatBubble fontSize='large' sx={{color:"white"}}/>
+                                </Badge>
+                            </Box>
+                    )
+                }
             </ContentContainer>
         </div>
     );

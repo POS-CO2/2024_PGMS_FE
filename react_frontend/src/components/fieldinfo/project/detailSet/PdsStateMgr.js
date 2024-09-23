@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
-import { useSetRecoilState } from 'recoil';
+import { useRecoilState, useSetRecoilState } from 'recoil';
 import {
-    managerState, eqState, eqLibState, emSourceState, revState
+    managerState, eqState, eqLibState, emSourceState, revState, selectedButtonState
 } from '../../../../atoms/pdsAtoms';
 import axiosInstance from '../../../../utils/AxiosInstance';
 import Pd from './Pd';
@@ -34,7 +34,7 @@ const CustomButton = styled(Button)(({ selected }) => ({
 }));
 
 export const PdsStateMgr = ({pjtId}) => {
-    const [selectedButton, setSelectedButton] = useState('담당자 관리');
+    const [selectedButton, setSelectedButton] = useRecoilState(selectedButtonState);
 
     const setManagers = useSetRecoilState(managerState);
     const setEquips = useSetRecoilState(eqState);
@@ -109,14 +109,14 @@ export const PdsStateMgr = ({pjtId}) => {
                     selected={selectedButton === '담당자 관리'}
                     onClick={() => setSelectedButton('담당자 관리')}
                 >
-                    담당자 관리
+                    담당자 관리*
                 </CustomButton>
                 <CustomButton
                     variant="outlined"
                     selected={selectedButton === '설비 관리'}
                     onClick={() => setSelectedButton('설비 관리')}
                 >
-                    설비 관리
+                    설비 관리*
                 </CustomButton>
                 <CustomButton
                     variant="outlined"
@@ -130,7 +130,7 @@ export const PdsStateMgr = ({pjtId}) => {
                     selected={selectedButton === '매출액 관리'}
                     onClick={() => setSelectedButton('매출액 관리')}
                 >
-                    매출액 관리
+                    매출액 관리*
                 </CustomButton>
             </div>
 

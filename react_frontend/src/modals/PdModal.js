@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { Modal, Button, Upload, Select, Input, ConfigProvider } from 'antd';
 import Swal from 'sweetalert2';
 import { useRecoilValue, useRecoilState } from 'recoil';
-import { pjtState, selectedSuppDocState } from '../atoms/pdsAtoms';
+import { selectedPjtState, selectedSuppDocState } from '../atoms/pdsAtoms';
 import axiosInstance from '../utils/AxiosInstance';
 import { TextField, Autocomplete } from '@mui/material';
 import { PaperClipOutlined, CloseOutlined } from '@ant-design/icons';
@@ -12,7 +12,7 @@ import WarningAmberIcon from '@mui/icons-material/WarningAmber';
 import Table from "../Table";
 import { CustomButton } from '../Button';
 import styled from 'styled-components';
-import { pjtColumns, userColumns, equipColumns, equipActvColumns, equipEmissionColumns } from '../assets/json/tableColumn.js';
+import { pjtColumns, equipColumns, equipActvColumns, equipEmissionColumns } from '../assets/json/tableColumn.js';
 import * as modalStyles from "../assets/css/pdModal.css";
 import * as rmStyles from "../assets/css/rmModal.css";
 import * as delStyle from "../assets/css/delModal.css";
@@ -21,7 +21,6 @@ import * as sdStyles from "../assets/css/sdModal.css";
 import * as pdsStyles from "../assets/css/pds.css";
 import * as sysStyles from "../assets/css/sysmng.css"
 import * as ps12Styles from "../assets/css/ps12UploadExcelModal.css";
-import { selectMonth } from "../assets/json/sd";
 
 const StyledInput = styled(Input)`
   background: #ECF1F4 !important;
@@ -37,6 +36,21 @@ const StyledInput = styled(Input)`
     box-shadow: none !important;
   }
 `;
+
+const selectMonth = [
+    { value: '1', label: '1' },
+    { value: '2', label: '2' },
+    { value: '3', label: '3' },
+    { value: '4', label: '4' },
+    { value: '5', label: '5' },
+    { value: '6', label: '6' },
+    { value: '7', label: '7' },
+    { value: '8', label: '8' },
+    { value: '9', label: '9' },
+    { value: '10', label: '10' },
+    { value: '11', label: '11' },
+    { value: '12', label: '12' }
+];
 
 export function PgAddModal({ isModalOpen, handleOk, handleCancel }) {
     const [selectedPjts, setSelectedPjts] = useState([]);     // 선택된 프로젝트
@@ -147,6 +161,7 @@ export function FlAddModal({ isModalOpen, handleOk, handleCancel, dropDown }) {
     const [selectedEqDvs, setSelectedEqDvs] = useState('');
     const [selectedEqType, setSelectedEqType] = useState('');
     const [selectedEqSpecUnit, setSelectedEqSpecUnit] = useState('');
+    const [errors, setErrors] = useState({});
 
     // 옵션을 가져오는 함수
     const getOptions = (fieldName) => {
@@ -163,79 +178,97 @@ export function FlAddModal({ isModalOpen, handleOk, handleCancel, dropDown }) {
             eqSpecUnit: selectedEqSpecUnit
         };
 
+        // 입력 값 검증
+        let newErrors = {};
+        if (!formData.eqLibName) newErrors.eqLibName = '설비명을 입력해 주세요.';
+        if (!formData.eqDvs) newErrors.eqDvs = '설비구분을 선택해 주세요.';
+        if (!formData.eqType) newErrors.eqType = '설비유형을 선택해 주세요.';
+        if (!formData.eqSpecUnit) newErrors.eqSpecUnit = '설비사양단위를 선택해 주세요.';
+
+        if (Object.keys(newErrors).length > 0) {
+            setErrors(newErrors);
+            return;
+        }
+
+        setErrors({});
+
+        // 입력값 검증 통과하면 등록 수행
         handleOk(formData);
     };
 
     return (
-        <ConfigProvider
-        theme={{token:{fontFamily:"SUITE-Regular"}}}>
-        <Modal
-            open={isModalOpen}
-            onCancel={handleCancel}
-            style={{ width: '25rem', maxWidth: '25rem', important: true }}
-            footer={null}                                                   //Ant Design의 기본 footer 제거(Cancel, OK 버튼)
-        >
-            <div className={rmStyles.title}>설비LIB 등록</div>
+        <ConfigProvider theme={{token:{fontFamily:"SUITE-Regular"}}}>
+            <Modal
+                open={isModalOpen}
+                onCancel={handleCancel}
+                style={{ width: '25rem', maxWidth: '25rem', important: true }}
+                footer={null}                                                   //Ant Design의 기본 footer 제거(Cancel, OK 버튼)
+            >
+                <div className={rmStyles.title}>설비LIB 등록</div>
 
-            <div className={rmStyles.submit_container}>
-                <div className={rmStyles.search_item}>
-                    <div className={rmStyles.search_title}>설비라이브러리명</div>
-                    <Input
-                        value={eqLibName}
-                        allowClear={{ clearIcon: <CloseOutlined style={{color: "red"}} /> }}
-                        onChange={(e) => setEqLibName(e.target.value)}
-                        style={{ width: '21rem' }}
-                    />
+                <div className={rmStyles.submit_container}>
+                    <div className={rmStyles.search_item}>
+                        <div className={rmStyles.search_title}>설비라이브러리명</div>
+                        <Input
+                            value={eqLibName}
+                            allowClear={{ clearIcon: <CloseOutlined style={{color: "red"}} /> }}
+                            onChange={(e) => setEqLibName(e.target.value)}
+                            style={{ width: '21rem' }}
+                        />
+                        {errors.eqLibName && <div className={modalStyles.error_message}>{errors.eqLibName}</div>}
+                    </div>
+                    <div className={rmStyles.search_item}>
+                        <div className={rmStyles.search_title}>설비구분</div>
+                        <Select
+                            value={selectedEqDvs}
+                            allowClear={{ clearIcon: <CloseOutlined style={{color: "red"}} /> }}
+                            onChange={(value) => setSelectedEqDvs(value)}
+                            style={{ width: '21rem' }}
+                        >
+                            {getOptions('equipDvs').map(option => (
+                                <Select.Option key={option.value} value={option.value}>
+                                    {option.label}
+                                </Select.Option>
+                            ))}
+                        </Select>
+                        {errors.eqDvs && <div className={modalStyles.error_message}>{errors.eqDvs}</div>}
+                    </div>
+                    <div className={rmStyles.search_item}>
+                        <div className={rmStyles.search_title}>설비유형</div>
+                        <Select
+                            value={selectedEqType}
+                            allowClear={{ clearIcon: <CloseOutlined style={{color: "red"}} /> }}
+                            onChange={(value) => setSelectedEqType(value)}
+                            style={{ width: '21rem' }}
+                        >
+                            {getOptions('equipType').map(option => (
+                                <Select.Option key={option.value} value={option.value}>
+                                    {option.label}
+                                </Select.Option>
+                            ))}
+                        </Select>
+                        {errors.eqType && <div className={modalStyles.error_message}>{errors.eqType}</div>}
+                    </div>
+                    <div className={rmStyles.search_item}>
+                        <div className={rmStyles.search_title}>설비사양단위</div>
+                        <Select
+                            value={selectedEqSpecUnit}
+                            allowClear={{ clearIcon: <CloseOutlined style={{color: "red"}} /> }}
+                            onChange={(value) => setSelectedEqSpecUnit(value)}
+                            style={{ width: '21rem' }}
+                        >
+                            {getOptions('equipSpecUnit').map(option => (
+                                <Select.Option key={option.value} value={option.value}>
+                                    {option.label}
+                                </Select.Option>
+                            ))}
+                        </Select>
+                        {errors.eqSpecUnit && <div className={modalStyles.error_message}>{errors.eqSpecUnit}</div>}
+                    </div>
                 </div>
-                <div className={rmStyles.search_item}>
-                    <div className={rmStyles.search_title}>설비구분</div>
-                    <Select
-                        value={selectedEqDvs}
-                        allowClear={{ clearIcon: <CloseOutlined style={{color: "red"}} /> }}
-                        onChange={(value) => setSelectedEqDvs(value)}
-                        style={{ width: '21rem' }}
-                    >
-                        {getOptions('equipDvs').map(option => (
-                            <Select.Option key={option.value} value={option.value}>
-                                {option.label}
-                            </Select.Option>
-                        ))}
-                    </Select>
-                </div>
-                <div className={rmStyles.search_item}>
-                    <div className={rmStyles.search_title}>설비유형</div>
-                    <Select
-                        value={selectedEqType}
-                        allowClear={{ clearIcon: <CloseOutlined style={{color: "red"}} /> }}
-                        onChange={(value) => setSelectedEqType(value)}
-                        style={{ width: '21rem' }}
-                    >
-                        {getOptions('equipType').map(option => (
-                            <Select.Option key={option.value} value={option.value}>
-                                {option.label}
-                            </Select.Option>
-                        ))}
-                    </Select>
-                </div>
-                <div className={rmStyles.search_item}>
-                    <div className={rmStyles.search_title}>설비사양단위</div>
-                    <Select
-                        value={selectedEqSpecUnit}
-                        allowClear={{ clearIcon: <CloseOutlined style={{color: "red"}} /> }}
-                        onChange={(value) => setSelectedEqSpecUnit(value)}
-                        style={{ width: '21rem' }}
-                    >
-                        {getOptions('equipSpecUnit').map(option => (
-                            <Select.Option key={option.value} value={option.value}>
-                                {option.label}
-                            </Select.Option>
-                        ))}
-                    </Select>
-                </div>
-            </div>
 
-            <button className={rmStyles.select_button} onClick={handleSelect}>등록</button>
-        </Modal>
+                <button className={rmStyles.select_button} onClick={handleSelect}>등록</button>
+            </Modal>
         </ConfigProvider>
     )
 }
@@ -245,6 +278,7 @@ export function FlEditModal({ isModalOpen, handleOk, handleCancel, rowData, drop
     const [selectedEqDvs, setSelectedEqDvs] = useState('');
     const [selectedEqType, setSelectedEqType] = useState('');
     const [selectedEqSpecUnit, setSelectedEqSpecUnit] = useState('');
+    const [errors, setErrors] = useState({});
 
     // 옵션을 가져오는 함수
     const getOptions = (fieldName) => {
@@ -275,6 +309,21 @@ export function FlEditModal({ isModalOpen, handleOk, handleCancel, rowData, drop
             eqSpecUnit: selectedEqSpecUnit
         };
 
+        // 입력 값 검증
+        let newErrors = {};
+        if (!formData.eqLibName) newErrors.eqLibName = '설비명을 입력해 주세요.';
+        if (!formData.eqDvs) newErrors.eqDvs = '설비구분을 선택해 주세요.';
+        if (!formData.eqType) newErrors.eqType = '설비유형을 선택해 주세요.';
+        if (!formData.eqSpecUnit) newErrors.eqSpecUnit = '설비사양단위를 선택해 주세요.';
+
+        if (Object.keys(newErrors).length > 0) {
+            setErrors(newErrors);
+            return;
+        }
+
+        setErrors({});
+
+        // 입력값 검증 통과하면 등록 수행
         handleOk(formData);
     };
 
@@ -298,6 +347,7 @@ export function FlEditModal({ isModalOpen, handleOk, handleCancel, rowData, drop
                         onChange={(e) => setEqLibName(e.target.value)}
                         style={{ width: '21rem' }}
                     />
+                    {errors.eqLibName && <div className={modalStyles.error_message}>{errors.eqLibName}</div>}
                 </div>
                 <div className={rmStyles.search_item}>
                     <div className={rmStyles.search_title}>설비구분</div>
@@ -313,6 +363,7 @@ export function FlEditModal({ isModalOpen, handleOk, handleCancel, rowData, drop
                             </Select.Option>
                         ))}
                     </Select>
+                    {errors.eqDvs && <div className={modalStyles.error_message}>{errors.eqDvs}</div>}
                 </div>
                 <div className={rmStyles.search_item}>
                     <div className={rmStyles.search_title}>설비유형</div>
@@ -328,6 +379,7 @@ export function FlEditModal({ isModalOpen, handleOk, handleCancel, rowData, drop
                             </Select.Option>
                         ))}
                     </Select>
+                    {errors.eqType && <div className={modalStyles.error_message}>{errors.eqType}</div>}
                 </div>
                 <div className={rmStyles.search_item}>
                     <div className={rmStyles.search_title}>설비사양단위</div>
@@ -343,6 +395,7 @@ export function FlEditModal({ isModalOpen, handleOk, handleCancel, rowData, drop
                             </Select.Option>
                         ))}
                     </Select>
+                    {errors.eqSpecUnit && <div className={modalStyles.error_message}>{errors.eqSpecUnit}</div>}
                 </div>
             </div>
             
@@ -360,6 +413,7 @@ export function FamAddModal({ isModalOpen, handleOk, handleCancel, dropDown }) {
     const [calUnit, setCalUnit] = useState('');
     const [unitConvCoef, setUnitConvCoef] = useState('');
     const [actvUnits, setActvUnits] = useState([]);
+    const [errors, setErrors] = useState({});
 
     useEffect(() => {
         const fetchActvUnit = async () => {
@@ -373,18 +427,6 @@ export function FamAddModal({ isModalOpen, handleOk, handleCancel, dropDown }) {
     
         fetchActvUnit();
     }, []);
-
-    //// 모달이 열릴 때 폼 필드 초기화
-    useEffect(() => {
-        if (isModalOpen) {
-            setActvName('');
-            setSelectedActvDvs('');
-            setSelectedEmtnActv('');
-            setSelectedInputUnit('');
-            setCalUnit('');
-            setUnitConvCoef('');
-        }
-    }, [isModalOpen]);
 
     // 옵션을 가져오는 함수
     const getOptions = (fieldName) => {
@@ -417,6 +459,21 @@ export function FamAddModal({ isModalOpen, handleOk, handleCancel, dropDown }) {
             unitConvCoef: unitConvCoef
         };
 
+        // 입력 값 검증
+        let newErrors = {};
+        if (!formData.actvDataName) newErrors.actvDataName = '활동자료명을 입력해 주세요.';
+        if (!formData.actvDataDvs) newErrors.actvDataDvs = '활동자료구분을 선택해 주세요.';
+        if (!formData.emtnActvType) newErrors.emtnActvType = '배출활동유형을 선택해 주세요.';
+        if (!formData.inputUnit) newErrors.inputUnit = '입력단위를 선택해 주세요.';
+
+        if (Object.keys(newErrors).length > 0) {
+            setErrors(newErrors);
+            return;
+        }
+
+        setErrors({});
+
+        // 입력값 검증 통과하면 등록 수행
         handleOk(formData);
     };
 
@@ -438,6 +495,7 @@ export function FamAddModal({ isModalOpen, handleOk, handleCancel, dropDown }) {
                         onChange={(e) => setActvName(e.target.value)}
                         style={{ width: '21rem' }}
                     />
+                    {errors.actvDataName && <div className={modalStyles.error_message}>{errors.actvDataName}</div>}
                 </div>
                 <div className={rmStyles.search_item}>
                     <div className={rmStyles.search_title}>활동자료구분</div>
@@ -453,6 +511,7 @@ export function FamAddModal({ isModalOpen, handleOk, handleCancel, dropDown }) {
                             </Select.Option>
                         ))}
                     </Select>
+                    {errors.actvDataDvs && <div className={modalStyles.error_message}>{errors.actvDataDvs}</div>}
                 </div>
                 <div className={rmStyles.search_item}>
                     <div className={rmStyles.search_title}>배출활동유형</div>
@@ -468,6 +527,7 @@ export function FamAddModal({ isModalOpen, handleOk, handleCancel, dropDown }) {
                             </Select.Option>
                         ))}
                     </Select>
+                    {errors.emtnActvType && <div className={modalStyles.error_message}>{errors.emtnActvType}</div>}
                 </div>
                 <div className={rmStyles.search_item}>
                     <div className={rmStyles.search_title}>입력단위</div>
@@ -483,6 +543,7 @@ export function FamAddModal({ isModalOpen, handleOk, handleCancel, dropDown }) {
                             </Select.Option>
                         ))}
                     </Select>
+                    {errors.inputUnit && <div className={modalStyles.error_message}>{errors.inputUnit}</div>}
                 </div>
                 <div className={rmStyles.search_item}>
                     <div className={rmStyles.search_title}>산정단위</div>
@@ -519,6 +580,7 @@ export function FamEditModal({ isModalOpen, handleOk, handleCancel, rowData, dro
     const [calUnit, setCalUnit] = useState('');
     const [unitConvCoef, setUnitConvCoef] = useState('');
     const [actvUnits, setActvUnits] = useState([]);
+    const [errors, setErrors] = useState({});
 
     useEffect(() => {
         const fetchActvUnit = async () => {
@@ -578,6 +640,21 @@ export function FamEditModal({ isModalOpen, handleOk, handleCancel, rowData, dro
             unitConvCoef: unitConvCoef
         };
 
+        // 입력 값 검증
+        let newErrors = {};
+        if (!formData.actvDataName) newErrors.actvDataName = '활동자료명을 입력해 주세요.';
+        if (!formData.actvDataDvs) newErrors.actvDataDvs = '활동자료구분을 선택해 주세요.';
+        if (!formData.emtnActvType) newErrors.emtnActvType = '배출활동유형을 선택해 주세요.';
+        if (!formData.inputUnit) newErrors.inputUnit = '입력단위를 선택해 주세요.';
+
+        if (Object.keys(newErrors).length > 0) {
+            setErrors(newErrors);
+            return;
+        }
+
+        setErrors({});
+
+        // 입력값 검증 통과하면 등록 수행
         handleOk(formData);
     };
 
@@ -599,6 +676,7 @@ export function FamEditModal({ isModalOpen, handleOk, handleCancel, rowData, dro
                         onChange={(e) => setActvName(e.target.value)}
                         style={{ width: '21rem' }}
                     />
+                    {errors.actvDataName && <div className={modalStyles.error_message}>{errors.actvDataName}</div>}
                 </div>
                 <div className={rmStyles.search_item}>
                     <div className={rmStyles.search_title}>활동자료구분</div>
@@ -614,6 +692,7 @@ export function FamEditModal({ isModalOpen, handleOk, handleCancel, rowData, dro
                             </Select.Option>
                         ))}
                     </Select>
+                    {errors.actvDataDvs && <div className={modalStyles.error_message}>{errors.actvDataDvs}</div>}
                 </div>
                 <div className={rmStyles.search_item}>
                     <div className={rmStyles.search_title}>배출활동유형</div>
@@ -629,6 +708,7 @@ export function FamEditModal({ isModalOpen, handleOk, handleCancel, rowData, dro
                             </Select.Option>
                         ))}
                     </Select>
+                    {errors.emtnActvType && <div className={modalStyles.error_message}>{errors.emtnActvType}</div>}
                 </div>
                 <div className={rmStyles.search_item}>
                     <div className={rmStyles.search_title}>입력단위</div>
@@ -644,6 +724,7 @@ export function FamEditModal({ isModalOpen, handleOk, handleCancel, rowData, dro
                             </Select.Option>
                         ))}
                     </Select>
+                    {errors.inputUnit && <div className={modalStyles.error_message}>{errors.inputUnit}</div>}
                 </div>
                 <div className={rmStyles.search_item}>
                     <div className={rmStyles.search_title}>산정단위</div>
@@ -860,13 +941,11 @@ export function Ps12UploadExcelModal({ isModalOpen, handleOk, handleCancel }) { 
                 }
             });
 
-            console.log(response.data);
             handleOk(response.data, true); // 새로 입력된 데이터를 handleOk 함수로 전달, 두번째 인자-closeModal=true
             swalOptions.title = '성공!',
             swalOptions.text = `성공적으로 등록되었습니다.`;
             swalOptions.icon = 'success';
         } catch (error) {
-            console.error('Error saving document:', error);
             swalOptions.title = '실패!',
             swalOptions.text = error.response.data.message;
             swalOptions.icon = 'error';
@@ -996,10 +1075,8 @@ export function CmAddModal({ isModalOpen, handleOk, handleCancel }) {
             swalOptions.icon = 'success';
             handleOk(data);
         } catch (error) {
-            console.error('Failed to add user:', error);
-
             swalOptions.title = '실패!',
-            swalOptions.text = `${formData.codeGrpName} 등록에 실패하였습니다.`;
+            swalOptions.text = error.response.data.message,
             swalOptions.icon = 'error';
         }
         Swal.fire(swalOptions);
@@ -1091,9 +1168,8 @@ export function CmEditModal({ isModalOpen, handleOk, handleCancel, rowData }) {
             swalOptions.text = `${formData.codeGrpName}이 성공적으로 수정되었습니다.`;
             swalOptions.icon = 'success';
         } catch (error) {
-            console.error('Failed to add user:', error);
             swalOptions.title = '실패!',
-            swalOptions.text = `${formData.codeGrpName} 등록에 실패하였습니다.`;
+            swalOptions.text = error.response.data.message,
             swalOptions.icon = 'error';
         }
         Swal.fire(swalOptions);
@@ -1169,7 +1245,7 @@ export function DeleteModal({ isModalOpen, handleOk, handleCancel, rowData, rowD
                 await axiosInstance.patch(`/pjt?id=${rowData.id}`);
             }
             else {
-                await axiosInstance.delete(`${url}?id=${rowData.id}`);
+                const res = await axiosInstance.delete(`${url}?id=${rowData.id}`);
             }
             
             swalOptions.title = '성공!',
@@ -1177,9 +1253,8 @@ export function DeleteModal({ isModalOpen, handleOk, handleCancel, rowData, rowD
             swalOptions.icon = 'success';
             handleOk();
         } catch (error) {
-            console.error('Failed to delete:', error);
             swalOptions.title = '실패!',
-            swalOptions.text = error.response.data.message;
+            swalOptions.text = error.response.data.message,
             swalOptions.icon = 'error';
         }
         Swal.fire(swalOptions);
@@ -1249,9 +1324,8 @@ export function CmListAddModal({ isModalOpen, handleOk, handleCancel, rowData })
             swalOptions.text = `${formData.codeName}가 성공적으로 등록되었습니다.`;
             swalOptions.icon = 'success';
         } catch (error) {
-            console.error('Failed to add user:', error);
             swalOptions.title = '실패!',
-            swalOptions.text = `${formData.codeName} 등록에 실패하였습니다.`;
+            swalOptions.text = error.response.data.message,
             swalOptions.icon = 'error';
         }
         Swal.fire(swalOptions);
@@ -1360,9 +1434,8 @@ export function CmListEditModal({ isModalOpen, handleOk, handleCancel, rowData }
             swalOptions.text = `${formData.codeName}이 성공적으로 수정되었습니다.`;
             swalOptions.icon = 'success';
         } catch (error) {
-            console.error('Failed to add user:', error);
             swalOptions.title = '실패!',
-            swalOptions.text = `${formData.codeName} 등록에 실패하였습니다.`;
+            swalOptions.text = error.response.data.message,
             swalOptions.icon = 'error';
         }
         Swal.fire(swalOptions);
@@ -1441,7 +1514,7 @@ export function EfmAddModal({ isModalOpen, handleOk, handleCancel, rowData }) {
     const [coef, setCoef] = useState(0);
     const [error, setError] = useState({});
 
-
+    console.log("HOCHUL")
     const handleSelect = async() => {
         let swalOptions = {
             confirmButtonText: '확인'
@@ -1456,7 +1529,7 @@ export function EfmAddModal({ isModalOpen, handleOk, handleCancel, rowData }) {
             unitCode,
             coef,
         };
-        console.log("formData", formData);
+
         let newError = {};
         if(!formData.applyYear) newError.applyYear = '적용년도를 입력해주세요.';
         if(!formData.applyDvs) newError.applyDvs = '적용구분을 입력해주세요.';
@@ -1470,14 +1543,13 @@ export function EfmAddModal({ isModalOpen, handleOk, handleCancel, rowData }) {
         try {
             // POST 요청으로 서버에 데이터 전송
             const {data} = await axiosInstance.post('/equip/coef', formData);
-            console.log("data2", data);
+
             // handleOk을 호출하여 모달을 닫고 상위 컴포넌트에 알림
             handleOk(data);
             swalOptions.title = '성공!',
             swalOptions.text = `배출계수가 성공적으로 등록되었습니다.`;
             swalOptions.icon = 'success';
         } catch (error) {
-            console.error('Failed to add user:', error);
             swalOptions.title = '실패!',
             swalOptions.text = error.response.data.message;
             swalOptions.icon = 'error';
@@ -1489,10 +1561,7 @@ export function EfmAddModal({ isModalOpen, handleOk, handleCancel, rowData }) {
         const fetchData = async () => {
             const appDvsResponse = await axiosInstance.get(`/sys/unit?unitType=적용구분`);
             setApplyDvs(appDvsResponse.data);
-            // const ghgResponse = await axiosInstance.get(`/sys/unit?unitType=온실가스코드`);
-            // setGhgCode(ghgResponse.data);
-            // console.log("2",ghgResponse.data);
-            // const coefResponse = await axiosInstance.get(`/sys/unit?unitType=계수종류코드`);
+
             const coefResponse = [
                 {
                     "code": 2,
@@ -1570,7 +1639,7 @@ export function EfmAddModal({ isModalOpen, handleOk, handleCancel, rowData }) {
                 </div>
                 <div className={sysStyles.text_field}>
                     <div className={sysStyles.text}>{"가스코드"}</div>
-                    <Select value={selectedGhgCode} onChange={(value) => {setSelectedGhgCode(value); console.log(value);}} style={{width:"18rem", height:"2rem",fontSize:"4rem"}}>
+                    <Select value={selectedGhgCode} onChange={(value) => {setSelectedGhgCode(value)}} style={{width:"18rem", height:"2rem",fontSize:"4rem"}}>
                     {ghgCode.map(option => (
                         <Select.Option key={option.code} value={option.code}>
                             {option.name}
@@ -1641,15 +1710,12 @@ export function EfmEditModal({ isModalOpen, handleOk, handleCancel, rowData }) {
             // POST 요청으로 서버에 데이터 전송
             const response = await axiosInstance.patch('/equip/coef', formData);
 
-            console.log("response", response);
-            console.log(formData); 
             // handleOk을 호출하여 모달을 닫고 상위 컴포넌트에 알림
             handleOk(response.data);
             swalOptions.title = '성공!',
-            swalOptions.text = `배출계수가 성공적으로 등록되었습니다.`;
+            swalOptions.text = `${formData.applyDvs}(이)가 성공적으로 수정되었습니다.`;
             swalOptions.icon = 'success';
         } catch (error) {
-            console.error('Failed to add user:', error);
             swalOptions.title = '실패!',
             swalOptions.text = error.response.data.message;
             swalOptions.icon = 'error';
@@ -1699,7 +1765,6 @@ export function EfmEditModal({ isModalOpen, handleOk, handleCancel, rowData }) {
         }
         const matchedUnit = afterSelectedCoefClassCode[value === 2 ? 0 : value];
         if (matchedUnit) {
-            console.log(matchedUnit);
             setGhgCode(matchedUnit.gas);
             setUnitCode(matchedUnit.unit);
         }
@@ -1730,7 +1795,7 @@ export function EfmEditModal({ isModalOpen, handleOk, handleCancel, rowData }) {
                 </div>
                 <div className={sysStyles.text_field}>
                     <div className={sysStyles.text}>{"적용구분"}</div>
-                    <Select value={selectedApplyDvs} onChange={(value) => {setSelectedApplyDvs(value); console.log(value);}} style={{width:"18rem", height:"2rem", fontSize:"4rem"}}>
+                    <Select value={selectedApplyDvs} onChange={(value) => {setSelectedApplyDvs(value)}} style={{width:"18rem", height:"2rem", fontSize:"4rem"}}>
                     {applyDvs.map(option => (
                         <Select.Option key={option.code} value={option.code}>
                             {option.name}
@@ -1838,9 +1903,8 @@ export function FmAddModal({ isModalOpen, handleOk, handleCancel, rowData }) {
             swalOptions.text = `${formData.equipName}가 성공적으로 등록되었습니다.`;
             swalOptions.icon = 'success';
         } catch (error) {
-            console.error('Failed to add user:', error);
             swalOptions.title = '실패!',
-            swalOptions.text = `${formData.equipName} 등록에 실패하였습니다.`;
+            swalOptions.text = error.response.data.message,
             swalOptions.icon = 'error';
         }
         Swal.fire(swalOptions);
@@ -1977,9 +2041,8 @@ export function UmAddModal({ isModalOpen, handleOk, handleCancel }) {
             swalOptions.text = `${formData.userName}가 성공적으로 등록되었습니다.`;
             swalOptions.icon = 'success';
         } catch (error) {
-            console.error('Failed to add user:', error);
             swalOptions.title = '실패!',
-            swalOptions.text = `${formData.userName} 등록에 실패하였습니다.`;
+            swalOptions.text = error.response.data.message,
             swalOptions.icon = 'error';
 
         }
@@ -2100,9 +2163,8 @@ export function MmAddModal({ isModalOpen, handleOk, handleCancel, rowData }) {
             swalOptions.text = `${formData.menuName}가 성공적으로 등록되었습니다.`;
             swalOptions.icon = 'success';
         } catch (error) {
-            console.error('Failed to add menu:', error);
             swalOptions.title = '실패!',
-            swalOptions.text = `${formData.menuName} 등록에 실패하였습니다.`;
+            swalOptions.text = error.response.data.message,
             swalOptions.icon = 'error';
         }
         Swal.fire(swalOptions);
@@ -2222,50 +2284,28 @@ export function EsmAddModal({ isModalOpen, handleOk, handleCancel, rowData }) {
 
     // 배출원 row 클릭 시 호출될 함수
     const handleEmtnClick = (row) => {
-        setSelectedEmtnCands(row);
-        console.log(row);
+        setSelectedEmtnCands(row.row);
     };
 
     // 등록 버튼 클릭 시 호출될 함수
     const handleSelect = async () => {
-        let swalOptions = {
-            confirmButtonText: '확인'
-        };
-
         // selectedEmtnCands가 null이거나 비었으면 모달 닫고 함수 종료
         if (!selectedEmtnCands || selectedEmtnCands.length === 0) {
             handleCancel();
             return;
         }
 
-        try {
-            // POST 요청으로 서버에 데이터 전송
-            const requests = selectedEmtnCands.map((selectedEmtnCand) => {
-                const regData = {
-                    equipId: selectedEmtnCand.equipId,
-                    actvDataId: selectedEmtnCand.actvDataId,
-                };
+        const requestBody = selectedEmtnCands.map((selectedEmtnCand) => ({
+            equipId: selectedEmtnCand.equipId,
+            actvDataId: selectedEmtnCand.actvDataId,
+        }));
 
-                // 각 항목에 대해 POST 요청을 보내고, 요청 결과를 Promise 배열로 수집
-                return axiosInstance.post('/equip/emission', regData);
-            });
-
-            // 모든 요청이 완료될 때까지 대기
-            const responses = await Promise.all(requests);
-            const responseEmtnCands = responses.map(response => response.data);
-
-            // handleOk을 호출하여 모달을 닫고 상위 컴포넌트에 알림
-            handleOk(responseEmtnCands);
-            swalOptions.title = '성공!',
-            swalOptions.text = `배출원이 성공적으로 등록되었습니다.`;
-            swalOptions.icon = 'success';
-        } catch (error) {
-            console.error('Failed to add user:', error);
-            swalOptions.title = '실패!',
-            swalOptions.text = `배출원 등록에 실패하였습니다.`;
-            swalOptions.icon = 'error';
-        }
-        Swal.fire(swalOptions);
+        // handleOk을 호출하여 모달을 닫고 상위 컴포넌트에 알림
+        handleOk({
+            url: "/equip/emission",
+            requestBody: requestBody,
+            successMsg: `배출원이 성공적으로 등록되었습니다.`,
+        });
     };
 
     return (
@@ -2302,7 +2342,7 @@ export function EsmAddModal({ isModalOpen, handleOk, handleCancel, rowData }) {
 }
 
 export function SdAddModal({ isModalOpen, handleOk, handleCancel, rowData }) { 
-    const project = useRecoilValue(pjtState);
+    const project = useRecoilValue(selectedPjtState);
     const [yearSelectOptions, setYearSelectOptions] = useState([]);
     const [formData, setFormData] = useState({
         actvYear: new Date().getFullYear().toString(),
@@ -2364,9 +2404,8 @@ export function SdAddModal({ isModalOpen, handleOk, handleCancel, rowData }) {
 
             return response.data; // 파일 업로드 후 S3에서 반환된 파일 정보 배열
         } catch (error) {
-            console.error('Error uploading files to S3:', error);
             swalOptions.title = '실패!',
-            swalOptions.text = `증빙자료 등록에 실패하였습니다.`;
+            swalOptions.text = error.response.data.message,
             swalOptions.icon = 'error';
         }
         Swal.fire(swalOptions);
@@ -2520,7 +2559,7 @@ export function SdAddModal({ isModalOpen, handleOk, handleCancel, rowData }) {
 }
 
 export function SdShowDetailsModal({ isModalOpen, handleOk, handleCancel }) {
-    const project = useRecoilValue(pjtState);
+    const project = useRecoilValue(selectedPjtState);
     const [selectedSD, setSelectedSD] = useRecoilState(selectedSuppDocState);
     const [yearSelectOptions, setYearSelectOptions] = useState([]);
     const [formData, setFormData] = useState({
@@ -2619,9 +2658,8 @@ export function SdShowDetailsModal({ isModalOpen, handleOk, handleCancel }) {
             }
             return []; // 파일이 없으면 빈 배열 반환
         } catch (error) {
-            console.error('Error uploading files to S3:', error);
             swalOptions.title = '실패!',
-            swalOptions.text = `증빙자료 등록에 실패하였습니다.`;
+            swalOptions.text = error.response.data.message,
             swalOptions.icon = 'error';
             Swal.fire(swalOptions);
             return []; // 실패 시 빈 배열 반환
@@ -2676,7 +2714,7 @@ export function SdShowDetailsModal({ isModalOpen, handleOk, handleCancel }) {
         handleOk({
             url: "/equip/document",
             requestBody: documentData,
-            successMsg: `${documentData.name}이 성공적으로 수정되었습니다.`,
+            successMsg: `${documentData.name}(이)가 성공적으로 수정되었습니다.`,
         });
 
     };
@@ -2807,6 +2845,7 @@ export function SdShowDetailsModal({ isModalOpen, handleOk, handleCancel }) {
                                     
                                     return (
                                         <div key={index} className={sdStyles.file_item}>
+                                            {displayName}
                                             <button
                                                 type="button"
                                                 className={sdStyles.remove_button}

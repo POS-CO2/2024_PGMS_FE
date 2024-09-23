@@ -1,4 +1,7 @@
 import React, { useState, useEffect } from 'react';
+import { useRecoilState } from 'recoil';
+import { projectPerfForm } from '../../../atoms/searchFormAtoms';
+import { psqSelectedBtnState } from '../../../atoms/buttonAtoms';
 import SearchForms from "../../../SearchForms.js";
 import { formField_psq_fp } from "../../../assets/json/searchFormData.js"
 import { CustomButton } from '../Ps_1_2';
@@ -17,10 +20,11 @@ import { DownOutlined } from '@ant-design/icons';
 import { Dropdown, Space } from 'antd';
 import axiosInstance from '../../../utils/AxiosInstance.js';
 import { emissionPerfPjtColumns, perfPjtColumns, pjtColumns } from '../../../assets/json/tableColumn';
+import * as pdsStyles from "../../../assets/css/pds.css";
 
 export default function Psq_Fp() {
     const [formFields, setFormFields] = useState(formField_psq_fp);
-    const [formData, setFormData] = useState(); // 검색 데이터
+    const [formData, setFormData] = useRecoilState(projectPerfForm); // 검색 데이터
     const [selectedPjtOption, setSelectedPjtOption] = useState([]); // searchForm에서 선택되어있는 프로젝트
     const [selectedPjt, setSelectedPjt] = useState([]); // 조회결과로 출력되는 프로젝트
     const [emissionTableData, setEmissionTableData] = useState([]); // 설비별 표
@@ -29,7 +33,7 @@ export default function Psq_Fp() {
     const [actvYearDisabled, setActvYearDisabled] = useState(true);  // 드롭다운 비활성화 상태 관리
     const [pieChartPerfs, setPieChartPerfs] = useState([]);
 
-    const [content, setContent] = useState('chart'); // chart || table
+    const [content, setContent] = useRecoilState(psqSelectedBtnState); // chart || table
     const handleButtonClick = (value) => {
         setContent(value);
     };
@@ -62,6 +66,11 @@ export default function Psq_Fp() {
             }
         };
         fetchPjtOptions();
+
+        // 이전 탭의 검색기록이 있으면 그 값을 불러옴
+        Object.keys(formData).length !== 0 && handleFormSubmit(formData);
+
+        handleButtonClick(content);
     }, []);
 
     // 프로젝트 선택 후 대상년도 드롭다운 옵션 설정
@@ -97,20 +106,18 @@ export default function Psq_Fp() {
 
     // 조회 버튼 클릭시 호출될 함수
     const handleFormSubmit = async (data) => {
-        // 데이터가 바뀌지 않았으면 종료
-        if (JSON.stringify(formData) === JSON.stringify(data)) {
-            return;
-        }
-
         setFormData(data);
-        setSelectedPjt(selectedPjtOption);
 
         // scope1,2
         let url = `/perf/pjt?pjtId=${data.searchProject}&year=${data.actvYear}`;
-        const response = await axiosInstance.get(url);
+
+        const pjtRes = await axiosInstance.get(`/pjt?pgmsYn=y&id=${data.searchProject}`);
+        const perfRes = await axiosInstance.get(url);
+
+        setSelectedPjt(pjtRes.data[0]);
 
         // data가 빈 배열인지 확인
-        if (response.data.length === 0) {
+        if (perfRes.data.length === 0) {
             // 빈 데이터인 경우, 배열의 필드를 유지하면서 빈 값으로 채운 배열 생성
             setChartPerfs([
                 { data: Array(12).fill(null), stack: 'A', label: 'Scope 1' },
@@ -120,8 +127,8 @@ export default function Psq_Fp() {
 
         } else {
             //차트
-            const scope1Data = response.data.map(perf => perf.scope1 || null);
-            const scope2Data = response.data.map(perf => perf.scope2 || null);
+            const scope1Data = perfRes.data.map(perf => perf.scope1 || null);
+            const scope2Data = perfRes.data.map(perf => perf.scope2 || null);
             const formattedChartPerfs = [
                 { data: scope1Data, stack: 'A', label: 'Scope 1' },
                 { data: scope2Data, stack: 'A', label: 'Scope 2' }
@@ -138,7 +145,7 @@ export default function Psq_Fp() {
             let totalSum = 0;
 
             // 각 월 데이터를 채워 넣고 합산 계산
-            response.data.forEach((item, index) => {
+            perfRes.data.forEach((item, index) => {
                 scope1TableData[index+1] = item.scope1;
                 scope2TableData[index+1] = item.scope2;
                 totalTableData[index+1] = item.total;
@@ -274,21 +281,40 @@ export default function Psq_Fp() {
                 {"배출실적 > 실적조회 > 프로젝트별 조회"}
             </div>
             <SearchForms
+                initialValues={formData}
                 onFormSubmit={handleFormSubmit}
                 formFields={formFields.map(field => field.name === 'actvYear' ? { ...field, disabled: actvYearDisabled } : field)} // actvYear 필드의 disabled 상태 반영
                 onProjectSelect={onProjectSelect} />
            
-            {(!formData || Object.keys(formData).length === 0) ? (
-                <></>
-             ) : (
-                <>
-                    <div className={esmStyles.main_grid}>
-                        <Card sx={{ width: "100%", height: "auto", borderRadius: "15px", marginBottom: "1rem" }}>
-                            <TableCustom title="프로젝트 상세정보" columns={pjtColumns} data={[selectedPjt]} pagination={false}/>
-                        </Card>
-                    </div>
+            {(!formData || Object.keys(formData).length === 0) ? 
+                <></> :
+                <div className={pdsStyles.main_grid}>
+                    <Card sx={{ height: "auto", padding: "0.5rem", borderRadius: "0.5rem" }}>
+                        <div className={pdsStyles.table_title} style={{ padding: "0 1rem"}}>프로젝트 상세정보</div>
 
-                    <div className={ps12Style.button_container}>
+                        <div className={pdsStyles.row} style={{ padding: "0.5rem 1rem"}}>
+                            <div className={pdsStyles.pjt_data_container}>프로젝트 지역
+                                <div className={pdsStyles.code}>{selectedPjt.pjtType} / {selectedPjt.regCode}</div>
+                            </div>
+                            <div className={pdsStyles.pjt_data_container}>계약일
+                                <div className={pdsStyles.code}>{selectedPjt.ctrtFrYear} / {selectedPjt.ctrtFrMth} ~ {selectedPjt.ctrtToYear} / {selectedPjt.ctrtToMth}</div>
+                            </div>
+                            <div className={pdsStyles.pjt_data_container}>본부명
+                                <div className={pdsStyles.code}>{selectedPjt.divCode}</div>
+                            </div>
+                            <div className={pdsStyles.pjt_data_container}>연면적(m²)
+                                <div className={pdsStyles.code}>{selectedPjt.bldArea}</div>
+                            </div>
+                            <div className={pdsStyles.pjt_data_container}>진행상태
+                                <div className={pdsStyles.code}>{selectedPjt.pjtProgStus}</div>
+                            </div>
+                            <div className={pdsStyles.pjt_data_container}>분류
+                                <div className={pdsStyles.code}>{selectedPjt.prodTypeCode}</div>
+                            </div>
+                        </div>
+                    </Card>
+
+                    <div className={pdsStyles.button_container}>
                         <CustomButton 
                             selected={content === 'chart'} 
                             onClick={() => handleButtonClick('chart')}
@@ -303,7 +329,7 @@ export default function Psq_Fp() {
                         </CustomButton>
                     </div>
 
-                    <div className={sysStyles.main_grid}>
+                    <div className={pdsStyles.contents_container}>
                         {content === 'chart' && 
                             <>
                                 <Card className={saStyles.card_box} sx={{ width: "50%", height: "auto", borderRadius: "15px" }}>
@@ -361,8 +387,8 @@ export default function Psq_Fp() {
                             </div>
                         }
                     </div>
-                </>
-            )}
+                </div>
+            }
         </div>
     );
 }

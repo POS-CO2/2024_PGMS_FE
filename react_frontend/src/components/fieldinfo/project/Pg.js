@@ -1,4 +1,8 @@
 import React, { useState, useEffect } from "react";
+import { useNavigate } from 'react-router-dom';
+import { useRecoilState } from "recoil";
+import { pjtMgrSearchForm } from '../../../atoms/searchFormAtoms';
+import { openTabsState, activeTabState } from '../../../atoms/tabAtoms';
 import Swal from 'sweetalert2';
 import { Card, Accordion, AccordionSummary, AccordionDetails } from '@mui/material';
 import * as mainStyles from "../../../assets/css/main.css"
@@ -8,10 +12,11 @@ import {formField_pg} from "../../../assets/json/searchFormData"
 import { pjtColumns, pjtManagerColumns } from '../../../assets/json/tableColumn';
 import axiosInstance from '../../../utils/AxiosInstance';
 import dayjs from 'dayjs';
-import { managerState } from "../../../atoms/pdsAtoms";
+import * as pdsStyles from "../../../assets/css/pds.css";
 
 export default function Pg() {
     const [formFields, setFormFields] = useState(formField_pg);
+    const [formData, setFormData] = useRecoilState(pjtMgrSearchForm);
     const [projects, setProjects] = useState([]);                   // 검색 데이터(프로젝트 목록)
     const [selectedPjt, setSelectedPjt] = useState({});             // 선택된 프로젝트(PK column only)
     const [managers, setManagers] = useState([]);
@@ -20,6 +25,10 @@ export default function Pg() {
         Delete: false
     });
     const [expandedRow, setExpandedRow] = useState(null);           // 아코디언 확장 상태
+
+    // const navigate = useNavigate();
+    // const [openTabs, setOpenTabs] = useRecoilState(openTabsState);
+    // const [activeKey, setActiveKey] = useRecoilState(activeTabState);
 
     const fetchOptions = async (unitType) => {
         const response = await axiosInstance.get(`/sys/unit?unitType=${unitType}`);
@@ -70,30 +79,43 @@ export default function Pg() {
     
         fetchDropDown();
         fetchProject();
+
+        // formData값이 있으면(이전 탭의 검색기록이 있으면) 그 값을 불러옴
+        if(Object.keys(formData).length !== 0) {
+            handleFormSubmit(formData);
+        }
     }, []);
 
     // 조회 버튼 클릭시 호출될 함수
     const handleFormSubmit = async (data) => {
+        setFormData(data);
+
         // data.calendar가 정의되어 있지 않거나 값이 없는 경우를 처리하기 위해 설정
-        const startDate = data.calendar?.[0]?.$d;
-        const endDate = data.calendar?.[1]?.$d;
+        // ISO 형식 문자열을 dayjs로 변환
+        const startDate = data.calendar?.[0] ? dayjs(data.calendar[0]) : null;
+        const endDate = data.calendar?.[1] ? dayjs(data.calendar[1]) : null;
 
-        const params = {
-            pjtCode : data.pjtCode,
-            pjtName : data.pjtName,
-            userLoginId : data.userLoginId,
-            userName : data.userName,
-            divCode : data.divCode,
-            pjtProgStus : data.pjtProgStus,
-            regCode: data.reg,
-            startDate: startDate ? dayjs(startDate).format('YYYY-MM') : undefined,
-            endDate : endDate ? dayjs(endDate).format('YYYY-MM') : undefined,
-            pgmsYn: 'y'
-        };
+    // dayjs에서 유효한 날짜인지 확인하는 함수
+    const isValidate = (date) => dayjs(date).isValid();
+        if (isValidate(startDate) && isValidate(endDate)) {
+            const params = {
+                pjtCode : data.pjtCode,
+                pjtName : data.pjtName,
+                userLoginId : data.managerId,
+                userName : data.managerName,
+                divCode : data.divCode,
+                pjtProgStus : data.pjtProgStus,
+                regCode: data.reg,
+                startDate: startDate ? dayjs(startDate).format('YYYY-MM') : undefined,
+                endDate : endDate ? dayjs(endDate).format('YYYY-MM') : undefined,
+                pgmsYn: 'y'
+            };
 
-        const response = await axiosInstance.get("/pjt", {params});
-
-        setProjects(response.data);
+            const response = await axiosInstance.get("/pjt", {params});
+            setProjects(response.data);
+        } else {
+            console.error("Invalid date");
+        }
     };
 
     // 프로젝트 row 클릭 시 호출될 함수
@@ -125,7 +147,6 @@ export default function Pg() {
 
     // 프로젝트 등록 버튼 클릭 시 호출될 함수
     const handleOk = (modalType) => async (data) => {
-        console.log("data", data);
         const newPjts = data.row;
 
         setIsModalOpen(prevState => ({ ...prevState, [modalType]: false })); //모달 닫기
@@ -145,13 +166,13 @@ export default function Pg() {
                 setProjects(prevPjts => [...prevPjts, ...response.data]);
 
                 swalOptions.title = '성공!',
-                swalOptions.text = '프로젝트가 성공적으로 등록되었습니다.';
+                swalOptions.text = error.response.data.message,
                 swalOptions.icon = 'success';
             } catch (error) {
                 console.log(error);
 
                 swalOptions.title = '실패!',
-                swalOptions.text = '프로젝트 등록에 실패하였습니다.';
+                swalOptions.text = error.response.data.message,
                 swalOptions.icon = 'error';
             }
             Swal.fire(swalOptions);
@@ -180,44 +201,66 @@ export default function Pg() {
         showModal('Delete');
     };
 
+    // const handleButtonClick = (path, label) => {
+    //     const newTab = { key: path, tab: label };
+    
+    //     if (!openTabs.find(tab => tab.key === path)) {
+    //       setOpenTabs([...openTabs, newTab]);  // 새로운 탭 추가
+    //     }
+        
+    //     setActiveKey(path);  // activeKey를 변경
+    //     navigate(path);  // 경로 이동
+    // };
+
     return (
         <>
             <div className={mainStyles.breadcrumb}>현장정보 &gt; 프로젝트 &gt; 프로젝트 관리</div>
-            <SearchForms onFormSubmit={handleFormSubmit} formFields={formFields} />
+            <SearchForms
+                initialValues={formData}
+                onFormSubmit={handleFormSubmit} 
+                formFields={formFields} 
+            />
 
-            {(!projects || Object.keys(projects).length === 0) ?
-            <></> : (
-                <>
-                    <TableCustom 
-                        title='프로젝트목록' 
-                        data={projects}
-                        columns={pjtColumns}            
-                        buttons={['Delete', 'Add']}
-                        onClicks={[onDeleteClick, onAddClick]}
-                        onRowClick={handlePjtClick}
-                        selectedRows={[selectedPjt]}
-                        subData={managers}
-                        expandedRow={expandedRow}
-                        modals={[
-                            {
-                                'modalType': 'Delete',
-                                'isModalOpen': isModalOpen.Delete,
-                                'handleOk': handleOk('Delete'),
-                                'handleCancel': handleCancel('Delete'),
-                                'rowData': selectedPjt,
-                                'rowDataName': 'pjtName',
-                                'url': '/pjt'
-                            },
-                            {
-                                'modalType': 'PgAdd',
-                                'isModalOpen': isModalOpen.PgAdd,
-                                'handleOk': handleOk('PgAdd'),
-                                'handleCancel': handleCancel('PgAdd')
-                            }
-                        ]}
-                    />
-                </>
-            )}
+            <div className={pdsStyles.main_grid}>
+                <div className={pdsStyles.contents_container}>
+                    {(!projects || Object.keys(projects).length === 0) ?
+                    <></> : (
+                        <Card sx={{ width: "100%", height: "auto", borderRadius: "0.5rem" }}>
+                            <TableCustom 
+                                title='프로젝트목록' 
+                                data={projects}
+                                columns={pjtColumns}            
+                                buttons={['Delete', 'Add']}
+                                onClicks={[onDeleteClick, onAddClick]}
+                                onRowClick={handlePjtClick}
+                                selectedRows={[selectedPjt]}
+                                subData={managers}
+                                expandedRow={expandedRow}
+                                modals={[
+                                    isModalOpen.Delete && {
+                                        'modalType': 'Delete',
+                                        'isModalOpen': isModalOpen.Delete,
+                                        'handleOk': handleOk('Delete'),
+                                        'handleCancel': handleCancel('Delete'),
+                                        'rowData': selectedPjt,
+                                        'rowDataName': 'pjtName',
+                                        'url': '/pjt'
+                                    },
+                                    isModalOpen.PgAdd && {
+                                        'modalType': 'PgAdd',
+                                        'isModalOpen': isModalOpen.PgAdd,
+                                        'handleOk': handleOk('PgAdd'),
+                                        'handleCancel': handleCancel('PgAdd')
+                                    }
+                                ]}
+                            />
+                            {/* <button onClick={() => handleButtonClick('/pds', '프로젝트 상세설정')}>
+                                새 페이지 열기
+                            </button> */}
+                        </Card>
+                    )}
+                </div>
+            </div>
         </>
     );
 }

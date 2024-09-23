@@ -1,6 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import App from './App.js';
+import { RecoilRoot } from 'recoil';
 import { ConfigProvider } from 'antd';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
@@ -20,7 +21,9 @@ root.render(
     >
         <ThemeProvider theme={theme}>
             <CssBaseline />
-            <App />
+            <RecoilRoot>
+                <App />
+            </RecoilRoot>
         </ThemeProvider>
     </ConfigProvider>
 );

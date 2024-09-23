@@ -1,9 +1,9 @@
 import React from 'react';
 import { styled } from '@mui/material/styles';
+import { EditOutlined } from '@ant-design/icons';
 import Button from '@mui/material/Button';
 import ControlPointIcon from '@mui/icons-material/ControlPoint';
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
-import CachedIcon from '@mui/icons-material/Cached';
 import UploadIcon from '@mui/icons-material/Upload';
 import DownloadIcon from '@mui/icons-material/Download';
 import SaveOutlinedIcon from '@mui/icons-material/SaveOutlined';
@@ -69,7 +69,7 @@ export function DeleteButton({ onClick, disabled=true }) {
 export function EditButton({ onClick, disabled=true }) {
   return (
     <CustomButton variant="contained" onClick={onClick} disabled={disabled}>
-      <CachedIcon className="icon" />수정
+      <EditOutlined className="icon" />수정
     </CustomButton>
   );
 }
