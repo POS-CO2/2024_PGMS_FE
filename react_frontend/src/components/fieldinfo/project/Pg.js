@@ -91,24 +91,31 @@ export default function Pg() {
         setFormData(data);
 
         // data.calendar가 정의되어 있지 않거나 값이 없는 경우를 처리하기 위해 설정
-        const startDate = data.calendar?.[0]?.$d;
-        const endDate = data.calendar?.[1]?.$d;
+        // ISO 형식 문자열을 dayjs로 변환
+        const startDate = data.calendar?.[0] ? dayjs(data.calendar[0]) : null;
+        const endDate = data.calendar?.[1] ? dayjs(data.calendar[1]) : null;
 
-        const params = {
-            pjtCode : data.pjtCode,
-            pjtName : data.pjtName,
-            userLoginId : data.managerId,
-            userName : data.managerName,
-            divCode : data.divCode,
-            pjtProgStus : data.pjtProgStus,
-            regCode: data.reg,
-            startDate: startDate ? dayjs(startDate).format('YYYY-MM') : undefined,
-            endDate : endDate ? dayjs(endDate).format('YYYY-MM') : undefined,
-            pgmsYn: 'y'
-        };
+    // dayjs에서 유효한 날짜인지 확인하는 함수
+    const isValidate = (date) => dayjs(date).isValid();
+        if (isValidate(startDate) && isValidate(endDate)) {
+            const params = {
+                pjtCode : data.pjtCode,
+                pjtName : data.pjtName,
+                userLoginId : data.managerId,
+                userName : data.managerName,
+                divCode : data.divCode,
+                pjtProgStus : data.pjtProgStus,
+                regCode: data.reg,
+                startDate: startDate ? dayjs(startDate).format('YYYY-MM') : undefined,
+                endDate : endDate ? dayjs(endDate).format('YYYY-MM') : undefined,
+                pgmsYn: 'y'
+            };
 
-        const response = await axiosInstance.get("/pjt", {params});
-        setProjects(response.data);
+            const response = await axiosInstance.get("/pjt", {params});
+            setProjects(response.data);
+        } else {
+            console.error("Invalid date");
+        }
     };
 
     // 프로젝트 row 클릭 시 호출될 함수

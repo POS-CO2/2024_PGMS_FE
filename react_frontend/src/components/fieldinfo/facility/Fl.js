@@ -93,11 +93,7 @@ export default function Fl() {
         fetchDropDown();
 
         // formData값이 없으면 설비LIB을 findAll, 있으면(이전 탭의 검색기록이 있으면) 그 값을 불러옴
-        if(Object.keys(formData).length === 0) {
-            fetchEqLib();
-        } else {
-            handleFormSubmit(formData);
-        }
+        Object.keys(formData).length === 0 ? fetchEqLib() : handleFormSubmit(formData);
     }, []);
 
     useEffect(() => {
@@ -307,7 +303,7 @@ export default function Fl() {
                 onFormSubmit={handleFormSubmit} 
                 formFields={formFields} 
             />
-            
+
             <div className={pdsStyles.main_grid}>
                 <div className={pdsStyles.contents_container}>
                     <Card sx={{ width: "50%", height: "auto", borderRadius: "0.5rem" }}>

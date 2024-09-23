@@ -68,7 +68,6 @@ export default function Ps_1_2() {
                 
                 // emtnActvType 필드만 업데이트
                 updateFormField('emtnActvType', { options });
-
                 setFormFields(prevFields => prevFields);
             } catch (error) {
                 console.error(error);

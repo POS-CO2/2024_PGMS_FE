@@ -12,10 +12,10 @@ export const emissionSourceForm = atom({
 
 // 프로젝트별 조회 메뉴의 서치폼
 export const projectPerfForm = atom({
-    key: 'projectScopeForm',
+    key: 'projectPerfForm',
     default: {},
     effects: [
-        localStorageEffect('projectScopeForm'), // 로컬 스토리지와 동기화
+        localStorageEffect('projectPerfForm'), // 로컬 스토리지와 동기화
     ],
 });
 
@@ -79,5 +79,17 @@ export const accessLogSearchForm = atom({
     default: {},
     effects: [
         localStorageEffect('accessLogSearchForm'), // 로컬 스토리지와 동기화
+    ],
+});
+
+
+/* 현장 페이지 */
+
+// 배출원 관리(프로젝트 상세설정) 메뉴의 서치폼
+export const emissionSrcSearchForm = atom({
+    key: 'emissionSrcSearchForm',
+    default: {},
+    effects: [
+        localStorageEffect('emissionSrcSearchForm'), // 로컬 스토리지와 동기화
     ],
 });

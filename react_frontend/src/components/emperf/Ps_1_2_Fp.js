@@ -1,4 +1,7 @@
 import React, { useState, useEffect } from 'react';
+import { useRecoilState } from 'recoil';
+import { emissionSourceForm } from '../../atoms/searchFormAtoms';
+import { ps12SelectedBtnState } from '../../atoms/buttonAtoms';
 import SearchForms from "../../SearchForms";
 import { formField_ps12_fp } from "../../assets/json/searchFormData";
 import { CustomButton } from './Ps_1_2';
@@ -10,34 +13,28 @@ import * as sysStyles from '../../assets/css/sysmng.css';
 import * as esmStyles from '../../assets/css/esm.css';
 import axiosInstance from '../../utils/AxiosInstance';
 import { perfColumns, pjtColumns } from '../../assets/json/tableColumn';
+import * as pdsStyles from "../../assets/css/pds.css";
 import * as XLSX from 'xlsx';
 
 export default function Ps_1_2_Fp() {
     const [formFields, setFormFields] = useState(formField_ps12_fp);
-    const [formData, setFormData] = useState(); // 검색 데이터
+    const [formData, setFormData] = useRecoilState(emissionSourceForm);
     const [selectedPjtOption, setSelectedPjtOption] = useState([]);
     const [selectedPjt, setSelectedPjt] = useState([]);
     const [usagePerfs, setUsagePerfs] = useState([]);
     const [amountUsedPerfs, setAmountUsedPerfs] = useState([]);
     const [actvYearDisabled, setActvYearDisabled] = useState(true);  // 드롭다운 비활성화 상태 관리
 
-    const [content, setContent] = useState('actvQty'); // actvQty || fee
+    const [content, setContent] = useRecoilState(ps12SelectedBtnState); // actvQty || fee
+
     const handleButtonClick = (value) => {
         setContent(value);
     };
 
-    // usagePerfs 상태가 변경될 때 실행될 useEffect
-    useEffect(() => {
-        console.log("usagePerfs");
-    }, [usagePerfs]);
-    // amountUsedPerfs 상태가 변경될 때 실행될 useEffect
-    useEffect(() => {
-        console.log("amountUsedPerfs");
-    }, [amountUsedPerfs]);
-
     const [pjtOptions, setPjtOptions] = useState([]);
     const [projectData, setProjectData] = useState([]);  // 전체 프로젝트 데이터를 저장
     const [emtnActvType, setEmtnActvType] = useState([]);
+    
     useEffect(() => {
         const fetchPjtOptions = async () => {
             try {
@@ -78,6 +75,11 @@ export default function Ps_1_2_Fp() {
         };
     
         fetchPjtOptions();
+        
+        // 이전 탭의 검색기록이 있으면 그 값을 불러옴
+        Object.keys(formData).length !== 0 && handleFormSubmit(formData);
+
+        handleButtonClick(content);
     }, []);
 
     // 프로젝트 선택 후 대상년도 드롭다운 옵션 설정
@@ -144,24 +146,26 @@ export default function Ps_1_2_Fp() {
     // 조회 버튼 클릭시 호출될 함수
     const handleFormSubmit = async (data) => {
         setFormData(data);
-        setSelectedPjt(selectedPjtOption);
 
-        let url = `/perf?pjtId=${data.searchProject}&actvYear=${data.actvYear}`;
+        let perfRequrl = `/perf?pjtId=${data.searchProject}&actvYear=${data.actvYear}`;
         // emtnActvType이 존재하는 경우에만 URL에 추가
         if (data.emtnActvType) {
-            url += `&emtnActvType=${data.emtnActvType}`;
+            perfRequrl += `&emtnActvType=${data.emtnActvType}`;
         }
-        const response = await axiosInstance.get(url);
-        console.log(response.data);
 
+        const pjtRes = await axiosInstance.get(`/pjt?pgmsYn=y&id=${data.searchProject}`);
+        const perfRes = await axiosInstance.get(perfRequrl);
+
+        setSelectedPjt(pjtRes.data[0]);
+    
         // data가 빈 배열인지 확인
-        if (response.data.length === 0) {
+        if (perfRes.data.length === 0) {
             setUsagePerfs([]);
             setAmountUsedPerfs([]);
         } else {
             // 필요한 필드만 추출하여 설정
-            const usageFilteredPerfs = response.data.map(perf => createPerfData(perf, 'formattedActvQty'));
-            const amountUsedFilteredPerfs = response.data.map(perf => createPerfData(perf, 'formattedFee'));
+            const usageFilteredPerfs = perfRes.data.map(perf => createPerfData(perf, 'formattedActvQty'));
+            const amountUsedFilteredPerfs = perfRes.data.map(perf => createPerfData(perf, 'formattedFee'));
 
             setUsagePerfs(usageFilteredPerfs);
             setAmountUsedPerfs(amountUsedFilteredPerfs);
@@ -326,26 +330,43 @@ export default function Ps_1_2_Fp() {
 
     return (
         <div>
-            <div className={mainStyle.breadcrumb}>
-                {"배출실적 > 활동량 관리"}
-            </div>
-
+            <div className={mainStyle.breadcrumb}>배출실적 &gt; 활동량 관리</div>
             <SearchForms
+                initialValues={formData}
                 onFormSubmit={handleFormSubmit}
                 formFields={formFields.map(field => field.name === 'actvYear' ? { ...field, disabled: actvYearDisabled } : field)} // actvYear 필드의 disabled 상태 반영
-                onProjectSelect={onProjectSelect} />
+                onProjectSelect={onProjectSelect} 
+            />
             
-            {(!formData || Object.keys(formData).length === 0) ? (
-                <></>
-             ) : (
-                <>
-                    <div className={esmStyles.main_grid}>
-                        <Card sx={{ width: "100%", height: "auto", borderRadius: "15px", marginBottom: "1rem" }}>
-                            <TableCustom title="프로젝트 상세정보" columns={pjtColumns} data={[selectedPjt]} pagination={false}/>
-                        </Card>
-                    </div>
+            {(Object.keys(formData).length === 0) ?
+                <></> :
+                <div className={pdsStyles.main_grid}>
+                    <Card sx={{ height: "auto", padding: "0.5rem", borderRadius: "0.5rem" }}>
+                        <div className={pdsStyles.table_title} style={{ padding: "0 1rem"}}>프로젝트 상세정보</div>
+
+                        <div className={pdsStyles.row} style={{ padding: "0.5rem 1rem"}}>
+                            <div className={pdsStyles.pjt_data_container}>프로젝트 지역
+                                <div className={pdsStyles.code}>{selectedPjt.pjtType} / {selectedPjt.regCode}</div>
+                            </div>
+                            <div className={pdsStyles.pjt_data_container}>계약일
+                                <div className={pdsStyles.code}>{selectedPjt.ctrtFrYear} / {selectedPjt.ctrtFrMth} ~ {selectedPjt.ctrtToYear} / {selectedPjt.ctrtToMth}</div>
+                            </div>
+                            <div className={pdsStyles.pjt_data_container}>본부명
+                                <div className={pdsStyles.code}>{selectedPjt.divCode}</div>
+                            </div>
+                            <div className={pdsStyles.pjt_data_container}>연면적(m²)
+                                <div className={pdsStyles.code}>{selectedPjt.bldArea}</div>
+                            </div>
+                            <div className={pdsStyles.pjt_data_container}>진행상태
+                                <div className={pdsStyles.code}>{selectedPjt.pjtProgStus}</div>
+                            </div>
+                            <div className={pdsStyles.pjt_data_container}>분류
+                                <div className={pdsStyles.code}>{selectedPjt.prodTypeCode}</div>
+                            </div>
+                        </div>
+                    </Card>
                     
-                    <div className={ps12Style.button_container}>
+                    <div className={pdsStyles.button_container}>
                         <CustomButton 
                             selected={content === 'actvQty'} 
                             onClick={() => handleButtonClick('actvQty')}
@@ -359,14 +380,15 @@ export default function Ps_1_2_Fp() {
                             사용금액
                         </CustomButton>
                     </div>
-                    <div className={sysStyles.main_grid}>
-                        <Card className={sysStyles.card_box} sx={{ width: "100%", height: "100%", borderRadius: "15px" }}>
+                    
+                    <div className={pdsStyles.contents_container}>
+                        <Card sx={{ width: "100%", height: "auto", borderRadius: "0.5rem" }}>
                             {content === 'actvQty' && <Usage data={usagePerfs} />}
                             {content === 'fee' && <AmountUsed data={amountUsedPerfs} />}
                         </Card>
                     </div>
-                </>
-            )}
+                </div>
+            }
         </div>
     );
 }

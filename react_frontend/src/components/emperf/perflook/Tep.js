@@ -26,7 +26,7 @@ export default function Tep() {
             handleFormSubmit(formData);
         }
         handleButtonClick(content);
-    }, [])
+    }, []);
 
     const handleButtonClick = (value) => {
         setContent(value);
