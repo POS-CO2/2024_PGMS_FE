@@ -159,7 +159,7 @@ export default function Fl() {
                 console.log(error);
 
                 swalOptions.title = '실패!',
-                swalOptions.text = error.response.data.message;
+                swalOptions.text = error.response.data.message,
                 swalOptions.icon = 'error';
             }
             Swal.fire(swalOptions);
@@ -193,7 +193,7 @@ export default function Fl() {
                 console.log(error);
 
                 swalOptions.title = '실패!',
-                swalOptions.text = error.response.data.message;
+                swalOptions.text = error.response.data.message,
                 swalOptions.icon = 'error';
             }
         } else if (modalType === 'FlEdit') {
@@ -223,7 +223,7 @@ export default function Fl() {
                 console.log(error);
 
                 swalOptions.title = '실패!',
-                swalOptions.text = error.response.data.message;
+                swalOptions.text = error.response.data.message,
                 swalOptions.icon = 'error';
             }
         } else if (modalType === 'DeleteB') {

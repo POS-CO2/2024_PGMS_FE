@@ -865,7 +865,6 @@ export function Ps12UploadExcelModal({ isModalOpen, handleOk, handleCancel }) { 
             swalOptions.text = `성공적으로 등록되었습니다.`;
             swalOptions.icon = 'success';
         } catch (error) {
-            console.error('Error saving document:', error);
             swalOptions.title = '실패!',
             swalOptions.text = error.response.data.message;
             swalOptions.icon = 'error';
@@ -995,10 +994,8 @@ export function CmAddModal({ isModalOpen, handleOk, handleCancel }) {
             swalOptions.icon = 'success';
             handleOk(data);
         } catch (error) {
-            console.error('Failed to add user:', error);
-
             swalOptions.title = '실패!',
-            swalOptions.text = `${formData.codeGrpName} 등록에 실패하였습니다.`;
+            swalOptions.text = error.response.data.message,
             swalOptions.icon = 'error';
         }
         Swal.fire(swalOptions);
@@ -1092,7 +1089,7 @@ export function CmEditModal({ isModalOpen, handleOk, handleCancel, rowData }) {
         } catch (error) {
             console.error('Failed to add user:', error);
             swalOptions.title = '실패!',
-            swalOptions.text = `${formData.codeGrpName} 등록에 실패하였습니다.`;
+            swalOptions.text = error.response.data.message,
             swalOptions.icon = 'error';
         }
         Swal.fire(swalOptions);
@@ -1178,7 +1175,7 @@ export function DeleteModal({ isModalOpen, handleOk, handleCancel, rowData, rowD
         } catch (error) {
             console.error('Failed to delete:', error);
             swalOptions.title = '실패!',
-            swalOptions.text = error.response.data.message;
+            swalOptions.text = error.response.data.message,
             swalOptions.icon = 'error';
         }
         Swal.fire(swalOptions);
@@ -1250,7 +1247,7 @@ export function CmListAddModal({ isModalOpen, handleOk, handleCancel, rowData })
         } catch (error) {
             console.error('Failed to add user:', error);
             swalOptions.title = '실패!',
-            swalOptions.text = `${formData.codeName} 등록에 실패하였습니다.`;
+            swalOptions.text = error.response.data.message,
             swalOptions.icon = 'error';
         }
         Swal.fire(swalOptions);
@@ -1361,7 +1358,7 @@ export function CmListEditModal({ isModalOpen, handleOk, handleCancel, rowData }
         } catch (error) {
             console.error('Failed to add user:', error);
             swalOptions.title = '실패!',
-            swalOptions.text = `${formData.codeName} 등록에 실패하였습니다.`;
+            swalOptions.text = error.response.data.message,
             swalOptions.icon = 'error';
         }
         Swal.fire(swalOptions);
@@ -1833,7 +1830,7 @@ export function FmAddModal({ isModalOpen, handleOk, handleCancel, rowData }) {
         } catch (error) {
             console.error('Failed to add user:', error);
             swalOptions.title = '실패!',
-            swalOptions.text = `${formData.equipName} 등록에 실패하였습니다.`;
+            swalOptions.text = error.response.data.message,
             swalOptions.icon = 'error';
         }
         Swal.fire(swalOptions);
@@ -1972,7 +1969,7 @@ export function UmAddModal({ isModalOpen, handleOk, handleCancel }) {
         } catch (error) {
             console.error('Failed to add user:', error);
             swalOptions.title = '실패!',
-            swalOptions.text = `${formData.userName} 등록에 실패하였습니다.`;
+            swalOptions.text = error.response.data.message,
             swalOptions.icon = 'error';
 
         }
@@ -2095,7 +2092,7 @@ export function MmAddModal({ isModalOpen, handleOk, handleCancel, rowData }) {
         } catch (error) {
             console.error('Failed to add menu:', error);
             swalOptions.title = '실패!',
-            swalOptions.text = `${formData.menuName} 등록에 실패하였습니다.`;
+            swalOptions.text = error.response.data.message,
             swalOptions.icon = 'error';
         }
         Swal.fire(swalOptions);
@@ -2337,7 +2334,7 @@ export function SdAddModal({ isModalOpen, handleOk, handleCancel, rowData }) {
         } catch (error) {
             console.error('Error uploading files to S3:', error);
             swalOptions.title = '실패!',
-            swalOptions.text = `증빙자료 등록에 실패하였습니다.`;
+            swalOptions.text = error.response.data.message,
             swalOptions.icon = 'error';
         }
         Swal.fire(swalOptions);
@@ -2592,7 +2589,7 @@ export function SdShowDetailsModal({ isModalOpen, handleOk, handleCancel }) {
         } catch (error) {
             console.error('Error uploading files to S3:', error);
             swalOptions.title = '실패!',
-            swalOptions.text = `증빙자료 등록에 실패하였습니다.`;
+            swalOptions.text = error.response.data.message,
             swalOptions.icon = 'error';
             Swal.fire(swalOptions);
             return []; // 실패 시 빈 배열 반환
