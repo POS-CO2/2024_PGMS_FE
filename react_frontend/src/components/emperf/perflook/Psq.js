@@ -11,9 +11,10 @@ import * as mainStyle from '../../../assets/css/main.css';
 import * as ps12Style from '../../../assets/css/ps12.css';
 import * as sysStyles from '../../../assets/css/sysmng.css';
 import * as esmStyles from '../../../assets/css/esm.css';
-import * as chartStyles from "../../../assets/css/chart.css"
-import * as saStyles from "../../../assets/css/sa.css"
-import * as psqStyles from "../../../assets/css/psq.css"
+import * as chartStyles from "../../../assets/css/chart.css";
+import * as saStyles from "../../../assets/css/sa.css";
+import * as psqStyles from "../../../assets/css/psq.css";
+import * as pdsStyles from "../../../assets/css/pds.css";
 import { Card } from '@mui/material';
 import { PieChart } from '@mui/x-charts/PieChart';
 import { DownOutlined } from '@ant-design/icons';
@@ -87,7 +88,7 @@ export default function Psq() {
         }
 
         setFormData(data);
-        setSelectedPjt([data.searchProject]);
+        setSelectedPjt(data.searchProject);
 
         // scope1,2
         let url = `/perf/pjt?pjtId=${data.searchProject.id}&year=${data.actvYear}`;
@@ -265,17 +266,35 @@ export default function Psq() {
                 onProjectSelect={onProjectSelect} 
             />
             
-            {(!selectedPjt || Object.keys(selectedPjt).length === 0) ? (
-                <></>
-             ) : (
-                <>
-                    <div className={esmStyles.main_grid}>
-                        <Card sx={{ width: "100%", height: "auto", borderRadius: "15px", marginBottom: "1rem" }}>
-                            <TableCustom title="조회결과" columns={pjtColumns} data={selectedPjt} pagination={false}/>
-                        </Card>
-                    </div>
+            {(!selectedPjt || Object.keys(selectedPjt).length === 0) ? 
+                <></> :
+                <div className={pdsStyles.main_grid}>
+                    <Card sx={{ height: "auto", padding: "0.5rem", borderRadius: "0.5rem" }}>
+                        <div className={pdsStyles.table_title} style={{ padding: "0 1rem"}}>프로젝트 상세정보</div>
 
-                    <div className={ps12Style.button_container}>
+                        <div className={pdsStyles.row} style={{ padding: "0.5rem 1rem"}}>
+                            <div className={pdsStyles.pjt_data_container}>프로젝트 지역
+                                <div className={pdsStyles.code}>{selectedPjt.pjtType} / {selectedPjt.regCode}</div>
+                            </div>
+                            <div className={pdsStyles.pjt_data_container}>계약일
+                                <div className={pdsStyles.code}>{selectedPjt.ctrtFrYear} / {selectedPjt.ctrtFrMth} ~ {selectedPjt.ctrtToYear} / {selectedPjt.ctrtToMth}</div>
+                            </div>
+                            <div className={pdsStyles.pjt_data_container}>본부명
+                                <div className={pdsStyles.code}>{selectedPjt.divCode}</div>
+                            </div>
+                            <div className={pdsStyles.pjt_data_container}>연면적(m²)
+                                <div className={pdsStyles.code}>{selectedPjt.bldArea}</div>
+                            </div>
+                            <div className={pdsStyles.pjt_data_container}>진행상태
+                                <div className={pdsStyles.code}>{selectedPjt.pjtProgStus}</div>
+                            </div>
+                            <div className={pdsStyles.pjt_data_container}>분류
+                                <div className={pdsStyles.code}>{selectedPjt.prodTypeCode}</div>
+                            </div>
+                        </div>
+                    </Card>
+
+                    <div className={pdsStyles.button_container}>
                         <CustomButton 
                             selected={content === 'chart'} 
                             onClick={() => handleButtonClick('chart')}
@@ -290,7 +309,7 @@ export default function Psq() {
                         </CustomButton>
                     </div>
                     
-                    <div className={sysStyles.main_grid}>
+                    <div className={pdsStyles.contents_container}>
                         {content === 'chart' && 
                             <>
                                 <Card className={saStyles.card_box} sx={{ width: "50%", height: "auto", borderRadius: "15px" }}>
@@ -348,8 +367,8 @@ export default function Psq() {
                             </div>
                         }
                     </div>
-                </>
-            )}
+                </div>
+            }
         </div>
     );
 }

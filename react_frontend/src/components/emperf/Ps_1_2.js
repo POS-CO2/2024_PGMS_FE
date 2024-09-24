@@ -11,6 +11,7 @@ import * as mainStyle from '../../assets/css/main.css';
 import * as ps12Style from '../../assets/css/ps12.css';
 import * as sysStyles from '../../assets/css/sysmng.css';
 import * as esmStyles from '../../assets/css/esm.css';
+import * as pdsStyles from "../../assets/css/pds.css";
 import axiosInstance from '../../utils/AxiosInstance';
 import { perfColumns, pjtColumns } from '../../assets/json/tableColumn';
 import * as XLSX from 'xlsx';
@@ -150,7 +151,7 @@ export default function Ps_1_2() {
     // 조회 버튼 클릭시 호출될 함수
     const handleFormSubmit = async (data) => {
         setFormData(data);
-        setSelectedPjt([data.searchProject]);
+        setSelectedPjt(data.searchProject);
 
         let url = `/perf?pjtId=${data.searchProject.id}&actvYear=${data.actvYear}`;
         // emtnActvType이 존재하는 경우에만 URL에 추가
@@ -342,17 +343,35 @@ export default function Ps_1_2() {
                 onProjectSelect={onProjectSelect} 
             />
             
-            {(!formData || Object.keys(formData).length === 0) ? (
-                <></>
-             ) : (
-                <>
-                    <div className={esmStyles.main_grid}>
-                        <Card sx={{ width: "100%", height: "auto", borderRadius: "15px", marginBottom: "1rem" }}>
-                            <TableCustom title="프로젝트 상세정보" columns={pjtColumns} data={selectedPjt} pagination={false}/>
-                        </Card>
-                    </div>
+            {(!formData || Object.keys(formData).length === 0) ? 
+                <></> :
+                <div className={pdsStyles.main_grid}>
+                    <Card sx={{ height: "auto", padding: "0.5rem", borderRadius: "0.5rem" }}>
+                        <div className={pdsStyles.table_title} style={{ padding: "0 1rem"}}>프로젝트 상세정보</div>
+
+                        <div className={pdsStyles.row} style={{ padding: "0.5rem 1rem"}}>
+                            <div className={pdsStyles.pjt_data_container}>프로젝트 지역
+                                <div className={pdsStyles.code}>{selectedPjt.pjtType} / {selectedPjt.regCode}</div>
+                            </div>
+                            <div className={pdsStyles.pjt_data_container}>계약일
+                                <div className={pdsStyles.code}>{selectedPjt.ctrtFrYear} / {selectedPjt.ctrtFrMth} ~ {selectedPjt.ctrtToYear} / {selectedPjt.ctrtToMth}</div>
+                            </div>
+                            <div className={pdsStyles.pjt_data_container}>본부명
+                                <div className={pdsStyles.code}>{selectedPjt.divCode}</div>
+                            </div>
+                            <div className={pdsStyles.pjt_data_container}>연면적(m²)
+                                <div className={pdsStyles.code}>{selectedPjt.bldArea}</div>
+                            </div>
+                            <div className={pdsStyles.pjt_data_container}>진행상태
+                                <div className={pdsStyles.code}>{selectedPjt.pjtProgStus}</div>
+                            </div>
+                            <div className={pdsStyles.pjt_data_container}>분류
+                                <div className={pdsStyles.code}>{selectedPjt.prodTypeCode}</div>
+                            </div>
+                        </div>
+                    </Card>
                     
-                    <div className={ps12Style.button_container}>
+                    <div className={pdsStyles.button_container}>
                         <CustomButton 
                             selected={content === 'actvQty'} 
                             onClick={() => handleButtonClick('actvQty')}
@@ -366,14 +385,14 @@ export default function Ps_1_2() {
                             사용금액
                         </CustomButton>
                     </div>
-                    <div className={sysStyles.main_grid}>
-                        <Card className={sysStyles.card_box} sx={{ width: "100%", height: "100%", borderRadius: "15px" }}>
+                    <div className={pdsStyles.contents_container}>
+                        <Card sx={{ width: "100%", height: "auto", borderRadius: "0.5rem" }}>
                             {content === 'actvQty' && <Usage data={usagePerfs} />}
                             {content === 'fee' && <AmountUsed data={amountUsedPerfs} />}
                         </Card>
                     </div>
-                </>
-            )}
+                </div>
+            }
         </div>
     );
 }
