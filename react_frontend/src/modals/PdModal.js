@@ -608,19 +608,21 @@ export function FamEditModal({ isModalOpen, handleOk, handleCancel, rowData, dro
         fetchActvUnit();
     }, []);
 
-    // 모달이 열릴 때 rowData로부터 폼 필드 값을 설정
     useEffect(() => {
-        if (isModalOpen && rowData) {
+        // actvUnits이 변경된 후에 실행
+        if (actvUnits.length > 0 && rowData) {
             const actvDvsOption = getOptions('actvDataDvs').find(option => option.label === rowData.actvDataDvs);
             const actvTypeOption = getOptions('emtnActvType').find(option => option.label === rowData.emtnActvType);
             const inputUnitOption = getOptions('inputUnit').find(option => option.label === rowData.inputUnitCode);
-
+    
             setActvName(rowData.actvDataName || '');
             setSelectedActvDvs(actvDvsOption ? actvDvsOption.value : '');
             setSelectedEmtnActv(actvTypeOption ? actvTypeOption.value : '');
-            handleInputUnitChange(inputUnitOption.value);
+            if (inputUnitOption) {
+                handleInputUnitChange(inputUnitOption.value); // actvUnits이 설정된 후 호출
+            }
         }
-    }, [rowData, isModalOpen]);
+    }, [actvUnits, rowData]);
 
     // 옵션을 가져오는 함수
     const getOptions = (fieldName) => {
@@ -633,7 +635,7 @@ export function FamEditModal({ isModalOpen, handleOk, handleCancel, rowData, dro
         setSelectedInputUnit(value);
 
         const matchedUnit = actvUnits.find(unit => unit.inputUnitCode === value);
-        
+
         if (matchedUnit) {
             setCalUnit(matchedUnit.calUnitCode);
             setUnitConvCoef(matchedUnit.unitConvCoef);
@@ -659,7 +661,7 @@ export function FamEditModal({ isModalOpen, handleOk, handleCancel, rowData, dro
         if (!formData.actvDataName) newErrors.actvDataName = '활동자료명을 입력해 주세요.';
         if (!formData.actvDataDvs) newErrors.actvDataDvs = '활동자료구분을 선택해 주세요.';
         if (!formData.emtnActvType) newErrors.emtnActvType = '배출활동유형을 선택해 주세요.';
-        if (!formData.inputUnit) newErrors.inputUnit = '입력단위를 선택해 주세요.';
+        if (!formData.inputUnitCode) newErrors.inputUnit = '입력단위를 선택해 주세요.';
 
         if (Object.keys(newErrors).length > 0) {
             setErrors(newErrors);
@@ -1528,7 +1530,6 @@ export function EfmAddModal({ isModalOpen, handleOk, handleCancel, rowData }) {
     const [coef, setCoef] = useState(0);
     const [error, setError] = useState({});
 
-    console.log("HOCHUL")
     const handleSelect = async() => {
         let swalOptions = {
             confirmButtonText: '확인'
@@ -1554,21 +1555,11 @@ export function EfmAddModal({ isModalOpen, handleOk, handleCancel, rowData }) {
             setError(newError);
             return;
         }
-        try {
-            // POST 요청으로 서버에 데이터 전송
-            const {data} = await axiosInstance.post('/equip/coef', formData);
 
-            // handleOk을 호출하여 모달을 닫고 상위 컴포넌트에 알림
-            handleOk(data);
-            swalOptions.title = '성공!',
-            swalOptions.text = `배출계수가 성공적으로 등록되었습니다.`;
-            swalOptions.icon = 'success';
-        } catch (error) {
-            swalOptions.title = '실패!',
-            swalOptions.text = error.response.data.message;
-            swalOptions.icon = 'error';
-        }
-        Swal.fire(swalOptions);
+        setError({});
+
+        // handleOk을 호출하여 모달을 닫고 상위 컴포넌트에 알림
+        handleOk(formData);
     };
 
     useEffect(() => {
@@ -1720,21 +1711,10 @@ export function EfmEditModal({ isModalOpen, handleOk, handleCancel, rowData }) {
             return;
         }
 
-        try {
-            // POST 요청으로 서버에 데이터 전송
-            const response = await axiosInstance.patch('/equip/coef', formData);
+        setError({});
 
-            // handleOk을 호출하여 모달을 닫고 상위 컴포넌트에 알림
-            handleOk(response.data);
-            swalOptions.title = '성공!',
-            swalOptions.text = `${formData.applyDvs}(이)가 성공적으로 수정되었습니다.`;
-            swalOptions.icon = 'success';
-        } catch (error) {
-            swalOptions.title = '실패!',
-            swalOptions.text = error.response.data.message;
-            swalOptions.icon = 'error';
-        }
-        Swal.fire(swalOptions);
+        // handleOk을 호출하여 모달을 닫고 상위 컴포넌트에 알림
+        handleOk(formData);
     };
 
     useEffect(() => {

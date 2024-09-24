@@ -88,7 +88,7 @@ export const useModalActions = () => {
 
 // 모달 내의 버튼(등록, 수정, 삭제) 액션
 export const useHandleOkAction = () => {
-  return useRecoilCallback(({ set }) => (modalType) => async ({data, setter, setterSumittedIdx = () => {}, url, requestBody, successMsg}) => {
+  return useRecoilCallback(({ set }) => (modalType) => async ({data, setter, setterSelected, setterSumittedIdx = () => {}, url, requestBody, successMsg}) => {
     let swalOptions = {
       confirmButtonText: '확인'
     };
@@ -129,11 +129,13 @@ export const useHandleOkAction = () => {
             od.id === data.id ? response.data : od
           )
         );
+        
+        setterSelected(response.data);
+        setterSumittedIdx([]);
 
         swalOptions.title = '성공!',
         swalOptions.text = successMsg;
         swalOptions.icon = 'success';
-        setterSumittedIdx([]);
       } catch (error) {
         console.log(error);
 
