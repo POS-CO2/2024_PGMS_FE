@@ -271,7 +271,7 @@ export const climateAnalColumns = [
     { key: 'mth', label: '대상월', hidden: false },
     { key: 'regCode', label: '지역', hidden: false },
     { key: 'avgTm', label: '영향인자값', hidden: true }, // 선택한 영향인자로 동적 변경
-    { key: 'co2EmtnConvTotalQty', label: '총배출량', hidden: true },
+    { key: 'co2EmtnConvTotalQty', label: '총CO2배출량', hidden: true },
     { key: 'formattedAvgTm', label: '영향인자값', hidden: false }, // 선택한 영향인자로 동적 변경
-    { key: 'formattedCo2EmtnConvTotalQty', label: '총배출량(tCO2)', hidden: false },
+    { key: 'formattedCo2EmtnConvTotalQty', label: '총CO2배출량(kgGHG)', hidden: false },
 ]

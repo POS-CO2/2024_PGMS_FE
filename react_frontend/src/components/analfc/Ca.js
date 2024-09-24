@@ -4,7 +4,7 @@ import { formField_ca } from "../../assets/json/searchFormData";
 import TableCustom from "../../TableCustom.js";
 import { climateAnalColumns } from '../../assets/json/tableColumn';
 import { Card } from '@mui/material';
-import { LineChart } from '@mui/x-charts/LineChart';
+import ApexChart from "react-apexcharts";
 import axiosInstance from '../../utils/AxiosInstance';
 import * as mainStyle from '../../assets/css/main.css';
 import * as sysStyles from '../../assets/css/sysmng.css';
@@ -13,13 +13,11 @@ import * as saStyles from "../../assets/css/sa.css"
 import * as psqStyles from "../../assets/css/psq.css"
 import * as XLSX from 'xlsx';
 
-import { tempData } from '../../assets/json/saDataEx';
-
 export default function Ca() {
     const [formFields, setFormFields] = useState(formField_ca);
     const [formData, setFormData] = useState(); // 검색 데이터
     const [caData, setCaData] = useState([]); // response, 표 데이터
-    const [chartData, setChartData] = useState([]); // 차트 데이터
+    const [chartData, setChartData] = useState({ xAxis: [], series: [], yaxis: [] }); // 차트 데이터
     const [columns, setColumns] = useState(climateAnalColumns);
 
     // 지역 드롭다운 옵션 설정
@@ -43,6 +41,21 @@ export default function Ca() {
         fetchRegCode();
     }, []);
 
+    // 영향인자 값에 따른 key 설정
+    const getSelectDataKey = (selected) => {
+        switch (selected) {
+            case '평균기온':
+                return 'avgTm';
+            case '강수량':
+                return 'rainfall';
+            case '습도':
+                return 'humidity';
+            default:
+                console.log("영향인자가 선택되지 않았습니다.");
+                return null;
+        }
+    };
+
     // 조회 버튼 클릭시 호출될 함수
     const handleFormSubmit = async (data) => {
         setFormData(data);
@@ -50,31 +63,84 @@ export default function Ca() {
         const startDate = `${data.calendar[0].$y}-${(data.calendar[0].$M + 1).toString().padStart(2, '0')}`;
         const endDate = `${data.calendar[1].$y}-${(data.calendar[1].$M + 1).toString().padStart(2, '0')}`;
 
-        /*let url = `/anal/climate?startDate=${startDate}&endDate=${endDate}&regCode=${data.regCode}&selected=${data.selected}`;
+        let url = `/anal/climate?startDate=${startDate}&endDate=${endDate}&regCode=${data.regCode}&selected=${data.selected}`;
         const response = await axiosInstance.get(url);
-console.log(response.data);
-        setCaData(response.data);*/
-        setCaData(tempData);
+        setCaData(response.data);
+
+        // 영향인자 값에 따른 key 가져오기
+        const selectKey = getSelectDataKey(data.selected);
 
         // 차트 데이터 설정
-        setChartData( {
-            xAxis: tempData.map(item => item.mth), // 월 데이터,
-            series: [
-                {
-                    yAxisIndex: 0,
-                    data: tempData.map(item => item.co2EmtnConvTotalQty), // 총배출량 데이터
-                    name: '총배출량',
-                    connectNulls: true,
-                },
-                {
-                    yAxisIndex: 1,
-                    data: tempData.map(item => item.avgTm), // 평균 기온 데이터
-                    name: '평균 기온',
-                    connectNulls: true,
-                }
-                
-            ]
-        });
+        if (response.data.length > 0) {
+            setChartData({
+                xAxis: response.data.map(item => `${item.year}-${String(item.mth).padStart(2, '0')}`), // 년-월 데이터
+                series: [
+                    {
+                        name: "총배출량",
+                        data: response.data.map(item => item.co2EmtnConvTotalQty), // 총배출량 데이터
+                        //connectNulls: true,
+                    },
+                    {
+                        name: data.selected,
+                        data: response.data.map(item => item[selectKey]), // 영향인자 데이터
+                        //connectNulls: true,
+                    }
+                    
+                ],
+                yaxis: [
+                    {
+                        axisTicks: {
+                            show: true
+                        },
+                        axisBorder: {
+                            show: true,
+                        },
+                        labels: {
+                            formatter: (value) => Math.round(value), // 정수로 변환
+                            style: {
+                                fontSize: '13px'
+                            }
+                        },
+                        title: {
+                            text: "총CO2배출량(kgGHG)",
+                            style: {
+                                fontSize: '13px',
+                                fontWeight: 'normal'
+                            },
+                            offsetX: -10 // 제목을 왼쪽으로 이동하여 간격 조정
+                        }
+                    },
+                    {
+                        opposite: true,
+                        axisTicks: {
+                            show: true
+                        },
+                        axisBorder: {
+                            show: true,
+                        },
+                        labels: {
+                            formatter: (value) => Math.round(value), // 정수로 변환
+                            style: {
+                                fontSize: '13px'
+                            }
+                        },
+                        title: {
+                            text: data.selected,
+                            style: {
+                                fontSize: '13px',
+                                fontWeight: 'normal'
+                            }
+                        }
+                    }
+                ]
+            });
+        } else {
+            setChartData({
+                xAxis: [],
+                series: [],
+                yaxis: []
+            });
+        }
 
         // columns 설정
         const updatedColumns = climateAnalColumns.map((col) => {
@@ -82,6 +148,7 @@ console.log(response.data);
                 return {
                     ...col,
                     label: data.selected, // selected 값으로 label 변경
+                    key: col.key.includes('formatted') ? `formatted${selectKey.charAt(0).toUpperCase()}${selectKey.slice(1)}` : selectKey, // key 변경
                 };
             }
             return col;
@@ -128,25 +195,39 @@ console.log(response.data);
                 <>
                     <div className={saStyles.main_grid}>
                         <Card className={saStyles.card_box} sx={{ width: "100%", height: "auto", borderRadius: "15px" }}>
-                            <div className={chartStyles.chart_title}>{"총배출량"}</div>
-                            <div className={chartStyles.chart_title}>{"평균기온"}</div>
-                            <LineChart
-                                xAxis={[{ data: chartData.xAxis }]}
-                                yAxis={[
-                                    { type: 'value', position: 'left', name: '총배출량 (톤)' },
-                                    { type: 'value', position: 'right', name: '평균 기온 (℃)' }
-                                ]}
-                                series={chartData.series}
-                                //width={500}
-                                height={200}
-                                margin={{ top: 10, bottom: 100 }}
+                            <div className={chartStyles.chart_title}>{`${formData.selected}과(와) 배출량 추이`}</div>
+                            <ApexChart
+                                type="line"
+                                series={chartData.series.length > 0 ? chartData.series : []}
+                                options={{
+                                    chart: {
+                                        height: 300,
+                                        type: "line",
+                                        stacked: false
+                                    },
+                                    dataLabels: {
+                                        enabled: false
+                                    },
+                                    colors: ["#7c4dff", "#ef6c00"],
+                                    stroke: {
+                                        width: [4, 4]
+                                    },
+                                    xaxis: {
+                                        categories: chartData.xAxis.length > 0 ? chartData.xAxis : [],
+                                    },
+                                    yaxis: chartData.yaxis,
+                                    legend: {
+                                        fontSize: '14px'
+                                    }
+                                }}
+                                height={300}
                             />
                         </Card>
                     </div>
 
                     <div className={saStyles.main_grid}>
                         <Card sx={{ width: "100%", height: "100%", borderRadius: "15px" }}>
-                            <TableCustom columns={columns} title="목록" data={caData} buttons={['DownloadExcel']} onClicks={[() => onDownloadExcelClick(caData)]} />
+                            <TableCustom columns={columns} title={`${formData.selected}과(와) 배출량 상세`} data={caData} buttons={['DownloadExcel']} onClicks={[() => onDownloadExcelClick(caData)]} />
                         </Card>
                     </div>
                 </>
