@@ -508,7 +508,7 @@ export default function Main() {
                                                 <div style={{display:"flex", flexDirection:"row",width:"100%", height:"100%", justifyContent:"space-around", alignItems:"center", fontSize:"3rem", fontWeight:"bold", color:"#0eaa00", gap:"1rem"}}>
                                                     <GppGoodTwoTone fontSize='large' sx={{color:"#0eaa00"}} />
                                                     <div>
-                                                        {scopeOneo}%
+                                                        {scopeOne}%
                                                     </div>
                                                 </div>
                                             )

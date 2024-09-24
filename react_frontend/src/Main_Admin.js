@@ -271,7 +271,7 @@ export default function Main_Admin() {
     const [service, setService] = useState([]);
     const [isServiceLoading, setIsServiceLoading] = useState(false);
 
-    const userCnt = useFetchData(`/sys/session`, 100000);
+    const userCnt = useFetchData(`/sys/session`, 10000);
     // const menuLogCnt = useFetchData(`/sys/log/board?startDate=${dateArray[0]}`);
     // const service = useFetchData(`/sys/containers?clusterName=pgms_common`);
     // console.log(service);
@@ -492,36 +492,40 @@ export default function Main_Admin() {
 
     // 서버관리
     useEffect(() => {
-        const fetchData = async () => {
-            // common
-            await Promise.all([
-                fetchCommonService(),
-                fetchEquipmentService(),
-                fetchProjectService(),
-                fetchAnalService(),
-                fetchSocketService()
-            ])
-            
-        }
+        if (main === "server") {
 
-        fetchData();
+        
+            const fetchData = async () => {
+                // common
+                await Promise.all([
+                    fetchCommonService(),
+                    fetchEquipmentService(),
+                    fetchProjectService(),
+                    fetchAnalService(),
+                    fetchSocketService()
+                ])
+                
+            }
 
-        const interval = setInterval(() => {
             fetchData();
-        }, 5000);
 
-        const progressInterval = setInterval(() => {
-            setProgress(prev => {
-                if (prev >= 100) {
-                    return 0; 
-                }
-                return prev + 20;
-            });
-        }, 1000); 
+            const interval = setInterval(() => {
+                fetchData();
+            }, 5000);
 
-        return () => {
-            clearInterval(interval);
-            clearInterval(progressInterval)
+            const progressInterval = setInterval(() => {
+                setProgress(prev => {
+                    if (prev >= 100) {
+                        return 0; 
+                    }
+                    return prev + 20;
+                });
+            }, 1000); 
+
+            return () => {
+                clearInterval(interval);
+                clearInterval(progressInterval)
+            }
         }
     }, [])
 
