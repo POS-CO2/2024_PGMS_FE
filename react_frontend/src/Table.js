@@ -41,7 +41,7 @@ const StyledTableCell = styled(TableCell)(({ theme }) => ({
     top: '25%', // 위에서부터 시작할 위치 (전체 높이의 25%)
     bottom: '25%', // 아래에서 끝날 위치 (전체 높이의 25%)
     right: 0,
-    width: '0.06rem',
+    width: '0.08rem',
     backgroundColor: '#FFF',
   },
   "& .resize-handle": {
@@ -135,10 +135,6 @@ export default function CustomizedTables({
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(modalPagination ? 5 : (monthPagination ? 12 : 10));             // default page row length
     const [columnWidths, setColumnWidths] = useState({});
-        
-    useEffect(() => {
-        console.log("columnWidths", columnWidths);
-    }, [columnWidths])
     
     // selectedRowId와 일치하는 행을 찾아 인덱스를 selectedRow로 설정하고 페이지를 이동
     useEffect(() => {

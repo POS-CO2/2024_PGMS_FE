@@ -77,11 +77,23 @@ export function PgAddModal({ isModalOpen, handleOk, handleCancel }) {
 
     //찾기 버튼 클릭시 호출될 함수
     const handleFormSubmit = () => {
+         // 입력 값에 공백이 있다면 제거
+        const trimmedCode = pjtCode.trim();
+        const trimmedName = pjtName.trim();
+        
+        // 필터링 로직
         const filteredProjects = allProjects.filter(pjt => {
-        const matchesCode = pjtCode ? pjt.projectCode?.includes(pjtCode) : true;
-        const matchesName = pjtName ? pjt.projectName?.includes(pjtName) : true;
-        return matchesCode && matchesName;
+            // 프로젝트 코드와 이름이 비어있는 경우를 처리
+            const matchesCode = trimmedCode 
+                ? pjt.pjtCode.toLowerCase().includes(trimmedCode.toLowerCase()) 
+                : true;
+            const matchesName = trimmedName 
+                ? pjt.pjtName.toLowerCase().includes(trimmedName.toLowerCase()) 
+                : true;
+
+            return matchesCode && matchesName;
         });
+
         setProject(filteredProjects);
     };
 
