@@ -139,7 +139,7 @@ export default function CustomizedTables({
         
     // selectedRowId와 일치하는 행을 찾아 인덱스를 selectedRow로 설정하고 페이지를 이동
   useEffect(() => {
-    if (selectedRowId !== null) {
+    if (Array.isArray(data) && selectedRowId !== null) {
       const rowIndex = data.findIndex(row => row.id === selectedRowId);
       if (rowIndex !== -1) {
         setSelectedRow(rowIndex);
