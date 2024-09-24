@@ -82,11 +82,6 @@ export default function Psq() {
 
     // 조회 버튼 클릭시 호출될 함수
     const handleFormSubmit = async (data) => {
-        // 데이터가 바뀌지 않았으면 종료
-        if (JSON.stringify(formData) === JSON.stringify(data)) {
-            return;
-        }
-
         setFormData(data);
         setSelectedPjt(data.searchProject);
 

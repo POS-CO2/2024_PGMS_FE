@@ -12,9 +12,6 @@ export const modalState = atom({
     DeleteA: false,
     DeleteB: false,
   },
-  effects: [
-    localStorageEffect('modalState'), // 로컬 스토리지와 동기화
-],
 });
 
 // 선택된 프로젝트

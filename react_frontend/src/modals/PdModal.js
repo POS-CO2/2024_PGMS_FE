@@ -2583,7 +2583,6 @@ export function SdShowDetailsModal({ isModalOpen, handleOk, handleCancel }) {
         fileList: []
     });
     const [errors, setErrors] = useState({});
-    const [innerSelectedSd, setInnerSelectedSd] = useState(selectedSD);
 
     useEffect(() => {
         const yearOptions = [];
@@ -2610,7 +2609,6 @@ export function SdShowDetailsModal({ isModalOpen, handleOk, handleCancel }) {
                     url: file.url
                 })) : []
             });
-            setInnerSelectedSd(selectedSD);
         }
     }, [selectedSD]);
 
@@ -2714,8 +2712,6 @@ export function SdShowDetailsModal({ isModalOpen, handleOk, handleCancel }) {
             files: allFiles
         };
         
-        setInnerSelectedSd(response.data); // innerSelectedSd 상태 업데이트
-
         setFormData(prevData => ({
             ...prevData,
             fileList: allFiles.map(file => ({
@@ -2731,23 +2727,6 @@ export function SdShowDetailsModal({ isModalOpen, handleOk, handleCancel }) {
             successMsg: `${documentData.name}(이)가 성공적으로 수정되었습니다.`,
         });
 
-    };
-
-    const onCancelClick = () => {
-        setErrors({});
-        if (innerSelectedSd) {
-            setFormData({
-                actvYear: String(innerSelectedSd.actvYear || new Date().getFullYear()),
-                actvMth: String(innerSelectedSd.actvMth || (new Date().getMonth() + 1)),
-                name: innerSelectedSd.name || '',
-                fileList: Array.isArray(innerSelectedSd.files) ? innerSelectedSd.files.map(file => ({
-                    name: file.name,
-                    status: 'done',
-                    url: file.url
-                })) : []
-            });
-        }
-        handleOk(innerSelectedSd, false);
     };
 
     return (
@@ -2773,6 +2752,7 @@ export function SdShowDetailsModal({ isModalOpen, handleOk, handleCancel }) {
                             id="actvYear"
                             value={formData.actvYear}
                             onChange={(value) => setFormData(prevData => ({ ...prevData, actvYear: value }))}
+                            disabled={true}
                         >
                             {yearSelectOptions.map(option => (
                                 <Select.Option key={option.value} value={option.value}>
@@ -2785,6 +2765,7 @@ export function SdShowDetailsModal({ isModalOpen, handleOk, handleCancel }) {
                             id="actvMth"
                             value={formData.actvMth}
                             onChange={(value) => setFormData(prevData => ({ ...prevData, actvMth: value }))}
+                            disabled={true}
                         >
                             {selectMonth.map(option => (
                                 <Select.Option key={option.value} value={option.value}>
@@ -2804,6 +2785,8 @@ export function SdShowDetailsModal({ isModalOpen, handleOk, handleCancel }) {
                     <input className={sdStyles.search} id="creator"
                         value={selectedSD.creatorDeptCode+" / "+selectedSD.creatorName}
                         onChange={(e) => setFormData(prevData => ({ ...prevData, name: e.target.value }))}
+                        disabled
+                        style={{ color: '#B6B6B6' }}
                     />
                 </div>
 
@@ -2878,7 +2861,7 @@ export function SdShowDetailsModal({ isModalOpen, handleOk, handleCancel }) {
             </div>
 
             <div className={sdStyles.button_group}>
-                <button onClick={onCancelClick} className={sdStyles.cancel_button}>취소</button>
+                <button onClick={handleCancel} className={sdStyles.cancel_button}>취소</button>
                 <button onClick={onSaveClick} className={sdStyles.save_button}>저장</button>
             </div>
         </Modal>
