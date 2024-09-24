@@ -18,6 +18,9 @@
 }
 
 .left_icon{
+    display: flex;
+    justify-content: center;
+    align-items: center;
     width: 80%;
     height: 70%;
     margin: 0.5rem auto 0;
@@ -104,7 +107,6 @@
     align-items: center;
     font-size: 1.4rem;
     font-weight: bold;
-
 }
 
 .container {
@@ -117,6 +119,10 @@
 }
 
 .container_status {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
     font-weight: bold;
 }
 

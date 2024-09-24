@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import * as gridStyles from './assets/css/gridAdmin.css';
-import { Card, CircularProgress, Divider, IconButton } from '@mui/material';
-import { Code, Menu, ManageAccounts, Terminal, PeopleAlt, Engineering, Business, Settings, Today, AddCircleTwoTone, RemoveCircleTwoTone, Person, RemoveCircleOutline, MoreHoriz } from '@mui/icons-material';
+import { Card, CircularProgress, Divider, IconButton, LinearProgress, Skeleton } from '@mui/material';
+import { Code, Menu, ManageAccounts, Terminal, PeopleAlt, Engineering, Business, Settings, Today, AddCircleTwoTone, RemoveCircleTwoTone, Person, RemoveCircleOutline, MoreHoriz, ScoreSharp } from '@mui/icons-material';
 import { SwiperSlide, Swiper } from 'swiper/react';
 import { Pagination, Navigation } from 'swiper/modules';
 import styled from 'styled-components';
@@ -16,6 +16,7 @@ import { ConfigProvider, Tabs, DatePicker, Input, Select, Collapse } from 'antd'
 import dayjs from 'dayjs';
 import axiosInstance from './utils/AxiosInstance';
 import useFetchData from './customhook/useFetchData';
+import Swal from 'sweetalert2';
 
 const { RangePicker } = DatePicker;
 
@@ -43,6 +44,11 @@ const StyledCollapse = styled(Collapse)`
     .ant-collapse-header-text {
         height: 100%;
         align-items: center;
+    }
+
+    .ant-collapse-content {
+        white-space: wrap;
+        overflow-x: auto;
     }
 
 `;
@@ -154,6 +160,19 @@ const StyledRoot2 = styled.div`
     }    
 `;
 
+const Overlay = styled('div')({
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)', // 반투명 검정색
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    zIndex: 10001, // 스피너가 위에 보이도록 설정
+});
+
 const ChartOptions = (title, xdata) => {
     const chartOption = {
     chart: {
@@ -249,11 +268,17 @@ export default function Main_Admin() {
     const [errorCode, setErrorCode] = useState("");
     const [errorLog, setErrorLog] = useState([]);
     const [logLoading, setLogLoading] = useState(false);
+    const [service, setService] = useState([]);
+    const [isServiceLoading, setIsServiceLoading] = useState(false);
 
     const userCnt = useFetchData(`/sys/session`, 100000);
     // const menuLogCnt = useFetchData(`/sys/log/board?startDate=${dateArray[0]}`);
-    const service = useFetchData(`/sys/containers?clusterName=pgms_common`);
-    console.log(service);
+    // const service = useFetchData(`/sys/containers?clusterName=pgms_common`);
+    // console.log(service);
+    const commonUrl = '/sys/containers/item?clusterName=pgms_common&arn=arn:aws:ecs:ap-northeast-2:011528301196:service/pgms_common/';
+    // const commonData = useFetchData(commonUrl.concat("pgms_common_service"));
+    // console.log(commonData.data);
+
     const handleCountChange = (value) => {
         setCount(value);
     }
@@ -383,12 +408,208 @@ export default function Main_Admin() {
         }
         fetchMenuLog();
         
+        // if(main === "server") {
+        //     const fetchServer = async () => {
+        //         setIsServiceLoading(true);
+        //         const serverResponse = await axiosInstance.get(`/sys/containers?clusterName=pgms_common`);
+        //         setService(serverResponse.data);
+        //         setIsServiceLoading(false);
+        //     }
+        //     fetchServer();    
+        // }
+        
     }, []);
+
+    const [commonContainer, setCommonContainer] = useState(null);
+    const [ccLoading, setCcLoading] = useState(false);
+    const [equipmentContainer, setEquipmentContainer] = useState(null);
+    const [eqLoading, setEqLoading] = useState(false);
+    const [projectContainer, setProjectContainer] = useState(null);
+    const [pjtLoading, setPjtLoading] = useState(false);
+    const [analContainer, setAnalContainer] = useState(null)
+    const [analLoading, setAnalLoading] = useState(false);
+    const [socketContainer, setSocketContainer] = useState(null);
+    const [skLoading, setSkLoading] = useState(false);
+    const [prePendingCm, setPrePendingCm] = useState(false);
+    const [prePendingEq, setPrePendingEq] = useState(false);
+    const [prePendingPj, setPrePendingPj] = useState(false);
+    const [prePendingAn, setPrePendingAn] = useState(false);
+    const [prePendingSk, setPrePendingSk] = useState(false);
+    const [progress, setProgress] = useState(0);
+
+    const fetchCommonService = async () => {
+        try {
+            const commonResponse = await axiosInstance.get(commonUrl.concat('pgms_common_service'));
+            setCommonContainer(commonResponse.data);
+            setCcLoading(false);
+        } catch (error) {
+            console.log(error);
+        }
+        
+    }
+
+    const fetchEquipmentService = async () => {
+        try {
+            const equipmentResponse = await axiosInstance.get(commonUrl.concat('pgms_equipment_service'));    
+            setEquipmentContainer(equipmentResponse.data);
+            setEqLoading(false);
+        } catch (error) {
+            console.log(error);
+        }
+        
+        
+    }
+
+    const fetchProjectService = async () => {
+        try {
+            const projectResponse = await axiosInstance.get(commonUrl.concat('pgms_project_service'));
+            setProjectContainer(projectResponse.data);
+            setPjtLoading(false)    
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
+    const fetchAnalService = async () => {
+        try {
+            const analResponse = await axiosInstance.get(commonUrl.concat('pgms_anal_service'));
+            setAnalContainer(analResponse.data);
+            setAnalLoading(false);    
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
+    const fetchSocketService = async () => {
+        try {
+            const socketResponse = await axiosInstance.get(commonUrl.concat('pgms_socket_service'));
+            setSocketContainer(socketResponse.data);
+            setSkLoading(false);    
+        } catch (error) {
+            console.log(error);
+        }
+    }
 
     // 서버관리
     useEffect(() => {
+        const fetchData = async () => {
+            // common
+            await Promise.all([
+                fetchCommonService(),
+                fetchEquipmentService(),
+                fetchProjectService(),
+                fetchAnalService(),
+                fetchSocketService()
+            ])
+            
+        }
 
+        fetchData();
+
+        const interval = setInterval(() => {
+            fetchData();
+        }, 5000);
+
+        const progressInterval = setInterval(() => {
+            setProgress(prev => {
+                if (prev >= 100) {
+                    return 0; 
+                }
+                return prev + 20;
+            });
+        }, 1000); 
+
+        return () => {
+            clearInterval(interval);
+            clearInterval(progressInterval)
+        }
     }, [])
+
+    const handleContainerAddClick = async (data) => {
+        let swalOptions = {
+            confirmButtonText: '확인'
+        };
+        
+        try {
+            await axiosInstance.post(`/sys/containers/up?clusterName=pgms_common&arn=`.concat(data.arn));
+            
+            if (data.arn === "arn:aws:ecs:ap-northeast-2:011528301196:service/pgms_common/pgms_common_service") {
+                setPrePendingCm(true);
+                await fetchCommonService();
+                setPrePendingCm(false);
+            }
+            else if (data.arn === "arn:aws:ecs:ap-northeast-2:011528301196:service/pgms_common/pgms_equipment_service") {
+                setPrePendingEq(true);
+                await fetchEquipmentService();
+                setPrePendingEq(false);
+            }
+            else if (data.arn === "arn:aws:ecs:ap-northeast-2:011528301196:service/pgms_common/pgms_project_service") {
+                setPrePendingPj(true);
+                await fetchProjectService();
+                setPrePendingPj(false);
+            }
+            else if (data.arn === "arn:aws:ecs:ap-northeast-2:011528301196:service/pgms_common/pgms_anal_service") {
+                setPrePendingAn(true);
+                await fetchAnalService();
+                setPrePendingAn(false);
+            }
+            else if (data.arn === "arn:aws:ecs:ap-northeast-2:011528301196:service/pgms_common/pgms_socket_service") {
+                setPrePendingSk(true);
+                await fetchSocketService();
+                setPrePendingSk(false);
+            }
+            swalOptions.title = '성공!',
+            swalOptions.text = `성공적으로 등록되었습니다. 잠시만 기다려주세요.`;
+            swalOptions.icon = 'success';
+        } catch (error) {
+            swalOptions.title = '실패!',
+            swalOptions.text = error.response.data.message;
+            swalOptions.icon = 'error';
+        }
+        Swal.fire(swalOptions);
+    }
+
+    const handleContainerDeleteClick = async (data) => {
+        let swalOptions = {
+            confirmButtonText: '확인'
+        };
+        try {
+            await axiosInstance.post(`/sys/containers/down?clusterName=pgms_common&arn=`.concat(data.arn));
+            if (data.arn === "arn:aws:ecs:ap-northeast-2:011528301196:service/pgms_common/pgms_common_service") {
+                setPrePendingCm(true);
+                await fetchCommonService();
+                setPrePendingCm(false);
+            }
+            else if (data.arn === "arn:aws:ecs:ap-northeast-2:011528301196:service/pgms_common/pgms_equipment_service") {
+                setPrePendingEq(true);
+                await fetchEquipmentService();
+                setPrePendingEq(false);
+            }
+            else if (data.arn === "arn:aws:ecs:ap-northeast-2:011528301196:service/pgms_common/pgms_project_service") {
+                setPrePendingPj(true);
+                await fetchProjectService();
+                setPrePendingPj(false);
+            }
+            else if (data.arn === "arn:aws:ecs:ap-northeast-2:011528301196:service/pgms_common/pgms_anal_service") {
+                setPrePendingAn(true);
+                await fetchAnalService();
+                setPrePendingAn(false);
+            }
+            else if (data.arn === "arn:aws:ecs:ap-northeast-2:011528301196:service/pgms_common/pgms_socket_service") {
+                setPrePendingSk(true);
+                await fetchSocketService();
+                setPrePendingSk(false);
+            }
+            swalOptions.title = '성공!',
+            swalOptions.text = `성공적으로 삭제되었습니다. 잠시만 기다려주세요.`;
+            swalOptions.icon = 'success';
+        } catch (error) {
+            swalOptions.title = '실패!',
+            swalOptions.text = error.response.data.message;
+            swalOptions.icon = 'error';
+        }
+        Swal.fire(swalOptions);
+    }
 
     // 예외 관리
     useEffect(() => {
@@ -407,7 +628,7 @@ export default function Main_Admin() {
                 <div className={gridStyles.left_box}>
                     <Card onClick={handleServerClick} sx={{width:"90%", height:"18%", borderRadius:"10px", margin:"0 auto", backgroundColor:"rgb(36,46,59)", margin:"0 auto"}}>
                         <div className={gridStyles.left_icon}>
-                            <img src={EcrLogo} alt='ecrlogo' style={{width:"100%", height:"100%"}}/>
+                            <img src={EcrLogo} alt='ecrlogo' style={{width:"100px", height:"100px"}}/>
                         </div>
                         <div className={gridStyles.left_icon_title}>
                             서버 관리
@@ -415,7 +636,7 @@ export default function Main_Admin() {
                     </Card>
                     <Card onClick={handleErrorLogClick} sx={{width:"90%", height:"18%", borderRadius:"10px", backgroundColor:"rgb(209,214,221)"}}>
                         <div className={gridStyles.left_icon}>
-                            <img src={TerminalLogo} alt='terminal' style={{width:"100%", height:"100%"}} />
+                            <img src={TerminalLogo} alt='terminal' style={{width:"100px", height:"100px", margin:"0 auto"}} />
                         </div>
                         <div className={gridStyles.left_icon_title}>
                             예외 관리
@@ -428,12 +649,14 @@ export default function Main_Admin() {
                                 // 서버관리
                                 <Card sx={{width:"98%", height:"100%", borderRadius:"10px"}}>
                                     <div className={gridStyles.server_header}>
+                                        <div style={{width:"20%"}}>
                                         서버관리
+                                        </div>
+                                        <div style={{width:"5%"}}>
+                                        <LinearProgress variant="determinate" value={progress} />
+                                        </div>
                                     </div>
                                     <div className={gridStyles.server_list}>
-                                        {
-
-                                        }
                                         <div className={gridStyles.server}>
                                             <div className={gridStyles.server_info}>
                                                 <div className={gridStyles.server_logo}>
@@ -445,72 +668,97 @@ export default function Main_Admin() {
                                                 
                                             </div>
                                             <Divider orientation='vertical' variant='middle' flexItem/>
-                                            <StyledRoot2 style={{width:"75%", height:"100%", overflow:"hidden"}}>
-                                                <Swiper
-                                                    spaceBetween={30}    // 슬라이드 사이의 간격
-                                                    slidesPerView={3.5}     // 화면에 보여질 슬라이드 수
-                                                    // centeredSlides={true}
-                                                    pagination={{ clickable: true }}  // 페이지 네이션 (점으로 표시되는 네비게이션)
-                                                    navigation={true}           // 이전/다음 버튼 네비게이션
-                                                    modules={[Navigation, Pagination]}
-                                                >
-                                                    <SwiperSlide style={{width:"100%", height:"100%"}}>
-                                                        <div className={gridStyles.container}>
-                                                            <img src={ContainerLogo} style={{width:"60%", height:"60%"}}/>
-                                                            <div className={gridStyles.container_status}>
-                                                                CPU : 50% <br/>
-                                                                RAM : 47%
-                                                            </div>
-                                                        </div>
-                                                    </SwiperSlide>
-                                                    <SwiperSlide style={{width:"100%", height:"100%"}}>
-                                                        <div className={gridStyles.container}>
-                                                            <img src={ContainerLogo} style={{width:"60%", height:"60%"}}/>
-                                                            <div className={gridStyles.container_status}>
-                                                                CPU : 35% <br/>
-                                                                RAM : 63%
-                                                            </div>
-                                                        </div>
-                                                    </SwiperSlide>
-                                                    <SwiperSlide style={{width:"100%", height:"100%"}}>
-                                                        <div className={gridStyles.container}>
-                                                            <img src={ContainerLogo} style={{width:"60%", height:"60%"}}/>
-                                                            <div className={gridStyles.container_status}>
-                                                                CPU : 82% <br/>
-                                                                RAM : 78%
-                                                            </div>
-                                                        </div>
-                                                    </SwiperSlide>
-                                                    <SwiperSlide style={{width:"100%", height:"100%"}}>
-                                                        <div className={gridStyles.container}>
-                                                            <img src={ContainerLogo} style={{width:"60%", height:"60%"}}/>
-                                                            <div className={gridStyles.container_status}>
-                                                                CPU : 13% <br/>
-                                                                RAM : 24%
-                                                            </div>
-                                                        </div>
-                                                    </SwiperSlide>
-                                                    <SwiperSlide style={{width:"100%", height:"100%"}}>
-                                                        <div className={gridStyles.container}>
-                                                            <img src={ContainerAddLogo} style={{width:"60%", height:"60%", color:"grey", filter:"brightness(0) invert(0.7) opacity(0.5)"}} />
-                                                            <div style={{display:"flex", flexDirection:"row"}}>
-                                                                <div className={gridStyles.container_status} >
-                                                                    <IconButton color='success' >
-                                                                        <AddCircleTwoTone />
-                                                                    </IconButton>
+                                            <StyledRoot2 style={{width:"75%", height:"100%", overflow:"hidden", position: "relative"}}>
+                                                {
+                                                    !ccLoading&&commonContainer !== null ? (
+                                                        <Swiper
+                                                            spaceBetween={30}    // 슬라이드 사이의 간격
+                                                            slidesPerView={3.5}     // 화면에 보여질 슬라이드 수
+                                                            // centeredSlides={true}
+                                                            pagination={{ clickable: true }}  // 페이지 네이션 (점으로 표시되는 네비게이션)
+                                                            navigation={true}           // 이전/다음 버튼 네비게이션
+                                                            modules={[Navigation, Pagination]}
+                                                        >
+                                                            {commonContainer.tasks.map(data => (
+                                                                <SwiperSlide style={{width:"100%", height:"100%"}}>
+                                                                    <div className={gridStyles.container}>
+                                                                        {
+                                                                            data.lastStatus === "RUNNING" ? (
+                                                                                <>
+                                                                                    <img src={ContainerLogo} style={{width:"85px", height:"85px"}}/>
+                                                                                    <div className={gridStyles.container_status}>
+                                                                                        {
+                                                                                            data.cpu !== null ? (
+                                                                                                <>
+                                                                                                <div style={{color: data.cpu >= 70 ? 'red' : 'black'}}>CPU : {data.cpu.toFixed(2)}%</div>
+                                                                                                <div>
+                                                                                                    RAM : {data.memory}MB
+                                                                                                </div>
+                                                                                                </>
+                                                                                            ) : (
+                                                                                                <div style={{display:"flex", justifyContent:"center", alignItems:"center"}}>
+                                                                                                데이터<br/>
+                                                                                                수집중 
+                                                                                                </div>
+                                                                                            )
+                                                                                        }
+                                                                                    </div>
+                                                                                </>
+                                                                            ) : (
+                                                                                <>
+                                                                                    <img src={ContainerAddLogo} style={{width:"85px", height:"85px", color:"grey", filter:"brightness(0) invert(0.7) opacity(0.5)"}}/>
+                                                                                    <div className={gridStyles.container_status} style={{width:"100%", height:"30%", display:"flex", justifyContent:"center", alignItems:"center"}}>
+                                                                                        <CircularProgress size="30px"/>
+                                                                                    </div>
+                                                                                </>
+                                                                            )
+                                                                        }
+                                                                    </div>
+                                                                </SwiperSlide>
+                                                            ))}
+                                                            <SwiperSlide style={{width:"100%", height:"100%"}}>
+                                                                <div className={gridStyles.container}>
+                                                                    <img src={ContainerAddLogo} style={{width:"85px", height:"85px", color:"grey", filter:"brightness(0) invert(0.7) opacity(0.5)"}} />
+                                                                    <div style={{display:"flex", flexDirection:"row"}}>
+                                                                        <div className={gridStyles.container_status} >
+                                                                            <IconButton color='success' onClick={() => handleContainerAddClick(commonContainer)}>
+                                                                                <AddCircleTwoTone />
+                                                                            </IconButton>
+                                                                        </div>
+                                                                        <div className={gridStyles.container_status} >
+                                                                            {commonContainer.taskCount === 1 ? (
+                                                                                <IconButton disabled color='error' onClick={() => handleContainerDeleteClick(commonContainer)}>
+                                                                                    <RemoveCircleTwoTone />
+                                                                                </IconButton>
+                                                                            ) : (
+                                                                                <IconButton color='error' onClick={() => handleContainerDeleteClick(commonContainer)}>
+                                                                                    <RemoveCircleTwoTone />
+                                                                                </IconButton>
+                                                                            )}
+                                                                        </div>
+                                                                    </div>
                                                                 </div>
-                                                                <div className={gridStyles.container_status} >
-                                                                    <IconButton color='error' >
-                                                                        <RemoveCircleTwoTone />
-                                                                    </IconButton>
-                                                                </div>
-                                                            </div>
+                                                            </SwiperSlide>
+                                                        </Swiper>
+                                                    ) : (
+                                                        <div style={{display:"flex", flexDirection:"row", justifyContent:"space-around", alignContent:"center", width:"100%", height:"100%"}}>
+                                                            <Skeleton variant='h1' sx={{width:"20%", height:"90%", borderRadius:"10px", margin:"auto 0"}}/>
+                                                            <Skeleton variant='h1' sx={{width:"20%", height:"90%", borderRadius:"10px", margin:"auto 0"}}/>
+                                                            <Skeleton variant='h1' sx={{width:"20%", height:"90%", borderRadius:"10px", margin:"auto 0"}}/>
+                                                            <Skeleton variant='h1' sx={{width:"20%", height:"90%", borderRadius:"10px", margin:"auto 0"}}/>
                                                         </div>
-                                                    </SwiperSlide>
-                                                </Swiper>
+                                                    )  
+                                                }
+                                                {prePendingCm && (
+                                                    <Overlay>
+                                                        <CircularProgress />
+                                                    </Overlay>
+                                                )}
                                             </StyledRoot2>
                                         </div>
+
                                         <Divider />
+
                                         <div className={gridStyles.server}>
                                             <div className={gridStyles.server_info}>
                                                 <div className={gridStyles.server_logo}>
@@ -522,51 +770,92 @@ export default function Main_Admin() {
                                                 
                                             </div>
                                             <Divider orientation='vertical' variant='middle' flexItem/>
-                                            <StyledRoot2 style={{width:"75%", height:"100%", overflow:"hidden"}}>
-                                                <Swiper
-                                                    spaceBetween={30}    // 슬라이드 사이의 간격
-                                                    slidesPerView={3.5}     // 화면에 보여질 슬라이드 수
-                                                    // centeredSlides={true}
-                                                    pagination={{ clickable: true }}  // 페이지 네이션 (점으로 표시되는 네비게이션)
-                                                    navigation={true}           // 이전/다음 버튼 네비게이션
-                                                    modules={[Navigation, Pagination]}
-                                                >
-                                                    <SwiperSlide style={{width:"100%", height:"100%"}}>
-                                                        <div className={gridStyles.container}>
-                                                            <img src={ContainerLogo} style={{width:"60%", height:"60%"}}/>
-                                                            <div className={gridStyles.container_status}>
-                                                                CPU : 50% <br/>
-                                                                RAM : 47%
-                                                            </div>
-                                                        </div>
-                                                    </SwiperSlide>
-                                                    <SwiperSlide style={{width:"100%", height:"100%"}}>
-                                                        <div className={gridStyles.container}>
-                                                            <img src={ContainerLogo} style={{width:"60%", height:"60%"}}/>
-                                                            <div className={gridStyles.container_status}>
-                                                                CPU : 13% <br/>
-                                                                RAM : 24%
-                                                            </div>
-                                                        </div>
-                                                    </SwiperSlide>
-                                                    <SwiperSlide style={{width:"100%", height:"100%"}}>
-                                                        <div className={gridStyles.container}>
-                                                            <img src={ContainerAddLogo} style={{width:"60%", height:"60%", color:"grey", filter:"brightness(0) invert(0.7) opacity(0.5)"}} />
-                                                            <div style={{display:"flex", flexDirection:"row"}}>
-                                                                <div className={gridStyles.container_status} >
-                                                                    <IconButton color='success' >
-                                                                        <AddCircleTwoTone />
-                                                                    </IconButton>
+                                            <StyledRoot2 style={{width:"75%", height:"100%", overflow:"hidden", position:"relative"}}>
+                                                {
+                                                    !eqLoading&&equipmentContainer !== null ? (
+                                                        <Swiper
+                                                            spaceBetween={30}    // 슬라이드 사이의 간격
+                                                            slidesPerView={3.5}     // 화면에 보여질 슬라이드 수
+                                                            // centeredSlides={true}
+                                                            pagination={{ clickable: true }}  // 페이지 네이션 (점으로 표시되는 네비게이션)
+                                                            navigation={true}           // 이전/다음 버튼 네비게이션
+                                                            modules={[Navigation, Pagination]}
+                                                        >
+                                                            {equipmentContainer.tasks.map(data => (
+                                                                <SwiperSlide style={{width:"100%", height:"100%"}}>
+                                                                    <div className={gridStyles.container}>
+                                                                        {
+                                                                            data.lastStatus === "RUNNING" ? (
+                                                                                <>
+                                                                                    <img src={ContainerLogo} style={{width:"85px", height:"85px"}}/>
+                                                                                    <div className={gridStyles.container_status}>
+                                                                                        {
+                                                                                            data.cpu !== null ? (
+                                                                                                <>
+                                                                                                <div style={{color: data.cpu >= 70 ? 'red' : 'black'}}>CPU : {data.cpu.toFixed(2)}%</div>
+                                                                                                <div>
+                                                                                                    RAM : {data.memory}MB
+                                                                                                </div>
+                                                                                                </>
+                                                                                            ) : (
+                                                                                                <div style={{display:"flex", justifyContent:"center", alignItems:"center"}}>
+                                                                                                데이터<br/>
+                                                                                                수집중 
+                                                                                                </div>
+                                                                                            )
+                                                                                        }
+                                                                                    </div>
+                                                                                </>
+                                                                            ) : (
+                                                                                <>
+                                                                                    <img src={ContainerAddLogo} style={{width:"85px", height:"85px", color:"grey", filter:"brightness(0) invert(0.7) opacity(0.5)"}}/>
+                                                                                    <div className={gridStyles.container_status} style={{width:"100%", height:"30%", display:"flex", justifyContent:"center", alignItems:"center"}}>
+                                                                                        <CircularProgress size="30px"/>
+                                                                                    </div>
+                                                                                </>
+                                                                            )
+                                                                        }
+                                                                    </div>
+                                                                </SwiperSlide>
+                                                            ))}
+                                                            <SwiperSlide style={{width:"100%", height:"100%"}}>
+                                                                <div className={gridStyles.container}>
+                                                                    <img src={ContainerAddLogo} style={{width:"85px", height:"85px", color:"grey", filter:"brightness(0) invert(0.7) opacity(0.5)"}} />
+                                                                    <div style={{display:"flex", flexDirection:"row"}}>
+                                                                        <div className={gridStyles.container_status} >
+                                                                            <IconButton color='success' onClick={() => handleContainerAddClick(equipmentContainer)}>
+                                                                                <AddCircleTwoTone />
+                                                                            </IconButton>
+                                                                        </div>
+                                                                        <div className={gridStyles.container_status}>
+                                                                            {equipmentContainer.taskCount === 1 ? (
+                                                                                <IconButton disabled color='error' onClick={() => handleContainerDeleteClick(equipmentContainer)}>
+                                                                                    <RemoveCircleTwoTone />
+                                                                                </IconButton>
+                                                                            ) : (
+                                                                                <IconButton color='error' onClick={() => handleContainerDeleteClick(equipmentContainer)}>
+                                                                                    <RemoveCircleTwoTone />
+                                                                                </IconButton>
+                                                                            )}
+                                                                        </div>
+                                                                    </div>
                                                                 </div>
-                                                                <div className={gridStyles.container_status} >
-                                                                    <IconButton color='error' >
-                                                                        <RemoveCircleTwoTone />
-                                                                    </IconButton>
-                                                                </div>
-                                                            </div>
+                                                            </SwiperSlide>
+                                                        </Swiper>
+                                                    ) : (
+                                                        <div style={{display:"flex", flexDirection:"row", justifyContent:"space-around", alignContent:"center", width:"100%", height:"100%"}}>
+                                                            <Skeleton variant='h1' sx={{width:"20%", height:"90%", borderRadius:"10px", margin:"auto 0"}}/>
+                                                            <Skeleton variant='h1' sx={{width:"20%", height:"90%", borderRadius:"10px", margin:"auto 0"}}/>
+                                                            <Skeleton variant='h1' sx={{width:"20%", height:"90%", borderRadius:"10px", margin:"auto 0"}}/>
+                                                            <Skeleton variant='h1' sx={{width:"20%", height:"90%", borderRadius:"10px", margin:"auto 0"}}/>
                                                         </div>
-                                                    </SwiperSlide>
-                                                </Swiper>
+                                                    )  
+                                                }
+                                                {prePendingEq && (
+                                                    <Overlay>
+                                                        <CircularProgress />
+                                                    </Overlay>
+                                                )}
                                             </StyledRoot2>
                                         </div>
                                         <Divider />
@@ -581,42 +870,92 @@ export default function Main_Admin() {
                                                 
                                             </div>
                                             <Divider orientation='vertical' variant='middle' flexItem/>
-                                            <StyledRoot2 style={{width:"75%", height:"100%", overflow:"hidden"}}>
-                                                <Swiper
-                                                    spaceBetween={30}    // 슬라이드 사이의 간격
-                                                    slidesPerView={3.5}     // 화면에 보여질 슬라이드 수
-                                                    // centeredSlides={true}
-                                                    pagination={{ clickable: true }}  // 페이지 네이션 (점으로 표시되는 네비게이션)
-                                                    navigation={true}           // 이전/다음 버튼 네비게이션
-                                                    modules={[Navigation, Pagination]}
-                                                >
-                                                    <SwiperSlide style={{width:"100%", height:"100%"}}>
-                                                        <div className={gridStyles.container}>
-                                                            <img src={ContainerLogo} style={{width:"60%", height:"60%"}}/>
-                                                            <div className={gridStyles.container_status}>
-                                                                CPU : 13% <br/>
-                                                                RAM : 24%
-                                                            </div>
-                                                        </div>
-                                                    </SwiperSlide>
-                                                    <SwiperSlide style={{width:"100%", height:"100%"}}>
-                                                        <div className={gridStyles.container}>
-                                                            <img src={ContainerAddLogo} style={{width:"60%", height:"60%", color:"grey", filter:"brightness(0) invert(0.7) opacity(0.5)"}} />
-                                                            <div style={{display:"flex", flexDirection:"row"}}>
-                                                                <div className={gridStyles.container_status} >
-                                                                    <IconButton color='success' >
-                                                                        <AddCircleTwoTone />
-                                                                    </IconButton>
+                                            <StyledRoot2 style={{width:"75%", height:"100%", overflow:"hidden", position:"relative"}}>
+                                                {
+                                                    !pjtLoading&&projectContainer !== null ? (
+                                                        <Swiper
+                                                            spaceBetween={30}    // 슬라이드 사이의 간격
+                                                            slidesPerView={3.5}     // 화면에 보여질 슬라이드 수
+                                                            // centeredSlides={true}
+                                                            pagination={{ clickable: true }}  // 페이지 네이션 (점으로 표시되는 네비게이션)
+                                                            navigation={true}           // 이전/다음 버튼 네비게이션
+                                                            modules={[Navigation, Pagination]}
+                                                        >
+                                                            {projectContainer.tasks.map(data => (
+                                                                <SwiperSlide style={{width:"100%", height:"100%"}}>
+                                                                    <div className={gridStyles.container}>
+                                                                        {
+                                                                            data.lastStatus === "RUNNING" ? (
+                                                                                <>
+                                                                                    <img src={ContainerLogo} style={{width:"85px", height:"85px"}}/>
+                                                                                    <div className={gridStyles.container_status}>
+                                                                                        {
+                                                                                            data.cpu !== null ? (
+                                                                                                <>
+                                                                                                <div style={{color: data.cpu >= 70 ? 'red' : 'black'}}>CPU : {data.cpu.toFixed(2)}%</div>
+                                                                                                <div>
+                                                                                                    RAM : {data.memory}MB
+                                                                                                </div>
+                                                                                                </>
+                                                                                            ) : (
+                                                                                                <div style={{display:"flex", justifyContent:"center", alignItems:"center"}}>
+                                                                                                데이터<br/>
+                                                                                                수집중 
+                                                                                                </div>
+                                                                                            )
+                                                                                        }
+                                                                                    </div>
+                                                                                </>
+                                                                            ) : (
+                                                                                <>
+                                                                                    <img src={ContainerAddLogo} style={{width:"85px", height:"85px", color:"grey", filter:"brightness(0) invert(0.7) opacity(0.5)"}}/>
+                                                                                    <div className={gridStyles.container_status} style={{width:"100%", height:"30%", display:"flex", justifyContent:"center", alignItems:"center"}}>
+                                                                                        <CircularProgress size="30px"/>
+                                                                                    </div>
+                                                                                </>
+                                                                            )
+                                                                        }
+                                                                    </div>
+                                                                </SwiperSlide>
+                                                            ))}
+                                                            <SwiperSlide style={{width:"100%", height:"100%"}}>
+                                                                <div className={gridStyles.container}>
+                                                                    <img src={ContainerAddLogo} style={{width:"85px", height:"85px", color:"grey", filter:"brightness(0) invert(0.7) opacity(0.5)"}} />
+                                                                    <div style={{display:"flex", flexDirection:"row"}}>
+                                                                        <div className={gridStyles.container_status} >
+                                                                            <IconButton color='success' onClick={() => handleContainerAddClick(projectContainer)}>
+                                                                                <AddCircleTwoTone />
+                                                                            </IconButton>
+                                                                        </div>
+                                                                        <div className={gridStyles.container_status} >
+                                                                            {projectContainer.taskCount === 1 ? (
+                                                                                <IconButton disabled color='error' onClick={() => handleContainerDeleteClick(projectContainer)}>
+                                                                                    <RemoveCircleTwoTone />
+                                                                                </IconButton>
+                                                                            ) : (
+                                                                                <IconButton color='error' onClick={() => handleContainerDeleteClick(projectContainer)}>
+                                                                                    <RemoveCircleTwoTone />
+                                                                                </IconButton>
+                                                                            )}
+                                                                        </div>
+                                                                    </div>
                                                                 </div>
-                                                                <div className={gridStyles.container_status} >
-                                                                    <IconButton color='error' >
-                                                                        <RemoveCircleTwoTone />
-                                                                    </IconButton>
-                                                                </div>
-                                                            </div>
+                                                            </SwiperSlide>
+                                                        </Swiper>
+                                                    ) : (
+                                                        <div style={{display:"flex", flexDirection:"row", justifyContent:"space-around", alignContent:"center", width:"100%", height:"100%"}}>
+                                                            <Skeleton variant='h1' sx={{width:"20%", height:"90%", borderRadius:"10px", margin:"auto 0"}}/>
+                                                            <Skeleton variant='h1' sx={{width:"20%", height:"90%", borderRadius:"10px", margin:"auto 0"}}/>
+                                                            <Skeleton variant='h1' sx={{width:"20%", height:"90%", borderRadius:"10px", margin:"auto 0"}}/>
+                                                            <Skeleton variant='h1' sx={{width:"20%", height:"90%", borderRadius:"10px", margin:"auto 0"}}/>
                                                         </div>
-                                                    </SwiperSlide>
-                                                </Swiper>
+                                                    )  
+                                                }
+                                                {prePendingPj && (
+                                                    <Overlay>
+                                                        <CircularProgress />
+                                                    </Overlay>
+                                                )}
                                             </StyledRoot2>
                                         </div>
                                         <Divider />
@@ -631,60 +970,92 @@ export default function Main_Admin() {
                                                 
                                             </div>
                                             <Divider orientation='vertical' variant='middle' flexItem/>
-                                            <StyledRoot2 style={{width:"75%", height:"100%", overflow:"hidden"}}>
-                                                <Swiper
-                                                    spaceBetween={30}    // 슬라이드 사이의 간격
-                                                    slidesPerView={3.5}     // 화면에 보여질 슬라이드 수
-                                                    // centeredSlides={true}
-                                                    pagination={{ clickable: true }}  // 페이지 네이션 (점으로 표시되는 네비게이션)
-                                                    navigation={true}           // 이전/다음 버튼 네비게이션
-                                                    modules={[Navigation, Pagination]}
-                                                >
-                                                    <SwiperSlide style={{width:"100%", height:"100%"}}>
-                                                        <div className={gridStyles.container}>
-                                                            <img src={ContainerLogo} style={{width:"60%", height:"60%"}}/>
-                                                            <div className={gridStyles.container_status}>
-                                                                CPU : 35% <br/>
-                                                                RAM : 63%
-                                                            </div>
-                                                        </div>
-                                                    </SwiperSlide>
-                                                    <SwiperSlide style={{width:"100%", height:"100%"}}>
-                                                        <div className={gridStyles.container}>
-                                                            <img src={ContainerLogo} style={{width:"60%", height:"60%"}}/>
-                                                            <div className={gridStyles.container_status}>
-                                                                CPU : 82% <br/>
-                                                                RAM : 78%
-                                                            </div>
-                                                        </div>
-                                                    </SwiperSlide>
-                                                    <SwiperSlide style={{width:"100%", height:"100%"}}>
-                                                        <div className={gridStyles.container}>
-                                                            <img src={ContainerLogo} style={{width:"60%", height:"60%"}}/>
-                                                            <div className={gridStyles.container_status}>
-                                                                CPU : 13% <br/>
-                                                                RAM : 24%
-                                                            </div>
-                                                        </div>
-                                                    </SwiperSlide>
-                                                    <SwiperSlide style={{width:"100%", height:"100%"}}>
-                                                        <div className={gridStyles.container}>
-                                                            <img src={ContainerAddLogo} style={{width:"60%", height:"60%", color:"grey", filter:"brightness(0) invert(0.7) opacity(0.5)"}} />
-                                                            <div style={{display:"flex", flexDirection:"row"}}>
-                                                                <div className={gridStyles.container_status} >
-                                                                    <IconButton color='success' >
-                                                                        <AddCircleTwoTone />
-                                                                    </IconButton>
+                                            <StyledRoot2 style={{width:"75%", height:"100%", overflow:"hidden", position:"relative"}}>
+                                            {
+                                                    !analLoading&&analContainer !== null ? (
+                                                        <Swiper
+                                                            spaceBetween={30}    // 슬라이드 사이의 간격
+                                                            slidesPerView={3.5}     // 화면에 보여질 슬라이드 수
+                                                            // centeredSlides={true}
+                                                            pagination={{ clickable: true }}  // 페이지 네이션 (점으로 표시되는 네비게이션)
+                                                            navigation={true}           // 이전/다음 버튼 네비게이션
+                                                            modules={[Navigation, Pagination]}
+                                                        >
+                                                            {analContainer.tasks.map(data => (
+                                                                <SwiperSlide style={{width:"100%", height:"100%"}}>
+                                                                    <div className={gridStyles.container}>
+                                                                        {
+                                                                            data.lastStatus === "RUNNING" ? (
+                                                                                <>
+                                                                                    <img src={ContainerLogo} style={{width:"85px", height:"85px"}}/>
+                                                                                    <div className={gridStyles.container_status}>
+                                                                                        {
+                                                                                            data.cpu !== null ? (
+                                                                                                <>
+                                                                                                <div style={{color: data.cpu >= 70 ? 'red' : 'black'}}>CPU : {data.cpu.toFixed(2)}%</div>
+                                                                                                <div>
+                                                                                                    RAM : {data.memory}MB
+                                                                                                </div>
+                                                                                                </>
+                                                                                            ) : (
+                                                                                                <div style={{display:"flex", justifyContent:"center", alignItems:"center"}}>
+                                                                                                데이터<br/>
+                                                                                                수집중 
+                                                                                                </div>
+                                                                                            )
+                                                                                        }
+                                                                                    </div>
+                                                                                </>
+                                                                            ) : (
+                                                                                <>
+                                                                                    <img src={ContainerAddLogo} style={{width:"85px", height:"85px", color:"grey", filter:"brightness(0) invert(0.7) opacity(0.5)"}}/>
+                                                                                    <div className={gridStyles.container_status} style={{width:"100%", height:"30%", display:"flex", justifyContent:"center", alignItems:"center"}}>
+                                                                                        <CircularProgress size="30px"/>
+                                                                                    </div>
+                                                                                </>
+                                                                            )
+                                                                        }
+                                                                    </div>
+                                                                </SwiperSlide>
+                                                            ))}
+                                                            <SwiperSlide style={{width:"100%", height:"100%"}}>
+                                                                <div className={gridStyles.container}>
+                                                                    <img src={ContainerAddLogo} style={{width:"85px", height:"85px", color:"grey", filter:"brightness(0) invert(0.7) opacity(0.5)"}} />
+                                                                    <div style={{display:"flex", flexDirection:"row"}}>
+                                                                        <div className={gridStyles.container_status} >
+                                                                            <IconButton color='success' onClick={() => handleContainerAddClick(analContainer)}>
+                                                                                <AddCircleTwoTone />
+                                                                            </IconButton>
+                                                                        </div>
+                                                                        <div className={gridStyles.container_status}>
+                                                                            {analContainer.taskCount === 1 ? (
+                                                                                <IconButton disabled color='error' onClick={() => handleContainerDeleteClick(analContainer)}>
+                                                                                    <RemoveCircleTwoTone />
+                                                                                </IconButton>
+                                                                            ) : (
+                                                                                <IconButton color='error' onClick={() => handleContainerDeleteClick(analContainer)}>
+                                                                                    <RemoveCircleTwoTone />
+                                                                                </IconButton>
+                                                                            )}
+                                                                        </div>
+                                                                    </div>
                                                                 </div>
-                                                                <div className={gridStyles.container_status} >
-                                                                    <IconButton color='error' >
-                                                                        <RemoveCircleTwoTone />
-                                                                    </IconButton>
-                                                                </div>
-                                                            </div>
+                                                            </SwiperSlide>
+                                                        </Swiper>
+                                                    ) : (
+                                                        <div style={{display:"flex", flexDirection:"row", justifyContent:"space-around", alignContent:"center", width:"100%", height:"100%"}}>
+                                                            <Skeleton variant='h1' sx={{width:"20%", height:"90%", borderRadius:"10px", margin:"auto 0"}}/>
+                                                            <Skeleton variant='h1' sx={{width:"20%", height:"90%", borderRadius:"10px", margin:"auto 0"}}/>
+                                                            <Skeleton variant='h1' sx={{width:"20%", height:"90%", borderRadius:"10px", margin:"auto 0"}}/>
+                                                            <Skeleton variant='h1' sx={{width:"20%", height:"90%", borderRadius:"10px", margin:"auto 0"}}/>
                                                         </div>
-                                                    </SwiperSlide>
-                                                </Swiper>
+                                                    )  
+                                                }
+                                                {prePendingAn && (
+                                                    <Overlay>
+                                                        <CircularProgress />
+                                                    </Overlay>
+                                                )}
                                             </StyledRoot2>
                                         </div>
                                         <Divider />
@@ -699,69 +1070,92 @@ export default function Main_Admin() {
                                                 
                                             </div>
                                             <Divider orientation='vertical' variant='middle' flexItem/>
-                                            <StyledRoot2 style={{width:"75%", height:"100%", overflow:"hidden"}}>
-                                                <Swiper
-                                                    spaceBetween={30}    // 슬라이드 사이의 간격
-                                                    slidesPerView={3.5}     // 화면에 보여질 슬라이드 수
-                                                    // centeredSlides={true}
-                                                    pagination={{ clickable: true }}  // 페이지 네이션 (점으로 표시되는 네비게이션)
-                                                    navigation={true}           // 이전/다음 버튼 네비게이션
-                                                    modules={[Navigation, Pagination]}
-                                                >
-                                                    <SwiperSlide style={{width:"100%", height:"100%"}}>
-                                                        <div className={gridStyles.container}>
-                                                            <img src={ContainerLogo} style={{width:"60%", height:"60%"}}/>
-                                                            <div className={gridStyles.container_status}>
-                                                                CPU : 50% <br/>
-                                                                RAM : 47%
-                                                            </div>
-                                                        </div>
-                                                    </SwiperSlide>
-                                                    <SwiperSlide style={{width:"100%", height:"100%"}}>
-                                                        <div className={gridStyles.container}>
-                                                            <img src={ContainerLogo} style={{width:"60%", height:"60%"}}/>
-                                                            <div className={gridStyles.container_status}>
-                                                                CPU : 35% <br/>
-                                                                RAM : 63%
-                                                            </div>
-                                                        </div>
-                                                    </SwiperSlide>
-                                                    <SwiperSlide style={{width:"100%", height:"100%"}}>
-                                                        <div className={gridStyles.container}>
-                                                            <img src={ContainerLogo} style={{width:"60%", height:"60%"}}/>
-                                                            <div className={gridStyles.container_status}>
-                                                                CPU : 82% <br/>
-                                                                RAM : 78%
-                                                            </div>
-                                                        </div>
-                                                    </SwiperSlide>
-                                                    <SwiperSlide style={{width:"100%", height:"100%"}}>
-                                                        <div className={gridStyles.container}>
-                                                            <img src={ContainerLogo} style={{width:"60%", height:"60%"}}/>
-                                                            <div className={gridStyles.container_status}>
-                                                                CPU : 13% <br/>
-                                                                RAM : 24%
-                                                            </div>
-                                                        </div>
-                                                    </SwiperSlide>
-                                                    <SwiperSlide style={{width:"100%", height:"100%"}}>
-                                                        <div className={gridStyles.container}>
-                                                            <img src={ContainerAddLogo} style={{width:"60%", height:"60%", color:"grey", filter:"brightness(0) invert(0.7) opacity(0.5)"}} />
-                                                            <div style={{display:"flex", flexDirection:"row"}}>
-                                                                <div className={gridStyles.container_status} >
-                                                                    <IconButton color='success' >
-                                                                        <AddCircleTwoTone />
-                                                                    </IconButton>
+                                            <StyledRoot2 style={{width:"75%", height:"100%", overflow:"hidden", position:"relative"}}>
+                                                {
+                                                    !skLoading&&socketContainer !== null ? (
+                                                        <Swiper
+                                                            spaceBetween={30}    // 슬라이드 사이의 간격
+                                                            slidesPerView={3.5}     // 화면에 보여질 슬라이드 수
+                                                            // centeredSlides={true}
+                                                            pagination={{ clickable: true }}  // 페이지 네이션 (점으로 표시되는 네비게이션)
+                                                            navigation={true}           // 이전/다음 버튼 네비게이션
+                                                            modules={[Navigation, Pagination]}
+                                                        >
+                                                            {socketContainer.tasks.map(data => (
+                                                                <SwiperSlide style={{width:"100%", height:"100%"}}>
+                                                                    <div className={gridStyles.container}>
+                                                                        {
+                                                                            data.lastStatus === "RUNNING" ? (
+                                                                                <>
+                                                                                    <img src={ContainerLogo} style={{width:"85px", height:"85px"}}/>
+                                                                                    <div className={gridStyles.container_status}>
+                                                                                        {
+                                                                                            data.cpu !== null ? (
+                                                                                                <>
+                                                                                                <div style={{color: data.cpu >= 70 ? 'red' : 'black'}}>CPU : {data.cpu.toFixed(2)}%</div>
+                                                                                                <div>
+                                                                                                    RAM : {data.memory}MB
+                                                                                                </div>
+                                                                                                </>
+                                                                                            ) : (
+                                                                                                <div style={{display:"flex", justifyContent:"center", alignItems:"center"}}>
+                                                                                                데이터<br/>
+                                                                                                수집중 
+                                                                                                </div>
+                                                                                            )
+                                                                                        }
+                                                                                    </div>
+                                                                                </>
+                                                                            ) : (
+                                                                                <>
+                                                                                    <img src={ContainerAddLogo} style={{width:"85px", height:"85px", color:"grey", filter:"brightness(0) invert(0.7) opacity(0.5)"}}/>
+                                                                                    <div className={gridStyles.container_status} style={{width:"100%", height:"30%", display:"flex", justifyContent:"center", alignItems:"center"}}>
+                                                                                        <CircularProgress size="30px"/>
+                                                                                    </div>
+                                                                                </>
+                                                                            )
+                                                                        }
+                                                                    </div>
+                                                                </SwiperSlide>
+                                                            ))}
+                                                            <SwiperSlide style={{width:"100%", height:"100%"}}>
+                                                                <div className={gridStyles.container}>
+                                                                    <img src={ContainerAddLogo} style={{width:"85px", height:"85px", color:"grey", filter:"brightness(0) invert(0.7) opacity(0.5)"}} />
+                                                                    <div style={{display:"flex", flexDirection:"row"}}>
+                                                                        <div className={gridStyles.container_status} >
+                                                                            <IconButton color='success' onClick={() => handleContainerAddClick(socketContainer)}>
+                                                                                <AddCircleTwoTone />
+                                                                            </IconButton>
+                                                                        </div>
+                                                                        <div className={gridStyles.container_status} >
+                                                                            {socketContainer.taskCount === 1 ? (
+                                                                                <IconButton disabled color='error' onClick={() => handleContainerDeleteClick(socketContainer)}>
+                                                                                    <RemoveCircleTwoTone />
+                                                                                </IconButton>
+                                                                            ) : (
+                                                                                <IconButton color='error' onClick={() => handleContainerDeleteClick(socketContainer)}>
+                                                                                    <RemoveCircleTwoTone />
+                                                                                </IconButton>
+                                                                            )}
+                                                                        </div>
+                                                                    </div>
                                                                 </div>
-                                                                <div className={gridStyles.container_status} >
-                                                                    <IconButton color='error' >
-                                                                        <RemoveCircleTwoTone />
-                                                                    </IconButton>
-                                                                </div>
-                                                            </div>
+                                                            </SwiperSlide>
+                                                        </Swiper>
+                                                    ) : (
+                                                        <div style={{display:"flex", flexDirection:"row", justifyContent:"space-around", alignContent:"center", width:"100%", height:"100%"}}>
+                                                            <Skeleton variant='h1' sx={{width:"20%", height:"90%", borderRadius:"10px", margin:"auto 0"}}/>
+                                                            <Skeleton variant='h1' sx={{width:"20%", height:"90%", borderRadius:"10px", margin:"auto 0"}}/>
+                                                            <Skeleton variant='h1' sx={{width:"20%", height:"90%", borderRadius:"10px", margin:"auto 0"}}/>
+                                                            <Skeleton variant='h1' sx={{width:"20%", height:"90%", borderRadius:"10px", margin:"auto 0"}}/>
                                                         </div>
-                                                    </SwiperSlide>
-                                                </Swiper>
+                                                    )  
+                                                }
+                                                {prePendingSk && (
+                                                    <Overlay>
+                                                        <CircularProgress />
+                                                    </Overlay>
+                                                )}
                                             </StyledRoot2>
                                         </div>
                                         <Divider />
