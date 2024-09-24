@@ -227,7 +227,7 @@ export default function Ca() {
 
                     <div className={saStyles.main_grid}>
                         <Card sx={{ width: "100%", height: "100%", borderRadius: "15px" }}>
-                            <TableCustom columns={columns} title={`${formData.selected}과(와) 배출량 상세`} data={caData} buttons={['DownloadExcel']} onClicks={[() => onDownloadExcelClick(caData)]} />
+                            <TableCustom columns={columns} title={`${formData.selected}과(와) 배출량 상세`} data={caData} buttons={['DownloadExcel']} onClicks={[() => onDownloadExcelClick(caData)]} monthPagination={true} />
                         </Card>
                     </div>
                 </>
