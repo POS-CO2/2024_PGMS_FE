@@ -95,7 +95,7 @@ export function PgAddModal({ isModalOpen, handleOk, handleCancel }) {
 
     // 프로젝트 row 클릭 시 호출될 함수
     const handlePjtClick = (pjt) => {
-        setSelectedPjts(pjt);
+        setSelectedPjts(pjt.row ?? {});
     };
 
     // 선택 버튼 클릭 시 호출될 함수
@@ -112,45 +112,47 @@ export function PgAddModal({ isModalOpen, handleOk, handleCancel }) {
         onCancel={handleCancel} 
         footer={null}             //Ant Design의 기본 footer 제거(Cancel, OK 버튼)
       >
-        <div className={pjtModalStyles.title}>프로젝트 등록</div>
-        <p className={pjtModalStyles.comment}>* 프로젝트 코드나 프로젝트 명 둘 중에 하나만 입력해도 검색이 가능합니다.</p>
-        <div className={pjtModalStyles.search_container}>
-          <div className={pjtModalStyles.search_item}>
-            <div className={pjtModalStyles.search_title}>프로젝트코드</div>
-            <StyledInput
-              value={pjtCode}
-              allowClear={{ clearIcon: <CloseOutlined style={{color: "red"}} /> }}
-              onChange={(e) => setPjtCode(e.target.value)}
-              onKeyDown={handleKeyDown}
-              style={{ width: '12rem' }}
-            />
-          </div>
-          <div className={pjtModalStyles.search_item}>
-            <div className={pjtModalStyles.search_title}>프로젝트명</div>
+        <div className={pjtModalStyles.group_container}>
+            <div className={pjtModalStyles.title}>프로젝트 등록</div>
+            <p className={pjtModalStyles.comment}>* 프로젝트 코드나 프로젝트 명 둘 중에 하나만 입력해도 검색이 가능합니다.</p>
             <div className={pjtModalStyles.search_container}>
+            <div className={pjtModalStyles.search_item}>
+                <div className={pjtModalStyles.search_title}>프로젝트코드</div>
                 <StyledInput
-                value={pjtName}
+                value={pjtCode}
                 allowClear={{ clearIcon: <CloseOutlined style={{color: "red"}} /> }}
-                onChange={(e) => setPjtName(e.target.value)}
+                onChange={(e) => setPjtCode(e.target.value)}
                 onKeyDown={handleKeyDown}
                 style={{ width: '12rem' }}
                 />
-                <button className={pjtModalStyles.search_button} onClick={handleFormSubmit}>찾기</button>
             </div>
-          </div>
-          <div className={pjtModalStyles.button_container}>
-              <CustomButton className={pjtModalStyles.select_button} onClick={handleSelect} disabled={selectedPjts.length === 0}>
-                <CheckOutlinedIcon className={pjtModalStyles.icon} sx={{ fontSize: '2.5rem' }}/>
-                <span className={pjtModalStyles.button_text}>선택</span>
-              </CustomButton> 
-            <CustomButton className={pjtModalStyles.select_button} onClick={handleCancel}>
-              <CloseIcon className={pjtModalStyles.icon} sx={{ fontSize: '2.5rem' }}/>
-              <span className={pjtModalStyles.button_text}>취소</span>
-            </CustomButton> 
-          </div>
-        </div>
-        <div className={pjtModalStyles.result_container}>
-            <Table data={project} columns={pjtColumns} variant='checkbox' onRowClick={handlePjtClick} />
+            <div className={pjtModalStyles.search_item}>
+                <div className={pjtModalStyles.search_title}>프로젝트명</div>
+                <div className={pjtModalStyles.search_container}>
+                    <StyledInput
+                    value={pjtName}
+                    allowClear={{ clearIcon: <CloseOutlined style={{color: "red"}} /> }}
+                    onChange={(e) => setPjtName(e.target.value)}
+                    onKeyDown={handleKeyDown}
+                    style={{ width: '12rem' }}
+                    />
+                    <button className={pjtModalStyles.search_button} onClick={handleFormSubmit}>찾기</button>
+                </div>
+            </div>
+            <div className={pjtModalStyles.button_container}>
+                <CustomButton className={pjtModalStyles.select_button} onClick={handleSelect} disabled={selectedPjts.length === 0}>
+                    <CheckOutlinedIcon className={pjtModalStyles.icon} sx={{ fontSize: '2.5rem' }}/>
+                    <span className={pjtModalStyles.button_text}>선택</span>
+                </CustomButton> 
+                <CustomButton className={pjtModalStyles.select_button} onClick={handleCancel}>
+                <CloseIcon className={pjtModalStyles.icon} sx={{ fontSize: '2.5rem' }}/>
+                <span className={pjtModalStyles.button_text}>취소</span>
+                </CustomButton> 
+            </div>
+            </div>
+            <div className={pjtModalStyles.result_container}>
+                <Table data={project} columns={pjtColumns} variant='checkbox' onRowClick={handlePjtClick} modalPagination={true} />
+            </div>
         </div>
       </Modal>
     )

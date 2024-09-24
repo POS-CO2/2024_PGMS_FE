@@ -93,7 +93,6 @@ const calculateColumnWidths = (columns, data, fontWidth = 15, hasCheckbox = fals
     // 체크박스가 있는 경우 첫 번째 열을 20px로 설정
     if (hasCheckbox) {
         widths[`col-checkbox`] = "4rem"; // 체크박스 열에 고정된 너비 할당
-        visibleIndex++;
     }
     
     columns.forEach((col, index) => {
@@ -109,7 +108,7 @@ const calculateColumnWidths = (columns, data, fontWidth = 15, hasCheckbox = fals
         widths[`col${visibleIndex}`] = Math.max(100, maxTextLength * fontWidth + 20);
         visibleIndex++; // visible 열에 대한 인덱스를 증가시킴
     });
-
+    
     return widths;
 };
 
@@ -137,19 +136,23 @@ export default function CustomizedTables({
     const [rowsPerPage, setRowsPerPage] = useState(modalPagination ? 5 : (monthPagination ? 12 : 10));             // default page row length
     const [columnWidths, setColumnWidths] = useState({});
         
+    useEffect(() => {
+        console.log("columnWidths", columnWidths);
+    }, [columnWidths])
+    
     // selectedRowId와 일치하는 행을 찾아 인덱스를 selectedRow로 설정하고 페이지를 이동
-  useEffect(() => {
-    if (selectedRowId !== null) {
-      const rowIndex = data.findIndex(row => row.id === selectedRowId);
-      if (rowIndex !== -1) {
-        setSelectedRow(rowIndex);
+    useEffect(() => {
+        if (selectedRowId !== null) {
+        const rowIndex = data.findIndex(row => row.id === selectedRowId);
+        if (rowIndex !== -1) {
+            setSelectedRow(rowIndex);
 
-        // rowIndex에 해당하는 페이지로 이동
-        const newPage = Math.floor(rowIndex / rowsPerPage); // 페이지 계산
-        setPage(newPage); // 페이지 이동
-      }
-    }
-  }, [selectedRowId, data, rowsPerPage]);
+            // rowIndex에 해당하는 페이지로 이동
+            const newPage = Math.floor(rowIndex / rowsPerPage); // 페이지 계산
+            setPage(newPage); // 페이지 이동
+        }
+        }
+    }, [selectedRowId, data, rowsPerPage]);
 
     // 데이터와 컬럼에 기반하여 초기 열 너비 설정
     useEffect(() => {
