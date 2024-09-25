@@ -36,6 +36,7 @@ export default function Pg() {
 
     const fetchOptions = async (unitType) => {
         const response = await axiosInstance.get(`/sys/unit?unitType=${unitType}`);
+        
         return response.data.map(item => ({
             value: item.code,
             label: item.name,
@@ -154,14 +155,13 @@ export default function Pg() {
     // 프로젝트 등록 버튼 클릭 시 호출될 함수
     const handleOk = (modalType) => async (data) => {
         setIsModalOpen(prevState => ({ ...prevState, [modalType]: false })); //모달 닫기
-        
         let swalOptions = {
             confirmButtonText: '확인'
         };
         
         if (modalType === 'PgAdd') {
             try {
-                const newPjts = data.row;
+                const newPjts = data;
                 const pjtNameList = [];
 
                 const requestBody = newPjts.map(project => {
@@ -172,6 +172,7 @@ export default function Pg() {
                 });
 
                 const response = await axiosInstance.post("/pjt", requestBody);
+                console.log("resPjt", response.data);
 
                 setProjects(prevPjts => [...response.data, ...prevPjts]);
                 setSelectedPjt({});

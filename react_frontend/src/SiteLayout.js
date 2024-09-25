@@ -77,7 +77,6 @@ const mapMenuDataToItems = (menuData) => {
 };
 
 export default function SiteLayout({handleLogout, menus, user}){
-    const [fav, setFav] = useState(false);
     const [loading, setLoading] = useState(false);
 
     const [collapsed, setCollapsed] = useState(false);
@@ -91,10 +90,6 @@ export default function SiteLayout({handleLogout, menus, user}){
     useEffect(() => {
         items = mapMenuDataToItems(menus);
     }, [menus]);
-
-    const handleFavClick = () => {
-        setFav(!fav);
-    }
 
     const toggleCollapsed = () => {
         setCollapsed(!collapsed);

@@ -44,6 +44,7 @@ export default function Adm() {
 
     const fetchOptions = async (unitType) => {
         const response = await axiosInstance.get(`/sys/unit?unitType=${unitType}`);
+
         return response.data.map(item => ({
             value: item.code,
             label: item.name,

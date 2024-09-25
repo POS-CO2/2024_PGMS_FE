@@ -40,10 +40,10 @@ export default function Fl() {
     });
 
     const fetchOptions = async (unitType) => {
-        console.log("unitType", unitType);
-
         const response = await axiosInstance.get(`/sys/unit?unitType=${unitType}`);
-        console.log("response1", response.data);
+        // console.log("unitType", unitType);
+        // console.log("response", response.data);
+        // console.log("Array.isArray", Array.isArray(response.data))
         return response.data.map(item => ({
             value: item.code,
             label: item.name,
@@ -54,7 +54,6 @@ export default function Fl() {
         const fetchEqLib = async () => {
             try {
                 const response = await axiosInstance.get("/equip/lib");
-        console.log("response2", response.data);
 
                 setEqLibs(response.data);
 
@@ -75,7 +74,8 @@ export default function Fl() {
                     fetchOptions('설비유형'),
                     fetchOptions('설비사양단위'),
                 ]);
-    
+
+                
                 // formField_fl를 업데이트
                 const updateFormFields = formField_fl.map(field => {
                     if (field.name === 'equipDvs') {
@@ -88,15 +88,17 @@ export default function Fl() {
                         return field;
                     }
                 });
-
+                
+                console.log("updateFormFields", updateFormFields);
                 setFormFields(updateFormFields);
             } catch (error) {
+                console.log("aaaa", error);
                 console.error(error);
             }
         };
         
         fetchDropDown();
-
+        console.log("aaaa");
         // formData값이 없으면 설비LIB을 findAll, 있으면(이전 탭의 검색기록이 있으면) 그 값을 불러옴
         Object.keys(formData).length === 0 ? fetchEqLib() : handleFormSubmit(formData);
     }, []);
@@ -130,6 +132,7 @@ export default function Fl() {
 
         try {
             const response = await axiosInstance.get("/equip/lib", {params});
+            console.log("response", response.data);
             setEqLibs(response.data);
 
             //설비LIB 목록에 selectedEqLib 있는지 확인
@@ -142,7 +145,7 @@ export default function Fl() {
             setSubmittedEqLibIdx([]);
             setFormData(data);
         } catch (error) {
-            console.error("Error fetching equip lib data:", error);
+            console.error(error);
         }
     };
 
