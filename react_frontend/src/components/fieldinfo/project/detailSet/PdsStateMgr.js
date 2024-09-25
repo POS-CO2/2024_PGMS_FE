@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useRecoilState, useSetRecoilState } from 'recoil';
 import {
-    managerState, eqState, eqLibState, emSourceState, revState, selectedButtonState
+    managerState, empState, eqState, eqLibState, emSourceState, revState, selectedButtonState
 } from '../../../../atoms/pdsAtoms';
 import axiosInstance from '../../../../utils/AxiosInstance';
 import Pd from './Pd';
@@ -37,6 +37,7 @@ export const PdsStateMgr = ({pjtId}) => {
     const [selectedButton, setSelectedButton] = useRecoilState(selectedButtonState);
 
     const setManagers = useSetRecoilState(managerState);
+    const setEmps = useSetRecoilState(empState);
     const setEquips = useSetRecoilState(eqState);
     const setEqLibs = useSetRecoilState(eqLibState);
     const setEmSources = useSetRecoilState(emSourceState);
@@ -46,11 +47,17 @@ export const PdsStateMgr = ({pjtId}) => {
     useEffect(() => {
       const triggerButtonClick = async () => {
         if (selectedButton === '담당자 관리') {
-          await handleOptionBtnClick([{
-            button: selectedButton,
-            url: `/pjt/manager?pjtId=${pjtId}`,
-            setter: setManagers
-          }]);
+          await handleOptionBtnClick([
+            {
+              button: selectedButton,
+              url: `/pjt/manager?pjtId=${pjtId}`,
+              setter: setManagers
+            },
+            {
+              url: `/pjt/not-manager?pjtId=${pjtId}`,
+              setter: setEmps
+            }
+          ]);
         } else if (selectedButton === '설비 관리') {
           await handleOptionBtnClick([
             {

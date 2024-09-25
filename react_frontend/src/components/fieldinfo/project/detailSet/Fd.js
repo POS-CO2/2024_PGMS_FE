@@ -71,6 +71,7 @@ export default function Fd({pjtId}) {
     const [selectedEq, setSelectedEq] = useRecoilState(selectedEqState);
     const [eqLibs, setEqLibs] = useRecoilState(eqLibState);
     const [selectedEqLib, setSelectedEqLib] = useRecoilState(selectedEqLibState);
+    const [submittedEqLibIdx, setSubmittedEqLibIdx] = useState([]);
 
     // 드롭다운 리스트
     const [eqTypeList, setEqTypeList] = useState([]);
@@ -138,6 +139,7 @@ export default function Fd({pjtId}) {
     };
 
     const handleSubmit = () => {
+        setSubmittedEqLibIdx([0]); //설비목록의 0번째 인덱스에 주황색 배경색 칠하기
         submitAction({
             data: selectedEqLib,
             setterReg: setEquips,
@@ -199,6 +201,7 @@ export default function Fd({pjtId}) {
                 <TableCustom
                     title='설비목록' 
                     data={equips}
+                    submittedRowIdx={submittedEqLibIdx} 
                     columns={equipColumns}                 
                     buttons={['Delete', 'DownloadExcel']}
                     onClicks={[() => showModal('Delete'), () => handleExcelUploadClick(equips, 'exported_table')]}
@@ -212,7 +215,7 @@ export default function Fd({pjtId}) {
                                 ...params,
                                 data: selectedEq, 
                                 setter: setEquips, 
-                                setterSelected: setSelectedEq
+                                setterSumittedIdx: setSubmittedEqLibIdx
                             }),
                             handleCancel: closeModal('Delete'),
                             rowData: selectedEq,

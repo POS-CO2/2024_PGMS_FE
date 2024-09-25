@@ -3,6 +3,8 @@ import { BarChart } from '@mui/x-charts';
 import * as chartStyles from "./assets/css/chart.css"
 //search by pjt
 export default function ChartCustom({ title, data }) {
+    const validatedData = Array.isArray(data) ? data : [];
+
     return (
         <>
             <div className={chartStyles.chart_title}>{title}</div>
@@ -10,7 +12,7 @@ export default function ChartCustom({ title, data }) {
             <div style={{ width: "100%", height: "30rem" }}>
                 <BarChart
                     borderRadius={10}
-                    series={data}
+                    series={validatedData }
                     barLabel={(item, context) => {
                         return context.bar.height < 60 ? null : item.value?.toFixed(2).toString();
                     }}
