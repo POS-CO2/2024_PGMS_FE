@@ -12,6 +12,8 @@ import * as chartStyles from "../../assets/css/chart.css"
 import * as saStyles from "../../assets/css/sa.css"
 import * as XLSX from 'xlsx';
 
+import {avgUnitPerDivData,avgUnitPerDivData2} from "../../assets/json/saDataEx.js"
+
 export default function Sa() {
     const [formData, setFormData] = useState(); // 검색 데이터
     const [salesTableData, setSalesTableData] = useState([]); // 목록 표
@@ -32,7 +34,6 @@ export default function Sa() {
         url = `/anal/sales/div?startDate=${startDate}&endDate=${endDate}`;
         const perDivChartResponse = await axiosInstance.get(url);
         setAvgUnitPerDiv(perDivChartResponse.data);
-
         url = `/anal/sales/prod?startDate=${startDate}&endDate=${endDate}`;
         const perProdChartResponse = await axiosInstance.get(url);
         setUnitPerProd(perProdChartResponse.data);
@@ -133,7 +134,7 @@ export default function Sa() {
                     dataset={unitPerProd}
                     xAxis={[{ 
                         scaleType: 'band',
-                        data: unitPerProd.map(item => item.divCode),
+                        data: unitPerProd.map(item => item.prodTypeCode),
                         colorMap: {
                             type: 'ordinal',
                             colors: ['#b8a3d6', '#97d3e7', '#b97b8c', '#e89596', '#c7e294', '#6fa7c7', '#9ed1b7', '#f1cb86', '#ef9080'],

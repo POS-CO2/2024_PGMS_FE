@@ -58,17 +58,17 @@ export const saData = [
 // 본부별 평균 원단위
 export const avgUnitPerDivData = [
     {
-        "divCode": "CEALD00",
+        "divCode": "플랜트사업본부",
         "avgEmissionQtyPerSales": 105638.99816504265,
         "formattedAvgEmissionQtyPerSales": "105,638.998165"
     },
     {
-        "divCode": "CEBOI00",
-        "avgEmissionQtyPerSales": 111111,
-        "formattedAvgEmissionQtyPerSales": "0"
+        "divCode": "건축사업본부",
+        "avgEmissionQtyPerSales": 123456,
+        "formattedAvgEmissionQtyPerSales": "123,456"
     },
     {
-        "divCode": "D000859",
+        "divCode": "인프라사업본부",
         "avgEmissionQtyPerSales": 17125.85536547434,
         "formattedAvgEmissionQtyPerSales": "17,125.855365"
     },
@@ -79,13 +79,31 @@ export const avgUnitPerDivData = [
     },
     {
         "divCode": "2CEBOI00",
-        "avgEmissionQtyPerSales": 111111,
+        "avgEmissionQtyPerSales": 0,
         "formattedAvgEmissionQtyPerSales": "0"
     },
     {
         "divCode": "3D000859",
         "avgEmissionQtyPerSales": 17125.85536547434,
         "formattedAvgEmissionQtyPerSales": "17,125.855365"
+    }
+]
+
+export const avgUnitPerDivData2 = [
+    {
+        "divCode": "플랜트사업본부",
+        "avgEmissionQtyPerSales": 2731676.7911541113,
+        "formattedAvgEmissionQtyPerSales": "2,731,676.791154"
+    },
+    {
+        "divCode": "건축사업본부", 
+        "avgEmissionQtyPerSales": 2855.561622199165, 
+        "formattedAvgEmissionQtyPerSales": "2,855.561622"
+    },
+    {
+        "divCode": "인프라사업본부", 
+        "avgEmissionQtyPerSales": 0, 
+        "formattedAvgEmissionQtyPerSales": "0"
     }
 ]
 
