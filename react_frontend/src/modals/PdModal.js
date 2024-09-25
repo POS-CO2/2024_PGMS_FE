@@ -923,6 +923,7 @@ export function Ps12UploadExcelModal({ isModalOpen, handleOk, handleCancel }) { 
     const handleFileChange = (event) => {
         const newFile = event.target.files[0];
         setFileList([newFile]);
+        event.target.value = null;
     };
 
     const handleFileRemove = () => {
@@ -2757,7 +2758,9 @@ export function SdShowDetailsModal({ isModalOpen, handleOk, handleCancel }) {
                                     
                                     return (
                                         <div key={index} className={sdStyles.file_item}>
-                                            {displayName}
+                                            <a href={file.url} target="_blank" rel="noopener noreferrer">
+                                                {displayName}
+                                            </a>
                                             <button
                                                 type="button"
                                                 className={sdStyles.remove_button}

@@ -62,7 +62,8 @@ export default function TableCustom({
     handleYearChange = () => { },
     year = undefined,
     subData = [],
-    expandedRow = {}
+    expandedRow = {},
+    monthPagination = false,
 }) {modalPagination
     // 버튼 활성화 상태 결정
     const buttonStatus = buttons.map((button) => {
@@ -133,6 +134,7 @@ export default function TableCustom({
                         handleYearChange={handleYearChange} 
                         subData={subData}
                         expandedRow={expandedRow}
+                        monthPagination={monthPagination}
                     />
                 ) : (<></>)}
             </div>

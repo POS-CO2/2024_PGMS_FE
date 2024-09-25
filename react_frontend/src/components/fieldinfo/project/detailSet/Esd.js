@@ -225,6 +225,7 @@ export default function Esd({pjtId}) {
                                 rowData: selectedES
                             },
                         ]}
+                        monthPagination={true}
                     />
                 )}
             </Card>
