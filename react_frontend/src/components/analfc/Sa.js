@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from 'react';
+import { useRecoilState } from "recoil";
+import { clAnaSearchForm } from '../../atoms/searchFormAtoms';
 import SearchForms from "../../SearchForms";
 import { formField_sa } from "../../assets/json/searchFormData";
 import TableCustom from "../../TableCustom.js";
@@ -15,10 +17,17 @@ import * as XLSX from 'xlsx';
 import {avgUnitPerDivData,avgUnitPerDivData2} from "../../assets/json/saDataEx.js"
 
 export default function Sa() {
-    const [formData, setFormData] = useState(); // 검색 데이터
+    const [formData, setFormData] = useRecoilState(clAnaSearchForm); // 검색 데이터
     const [salesTableData, setSalesTableData] = useState([]); // 목록 표
     const [avgUnitPerDiv, setAvgUnitPerDiv] = useState([]); // 본부별 평균 원단위
     const [unitPerProd, setUnitPerProd] = useState([]); // 상품별 원단위
+
+    useEffect(() => {
+        // formData값이 있으면(이전 탭의 검색기록이 있으면) 그 값을 불러옴
+        if(Object.keys(formData).length !== 0) {
+            handleFormSubmit(formData);
+        }
+    }, []);
 
     // 조회 버튼 클릭시 호출될 함수
     const handleFormSubmit = async (data) => {
@@ -190,7 +199,7 @@ export default function Sa() {
                 {"분석및예측 > 매출액별 분석"}
             </div>
 
-            <SearchForms onFormSubmit={handleFormSubmit} formFields={formField_sa} />
+            <SearchForms initialValues={formData} onFormSubmit={handleFormSubmit} formFields={formField_sa} />
 
             {(!formData || Object.keys(formData).length === 0) ? (
                 <></>

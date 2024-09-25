@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from 'react';
+import { useRecoilState } from "recoil";
+import { clAnaSearchForm } from '../../atoms/searchFormAtoms';
 import SearchForms from "../../SearchForms";
 import { formField_ca } from "../../assets/json/searchFormData";
 import TableCustom from "../../TableCustom.js";
@@ -15,10 +17,17 @@ import * as XLSX from 'xlsx';
 
 export default function Ca() {
     const [formFields, setFormFields] = useState(formField_ca);
-    const [formData, setFormData] = useState(); // 검색 데이터
+    const [formData, setFormData] = useRecoilState(clAnaSearchForm); // 검색 데이터
     const [caData, setCaData] = useState([]); // response, 표 데이터
     const [chartData, setChartData] = useState({ xAxis: [], series: [], yaxis: [] }); // 차트 데이터
     const [columns, setColumns] = useState(climateAnalColumns);
+
+    useEffect(() => {
+        // formData값이 있으면(이전 탭의 검색기록이 있으면) 그 값을 불러옴
+        if(Object.keys(formData).length !== 0) {
+            handleFormSubmit(formData);
+        }
+    }, []);
 
     // 지역 드롭다운 옵션 설정
     useEffect(() => {
@@ -64,10 +73,9 @@ export default function Ca() {
         const endDate = `${data.calendar[1].$y}-${(data.calendar[1].$M + 1).toString().padStart(2, '0')}`;
 
         let url = `/anal/climate?startDate=${startDate}&endDate=${endDate}&regCode=${data.regCode}&selected=${data.selected}`;
-console.log(url);
         const response = await axiosInstance.get(url);
         setCaData(response.data);
-console.log(response.data);
+
         // 영향인자 값에 따른 key 가져오기
         const selectKey = getSelectDataKey(data.selected);
 
@@ -188,7 +196,7 @@ console.log(response.data);
                 {"분석및예측 > 기후별 분석"}
             </div>
 
-            <SearchForms onFormSubmit={handleFormSubmit} formFields={formFields} />
+            <SearchForms initialValues={formData} onFormSubmit={handleFormSubmit} formFields={formFields} />
 
             {(!formData || Object.keys(formData).length === 0) ? (
                 <></>

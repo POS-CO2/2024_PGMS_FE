@@ -63,3 +63,22 @@ export const emissionSrcSearchForm = atom({
     key: 'emissionSrcSearchForm',
     default: {},
 });
+
+/* 분석 페이지 */
+// 매출액별 분석 메뉴의 서치폼
+export const revAnaSearchForm = atom({
+    key: 'emissionSrcSearchForm',
+    default: {},
+});
+
+// 설비별 분석 메뉴의 서치폼
+export const eqLibAnaSearchForm = atom({
+    key: 'eqLibAnaSearchForm',
+    default: {},
+});
+
+// 기후별 분석 메뉴의 서치폼
+export const clAnaSearchForm = atom({
+    key: 'clAnaSearchForm',
+    default: {},
+});
