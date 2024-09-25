@@ -203,7 +203,9 @@ export default function Ca() {
                                     chart: {
                                         height: 300,
                                         type: "line",
-                                        stacked: false
+                                        stacked: false,
+                                        fontFamily: `SUITE-Regular`,
+                                        fontSize: '0.75em'
                                     },
                                     dataLabels: {
                                         enabled: false
