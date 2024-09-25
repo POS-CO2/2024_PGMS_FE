@@ -77,11 +77,23 @@ export function PgAddModal({ isModalOpen, handleOk, handleCancel }) {
 
     //찾기 버튼 클릭시 호출될 함수
     const handleFormSubmit = () => {
+         // 입력 값에 공백이 있다면 제거
+        const trimmedCode = pjtCode.trim();
+        const trimmedName = pjtName.trim();
+        
+        // 필터링 로직
         const filteredProjects = allProjects.filter(pjt => {
-        const matchesCode = pjtCode ? pjt.projectCode?.includes(pjtCode) : true;
-        const matchesName = pjtName ? pjt.projectName?.includes(pjtName) : true;
-        return matchesCode && matchesName;
+            // 프로젝트 코드와 이름이 비어있는 경우를 처리
+            const matchesCode = trimmedCode 
+                ? pjt.pjtCode.toLowerCase().includes(trimmedCode.toLowerCase()) 
+                : true;
+            const matchesName = trimmedName 
+                ? pjt.pjtName.toLowerCase().includes(trimmedName.toLowerCase()) 
+                : true;
+
+            return matchesCode && matchesName;
         });
+
         setProject(filteredProjects);
     };
 
@@ -95,7 +107,7 @@ export function PgAddModal({ isModalOpen, handleOk, handleCancel }) {
 
     // 프로젝트 row 클릭 시 호출될 함수
     const handlePjtClick = (pjt) => {
-        setSelectedPjts(pjt);
+        setSelectedPjts(pjt.row ?? {});
     };
 
     // 선택 버튼 클릭 시 호출될 함수
@@ -112,45 +124,47 @@ export function PgAddModal({ isModalOpen, handleOk, handleCancel }) {
         onCancel={handleCancel} 
         footer={null}             //Ant Design의 기본 footer 제거(Cancel, OK 버튼)
       >
-        <div className={pjtModalStyles.title}>프로젝트 등록</div>
-        <p className={pjtModalStyles.comment}>* 프로젝트 코드나 프로젝트 명 둘 중에 하나만 입력해도 검색이 가능합니다.</p>
-        <div className={pjtModalStyles.search_container}>
-          <div className={pjtModalStyles.search_item}>
-            <div className={pjtModalStyles.search_title}>프로젝트코드</div>
-            <StyledInput
-              value={pjtCode}
-              allowClear={{ clearIcon: <CloseOutlined style={{color: "red"}} /> }}
-              onChange={(e) => setPjtCode(e.target.value)}
-              onKeyDown={handleKeyDown}
-              style={{ width: '12rem' }}
-            />
-          </div>
-          <div className={pjtModalStyles.search_item}>
-            <div className={pjtModalStyles.search_title}>프로젝트명</div>
+        <div className={pjtModalStyles.group_container}>
+            <div className={pjtModalStyles.title}>프로젝트 등록</div>
+            <p className={pjtModalStyles.comment}>* 프로젝트 코드나 프로젝트 명 둘 중에 하나만 입력해도 검색이 가능합니다.</p>
             <div className={pjtModalStyles.search_container}>
+            <div className={pjtModalStyles.search_item}>
+                <div className={pjtModalStyles.search_title}>프로젝트코드</div>
                 <StyledInput
-                value={pjtName}
+                value={pjtCode}
                 allowClear={{ clearIcon: <CloseOutlined style={{color: "red"}} /> }}
-                onChange={(e) => setPjtName(e.target.value)}
+                onChange={(e) => setPjtCode(e.target.value)}
                 onKeyDown={handleKeyDown}
                 style={{ width: '12rem' }}
                 />
-                <button className={pjtModalStyles.search_button} onClick={handleFormSubmit}>찾기</button>
             </div>
-          </div>
-          <div className={pjtModalStyles.button_container}>
-              <CustomButton className={pjtModalStyles.select_button} onClick={handleSelect} disabled={selectedPjts.length === 0}>
-                <CheckOutlinedIcon className={pjtModalStyles.icon} sx={{ fontSize: '2.5rem' }}/>
-                <span className={pjtModalStyles.button_text}>선택</span>
-              </CustomButton> 
-            <CustomButton className={pjtModalStyles.select_button} onClick={handleCancel}>
-              <CloseIcon className={pjtModalStyles.icon} sx={{ fontSize: '2.5rem' }}/>
-              <span className={pjtModalStyles.button_text}>취소</span>
-            </CustomButton> 
-          </div>
-        </div>
-        <div className={pjtModalStyles.result_container}>
-            <Table data={project} columns={pjtColumns} variant='checkbox' onRowClick={handlePjtClick} />
+            <div className={pjtModalStyles.search_item}>
+                <div className={pjtModalStyles.search_title}>프로젝트명</div>
+                <div className={pjtModalStyles.search_container}>
+                    <StyledInput
+                    value={pjtName}
+                    allowClear={{ clearIcon: <CloseOutlined style={{color: "red"}} /> }}
+                    onChange={(e) => setPjtName(e.target.value)}
+                    onKeyDown={handleKeyDown}
+                    style={{ width: '12rem' }}
+                    />
+                    <button className={pjtModalStyles.search_button} onClick={handleFormSubmit}>찾기</button>
+                </div>
+            </div>
+            <div className={pjtModalStyles.button_container}>
+                <CustomButton className={pjtModalStyles.select_button} onClick={handleSelect} disabled={selectedPjts.length === 0}>
+                    <CheckOutlinedIcon className={pjtModalStyles.icon} sx={{ fontSize: '2.5rem' }}/>
+                    <span className={pjtModalStyles.button_text}>선택</span>
+                </CustomButton> 
+                <CustomButton className={pjtModalStyles.select_button} onClick={handleCancel}>
+                <CloseIcon className={pjtModalStyles.icon} sx={{ fontSize: '2.5rem' }}/>
+                <span className={pjtModalStyles.button_text}>취소</span>
+                </CustomButton> 
+            </div>
+            </div>
+            <div className={pjtModalStyles.result_container}>
+                <Table data={project} columns={pjtColumns} variant='checkbox' onRowClick={handlePjtClick} modalPagination={true} />
+            </div>
         </div>
       </Modal>
     )
@@ -594,19 +608,21 @@ export function FamEditModal({ isModalOpen, handleOk, handleCancel, rowData, dro
         fetchActvUnit();
     }, []);
 
-    // 모달이 열릴 때 rowData로부터 폼 필드 값을 설정
     useEffect(() => {
-        if (isModalOpen && rowData) {
+        // actvUnits이 변경된 후에 실행
+        if (actvUnits.length > 0 && rowData) {
             const actvDvsOption = getOptions('actvDataDvs').find(option => option.label === rowData.actvDataDvs);
             const actvTypeOption = getOptions('emtnActvType').find(option => option.label === rowData.emtnActvType);
             const inputUnitOption = getOptions('inputUnit').find(option => option.label === rowData.inputUnitCode);
-
+    
             setActvName(rowData.actvDataName || '');
             setSelectedActvDvs(actvDvsOption ? actvDvsOption.value : '');
             setSelectedEmtnActv(actvTypeOption ? actvTypeOption.value : '');
-            handleInputUnitChange(inputUnitOption.value);
+            if (inputUnitOption) {
+                handleInputUnitChange(inputUnitOption.value); // actvUnits이 설정된 후 호출
+            }
         }
-    }, [rowData, isModalOpen]);
+    }, [actvUnits, rowData]);
 
     // 옵션을 가져오는 함수
     const getOptions = (fieldName) => {
@@ -619,7 +635,7 @@ export function FamEditModal({ isModalOpen, handleOk, handleCancel, rowData, dro
         setSelectedInputUnit(value);
 
         const matchedUnit = actvUnits.find(unit => unit.inputUnitCode === value);
-        
+
         if (matchedUnit) {
             setCalUnit(matchedUnit.calUnitCode);
             setUnitConvCoef(matchedUnit.unitConvCoef);
@@ -645,7 +661,7 @@ export function FamEditModal({ isModalOpen, handleOk, handleCancel, rowData, dro
         if (!formData.actvDataName) newErrors.actvDataName = '활동자료명을 입력해 주세요.';
         if (!formData.actvDataDvs) newErrors.actvDataDvs = '활동자료구분을 선택해 주세요.';
         if (!formData.emtnActvType) newErrors.emtnActvType = '배출활동유형을 선택해 주세요.';
-        if (!formData.inputUnit) newErrors.inputUnit = '입력단위를 선택해 주세요.';
+        if (!formData.inputUnitCode) newErrors.inputUnit = '입력단위를 선택해 주세요.';
 
         if (Object.keys(newErrors).length > 0) {
             setErrors(newErrors);
@@ -907,6 +923,7 @@ export function Ps12UploadExcelModal({ isModalOpen, handleOk, handleCancel }) { 
     const handleFileChange = (event) => {
         const newFile = event.target.files[0];
         setFileList([newFile]);
+        event.target.value = null;
     };
 
     const handleFileRemove = () => {
@@ -1048,10 +1065,6 @@ export function CmAddModal({ isModalOpen, handleOk, handleCancel }) {
     const [error, setError] = useState({});
 
     const handleSelect = async() => {
-        let swalOptions = {
-            confirmButtonText: '확인'
-        };
-
         const formData = {
             codeGrpNo,
             codeGrpName,
@@ -1066,20 +1079,11 @@ export function CmAddModal({ isModalOpen, handleOk, handleCancel }) {
             setError(newError);
             return;
         }
-        try {
-            // POST 요청으로 서버에 데이터 전송
-            const {data} = await axiosInstance.post('/sys/codegroup', formData);
-            // handleOk을 호출하여 모달을 닫고 상위 컴포넌트에 알림
-            swalOptions.title = '성공!',
-            swalOptions.text = `${formData.codeGrpName}가 성공적으로 등록되었습니다.`;
-            swalOptions.icon = 'success';
-            handleOk(data);
-        } catch (error) {
-            swalOptions.title = '실패!',
-            swalOptions.text = error.response.data.message,
-            swalOptions.icon = 'error';
-        }
-        Swal.fire(swalOptions);
+
+        setError({});
+
+        // handleOk을 호출하여 모달을 닫고 상위 컴포넌트에 알림
+        handleOk(formData);
     };
 
     return (
@@ -1141,10 +1145,6 @@ export function CmEditModal({ isModalOpen, handleOk, handleCancel, rowData }) {
     const [error, setError] = useState({});
     // 등록 버튼 클릭 시 호출될 함수
     const handleSelect = async() => {
-
-        let swalOptions = {
-            confirmButtonText: '확인'
-        };
         const formData = {
             id: rowData.id,
             codeGrpNo,
@@ -1160,19 +1160,11 @@ export function CmEditModal({ isModalOpen, handleOk, handleCancel, rowData }) {
             setError(newError);
             return;
         }
-        try {
-            const {data} = await axiosInstance.patch('/sys/codegroup', formData);
-            // handleOk을 호출하여 모달을 닫고 상위 컴포넌트에 알림
-            handleOk(data);
-            swalOptions.title = '성공!',
-            swalOptions.text = `${formData.codeGrpName}이 성공적으로 수정되었습니다.`;
-            swalOptions.icon = 'success';
-        } catch (error) {
-            swalOptions.title = '실패!',
-            swalOptions.text = error.response.data.message,
-            swalOptions.icon = 'error';
-        }
-        Swal.fire(swalOptions);
+        
+        setError({});
+
+        // handleOk을 호출하여 모달을 닫고 상위 컴포넌트에 알림
+        handleOk(formData);
     };
 
     return (
@@ -1314,21 +1306,10 @@ export function CmListAddModal({ isModalOpen, handleOk, handleCancel, rowData })
             return;
         }
 
+        setError({});
 
-        try {
-            // POST 요청으로 서버에 데이터 전송
-            const {data} = await axiosInstance.post('/sys/code', formData);
-            // handleOk을 호출하여 모달을 닫고 상위 컴포넌트에 알림
-            handleOk(data);
-            swalOptions.title = '성공!',
-            swalOptions.text = `${formData.codeName}가 성공적으로 등록되었습니다.`;
-            swalOptions.icon = 'success';
-        } catch (error) {
-            swalOptions.title = '실패!',
-            swalOptions.text = error.response.data.message,
-            swalOptions.icon = 'error';
-        }
-        Swal.fire(swalOptions);
+        // handleOk을 호출하여 모달을 닫고 상위 컴포넌트에 알림
+         handleOk(formData);
     };
 
     return (
@@ -1356,7 +1337,7 @@ export function CmListAddModal({ isModalOpen, handleOk, handleCancel, rowData })
                     <Input id='codeName' disabled value={rowData.codeGrpName} label="코드 그룹 이름" style={{width:"18rem"}} />
                 </div>
                 <div className={sysStyles.text_field}>
-                    <div className={sysStyles.text}>{"코드"}</div>
+                    <div className={sysStyles.text}>{"코드번호"}</div>
                     {/* <TextField size='small' id='code' value={code} onChange={(e) => setCode(e.target.value)} label="코드" variant='outlined' sx={{ width: "20rem" }} /> */}
                     <Input id='code' value={code} onChange={(e) => setCode(e.target.value)} label="코드" style={{width:"18rem"}} />
                     {error.code && <div className={modalStyles.error_message}>{error.code}</div>}
@@ -1425,20 +1406,10 @@ export function CmListEditModal({ isModalOpen, handleOk, handleCancel, rowData }
             return;
         }
 
-        try {
-            // POST 요청으로 서버에 데이터 전송
-            const {data} = await axiosInstance.patch('/sys/code', formData);
-            // handleOk을 호출하여 모달을 닫고 상위 컴포넌트에 알림
-            handleOk(data);
-            swalOptions.title = '성공!',
-            swalOptions.text = `${formData.codeName}이 성공적으로 수정되었습니다.`;
-            swalOptions.icon = 'success';
-        } catch (error) {
-            swalOptions.title = '실패!',
-            swalOptions.text = error.response.data.message,
-            swalOptions.icon = 'error';
-        }
-        Swal.fire(swalOptions);
+        setError({});
+
+        // handleOk을 호출하여 모달을 닫고 상위 컴포넌트에 알림
+        handleOk(formData);
     };
     return (
         <ConfigProvider
@@ -1502,7 +1473,7 @@ export function CmListEditModal({ isModalOpen, handleOk, handleCancel, rowData }
 }
 
 export function EfmAddModal({ isModalOpen, handleOk, handleCancel, rowData }) {
-    const [applyYear, setApplyYear] = useState(2024);
+    const [applyYear, setApplyYear] = useState(new Date().getFullYear());
     const [applyDvs, setApplyDvs] = useState([]);
     const [selectedApplyDvs, setSelectedApplyDvs] = useState([]);
     const [ghgCode, setGhgCode] = useState([]);
@@ -1514,12 +1485,7 @@ export function EfmAddModal({ isModalOpen, handleOk, handleCancel, rowData }) {
     const [coef, setCoef] = useState(0);
     const [error, setError] = useState({});
 
-    console.log("HOCHUL")
     const handleSelect = async() => {
-        let swalOptions = {
-            confirmButtonText: '확인'
-        };
-
         const formData = {
             actvDataId: rowData.id,
             applyYear,
@@ -1540,21 +1506,11 @@ export function EfmAddModal({ isModalOpen, handleOk, handleCancel, rowData }) {
             setError(newError);
             return;
         }
-        try {
-            // POST 요청으로 서버에 데이터 전송
-            const {data} = await axiosInstance.post('/equip/coef', formData);
 
-            // handleOk을 호출하여 모달을 닫고 상위 컴포넌트에 알림
-            handleOk(data);
-            swalOptions.title = '성공!',
-            swalOptions.text = `배출계수가 성공적으로 등록되었습니다.`;
-            swalOptions.icon = 'success';
-        } catch (error) {
-            swalOptions.title = '실패!',
-            swalOptions.text = error.response.data.message;
-            swalOptions.icon = 'error';
-        }
-        Swal.fire(swalOptions);
+        setError({});
+
+        // handleOk을 호출하여 모달을 닫고 상위 컴포넌트에 알림
+        handleOk(formData);
     };
 
     useEffect(() => {
@@ -1706,21 +1662,10 @@ export function EfmEditModal({ isModalOpen, handleOk, handleCancel, rowData }) {
             return;
         }
 
-        try {
-            // POST 요청으로 서버에 데이터 전송
-            const response = await axiosInstance.patch('/equip/coef', formData);
+        setError({});
 
-            // handleOk을 호출하여 모달을 닫고 상위 컴포넌트에 알림
-            handleOk(response.data);
-            swalOptions.title = '성공!',
-            swalOptions.text = `${formData.applyDvs}(이)가 성공적으로 수정되었습니다.`;
-            swalOptions.icon = 'success';
-        } catch (error) {
-            swalOptions.title = '실패!',
-            swalOptions.text = error.response.data.message;
-            swalOptions.icon = 'error';
-        }
-        Swal.fire(swalOptions);
+        // handleOk을 호출하여 모달을 닫고 상위 컴포넌트에 알림
+        handleOk(formData);
     };
 
     useEffect(() => {
@@ -2008,9 +1953,6 @@ export function UmAddModal({ isModalOpen, handleOk, handleCancel }) {
 
     // 등록 버튼 클릭 시 호출될 함수
     const handleInsert = async () => {
-        let swalOptions = {
-            confirmButtonText: '확인'
-        };
         const formData = {
             userName,
             loginId,
@@ -2032,21 +1974,9 @@ export function UmAddModal({ isModalOpen, handleOk, handleCancel }) {
         }
 
         setError({});
-        try {
-            // POST 요청으로 서버에 데이터 전송
-            const {data} = await axiosInstance.post('/sys/user', formData);
-            // handleOk을 호출하여 모달을 닫고 상위 컴포넌트에 알림
-            handleOk(data);
-            swalOptions.title = '성공!',
-            swalOptions.text = `${formData.userName}가 성공적으로 등록되었습니다.`;
-            swalOptions.icon = 'success';
-        } catch (error) {
-            swalOptions.title = '실패!',
-            swalOptions.text = error.response.data.message,
-            swalOptions.icon = 'error';
-
-        }
-        Swal.fire(swalOptions);
+        
+        // handleOk을 호출하여 모달을 닫고 상위 컴포넌트에 알림
+        handleOk(formData);
     };
 
     return (
@@ -2569,7 +2499,6 @@ export function SdShowDetailsModal({ isModalOpen, handleOk, handleCancel }) {
         fileList: []
     });
     const [errors, setErrors] = useState({});
-    const [innerSelectedSd, setInnerSelectedSd] = useState(selectedSD);
 
     useEffect(() => {
         const yearOptions = [];
@@ -2596,7 +2525,6 @@ export function SdShowDetailsModal({ isModalOpen, handleOk, handleCancel }) {
                     url: file.url
                 })) : []
             });
-            setInnerSelectedSd(selectedSD);
         }
     }, [selectedSD]);
 
@@ -2700,8 +2628,6 @@ export function SdShowDetailsModal({ isModalOpen, handleOk, handleCancel }) {
             files: allFiles
         };
         
-        setInnerSelectedSd(response.data); // innerSelectedSd 상태 업데이트
-
         setFormData(prevData => ({
             ...prevData,
             fileList: allFiles.map(file => ({
@@ -2717,23 +2643,6 @@ export function SdShowDetailsModal({ isModalOpen, handleOk, handleCancel }) {
             successMsg: `${documentData.name}(이)가 성공적으로 수정되었습니다.`,
         });
 
-    };
-
-    const onCancelClick = () => {
-        setErrors({});
-        if (innerSelectedSd) {
-            setFormData({
-                actvYear: String(innerSelectedSd.actvYear || new Date().getFullYear()),
-                actvMth: String(innerSelectedSd.actvMth || (new Date().getMonth() + 1)),
-                name: innerSelectedSd.name || '',
-                fileList: Array.isArray(innerSelectedSd.files) ? innerSelectedSd.files.map(file => ({
-                    name: file.name,
-                    status: 'done',
-                    url: file.url
-                })) : []
-            });
-        }
-        handleOk(innerSelectedSd, false);
     };
 
     return (
@@ -2759,6 +2668,7 @@ export function SdShowDetailsModal({ isModalOpen, handleOk, handleCancel }) {
                             id="actvYear"
                             value={formData.actvYear}
                             onChange={(value) => setFormData(prevData => ({ ...prevData, actvYear: value }))}
+                            disabled={true}
                         >
                             {yearSelectOptions.map(option => (
                                 <Select.Option key={option.value} value={option.value}>
@@ -2771,6 +2681,7 @@ export function SdShowDetailsModal({ isModalOpen, handleOk, handleCancel }) {
                             id="actvMth"
                             value={formData.actvMth}
                             onChange={(value) => setFormData(prevData => ({ ...prevData, actvMth: value }))}
+                            disabled={true}
                         >
                             {selectMonth.map(option => (
                                 <Select.Option key={option.value} value={option.value}>
@@ -2790,6 +2701,8 @@ export function SdShowDetailsModal({ isModalOpen, handleOk, handleCancel }) {
                     <input className={sdStyles.search} id="creator"
                         value={selectedSD.creatorDeptCode+" / "+selectedSD.creatorName}
                         onChange={(e) => setFormData(prevData => ({ ...prevData, name: e.target.value }))}
+                        disabled
+                        style={{ color: '#B6B6B6' }}
                     />
                 </div>
 
@@ -2845,7 +2758,9 @@ export function SdShowDetailsModal({ isModalOpen, handleOk, handleCancel }) {
                                     
                                     return (
                                         <div key={index} className={sdStyles.file_item}>
-                                            {displayName}
+                                            <a href={file.url} target="_blank" rel="noopener noreferrer">
+                                                {displayName}
+                                            </a>
                                             <button
                                                 type="button"
                                                 className={sdStyles.remove_button}
@@ -2864,7 +2779,7 @@ export function SdShowDetailsModal({ isModalOpen, handleOk, handleCancel }) {
             </div>
 
             <div className={sdStyles.button_group}>
-                <button onClick={onCancelClick} className={sdStyles.cancel_button}>취소</button>
+                <button onClick={handleCancel} className={sdStyles.cancel_button}>취소</button>
                 <button onClick={onSaveClick} className={sdStyles.save_button}>저장</button>
             </div>
         </Modal>

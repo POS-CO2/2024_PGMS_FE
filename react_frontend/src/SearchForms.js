@@ -91,7 +91,7 @@ export default function SearchForms({ initialValues={}, onFormSubmit, formFields
         if (isInitialSubmit) {
             autoSubmitForm();
         }
-    }, [isInitialSubmit, formFields, form]);
+    }, []);
 
     // 폼 변경을 감지해서 버튼 색상 변경
     const handleFieldsChange = () => {

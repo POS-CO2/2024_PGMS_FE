@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useRecoilState } from "recoil";
 import { userMgrSearchForm } from '../../atoms/searchFormAtoms';
+import { selectedUserState } from '../../atoms/selectedRowAtoms';
 import SearchForms from '../../SearchForms';
 import { formField_mal, formField_um } from '../../assets/json/searchFormData';
 import TableCustom from '../../TableCustom';
@@ -17,8 +18,11 @@ export default function Um() {
     const [formFields, setFormFields] = useState(formField_mal);
     const [formData, setFormData] = useRecoilState(userMgrSearchForm);
     const [userList, setUserList] = useState([]);
-    const [userShow, setUserShow] = useState(true);
     const [password, setPassword] = useState(null);
+    const [submittedUserIdx, setSubmittedUserIdx] = useState(() => {
+        const leftTableSub = localStorage.getItem("leftTableSub");
+        return leftTableSub ? JSON.parse(leftTableSub) : [];
+    });
 
     const access = [
         {
@@ -67,9 +71,12 @@ export default function Um() {
         Object.keys(formData).length === 0 ? fetchUserList() : handleFormSubmit(formData);
     },[]);
 
+    useEffect(() => {
+        localStorage.setItem("leftTableSub", JSON.stringify(submittedUserIdx));
+    }, [submittedUserIdx]);
+
     const handleFormSubmit = async (e) => {
         setFormData(e);
-        setUserShow(false);
         const {data} = await axiosInstance.get(`/sys/user`, {
             params: {
                 loginId : e.loginId,
@@ -79,25 +86,16 @@ export default function Um() {
             }
         });
         setUserList(data ?? {});
-        setUserShow(true);
-        setInfoShow(false);
+        setSubmittedUserIdx([]);
+        setFormData(e);
     }
 
-    const [infoShow ,setInfoShow] = useState(false);
-
-    const [selectedUser, setSelectedUser] = useState([]);
+    const [selectedUser, setSelectedUser] = useRecoilState(selectedUserState);
 
     const handleRowClick = (data) => {
         const e = data.row;
     
         setSelectedUser(e ?? {});
-        if (e === undefined) {
-            setInfoShow(false);
-        }
-        else {
-            
-            setInfoShow(true);
-        }
         setEditable(true);
     };
 
@@ -110,17 +108,46 @@ export default function Um() {
         setIsModalOpen(prevState => ({...prevState, [modalType]: true}));
     };
 
-    const handleOk = (modalType) => (data) => {
+    const handleOk = (modalType) => async (data) => {
         setIsModalOpen(prevState => ({ ...prevState, [modalType]: false }));
+
+        let swalOptions = {
+            confirmButtonText: '확인'
+        };
+
         if (modalType === 'Delete') {
             // 사용자 삭제 후 목록 갱신
-            setUserList(prevList => prevList.filter(user => user.id !== data.id));
-            setInfoShow(false); // 상세 정보 화면 비활성화
+            setUserList(prevList => prevList.filter(user => user.id !== selectedUser.id));
+            setSelectedUser({});
+            setSubmittedUserIdx([]);
         }
         else if (modalType === 'UmAdd') {
-            // 새로 추가된 사용자 목록에 추가
-            setUserList(prevList => [...prevList, data]);
+            try {
+                // POST 요청으로 서버에 데이터 전송
+                const response = await axiosInstance.post('/sys/user', data);
+                
+                // 새로 추가된 사용자 목록에 추가
+                setUserList(prevList => [response.data, ...prevList]);
+                setSelectedUser({});
+                setSubmittedUserIdx([0]);
+
+                swalOptions.title = '성공!',
+                swalOptions.text = `${data.userName}(이)가 성공적으로 등록되었습니다.`;
+                swalOptions.icon = 'success';
+            } catch (error) {
+                swalOptions.title = '실패!',
+                swalOptions.text = error.response.data.message,
+                swalOptions.icon = 'error';
+            }
         }
+
+        // Swal.fire 실행 후, 성공 메시지가 표시되면 페이지 새로고침
+        Swal.fire(swalOptions).then(() => {
+            // 성공 후 페이지 새로고침
+            if(modalType !== 'Delete') {
+                window.location.reload();
+            }
+        });
     };
 
     const handleCancel = (modalType) => () => {
@@ -194,7 +221,7 @@ export default function Um() {
             />
             <div className={sysStyles.main_grid}>
                 <Card className={sysStyles.card_box} sx={{width:"50%", height:"80vh", borderRadius:"15px"}}>
-                    {userShow && <TableCustom title="사용자목록" columns={userColumns} data={userList} buttons={['Delete', 'Add']} selectedRows={[selectedUser]} onClicks={[handleDeleteClick, handleAddClick]} onRowClick={(e) => handleRowClick(e)} modals={
+                    <TableCustom title="사용자목록" columns={userColumns} data={userList} submittedRowIdx={submittedUserIdx} buttons={['Delete', 'Add']} selectedRows={[selectedUser]} onClicks={[handleDeleteClick, handleAddClick]} onRowClick={(e) => handleRowClick(e)} modals={
                         [
                             isModalOpen.UmAdd && {
                                 "modalType" : 'UmAdd',
@@ -212,10 +239,10 @@ export default function Um() {
                                 'url': '/sys/user', // 삭제 전달할 api 주소
                             },
                         ].filter(Boolean)
-                    }/>}
+                    }/>
                 </Card>
                 <Card className={sysStyles.card_box} sx={{width:"50%", borderRadius:"15px", height:"80vh"}}>
-                    {infoShow ? (
+                    {(!selectedUser || Object.keys(selectedUser).length !== 0) ? (
                         <ConfigProvider
                         theme={{token:{fontFamily:"SUITE-Regular"}}}>
                             <TableCustom title='사용자 상세정보' buttons={['DoubleClickEdit']} onClicks={[handleEditClick]} table={false} 

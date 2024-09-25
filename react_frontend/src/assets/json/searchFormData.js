@@ -149,6 +149,25 @@ export const formField_sa = [
     { type: 'SelectCalendar', name: 'calendar', label: '분석기간', required: true }
 ];
 
+export const formField_ea = [
+    { type: 'SelectCalendar', name: 'calendar', label: '분석기간', required: true },
+    { type: 'DropDown', name: 'selected', label: '분석기준', required: true, options: [
+        { value: '설비LIB', label: '설비LIB' },
+        { value: '설비유형', label: '설비유형' },
+        { value: '에너지원', label: '에너지원' }
+    ] }
+];
+
+export const formField_ca = [
+    { type: 'SelectCalendar', name: 'calendar', label: '분석기간', required: true },
+    { type: 'DropDown', name: 'regCode', label: '지역', required: true, options: [] },
+    { type: 'DropDown', name: 'selected', label: '영향인자', required: true, options: [
+        { value: '평균기온', label: '평균기온' },
+        { value: '평균강수량', label: '평균강수량' },
+        { value: '평균습도', label: '평균습도' }
+    ] }
+];
+
 // 필요한 서치바 여기서 만들어서 데이터 임포트 해서 사용하기
 // import {formField_ps12} from "../../assets/json/searchFormData.js"
 // import { formField_ps12 } from './searchFormData';

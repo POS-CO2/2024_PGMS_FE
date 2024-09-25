@@ -71,9 +71,30 @@ export default function Esd({pjtId}) {
     const [filteredSDs, setFilteredSDs] = useState(filteredSDState);
     const [selectedSD, setSelectedSD] = useRecoilState(selectedSuppDocState);
     const [year, setYear] = useState(new Date().getFullYear());
+    const [submittedEsdIdx, setSubmittedEsdIdx] = useState([]);
+    const [submittedSDIdx, setSubmittedSDIdx] = useState([]);
 
     const { showModal, closeModal, isModalOpen } = useModalActions();
     const handleOk = useHandleOkAction();
+
+    useEffect(() => {
+        Object.keys(selectedES).length !== 0 && fetchSDList(selectedES);
+    }, []);
+
+    useEffect(() => {
+        setSelectedSD({});
+    }, [selectedES])
+
+    const fetchSDList = async (es) => {
+        try {
+            // 선택한 배출원에 매핑된 증빙자료 목록 조회
+            const response = await axiosInstance.get(`/equip/document?emissionId=${es.id}`);
+            setSuppDocs(response.data);
+            setFilteredSDs(response.data);
+        } catch (error) {
+            console.error("Error fetching activity data:", error);
+        }
+    }
 
     // 배출원 row 클릭 시 호출될 함수
     const handleESClick = async (data) => {
@@ -88,15 +109,7 @@ export default function Esd({pjtId}) {
 
         // 배출원을 클릭하면 setSelectedES를 설정하고 API 호출
         setSelectedES(es);
-
-        try {
-            // 선택한 배출원에 매핑된 증빙자료 목록 조회
-            const response = await axiosInstance.get(`/equip/document?emissionId=${es.id}`);
-            setSuppDocs(response.data);
-            setFilteredSDs(response.data);
-        } catch (error) {
-            console.error("Error fetching activity data:", error);
-        }
+        fetchSDList(es);
     };
 
     // 증빙자료 row 클릭 시 호출될 함수
@@ -116,6 +129,7 @@ export default function Esd({pjtId}) {
                 <TableCustom
                     title='배출원목록' 
                     data={emSources}
+                    submittedRowIdx={submittedEsdIdx}
                     columns={equipEmissionColumns}                 
                     buttons={['Delete', 'Add']}
                     onClicks={[() => showModal('DeleteA'), () => showModal('EsmAdd')]}
@@ -130,7 +144,8 @@ export default function Esd({pjtId}) {
                                 ...params,
                                 data: selectedES, 
                                 setter: setEmSources,
-                                setterSelected: setSelectedES
+                                setterSelected: setSelectedES,
+                                setterSumittedIdx: setSubmittedEsdIdx
                             }),
                             handleCancel: closeModal('DeleteA'),
                             rowData: selectedES,
@@ -143,7 +158,8 @@ export default function Esd({pjtId}) {
                             handleOk: (params) => handleOk('EsmAdd')({
                                 ...params,
                                 setter: setEmSources, 
-                                setterSelected: setSelectedES
+                                setterSelected: setSelectedES,
+                                setterSumittedIdx: setSubmittedEsdIdx
                             }),
                             handleCancel: closeModal('EsmAdd'),
                             rowData: pjtId
@@ -159,6 +175,7 @@ export default function Esd({pjtId}) {
                     <TableCustom 
                         title='증빙자료목록' 
                         data={filteredSDs} 
+                        submittedRowIdx={submittedSDIdx}
                         columns={equipDocumentColumns}
                         buttons={['ShowDetails', 'Delete', 'Add']}
                         onClicks={[() => showModal('SdShowDetails'), () => showModal('DeleteB'), () => showModal('SdAdd')]}
@@ -170,10 +187,12 @@ export default function Esd({pjtId}) {
                             isModalOpen.SdShowDetails && {
                                 modalType: 'SdShowDetails',
                                 isModalOpen: isModalOpen.SdShowDetails,
-                                handleOk: () => handleOk('SdShowDetails') ({
+                                handleOk: (params) => handleOk('SdShowDetails') ({
+                                    ...params,
                                     data: selectedSD, 
                                     setter: setFilteredSDs, 
-                                    setterSelected: setSelectedSD
+                                    setterSelected: setSelectedSD,
+                                    setterSumittedIdx: setSubmittedSDIdx
                                 }),
                                 handleCancel: closeModal('SdShowDetails'),
                                 rowData: selectedSD
@@ -185,7 +204,8 @@ export default function Esd({pjtId}) {
                                     ...params,
                                     data: selectedSD, 
                                     setter: setFilteredSDs, 
-                                    setterSelected: setSelectedSD
+                                    setterSelected: setSelectedSD,
+                                    setterSumittedIdx: setSubmittedSDIdx
                                 }),
                                 handleCancel: closeModal('DeleteB'),
                                 rowData: selectedSD,
@@ -198,12 +218,14 @@ export default function Esd({pjtId}) {
                                 handleOk: (params) => handleOk('SdAdd')({
                                     ...params,
                                     setter: setFilteredSDs, 
-                                    setterSelected: setSelectedSD
+                                    setterSelected: setSelectedSD,
+                                    setterSumittedIdx: setSubmittedSDIdx
                                 }),
                                 handleCancel: closeModal('SdAdd'),
                                 rowData: selectedES
                             },
                         ]}
+                        monthPagination={true}
                     />
                 )}
             </Card>

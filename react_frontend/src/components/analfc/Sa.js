@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from 'react';
+import { useRecoilState } from "recoil";
+import { clAnaSearchForm } from '../../atoms/searchFormAtoms';
 import SearchForms from "../../SearchForms";
 import { formField_sa } from "../../assets/json/searchFormData";
 import TableCustom from "../../TableCustom.js";
@@ -12,42 +14,38 @@ import * as chartStyles from "../../assets/css/chart.css"
 import * as saStyles from "../../assets/css/sa.css"
 import * as XLSX from 'xlsx';
 
-import { saData, avgUnitPerDivData, unitPerProdData } from '../../assets/json/saDataEx';
+import {avgUnitPerDivData,avgUnitPerDivData2} from "../../assets/json/saDataEx.js"
 
 export default function Sa() {
-    const [formData, setFormData] = useState(); // 검색 데이터
+    const [formData, setFormData] = useRecoilState(clAnaSearchForm); // 검색 데이터
     const [salesTableData, setSalesTableData] = useState([]); // 목록 표
     const [avgUnitPerDiv, setAvgUnitPerDiv] = useState([]); // 본부별 평균 원단위
     const [unitPerProd, setUnitPerProd] = useState([]); // 상품별 원단위
 
+    useEffect(() => {
+        // formData값이 있으면(이전 탭의 검색기록이 있으면) 그 값을 불러옴
+        if(Object.keys(formData).length !== 0) {
+            handleFormSubmit(formData);
+        }
+    }, []);
+
     // 조회 버튼 클릭시 호출될 함수
     const handleFormSubmit = async (data) => {
         setFormData(data);
+        
+        const startDate = `${data.calendar[0].$y}-${(data.calendar[0].$M + 1).toString().padStart(2, '0')}`;
+        const endDate = `${data.calendar[1].$y}-${(data.calendar[1].$M + 1).toString().padStart(2, '0')}`;
 
-        //let url = `/perf/pjt?pjtId=${data.searchProject.id}&year=${data.actvYear}`;
-        //const response = await axiosInstance.get(url);
-        setSalesTableData(saData);
-        setAvgUnitPerDiv(avgUnitPerDivData);
-        setUnitPerProd(unitPerProdData);
-/*
-        // data가 빈 배열인지 확인
-        if (response.data.length === 0) {
-            // 빈 데이터인 경우, 배열의 필드를 유지하면서 빈 값으로 채운 배열 생성
-            setChartPerfs([
-                { data: Array(12).fill(null), stack: 'A', label: 'Scope 1' },
-                { data: Array(12).fill(null), stack: 'A', label: 'Scope 2' }
-            ]);
+        let url = `/anal/sales/table?startDate=${startDate}&endDate=${endDate}`;
+        const tableResponse = await axiosInstance.get(url);
+        setSalesTableData(tableResponse.data);
 
-        } else {
-            //차트
-            const scope1Data = response.data.map(perf => perf.scope1 || null);
-            const scope2Data = response.data.map(perf => perf.scope2 || null);
-            const formattedChartPerfs = [
-                { data: scope1Data, stack: 'A', label: 'Scope 1' },
-                { data: scope2Data, stack: 'A', label: 'Scope 2' }
-            ];
-            setChartPerfs(formattedChartPerfs);
-        }*/
+        url = `/anal/sales/div?startDate=${startDate}&endDate=${endDate}`;
+        const perDivChartResponse = await axiosInstance.get(url);
+        setAvgUnitPerDiv(perDivChartResponse.data);
+        url = `/anal/sales/prod?startDate=${startDate}&endDate=${endDate}`;
+        const perProdChartResponse = await axiosInstance.get(url);
+        setUnitPerProd(perProdChartResponse.data);
     };
     
     const onDownloadExcelClick = (csvData) => {
@@ -145,7 +143,7 @@ export default function Sa() {
                     dataset={unitPerProd}
                     xAxis={[{ 
                         scaleType: 'band',
-                        data: unitPerProd.map(item => item.divCode),
+                        data: unitPerProd.map(item => item.prodTypeCode),
                         colorMap: {
                             type: 'ordinal',
                             colors: ['#b8a3d6', '#97d3e7', '#b97b8c', '#e89596', '#c7e294', '#6fa7c7', '#9ed1b7', '#f1cb86', '#ef9080'],
@@ -201,7 +199,7 @@ export default function Sa() {
                 {"분석및예측 > 매출액별 분석"}
             </div>
 
-            <SearchForms onFormSubmit={handleFormSubmit} formFields={formField_sa} />
+            <SearchForms initialValues={formData} onFormSubmit={handleFormSubmit} formFields={formField_sa} />
 
             {(!formData || Object.keys(formData).length === 0) ? (
                 <></>

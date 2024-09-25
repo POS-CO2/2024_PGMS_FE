@@ -246,3 +246,32 @@ export const salesAnalColumns = [
     { key: 'formattedTotalSales', label: '매출액(백만원)', hidden: false },
     { key: 'formattedEmissionQtyPerSales', label: '원단위', hidden: false },
 ]
+
+export const equipAnalLibColumns = [
+    { key: 'equipLibName', label: '설비LIB명', hidden: false },
+    { key: 'totalEmissionQty', label: '총배출량', hidden: true },
+    { key: 'formattedTotalEmissionQty', label: '총배출량', hidden: false },
+]
+
+export const equipAnalTypeColumns = [
+    { key: 'equipType', label: '설비유형', hidden: false },
+    { key: 'totalEmissionQty', label: '총배출량', hidden: true },
+    { key: 'formattedTotalEmissionQty', label: '총배출량', hidden: false },
+]
+
+export const equipAnalSourceColumns = [
+    { key: 'energySource', label: '에너지원', hidden: false },
+    { key: 'equipSpecUnit', label: '설비사양단위', hidden: false },
+    { key: 'totalEmissionQty', label: '총배출량', hidden: true },
+    { key: 'formattedTotalEmissionQty', label: '총배출량', hidden: false },
+]
+
+export const climateAnalColumns = [
+    { key: 'year', label: '대상연도', hidden: false },
+    { key: 'mth', label: '대상월', hidden: false },
+    { key: 'regCode', label: '지역', hidden: false },
+    { key: 'avgTm', label: '영향인자값', hidden: true }, // 선택한 영향인자로 동적 변경
+    { key: 'co2EmtnConvTotalQty', label: '총CO2배출량', hidden: true },
+    { key: 'formattedAvgTm', label: '영향인자값', hidden: false }, // 선택한 영향인자로 동적 변경
+    { key: 'formattedCo2EmtnConvTotalQty', label: '총CO2배출량(kgGHG)', hidden: false },
+]
