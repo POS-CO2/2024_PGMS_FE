@@ -293,12 +293,7 @@ export default function Main_Admin() {
     };
 
     const userCnt = useFetchData(`/sys/session`, 10000);
-    // const menuLogCnt = useFetchData(`/sys/log/board?startDate=${dateArray[0]}`);
-    // const service = useFetchData(`/sys/containers?clusterName=pgms_common`);
-    // console.log(service);
     const commonUrl = '/sys/containers/item?clusterName=pgms_common&arn=arn:aws:ecs:ap-northeast-2:011528301196:service/pgms_common/';
-    // const commonData = useFetchData(commonUrl.concat("pgms_common_service"));
-    // console.log(commonData.data);
 
     const handleCountChange = (value) => {
         setCount(value);
@@ -531,6 +526,7 @@ export default function Main_Admin() {
         } catch (error) {
             console.error(error);
         }
+        console.log("삐빅");
     }, []);
 
     const fetchSocketService = async () => {
@@ -543,43 +539,20 @@ export default function Main_Admin() {
         }
     }
 
-    useInterval(() => {
-        setProgress(prev => {
-            if (prev >= 100) {
-                return 0; 
-            }
-            return prev + 25;
-        });
-    }, 1000 )
-
-    useInterval(() => {
-        fetchData();
-    }, 5000);
-
-    // 서버관리
-    // useEffect(() => {
-    //     if (main === "server") {
-    //         // const fetchData = async () => {
-    //         //     // common
-    //         //     await Promise.all([
-    //         //         fetchCommonService(),
-    //         //         fetchEquipmentService(),
-    //         //         fetchProjectService(),
-    //         //         fetchAnalService(),
-    //         //         fetchSocketService()
-    //         //     ])
-    //         // }
-    //         // fetchData();
-
-    //         const interval = setInterval(() => {
-    //             fetchData();
-    //         }, 5000);
-            
-    //         return () => {
-    //             clearInterval(interval);
+    // useInterval(() => {
+    //     setProgress(prev => {
+    //         if (prev >= 100) {
+    //             return 0; 
     //         }
-    //     }
-    // }, [main])
+    //         return prev + 25;
+    //     });
+    // }, 1000 )
+    
+    useInterval(() => {
+        if (main === "server"){
+            fetchData();
+        }
+    }, 5000);
 
     const handleContainerAddClick = async (data) => {
         let swalOptions = {
@@ -682,7 +655,7 @@ export default function Main_Admin() {
     return (
             <div className={gridStyles.main_grid}>
                 <div className={gridStyles.left_box}>
-                    <Card onClick={handleServerClick} sx={{width:"90%", height:"18%", borderRadius:"10px", margin:"0 auto", backgroundColor:"rgb(36,46,59)", margin:"0 auto"}}>
+                    <Card onClick={handleServerClick} sx={{width:"90%", height:"18%", borderRadius:"10px", margin:"0 auto", backgroundColor:"rgb(36,46,59)", margin:"0 auto", cursor:"pointer"}}>
                         <div className={gridStyles.left_icon}>
                             <img src={EcrLogo} alt='ecrlogo' style={{width:"100px", height:"100px"}}/>
                         </div>
@@ -690,7 +663,7 @@ export default function Main_Admin() {
                             서버 관리
                         </div>
                     </Card>
-                    <Card onClick={handleErrorLogClick} sx={{width:"90%", height:"18%", borderRadius:"10px", backgroundColor:"rgb(209,214,221)"}}>
+                    <Card onClick={handleErrorLogClick} sx={{width:"90%", height:"18%", borderRadius:"10px", backgroundColor:"rgb(209,214,221)", cursor:"pointer"}}>
                         <div className={gridStyles.left_icon}>
                             <img src={TerminalLogo} alt='terminal' style={{width:"100px", height:"100px", margin:"0 auto"}} />
                         </div>
@@ -1394,6 +1367,7 @@ export default function Main_Admin() {
                                     justifyContent: "center",
                                     alignItems: "center",
                                     borderRadius: "10px",
+                                    cursor:"pointer"
                                     }}
                                 >
                                     <Code fontSize="large" sx={{ color: "white" }} />
@@ -1408,6 +1382,7 @@ export default function Main_Admin() {
                                     justifyContent: "center",
                                     alignItems: "center",
                                     borderRadius: "10px",
+                                    cursor:"pointer"
                                     }}
                                 >
                                     <ManageAccounts fontSize="large" sx={{ color: "white" }} />
@@ -1422,6 +1397,7 @@ export default function Main_Admin() {
                                     justifyContent: "center",
                                     alignItems: "center",
                                     borderRadius: "10px",
+                                    cursor:"pointer"
                                     }}
                                 >
                                     <Menu fontSize="large" sx={{ color: "white" }} />
@@ -1436,6 +1412,7 @@ export default function Main_Admin() {
                                     justifyContent: "center",
                                     alignItems: "center",
                                     borderRadius: "10px",
+                                    cursor:"pointer"
                                     }}
                                 >
                                     <Terminal fontSize="large" sx={{ color: "white" }} />
@@ -1455,9 +1432,7 @@ export default function Main_Admin() {
                             <div className={gridStyles.right_box_user}>
                                 <div className={gridStyles.online_dot}>●</div>
                                 <div className={gridStyles.online_user}>
-                                    {!userCnt.isLoading ? userCnt.data.TOTAL : (
-                                        <CircularProgress />
-                                    )}
+                                    {userCnt.data.TOTAL}
                                 </div>
                                 <div className={gridStyles.online_icon}>
                                     <PeopleAlt fontSize='large' sx={{color:"gray"}} />
