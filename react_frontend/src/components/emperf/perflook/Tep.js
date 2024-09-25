@@ -144,7 +144,7 @@ function TableTab({ data }) {
 
     return (
         <Card sx={{ width: "100%", height: "100%", borderRadius: "15px" }}>
-            <TableCustom columns={perfTotalColumns} title="총량실적표" data={data} buttons={['DownloadExcel']} onClicks={[() => onDownloadExcelClick(data)]} />
+            <TableCustom columns={perfTotalColumns} title="총량실적표" data={data} buttons={['DownloadExcel']} onClicks={[() => onDownloadExcelClick(data)]} monthPagination={true} />
         </Card>
     )
 }

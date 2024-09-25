@@ -4,10 +4,28 @@
     line-height: 39px;
     font-size: 20px;
 
-    margin-top: 20px;
+    margin-top: 13px;
     margin-left: 20px;
     display: flex;
     align-items: center;
 
     color: #000000
 };
+
+.chart_double_title {
+    position: relative;
+    font-weight: bold;
+    line-height: 39px;
+    font-size: 20px;
+    display: flex;
+    align-items: center;
+    color: #000000
+};
+.chart_title_container {
+    display: flex;
+    justify-content: space-between; /* 내부 요소를 양 끝에 배치 */
+    align-items: center; /* 세로축 중앙 정렬 */
+    margin-top: 1.5rem;
+    margin-left: 1.5rem;
+    width: 97%; /* 컨테이너가 부모의 전체 너비를 차지 */
+}

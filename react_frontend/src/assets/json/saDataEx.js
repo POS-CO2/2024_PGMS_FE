@@ -1,3 +1,5 @@
+// 매출액별 분석
+// 테이블
 export const saData = [
     {
         "pjtCode": "070687CA",
@@ -53,19 +55,20 @@ export const saData = [
     }
 ]
 
+// 본부별 평균 원단위
 export const avgUnitPerDivData = [
     {
-        "divCode": "CEALD00",
+        "divCode": "플랜트사업본부",
         "avgEmissionQtyPerSales": 105638.99816504265,
         "formattedAvgEmissionQtyPerSales": "105,638.998165"
     },
     {
-        "divCode": "CEBOI00",
-        "avgEmissionQtyPerSales": 111111,
-        "formattedAvgEmissionQtyPerSales": "0"
+        "divCode": "건축사업본부",
+        "avgEmissionQtyPerSales": 123456,
+        "formattedAvgEmissionQtyPerSales": "123,456"
     },
     {
-        "divCode": "D000859",
+        "divCode": "인프라사업본부",
         "avgEmissionQtyPerSales": 17125.85536547434,
         "formattedAvgEmissionQtyPerSales": "17,125.855365"
     },
@@ -76,7 +79,7 @@ export const avgUnitPerDivData = [
     },
     {
         "divCode": "2CEBOI00",
-        "avgEmissionQtyPerSales": 111111,
+        "avgEmissionQtyPerSales": 0,
         "formattedAvgEmissionQtyPerSales": "0"
     },
     {
@@ -86,6 +89,25 @@ export const avgUnitPerDivData = [
     }
 ]
 
+export const avgUnitPerDivData2 = [
+    {
+        "divCode": "플랜트사업본부",
+        "avgEmissionQtyPerSales": 2731676.7911541113,
+        "formattedAvgEmissionQtyPerSales": "2,731,676.791154"
+    },
+    {
+        "divCode": "건축사업본부", 
+        "avgEmissionQtyPerSales": 2855.561622199165, 
+        "formattedAvgEmissionQtyPerSales": "2,855.561622"
+    },
+    {
+        "divCode": "인프라사업본부", 
+        "avgEmissionQtyPerSales": 0, 
+        "formattedAvgEmissionQtyPerSales": "0"
+    }
+]
+
+// 상품별 평균 원단위
 export const unitPerProdData = [
     {
         "divCode": "1201",
@@ -141,5 +163,114 @@ export const unitPerProdData = [
         "divCode": "125",
         "avgEmissionQtyPerSales": 24358,
         "formattedAvgEmissionQtyPerSales": "106,799.866277"
+    }
+]
+
+// 설비별 분석
+// 설비LIB
+export const libData = [
+    {
+        "equipLibName": "가설사무실 전력",
+        "totalEmissionQty": 352094.3804618,
+        "formattedTotalEmissionQty": "352,094.380462"
+    },
+    {
+        "equipLibName": "공사용 전력",
+        "totalEmissionQty": 23653.5181155016,
+        "formattedTotalEmissionQty": "23,653.518116"
+    },
+    {
+        "equipLibName": "법인차량",
+        "totalEmissionQty": 2114.2896,
+        "formattedTotalEmissionQty": "2,114.2896"
+    }
+]
+
+// 설비유형
+export const typeData = [
+    {
+        "equipType": "1",
+        "totalEmissionQty": 2114.2896,
+        "formattedTotalEmissionQty": "2,114.2896"
+    },
+    {
+        "equipType": "9",
+        "totalEmissionQty": 375747.8985773016,
+        "formattedTotalEmissionQty": "375,747.898577"
+    }
+]
+
+// 에너지원
+export const sourceData = [
+    {
+        "energySource": "전력",
+        "equipSpecUnit": "kWh",
+        "totalEmissionQty": 375747.8985773016,
+        "formattedTotalEmissionQty": "375,747.898577"
+    },
+    {
+        "energySource": "액체연료",
+        "equipSpecUnit": "ℓ",
+        "totalEmissionQty": 2114.2896,
+        "formattedTotalEmissionQty": "2,114.2896"
+    }
+]
+
+// 기후별 분석
+// 평균기온
+export const tempData = [
+    {
+        "regCode": "서울",
+        "year": 2024,
+        "mth": 1,
+        "avgTm": -0.3,
+        "co2EmtnConvTotalQty": 689.1,
+        "formattedAvgTm": "-0.3",
+        "formattedCo2EmtnConvTotalQty": "689.1"
+    },
+    {
+        "regCode": "서울",
+        "year": 2024,
+        "mth": 2,
+        "avgTm": 3.9,
+        "co2EmtnConvTotalQty": 598.8,
+        "formattedAvgTm": "3.9",
+        "formattedCo2EmtnConvTotalQty": "598.8"
+    },
+    {
+        "regCode": "서울",
+        "year": 2024,
+        "mth": 3,
+        "avgTm": 7.3,
+        "co2EmtnConvTotalQty": 499.4,
+        "formattedAvgTm": "7.3",
+        "formattedCo2EmtnConvTotalQty": "499.4"
+    },
+    {
+        "regCode": "서울",
+        "year": 2024,
+        "mth": 4,
+        "avgTm": 16.9,
+        "co2EmtnConvTotalQty": 399.8,
+        "formattedAvgTm": "16.9",
+        "formattedCo2EmtnConvTotalQty": "399.8"
+    },
+    {
+        "regCode": "서울",
+        "year": 2024,
+        "mth": 5,
+        "avgTm": 18.1,
+        "co2EmtnConvTotalQty": 328.1,
+        "formattedAvgTm": "18.1",
+        "formattedCo2EmtnConvTotalQty": "328.1"
+    },
+    {
+        "regCode": "서울",
+        "year": 2024,
+        "mth": 6,
+        "avgTm": 23.81,
+        "co2EmtnConvTotalQty": 159.9,
+        "formattedAvgTm": "23.81",
+        "formattedCo2EmtnConvTotalQty": "159.9"
     }
 ]
