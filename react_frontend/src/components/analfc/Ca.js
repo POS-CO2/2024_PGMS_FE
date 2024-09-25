@@ -46,10 +46,10 @@ export default function Ca() {
         switch (selected) {
             case '평균기온':
                 return 'avgTm';
-            case '강수량':
-                return 'rainfall';
-            case '습도':
-                return 'humidity';
+            case '평균강수량':
+                return 'avgRn';
+            case '평균습도':
+                return 'avgRhm';
             default:
                 console.log("영향인자가 선택되지 않았습니다.");
                 return null;
@@ -64,9 +64,10 @@ export default function Ca() {
         const endDate = `${data.calendar[1].$y}-${(data.calendar[1].$M + 1).toString().padStart(2, '0')}`;
 
         let url = `/anal/climate?startDate=${startDate}&endDate=${endDate}&regCode=${data.regCode}&selected=${data.selected}`;
+console.log(url);
         const response = await axiosInstance.get(url);
         setCaData(response.data);
-
+console.log(response.data);
         // 영향인자 값에 따른 key 가져오기
         const selectKey = getSelectDataKey(data.selected);
 

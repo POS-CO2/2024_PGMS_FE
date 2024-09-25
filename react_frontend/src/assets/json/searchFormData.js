@@ -163,8 +163,8 @@ export const formField_ca = [
     { type: 'DropDown', name: 'regCode', label: '지역', required: true, options: [] },
     { type: 'DropDown', name: 'selected', label: '영향인자', required: true, options: [
         { value: '평균기온', label: '평균기온' },
-        { value: '강수량', label: '강수량' },
-        { value: '습도', label: '습도' }
+        { value: '평균강수량', label: '평균강수량' },
+        { value: '평균습도', label: '평균습도' }
     ] }
 ];
 
