@@ -183,8 +183,9 @@
     display: flex;
     width: 100%;
     height: 30%;
+    justify-content: space-between;
     align-items: center;
-    margin-left: 1rem;
+    padding: 0 1rem;
 }
 
 .dp_pjt{
@@ -192,11 +193,23 @@
     align-items: flex-start;
     margin: 1.5rem 0 0 1rem;
     width: 100%;
-    height: 70%;
+    height: 40%;
     text-overflow: ellipsis;
     font-size: 1.5rem;
     font-weight: bold;
     color: rgb(55, 57, 78);
+}
+
+.dp_pjt_period {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    width: 100%;
+    height: 30%;
+    padding-right: 1.5rem;
+    font-size: 1rem;
+    color: grey;
+
 }
 
 .box2_3{

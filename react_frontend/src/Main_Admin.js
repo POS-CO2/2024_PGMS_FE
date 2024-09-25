@@ -6,7 +6,9 @@ import { SwiperSlide, Swiper } from 'swiper/react';
 import { Pagination, Navigation } from 'swiper/modules';
 import styled from 'styled-components';
 import ApexCharts from 'react-apexcharts';
-import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
+import { useRecoilState } from "recoil";
+import { openTabsState, activeTabState } from './atoms/tabAtoms';
 import EcrLogo from './assets/images/ecrlogo.png';
 import TerminalLogo from './assets/images/terminal.png';
 import ContainerLogo from './assets/images/container.png';
@@ -270,6 +272,20 @@ export default function Main_Admin() {
     const [logLoading, setLogLoading] = useState(false);
     const [service, setService] = useState([]);
     const [isServiceLoading, setIsServiceLoading] = useState(false);
+    const navigate = useNavigate();
+    const [openTabs, setOpenTabs] = useRecoilState(openTabsState);
+    const [activeKey, setActiveKey] = useRecoilState(activeTabState);
+
+    const handleButtonClick = (path, label) => {
+        const newTab = { key: path, tab: label };
+    
+        if (!openTabs.find(tab => tab.key === path)) {
+          setOpenTabs([...openTabs, newTab]);  // 새로운 탭 추가
+        }
+        
+        setActiveKey(path);  // activeKey를 변경
+        navigate(path);  // 경로 이동
+    };
 
     const userCnt = useFetchData(`/sys/session`, 10000);
     // const menuLogCnt = useFetchData(`/sys/log/board?startDate=${dateArray[0]}`);
@@ -408,16 +424,6 @@ export default function Main_Admin() {
         }
         fetchMenuLog();
         
-        // if(main === "server") {
-        //     const fetchServer = async () => {
-        //         setIsServiceLoading(true);
-        //         const serverResponse = await axiosInstance.get(`/sys/containers?clusterName=pgms_common`);
-        //         setService(serverResponse.data);
-        //         setIsServiceLoading(false);
-        //     }
-        //     fetchServer();    
-        // }
-        
     }, []);
 
     const [commonContainer, setCommonContainer] = useState(null);
@@ -518,7 +524,7 @@ export default function Main_Admin() {
                     if (prev >= 100) {
                         return 0; 
                     }
-                    return prev + 20;
+                    return prev + 25;
                 });
             }, 1000); 
 
@@ -1315,26 +1321,18 @@ export default function Main_Admin() {
                                 <Card sx={{width:"98%", height:"70%", borderRadius:"10px", backgroundColor:"rgba(0,0,30,0.3)", backdropFilter: "blur(2px)", display:"flex", justifyContent:"center", alignItems:"center"}}>
                                     <div className={gridStyles.icon_box}>
                                         {/* 바로가기 구현 필요 */}
-                                        <Link to="/cm">
-                                        <Card sx={{backgroundColor:"rgb(211,245,230)", width:"4rem", height:"4rem", display:"flex",justifyContent:"center", alignItems:"center", borderRadius:"10px"}}>
+                                        <Card onClick={() => handleButtonClick('/cm', '코드 관리')} sx={{backgroundColor:"rgb(211,245,230)", width:"4rem", height:"4rem", display:"flex",justifyContent:"center", alignItems:"center", borderRadius:"10px"}}>
                                             <Code fontSize='large' sx={{color:"white"}} />
                                         </Card>
-                                        </Link>
-                                        <Link to="/um">
-                                        <Card sx={{backgroundColor:"rgb(196,247,254)", width:"4rem", height:"4rem", display:"flex",justifyContent:"center", alignItems:"center", borderRadius:"10px"}}>
+                                        <Card onClick={() => handleButtonClick('/um', '사용자 관리')} sx={{backgroundColor:"rgb(196,247,254)", width:"4rem", height:"4rem", display:"flex",justifyContent:"center", alignItems:"center", borderRadius:"10px"}}>
                                             <ManageAccounts fontSize='large' sx={{color:"white"}}/>
                                         </Card>
-                                        </Link>
-                                        <Link to="/mm">
-                                        <Card sx={{backgroundColor:"rgb(253,241,187)", width:"4rem", height:"4rem", display:"flex",justifyContent:"center", alignItems:"center", borderRadius:"10px"}}>
+                                        <Card onClick={() => handleButtonClick('/mm', '메뉴 관리')} sx={{backgroundColor:"rgb(253,241,187)", width:"4rem", height:"4rem", display:"flex",justifyContent:"center", alignItems:"center", borderRadius:"10px"}}>
                                             <Menu fontSize="large" sx={{color:"white"}} />
                                         </Card>
-                                        </Link>
-                                        <Link to="/mal">
-                                        <Card sx={{backgroundColor:"rgb(213,212,249)", width:"4rem", height:"4rem", display:"flex",justifyContent:"center", alignItems:"center", borderRadius:"10px"}}>
+                                        <Card onClick={() => handleButtonClick('/mal', '접속로그 조회')} sx={{backgroundColor:"rgb(213,212,249)", width:"4rem", height:"4rem", display:"flex",justifyContent:"center", alignItems:"center", borderRadius:"10px"}}>
                                             <Terminal fontSize='large' sx={{color:"white"}} />
                                         </Card>
-                                        </Link>
                                     </div>
                                 </Card>
                             ) : (

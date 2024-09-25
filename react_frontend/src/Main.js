@@ -15,7 +15,7 @@ import DataSaverOffOutlinedIcon from '@mui/icons-material/DataSaverOffOutlined';
 import SpeedIcon from '@mui/icons-material/Speed';
 import LeaderboardOutlinedIcon from '@mui/icons-material/LeaderboardOutlined';
 import SummarizeOutlinedIcon from '@mui/icons-material/SummarizeOutlined';
-import { ArrowBackIos, ArrowForward, ArrowForwardIos, Girl, GppGoodTwoTone, MarginRounded, Star, WarningRounded, WarningTwoTone } from '@mui/icons-material';
+import { ArrowBackIos, ArrowForward, ArrowForwardIos, Girl, GppGoodTwoTone, MarginRounded, NotificationsActive, NotificationsOff, Star, WarningRounded, WarningTwoTone } from '@mui/icons-material';
 import { color } from 'three/webgpu';
 import { Transfer, Select, Progress, ConfigProvider } from 'antd';
 import axiosInstance from './utils/AxiosInstance';
@@ -187,6 +187,7 @@ export default function Main() {
     const [dpPjt, setDpPjt] = useState([]);
     const [scopeOneData, setScopeOneData] = useState([]);
     const [scopeTwoData, setScopeTwoData] = useState([]);
+    const [alarm, setAlarm] = useState([]);
 
     let today = new Date();
     let toYear = today.getFullYear();
@@ -196,7 +197,6 @@ export default function Main() {
         const tempTargetKeys = [];
         const tempMockData = [];
         const bae = ae.concat(be);
-        console.log(bae);
         bae.map(v => {
             const data = {
                 key: [v.equipId, v.actvDataId],
@@ -228,9 +228,16 @@ export default function Main() {
             try{
                 const pjtResponse = await axiosInstance.get(`/pjt/my`);
                 const myPjt = pjtResponse.data;
+                console.log(myPjt);
                 setMyPjt(myPjt);
+                
 
                 if (myPjt.length > 0){
+                    const initialAlarms = myPjt.map((data) => ({
+                        id: data.id,
+                        alarmYn: data.alarmYn,
+                    }));
+                    setAlarm(initialAlarms)
                     const initialPjt = myPjt[0];
                     setSelectedMyPjt(initialPjt);
                     setPjtStartYear(initialPjt.ctrtFrYear);
@@ -254,7 +261,6 @@ export default function Main() {
                     // 증빙자료 제출현황 3개월치 구하기
                     const documentResponse = await axiosInstance.get(`/equip/document-status?pjtId=${initialPjt.pjtId}`);
                     setDocumentStatus(documentResponse.data);
-                    console.log(initialPjt);
                     // 배출원 지정 
                     const emissionResponse = await axiosInstance.get(`/equip/emission?projectId=${initialPjt.pjtId}`);
                     const ae = emissionResponse.data;
@@ -365,7 +371,6 @@ export default function Main() {
         else {
             for (const key of moveKeys){
                 const deleteData = afterEmission.find(item => item.equipId === key[0] && item.actvDataId === key[1]);
-                console.log(deleteData);
                 if (deleteData) {
                     try {
                         const {data} = await axiosInstance.delete(`/equip/emission?id=${deleteData.id}`);    
@@ -374,7 +379,6 @@ export default function Main() {
                         swalOptions.icon = 'success';
                         setTargetKeys(newTargetKeys);
                     } catch (error) {
-                        console.error(error);
                         swalOptions.title = '실패!',
                         swalOptions.text = error.response.data.message,
                         swalOptions.icon = 'error';
@@ -388,7 +392,6 @@ export default function Main() {
         }
         Swal.fire(swalOptions);
 
-        // setTargetKeys(newTargetKeys);
     };
 
     const handleDropClick = (e) => {
@@ -406,32 +409,9 @@ export default function Main() {
         height: 200,
     };
 
-    const scopeSettings1 = {
-        width: 175,
-        height: 175,
-        value: scopeOne,
-    };
-    const scopeSettings2 = {
-        width: 175,
-        height: 175,
-        value: scopeTwo,
-    };
-
-    const [year, setYear] = useState(null);
-
-    const handleYear = (event) => {
-        setYear(event.target.value);
-    }
-
     const twoColors = {
         '0%': '#108ee9',
         '100%': '#87d068',
-    };
-
-    const getStrokeColor = (value) => {
-        if (value <= 50) return green['A700'];
-        if (value <= 100) return yellow['800'];
-        return red['A700'];
     };
 
     const progressPjt = () => {
@@ -463,8 +443,25 @@ export default function Main() {
         setSelectedMyPjt(e);
         Swal.fire(swalOptions);
     }
-    console.log(scopeOneData);
+    
+    const handleSetAlarm = async (e) => {    
+        try {
+            const request = await axiosInstance.patch(`/pjt/my/alarm?projectUserId=${e.id}`);
+            console.log(request);
+            console.log("success");
+            setAlarm((prev) => 
+                prev.map((item) => 
+                    item.id === e.id 
+                    ? { ...item, alarmYn: item.alarmYn === 'y' ? 'n' : 'y'} 
+                    : item
+                )
+            );
 
+        } catch (error) {
+            console.error("error");
+        }
+    }
+    console.log(alarm);
     return (
             <div className={gridStyles.grid_container}>
                 <Card className={gridStyles.box1} sx={{borderRadius:"10px", color:"white"}}>
@@ -565,18 +562,42 @@ export default function Main() {
                                         navigation={true}           // 이전/다음 버튼 네비게이션
                                         modules={[Navigation, Pagination]}
                                     >
-                                        {myPjt.map((data, idx) => (
+                                        {myPjt.map((data, idx) => {
+                                            
+                                            const matchingAlarm = alarm.find(e => e.id === data.id)
+                                            
+                                            return (
                                             <SwiperSlide style={{width:"100%", height:"100%"}}>
                                                 <Card sx={{backgroundColor:"white", width:"90%", height:"100%", margin:"1rem auto", borderRadius:"15px", display:"flex", flexDirection:"column", backgroundColor:"rgb(241,244,248)"}}>
                                                     <div className={gridStyles.star}>
-                                                        {idx === 0 ? <Star fontSize='large' sx={{color:"#ffd700"}} /> : <Star fontSize='large' onClick={() => handleSetDpPjt(data)} sx={{color:"gray"}}/>}
+                                                        {idx === 0 ? (
+                                                            <IconButton>
+                                                                <Star fontSize='large' sx={{color:"#ffd700"}} />
+                                                            </IconButton>
+                                                        ): (
+                                                            <IconButton onClick={() => handleSetDpPjt(data)}>
+                                                                <Star fontSize='large' sx={{color:"gray"}}/>
+                                                            </IconButton>
+                                                        )}
+                                                        {matchingAlarm?.alarmYn === "y"? (
+                                                            <IconButton onClick={() => handleSetAlarm(data)}>
+                                                                <NotificationsActive fontSize='large' sx={{color:"gold"}}/>
+                                                            </IconButton>
+                                                        ) : (
+                                                            <IconButton onClick={() => handleSetAlarm(data)}>
+                                                                <NotificationsOff fontSize='large' />
+                                                            </IconButton>
+                                                        )}
                                                     </div>
                                                     <div className={gridStyles.dp_pjt}>
                                                         {`${data.pjtName}`}
                                                     </div>
+                                                    <div className={gridStyles.dp_pjt_period}>
+                                                        {`${data.ctrtFrYear}년${data.ctrtFrMth}월~${data.ctrtToYear}년${data.ctrtToMth}월`}
+                                                    </div>
                                                 </Card>    
                                             </SwiperSlide>
-                                        ))}
+                                        )})}
                                         <SwiperSlide>
                                         </SwiperSlide>
                                     </Swiper>
