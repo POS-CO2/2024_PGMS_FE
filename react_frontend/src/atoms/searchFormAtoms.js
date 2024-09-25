@@ -67,7 +67,7 @@ export const emissionSrcSearchForm = atom({
 /* 분석 페이지 */
 // 매출액별 분석 메뉴의 서치폼
 export const revAnaSearchForm = atom({
-    key: 'emissionSrcSearchForm',
+    key: 'revAnaSearchForm',
     default: {},
 });
 
