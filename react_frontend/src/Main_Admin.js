@@ -1,5 +1,6 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useCallback, memo } from 'react';
 import * as gridStyles from './assets/css/gridAdmin.css';
+import { useSpring, animated } from '@react-spring/web';
 import { Card, CircularProgress, Divider, IconButton, LinearProgress, Skeleton } from '@mui/material';
 import { Code, Menu, ManageAccounts, Terminal, PeopleAlt, Engineering, Business, Settings, Today, AddCircleTwoTone, RemoveCircleTwoTone, Person, RemoveCircleOutline, MoreHoriz, ScoreSharp } from '@mui/icons-material';
 import { SwiperSlide, Swiper } from 'swiper/react';
@@ -18,6 +19,7 @@ import { ConfigProvider, Tabs, DatePicker, Input, Select, Collapse } from 'antd'
 import dayjs from 'dayjs';
 import axiosInstance from './utils/AxiosInstance';
 import useFetchData from './customhook/useFetchData';
+import useInterval from './customhook/useInterval'
 import Swal from 'sweetalert2';
 
 const { RangePicker } = DatePicker;
@@ -156,7 +158,8 @@ const StyledRoot2 = styled.div`
         }
         &-slide {
             flex-shrink: 0; // important
-            width: 100%;
+            width: 100%;import useInterval from './customhook/useInterval';
+
             height: 100%;
         },
     }    
@@ -250,10 +253,16 @@ const ChartOptions = (title, xdata) => {
     return chartOption;
 };
 
+const ProgressComponent = memo(({ progress }) => {
+    return (
+        <div style={{ width: "5%" }}>
+            <LinearProgress variant="determinate" value={progress} />
+        </div>
+    );
+});
 
 export default function Main_Admin() {
     const today = new Date();
-
     const defaultStartDate = dayjs(today).format('YYYY-MM-DD') + 'T00:00:00.000';
     const defaultEndDate = dayjs(today).format('YYYY-MM-DD') + 'T23:59:59.999';
 
@@ -270,19 +279,15 @@ export default function Main_Admin() {
     const [errorCode, setErrorCode] = useState("");
     const [errorLog, setErrorLog] = useState([]);
     const [logLoading, setLogLoading] = useState(false);
-    const [service, setService] = useState([]);
-    const [isServiceLoading, setIsServiceLoading] = useState(false);
     const navigate = useNavigate();
     const [openTabs, setOpenTabs] = useRecoilState(openTabsState);
     const [activeKey, setActiveKey] = useRecoilState(activeTabState);
 
     const handleButtonClick = (path, label) => {
         const newTab = { key: path, tab: label };
-    
         if (!openTabs.find(tab => tab.key === path)) {
           setOpenTabs([...openTabs, newTab]);  // 새로운 탭 추가
         }
-        
         setActiveKey(path);  // activeKey를 변경
         navigate(path);  // 경로 이동
     };
@@ -376,6 +381,11 @@ export default function Main_Admin() {
             setLogLoading(false);
         }
     }
+
+    const springProps = useSpring({
+        transform: showMenuBar ? 'translateY(-20px)' : 'translateY(75px)',
+        config: {tension: 250, friction: 20},
+    });
 
     const handleMouseOver = () => {
         setShowMenuBar(true);
@@ -486,6 +496,43 @@ export default function Main_Admin() {
         }
     }
 
+    const fetchServiceData = async (url, setData, setLoading) => {
+        try {
+            const response = await axiosInstance.get(url);
+            setData(response.data);
+        } catch (error) {
+            console.error(error);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const handleFetch = async () => {
+        const commonUrl = '/sys/containers/item?clusterName=pgms_common&arn=arn:aws:ecs:ap-northeast-2:011528301196:service/pgms_common/';
+        const services = [
+            { url: commonUrl.concat('pgms_common_service'), setData: setCommonContainer, setLoading: setCcLoading },
+            { url: commonUrl.concat('pgms_equipment_service'), setData: setEquipmentContainer, setLoading: setEqLoading },
+            { url: commonUrl.concat('pgms_project_service'), setData: setProjectContainer, setLoading: setPjtLoading },
+            { url: commonUrl.concat('pgms_anal_service'), setData: setAnalContainer, setLoading: setAnalLoading },
+            { url: commonUrl.concat('pgms_socket_service'), setData: setSocketContainer, setLoading: setSkLoading }
+        ];
+
+        await Promise.all(services.map(service => fetchServiceData(service.url, service.setData, service.setLoading)));
+    };
+    const fetchData = useCallback(async () => {
+        try {
+            await Promise.all([
+                fetchCommonService(),
+                fetchEquipmentService(),
+                fetchProjectService(),
+                fetchAnalService(),
+                fetchSocketService(),
+            ]);
+        } catch (error) {
+            console.error(error);
+        }
+    }, []);
+
     const fetchSocketService = async () => {
         try {
             const socketResponse = await axiosInstance.get(commonUrl.concat('pgms_socket_service'));
@@ -496,44 +543,43 @@ export default function Main_Admin() {
         }
     }
 
+    useInterval(() => {
+        setProgress(prev => {
+            if (prev >= 100) {
+                return 0; 
+            }
+            return prev + 25;
+        });
+    }, 1000 )
+
+    useInterval(() => {
+        fetchData();
+    }, 5000);
+
     // 서버관리
-    useEffect(() => {
-        if (main === "server") {
+    // useEffect(() => {
+    //     if (main === "server") {
+    //         // const fetchData = async () => {
+    //         //     // common
+    //         //     await Promise.all([
+    //         //         fetchCommonService(),
+    //         //         fetchEquipmentService(),
+    //         //         fetchProjectService(),
+    //         //         fetchAnalService(),
+    //         //         fetchSocketService()
+    //         //     ])
+    //         // }
+    //         // fetchData();
 
-        
-            const fetchData = async () => {
-                // common
-                await Promise.all([
-                    fetchCommonService(),
-                    fetchEquipmentService(),
-                    fetchProjectService(),
-                    fetchAnalService(),
-                    fetchSocketService()
-                ])
-                
-            }
-
-            fetchData();
-
-            const interval = setInterval(() => {
-                fetchData();
-            }, 5000);
-
-            const progressInterval = setInterval(() => {
-                setProgress(prev => {
-                    if (prev >= 100) {
-                        return 0; 
-                    }
-                    return prev + 25;
-                });
-            }, 1000); 
-
-            return () => {
-                clearInterval(interval);
-                clearInterval(progressInterval)
-            }
-        }
-    }, [])
+    //         const interval = setInterval(() => {
+    //             fetchData();
+    //         }, 5000);
+            
+    //         return () => {
+    //             clearInterval(interval);
+    //         }
+    //     }
+    // }, [main])
 
     const handleContainerAddClick = async (data) => {
         let swalOptions = {
@@ -662,9 +708,10 @@ export default function Main_Admin() {
                                         <div style={{width:"20%"}}>
                                         서버관리
                                         </div>
-                                        <div style={{width:"5%"}}>
+                                        {/* <div style={{width:"5%"}}>
                                         <LinearProgress variant="determinate" value={progress} />
-                                        </div>
+                                        </div> */}
+                                        <ProgressComponent progress={progress} />
                                     </div>
                                     <div className={gridStyles.server_list}>
                                         <div className={gridStyles.server}>
@@ -1315,37 +1362,87 @@ export default function Main_Admin() {
                                 </Card>
                             )}
                         {/* 아래 메뉴 바로가기 구현부 */}
-                        <div onMouseEnter={handleMouseOver} onMouseLeave={handleMouseLeave} className={`${gridStyles.menu_bar} ${showMenuBar ? gridStyles.menu_bar_hover : ''}`}>
-                            {showMenuBar ? (
-                                // 호버 시 보이는 카드
-                                <Card sx={{width:"98%", height:"70%", borderRadius:"10px", backgroundColor:"rgba(0,0,30,0.3)", backdropFilter: "blur(2px)", display:"flex", justifyContent:"center", alignItems:"center"}}>
-                                    <div className={gridStyles.icon_box}>
-                                        {/* 바로가기 구현 필요 */}
-                                        <Card onClick={() => handleButtonClick('/cm', '코드 관리')} sx={{backgroundColor:"rgb(211,245,230)", width:"4rem", height:"4rem", display:"flex",justifyContent:"center", alignItems:"center", borderRadius:"10px"}}>
-                                            <Code fontSize='large' sx={{color:"white"}} />
-                                        </Card>
-                                        <Card onClick={() => handleButtonClick('/um', '사용자 관리')} sx={{backgroundColor:"rgb(196,247,254)", width:"4rem", height:"4rem", display:"flex",justifyContent:"center", alignItems:"center", borderRadius:"10px"}}>
-                                            <ManageAccounts fontSize='large' sx={{color:"white"}}/>
-                                        </Card>
-                                        <Card onClick={() => handleButtonClick('/mm', '메뉴 관리')} sx={{backgroundColor:"rgb(253,241,187)", width:"4rem", height:"4rem", display:"flex",justifyContent:"center", alignItems:"center", borderRadius:"10px"}}>
-                                            <Menu fontSize="large" sx={{color:"white"}} />
-                                        </Card>
-                                        <Card onClick={() => handleButtonClick('/mal', '접속로그 조회')} sx={{backgroundColor:"rgb(213,212,249)", width:"4rem", height:"4rem", display:"flex",justifyContent:"center", alignItems:"center", borderRadius:"10px"}}>
-                                            <Terminal fontSize='large' sx={{color:"white"}} />
-                                        </Card>
-                                    </div>
+                        <animated.div
+                            style={{
+                                ...springProps, // useSpring 애니메이션 스타일 적용
+                            }}
+                            className={gridStyles.menu_bar}
+                            onMouseEnter={handleMouseOver}
+                            onMouseLeave={handleMouseLeave}
+                            >
+                            <Card
+                                sx={{
+                                width: "98%",
+                                height: "70%",
+                                borderRadius: "10px",
+                                backgroundColor: "rgba(0,0,30,0.3)",
+                                backdropFilter: "blur(2px)",
+                                display: "flex",
+                                justifyContent: "center",
+                                alignItems: "center",
+                                }}
+                            >
+                                <div className={gridStyles.icon_box}>
+                                {/* 바로가기 구현 필요 */}
+                                <Card
+                                    onClick={() => handleButtonClick('/cm', '코드 관리')}
+                                    sx={{
+                                    backgroundColor: "rgb(211,245,230)",
+                                    width: "4rem",
+                                    height: "4rem",
+                                    display: "flex",
+                                    justifyContent: "center",
+                                    alignItems: "center",
+                                    borderRadius: "10px",
+                                    }}
+                                >
+                                    <Code fontSize="large" sx={{ color: "white" }} />
                                 </Card>
-                            ) : (
-                                <Card sx={{width:"98%", height:"100%", borderRadius:"10px 10px 0 0", backgroundColor:"rgba(0,0,30,0.3)", backdropFilter: "blur(2px)", display:"flex", justifyContent:"center", alignItems:"center"}}>
-                                    <div className={gridStyles.icon_box_before}>
-                                        <Card sx={{backgroundColor:"rgb(211,245,230)", width:"4rem", height:"1rem", display:"flex",justifyContent:"center", alignItems:"center", borderRadius:"10px 10px 0 0"}}></Card>
-                                        <Card sx={{backgroundColor:"rgb(196,247,254)", width:"4rem", height:"1rem", display:"flex",justifyContent:"center", alignItems:"center", borderRadius:"10px 10px 0 0"}}></Card>
-                                        <Card sx={{backgroundColor:"rgb(253,241,187)", width:"4rem", height:"1rem", display:"flex",justifyContent:"center", alignItems:"center", borderRadius:"10px 10px 0 0"}}></Card>
-                                        <Card sx={{backgroundColor:"rgb(213,212,249)", width:"4rem", height:"1rem", display:"flex",justifyContent:"center", alignItems:"center", borderRadius:"10px 10px 0 0"}}></Card>
-                                    </div>
+                                <Card
+                                    onClick={() => handleButtonClick('/um', '사용자 관리')}
+                                    sx={{
+                                    backgroundColor: "rgb(196,247,254)",
+                                    width: "4rem",
+                                    height: "4rem",
+                                    display: "flex",
+                                    justifyContent: "center",
+                                    alignItems: "center",
+                                    borderRadius: "10px",
+                                    }}
+                                >
+                                    <ManageAccounts fontSize="large" sx={{ color: "white" }} />
                                 </Card>
-                            )}
-                        </div>
+                                <Card
+                                    onClick={() => handleButtonClick('/mm', '메뉴 관리')}
+                                    sx={{
+                                    backgroundColor: "rgb(253,241,187)",
+                                    width: "4rem",
+                                    height: "4rem",
+                                    display: "flex",
+                                    justifyContent: "center",
+                                    alignItems: "center",
+                                    borderRadius: "10px",
+                                    }}
+                                >
+                                    <Menu fontSize="large" sx={{ color: "white" }} />
+                                </Card>
+                                <Card
+                                    onClick={() => handleButtonClick('/mal', '접속로그 조회')}
+                                    sx={{
+                                    backgroundColor: "rgb(213,212,249)",
+                                    width: "4rem",
+                                    height: "4rem",
+                                    display: "flex",
+                                    justifyContent: "center",
+                                    alignItems: "center",
+                                    borderRadius: "10px",
+                                    }}
+                                >
+                                    <Terminal fontSize="large" sx={{ color: "white" }} />
+                                </Card>
+                                </div>
+                            </Card>
+                        </animated.div>
                     </div>
                 </div>
                 <div className={gridStyles.right_box}>
