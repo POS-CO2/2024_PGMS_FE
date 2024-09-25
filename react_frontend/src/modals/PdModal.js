@@ -1064,10 +1064,6 @@ export function CmAddModal({ isModalOpen, handleOk, handleCancel }) {
     const [error, setError] = useState({});
 
     const handleSelect = async() => {
-        let swalOptions = {
-            confirmButtonText: '확인'
-        };
-
         const formData = {
             codeGrpNo,
             codeGrpName,
@@ -1082,20 +1078,11 @@ export function CmAddModal({ isModalOpen, handleOk, handleCancel }) {
             setError(newError);
             return;
         }
-        try {
-            // POST 요청으로 서버에 데이터 전송
-            const {data} = await axiosInstance.post('/sys/codegroup', formData);
-            // handleOk을 호출하여 모달을 닫고 상위 컴포넌트에 알림
-            swalOptions.title = '성공!',
-            swalOptions.text = `${formData.codeGrpName}가 성공적으로 등록되었습니다.`;
-            swalOptions.icon = 'success';
-            handleOk(data);
-        } catch (error) {
-            swalOptions.title = '실패!',
-            swalOptions.text = error.response.data.message,
-            swalOptions.icon = 'error';
-        }
-        Swal.fire(swalOptions);
+
+        setError({});
+
+        // handleOk을 호출하여 모달을 닫고 상위 컴포넌트에 알림
+        handleOk(formData);
     };
 
     return (
@@ -1157,10 +1144,6 @@ export function CmEditModal({ isModalOpen, handleOk, handleCancel, rowData }) {
     const [error, setError] = useState({});
     // 등록 버튼 클릭 시 호출될 함수
     const handleSelect = async() => {
-
-        let swalOptions = {
-            confirmButtonText: '확인'
-        };
         const formData = {
             id: rowData.id,
             codeGrpNo,
@@ -1176,19 +1159,11 @@ export function CmEditModal({ isModalOpen, handleOk, handleCancel, rowData }) {
             setError(newError);
             return;
         }
-        try {
-            const {data} = await axiosInstance.patch('/sys/codegroup', formData);
-            // handleOk을 호출하여 모달을 닫고 상위 컴포넌트에 알림
-            handleOk(data);
-            swalOptions.title = '성공!',
-            swalOptions.text = `${formData.codeGrpName}이 성공적으로 수정되었습니다.`;
-            swalOptions.icon = 'success';
-        } catch (error) {
-            swalOptions.title = '실패!',
-            swalOptions.text = error.response.data.message,
-            swalOptions.icon = 'error';
-        }
-        Swal.fire(swalOptions);
+        
+        setError({});
+
+        // handleOk을 호출하여 모달을 닫고 상위 컴포넌트에 알림
+        handleOk(formData);
     };
 
     return (
@@ -1330,21 +1305,10 @@ export function CmListAddModal({ isModalOpen, handleOk, handleCancel, rowData })
             return;
         }
 
+        setError({});
 
-        try {
-            // POST 요청으로 서버에 데이터 전송
-            const {data} = await axiosInstance.post('/sys/code', formData);
-            // handleOk을 호출하여 모달을 닫고 상위 컴포넌트에 알림
-            handleOk(data);
-            swalOptions.title = '성공!',
-            swalOptions.text = `${formData.codeName}가 성공적으로 등록되었습니다.`;
-            swalOptions.icon = 'success';
-        } catch (error) {
-            swalOptions.title = '실패!',
-            swalOptions.text = error.response.data.message,
-            swalOptions.icon = 'error';
-        }
-        Swal.fire(swalOptions);
+        // handleOk을 호출하여 모달을 닫고 상위 컴포넌트에 알림
+         handleOk(formData);
     };
 
     return (
@@ -1372,7 +1336,7 @@ export function CmListAddModal({ isModalOpen, handleOk, handleCancel, rowData })
                     <Input id='codeName' disabled value={rowData.codeGrpName} label="코드 그룹 이름" style={{width:"18rem"}} />
                 </div>
                 <div className={sysStyles.text_field}>
-                    <div className={sysStyles.text}>{"코드"}</div>
+                    <div className={sysStyles.text}>{"코드번호"}</div>
                     {/* <TextField size='small' id='code' value={code} onChange={(e) => setCode(e.target.value)} label="코드" variant='outlined' sx={{ width: "20rem" }} /> */}
                     <Input id='code' value={code} onChange={(e) => setCode(e.target.value)} label="코드" style={{width:"18rem"}} />
                     {error.code && <div className={modalStyles.error_message}>{error.code}</div>}
@@ -1441,20 +1405,10 @@ export function CmListEditModal({ isModalOpen, handleOk, handleCancel, rowData }
             return;
         }
 
-        try {
-            // POST 요청으로 서버에 데이터 전송
-            const {data} = await axiosInstance.patch('/sys/code', formData);
-            // handleOk을 호출하여 모달을 닫고 상위 컴포넌트에 알림
-            handleOk(data);
-            swalOptions.title = '성공!',
-            swalOptions.text = `${formData.codeName}이 성공적으로 수정되었습니다.`;
-            swalOptions.icon = 'success';
-        } catch (error) {
-            swalOptions.title = '실패!',
-            swalOptions.text = error.response.data.message,
-            swalOptions.icon = 'error';
-        }
-        Swal.fire(swalOptions);
+        setError({});
+
+        // handleOk을 호출하여 모달을 닫고 상위 컴포넌트에 알림
+        handleOk(formData);
     };
     return (
         <ConfigProvider
@@ -1518,7 +1472,7 @@ export function CmListEditModal({ isModalOpen, handleOk, handleCancel, rowData }
 }
 
 export function EfmAddModal({ isModalOpen, handleOk, handleCancel, rowData }) {
-    const [applyYear, setApplyYear] = useState(2024);
+    const [applyYear, setApplyYear] = useState(new Date().getFullYear());
     const [applyDvs, setApplyDvs] = useState([]);
     const [selectedApplyDvs, setSelectedApplyDvs] = useState([]);
     const [ghgCode, setGhgCode] = useState([]);
@@ -1531,10 +1485,6 @@ export function EfmAddModal({ isModalOpen, handleOk, handleCancel, rowData }) {
     const [error, setError] = useState({});
 
     const handleSelect = async() => {
-        let swalOptions = {
-            confirmButtonText: '확인'
-        };
-
         const formData = {
             actvDataId: rowData.id,
             applyYear,
@@ -2002,9 +1952,6 @@ export function UmAddModal({ isModalOpen, handleOk, handleCancel }) {
 
     // 등록 버튼 클릭 시 호출될 함수
     const handleInsert = async () => {
-        let swalOptions = {
-            confirmButtonText: '확인'
-        };
         const formData = {
             userName,
             loginId,
@@ -2026,21 +1973,9 @@ export function UmAddModal({ isModalOpen, handleOk, handleCancel }) {
         }
 
         setError({});
-        try {
-            // POST 요청으로 서버에 데이터 전송
-            const {data} = await axiosInstance.post('/sys/user', formData);
-            // handleOk을 호출하여 모달을 닫고 상위 컴포넌트에 알림
-            handleOk(data);
-            swalOptions.title = '성공!',
-            swalOptions.text = `${formData.userName}가 성공적으로 등록되었습니다.`;
-            swalOptions.icon = 'success';
-        } catch (error) {
-            swalOptions.title = '실패!',
-            swalOptions.text = error.response.data.message,
-            swalOptions.icon = 'error';
-
-        }
-        Swal.fire(swalOptions);
+        
+        // handleOk을 호출하여 모달을 닫고 상위 컴포넌트에 알림
+        handleOk(formData);
     };
 
     return (

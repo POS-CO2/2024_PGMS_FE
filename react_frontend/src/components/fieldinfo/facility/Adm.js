@@ -253,13 +253,13 @@ export default function Adm() {
                 // POST 요청으로 서버에 데이터 전송
                 const response = await axiosInstance.post('/equip/coef', data);
     
-                swalOptions.title = '성공!',
-                swalOptions.text = `배출계수가 성공적으로 등록되었습니다.`;
-                swalOptions.icon = 'success';
-           
                 setFilteredEfs(prevList => [response.data, ...prevList]);
                 setSelectedEF({});
                 setSubmittedEFIdx([0]);
+                
+                swalOptions.title = '성공!',
+                swalOptions.text = `배출계수가 성공적으로 등록되었습니다.`;
+                swalOptions.icon = 'success';
             } catch (error) {
                 swalOptions.title = '실패!',
                 swalOptions.text = error.response.data.message;
@@ -270,17 +270,16 @@ export default function Adm() {
                 // POST 요청으로 서버에 데이터 전송
                 const response = await axiosInstance.patch('/equip/coef', data);
     
-                swalOptions.title = '성공!',
-                swalOptions.text = `${response.data.applyDvs}(이)가 성공적으로 수정되었습니다.`;
-                swalOptions.icon = 'success';
-
                 setFilteredEfs(prevList =>
                     prevList.map(item =>
                         item.id === data.id ? { ...item, ...data } : item
                     )
                 );
                 setSelectedEF(response.data);
-
+                
+                swalOptions.title = '성공!',
+                swalOptions.text = `${response.data.applyDvs}(이)가 성공적으로 수정되었습니다.`;
+                swalOptions.icon = 'success';
             } catch (error) {
                 swalOptions.title = '실패!',
                 swalOptions.text = error.response.data.message;

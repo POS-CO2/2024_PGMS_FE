@@ -153,6 +153,7 @@ export default function SiteLayout({handleLogout, menus, user}){
                     <StyledTabsContainer 
                         handleLogout={handleLogout} 
                         user={user} 
+                        handleMenuClick={handleMenuClick}
                         ref={tabsContainerRef} 
                     />
                     <Outlet />
@@ -186,6 +187,7 @@ export default function SiteLayout({handleLogout, menus, user}){
                 <TabsContainer 
                     handleLogout={handleLogout} 
                     user={user} 
+                    handleMenuClick={handleMenuClick}
                     ref={tabsContainerRef} 
                 />
                 <div style={{ overflowY: 'auto' }}>

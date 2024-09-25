@@ -37,6 +37,33 @@ export const selectedEFState = atom({
     ],
 });
 
+// 선택된 코드그룹(코드 관리)
+export const selectedCGState = atom({
+    key: 'selectedCGState',
+    default: {},
+    effects: [
+        localStorageEffect('selectedCGState'), // 로컬 스토리지와 동기화
+    ],
+});
+
+// 선택된 코드리스트(코드 관리)
+export const selectedCLState = atom({
+    key: 'selectedCLState',
+    default: {},
+    effects: [
+        localStorageEffect('selectedCLState'), // 로컬 스토리지와 동기화
+    ],
+});
+
+// 선택된 사용자(사용자 관리)
+export const selectedUserState = atom({
+    key: 'selectedUserState',
+    default: {},
+    effects: [
+        localStorageEffect('selectedUserState'), // 로컬 스토리지와 동기화
+    ],
+});
+
 // 확장된 행
 export const expandedRowState = atom({
     key: 'expandedRowState',

@@ -40,7 +40,10 @@ export default function Fl() {
     });
 
     const fetchOptions = async (unitType) => {
+        console.log("unitType", unitType);
+
         const response = await axiosInstance.get(`/sys/unit?unitType=${unitType}`);
+        console.log("response1", response.data);
         return response.data.map(item => ({
             value: item.code,
             label: item.name,
@@ -51,6 +54,8 @@ export default function Fl() {
         const fetchEqLib = async () => {
             try {
                 const response = await axiosInstance.get("/equip/lib");
+        console.log("response2", response.data);
+
                 setEqLibs(response.data);
 
                 // 설비 LIB 로드가 완료된 후에만 selectedEqLib를 확인하여 활동 자료를 불러옴
@@ -211,13 +216,14 @@ export default function Fl() {
                 };
 
                 const response = await axiosInstance.patch("/equip/lib", requestBody);
-
+                
                 // 서버로부터 받은 수정된 데이터를 사용하여 리스트 업데이트
                 setEqLibs(prevEqLibs => 
                     prevEqLibs.map(eqLib => 
                         eqLib.id === selectedEqLib.id ? response.data : eqLib
                     )
                 );
+                setSelectedEqLib(response.data);
 
                 swalOptions.title = '성공!',
                 swalOptions.text = `${selectedEqLib.equipLibName}(이)가 성공적으로 수정되었습니다.`;

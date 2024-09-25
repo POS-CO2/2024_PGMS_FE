@@ -265,9 +265,6 @@ export default function Pg() {
                                     }
                                 ]}
                             />
-                            {/* <button onClick={() => handleButtonClick('/pds', '프로젝트 상세설정')}>
-                                새 페이지 열기
-                            </button> */}
                         </Card>
                     )}
                 </div>
