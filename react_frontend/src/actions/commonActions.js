@@ -16,7 +16,7 @@ export const useSearchAction = () => {
     });
 };
 
-// 모달 밖의 버튼(등록, 수정, 삭제) 액션
+// 모달 밖의 버튼(등록) 액션
 export const useHandleSubmitAction = () => {
   return useRecoilCallback(() => async({data, setterReg, setterNotReg, setterSelectedNotReg, requestBody, url, successMsg}) => {
     let swalOptions = {
@@ -88,7 +88,7 @@ export const useModalActions = () => {
 
 // 모달 내의 버튼(등록, 수정, 삭제) 액션
 export const useHandleOkAction = () => {
-  return useRecoilCallback(({ set }) => (modalType) => async ({data, setter, setterSelected, url, requestBody, successMsg}) => {
+  return useRecoilCallback(({ set }) => (modalType) => async ({data, setter, setterSelected, setterSumittedIdx = () => {}, url, requestBody, successMsg}) => {
     let swalOptions = {
       confirmButtonText: '확인'
     };
@@ -106,6 +106,8 @@ export const useHandleOkAction = () => {
           ...prevRegs
         ]);
 
+        setterSumittedIdx([...Array(response.data.length).keys()]);
+
         swalOptions.title = '성공!',
         swalOptions.text = successMsg;
         swalOptions.icon = 'success';
@@ -117,7 +119,7 @@ export const useHandleOkAction = () => {
         swalOptions.icon = 'error';
       }
       Swal.fire(swalOptions);
-    } else if (modalType.includes('Edit')) {
+    } else if (modalType.includes('Edit') || modalType.includes('Details')) {
       try {
         const response = await axiosInstance.patch(url, requestBody);
 
@@ -127,6 +129,9 @@ export const useHandleOkAction = () => {
             od.id === data.id ? response.data : od
           )
         );
+        
+        setterSelected(response.data);
+        setterSumittedIdx([]);
 
         swalOptions.title = '성공!',
         swalOptions.text = successMsg;
@@ -142,6 +147,9 @@ export const useHandleOkAction = () => {
     } else if (modalType.includes('Delete')) {
       // 삭제한 데이터를 목록에서 제거
       setter(originData => originData.filter(row => row.id !== data.id));
+
+      // 주황색 row (최근에 등록된 row) 배경색 제거
+      setterSumittedIdx([]);
     }
   });
 };

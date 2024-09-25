@@ -77,8 +77,14 @@ export default function Mal() {
         setSelectedUser(e);
         if (e) {
             const {data} = await axiosInstance.get(`/sys/log?loginId=${e.loginId}`);
-            const res = data[0].logMenuList
-            setLog(res);
+            if (data.length !== 0){
+                const res = data[0].logMenuList;
+                setLog(res);
+            }
+            else {
+                setLog([]);
+            }
+            
         }
         else{
             setShowLog(false);

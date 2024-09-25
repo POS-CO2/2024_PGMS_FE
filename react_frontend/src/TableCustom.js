@@ -125,7 +125,7 @@ export default function TableCustom({
                         key={tableKey} 
                         data={data} 
                         submittedRowIdx={submittedRowIdx}
-                        selectedRowId={selectedRows.length === 1 ? selectedRows[0]?.id:null} //variant가 default(단건 선택)일 떄만 id전달 => 수정 완료후 표시
+                        selectedRowId={selectedRows?.length === 1 ? selectedRows[0]?.id : null} //variant가 default(단건 선택)일 떄만 id전달 => 수정 완료후 표시
                         variant={variant} 
                         onRowClick={onRowClick} 
                         pagination={pagination} 

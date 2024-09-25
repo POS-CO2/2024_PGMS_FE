@@ -51,6 +51,7 @@ export default function Pd({pjtId}) {                                           
     const [selectedEmps, setSelectedEmps] = useRecoilState(selectedEmpState);                   // 선택된 사원의 loginId list
     const [inputEmpId, setInputEmpId] = useState('');                                     // 입력한 사번
     const [inputEmpName, setInputEmpName] = useState('');                                       // 입력한 사원명
+    const [submittedMgrIdx, setSubmittedMgrIdx] = useState([]);
 
     const { showModal, closeModal, isModalOpen } = useModalActions();
     const handleOk = useHandleOkAction();
@@ -66,6 +67,7 @@ export default function Pd({pjtId}) {                                           
     };
 
     const handleSubmit = () => {
+        setSubmittedMgrIdx([...Array(selectedEmps.length).keys()]) //등록된 현장담당자 수만큼의 인덱스 추출
         submitAction({
             data: selectedEmps,
             setterReg: setManagers,
@@ -96,6 +98,7 @@ export default function Pd({pjtId}) {                                           
                 <TableCustom
                     title='현장담당자 목록' 
                     data={managers}
+                    submittedRowIdx={submittedMgrIdx} 
                     columns={pjtManagerColumns}                 
                     buttons={['Delete']}
                     onClicks={[() => showModal('Delete')]}
@@ -109,7 +112,7 @@ export default function Pd({pjtId}) {                                           
                                 ...params,
                                 data: selectedManager, 
                                 setter: setManagers, 
-                                setterSelected: setSelectedManager
+                                setterSumittedIdx: setSubmittedMgrIdx
                             }),
                             handleCancel: closeModal('Delete'),
                             rowData: selectedManager,

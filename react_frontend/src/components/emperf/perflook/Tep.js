@@ -21,10 +21,7 @@ export default function Tep() {
     const [content, setContent] = useRecoilState(tepSelectedBtnState);
 
     useEffect(() => {
-        // formData값이 있으면(이전 탭의 검색기록이 있으면) 그 값을 불러옴
-        if(Object.keys(formData).length !== 0) {
-            handleFormSubmit(formData);
-        }
+        handleFormSubmit(formData);
         handleButtonClick(content);
     }, []);
 
@@ -69,7 +66,7 @@ export default function Tep() {
                 initialValues={formData} 
                 onFormSubmit={handleFormSubmit} 
                 formFields={formField_tep} 
-                autoSubmitOnInit={true}
+                //autoSubmitOnInit={true}
             />
 
             {(!formData || Object.keys(formData).length === 0) ? (

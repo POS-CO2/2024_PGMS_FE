@@ -11,16 +11,16 @@ import * as mainStyle from '../../../assets/css/main.css';
 import * as ps12Style from '../../../assets/css/ps12.css';
 import * as sysStyles from '../../../assets/css/sysmng.css';
 import * as esmStyles from '../../../assets/css/esm.css';
-import * as chartStyles from "../../../assets/css/chart.css"
-import * as saStyles from "../../../assets/css/sa.css"
-import * as psqStyles from "../../../assets/css/psq.css"
+import * as chartStyles from "../../../assets/css/chart.css";
+import * as saStyles from "../../../assets/css/sa.css";
+import * as psqStyles from "../../../assets/css/psq.css";
+import * as pdsStyles from "../../../assets/css/pds.css";
 import { Card } from '@mui/material';
 import { PieChart } from '@mui/x-charts/PieChart';
 import { DownOutlined } from '@ant-design/icons';
 import { Dropdown, Space } from 'antd';
 import axiosInstance from '../../../utils/AxiosInstance.js';
 import { emissionPerfPjtColumns, perfPjtColumns, pjtColumns } from '../../../assets/json/tableColumn';
-import * as pdsStyles from "../../../assets/css/pds.css";
 
 export default function Psq_Fp() {
     const [formFields, setFormFields] = useState(formField_psq_fp);

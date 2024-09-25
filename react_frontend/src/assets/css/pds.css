@@ -111,6 +111,7 @@ button:hover {
     flex-direction: column;
     flex-wrap: nowrap;
     padding: 20px;
+    padding-top: 5px;
     height: 100%;
 }
 

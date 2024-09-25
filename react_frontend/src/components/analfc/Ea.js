@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from 'react';
+import { useRecoilState } from "recoil";
+import { eqLibAnaSearchForm } from '../../atoms/searchFormAtoms';
 import SearchForms from "../../SearchForms";
 import { formField_ea } from "../../assets/json/searchFormData";
 import TableCustom from "../../TableCustom.js";
@@ -14,12 +16,19 @@ import * as psqStyles from "../../assets/css/psq.css"
 import * as XLSX from 'xlsx';
 
 export default function Ea() {
-    const [formData, setFormData] = useState(); // 검색 데이터
+    const [formData, setFormData] = useRecoilState(eqLibAnaSearchForm); // 검색 데이터
     const [analEquipData, setAnalEquipData] = useState([]); // 표
     const [analEquipChartData, setAnalEquipChartData] = useState([]); // 차트
     const [tableColumn, setTableColumn] = useState([]);
 
     const colors = ['#67b7dc', '#6794dc', '#6771dc', '#8067dc', '#a367dc', '#c767dc'];
+
+    useEffect(() => {
+        // formData값이 있으면(이전 탭의 검색기록이 있으면) 그 값을 불러옴
+        if(Object.keys(formData).length !== 0) {
+            handleFormSubmit(formData);
+        }
+    }, []);
 
     useEffect(() => {
         // 총 value 계산
@@ -101,7 +110,7 @@ export default function Ea() {
                 {"분석및예측 > 설비별 분석"}
             </div>
 
-            <SearchForms onFormSubmit={handleFormSubmit} formFields={formField_ea} />
+            <SearchForms initialValues={formData} onFormSubmit={handleFormSubmit} formFields={formField_ea} />
 
             {(!formData || Object.keys(formData).length === 0) ? (
                 <></>

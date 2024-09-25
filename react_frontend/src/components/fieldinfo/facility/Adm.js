@@ -23,12 +23,12 @@ export default function Adm() {
     const [year, setYear] = useState(new Date().getFullYear());
 
     // localStorage에서 값을 가져오고, 파싱하여 배열로 변환
-    const [selectedEqLibIdx, setSelectedEqLibIdx] = useState(() => {
+    const [submittedActvIdx, setSubmittedActvIdx] = useState(() => {
         const leftTableSub = localStorage.getItem("leftTableSub");
         return leftTableSub ? JSON.parse(leftTableSub) : [];
     });
     
-    const [selectedActvIdx, setSelectedActvIdx] = useState(() => {
+    const [submittedEFIdx, setSubmittedEFIdx] = useState(() => {
         const rightTableSub = localStorage.getItem("rightTableSub");
         return rightTableSub ? JSON.parse(rightTableSub) : [];
     });
@@ -44,6 +44,7 @@ export default function Adm() {
 
     const fetchOptions = async (unitType) => {
         const response = await axiosInstance.get(`/sys/unit?unitType=${unitType}`);
+
         return response.data.map(item => ({
             value: item.code,
             label: item.name,
@@ -94,6 +95,32 @@ export default function Adm() {
         Object.keys(formData).length === 0 ? fetchActv() : handleFormSubmit(formData);
     }, []);
 
+    // actves가 업데이트된 이후에 fetchEFList를 호출
+    useEffect(() => {
+        if (actves.length > 0 && selectedActv) {
+            fetchEFList(selectedActv); // actv 리스트가 로딩된 이후에 호출
+        }
+    }, [actves, selectedActv]); // actves가 업데이트될 때마다 실행
+
+    useEffect(() => {
+        localStorage.setItem("leftTableSub", JSON.stringify(submittedActvIdx));
+    }, [submittedActvIdx]);
+
+    useEffect(() => {
+        localStorage.setItem("rightTableSub", JSON.stringify(submittedEFIdx));
+    }, [submittedEFIdx]);
+
+    const fetchEFList = async (actv) => {
+        try {
+            // 선택한 actv에 매핑된 배출계수 목록 조회
+            const response = await axiosInstance.get(`/equip/coef?actvDataId=${actv.id}`);
+            setEmissionFactors(response.data);
+            setFilteredEfs(response.data);
+        } catch (error) {
+            console.error("Error fetching activity data:", error);
+        }
+    }
+
     //조회 버튼 클릭시 호출될 함수
     const handleFormSubmit = async (data) => {
         const params = {
@@ -108,7 +135,15 @@ export default function Adm() {
         try {
             const response = await axiosInstance.get("/equip/actv", {params});
             setActves(response.data);
-            setEmissionFactors([]);
+
+            //설비LIB 목록에 selectedEqLib 있는지 확인
+            const targetRow = response.data.find(row => row.id === selectedEqLib.id);
+            if (targetRow) {
+                fetchEFList(selectedActv);
+            } else {
+                setEmissionFactors([]);
+            }
+            setSubmittedActvIdx([]);
             setFormData(data);
         } catch (error) {
             console.error("Error fetching actv data:", error);
@@ -128,15 +163,7 @@ export default function Adm() {
 
         // actv가 있으면 setSelectedActv를 설정하고 API 호출
         setSelectedActv(actv);
-
-        try {
-            // 선택한 actv에 매핑된 배출계수 목록 조회
-            const response = await axiosInstance.get(`/equip/coef?actvDataId=${actv.id}`);
-            setEmissionFactors(response.data);
-            setFilteredEfs(response.data);
-        } catch (error) {
-            console.error("Error fetching activity data:", error);
-        }
+        fetchEFList(actv); //배출계수 목록 불러오기
     };
 
     // 배출계수 row 클릭 시 호출될 함수
@@ -170,14 +197,10 @@ export default function Adm() {
 
                 const response = await axiosInstance.post("/equip/actv", requestBody);
 
-                // 기존 프로젝트에서 placeholderPjt를 제거하고 새 데이터를 병합
-                setActves(prevActves => {
-                    // placeholderProject 제거
-                    const cleanedActves = prevActves.filter(actv => actv.id !== '');
-
-                    // 새로 추가된 활동자료를 병합
-                    return [...cleanedActves, response.data];
-                });
+                // 기존 활동자료에 새 데이터를 병합
+                setActves(prevActves => [response.data, ...prevActves]);
+                setSelectedActv({});
+                setSubmittedActvIdx([0]);
 
                 swalOptions.title = '성공!',
                 swalOptions.text = '활동자료가 성공적으로 등록되었습니다.';
@@ -189,11 +212,11 @@ export default function Adm() {
                 swalOptions.text = error.response.data.message,
                 swalOptions.icon = 'error';
             }
-            Swal.fire(swalOptions);
         } else if (modalType === 'DeleteA') {
             // 선택된 활동자료를 actves 리스트에서 제거
             setActves(prevActves => prevActves.filter(actv => actv.id !== selectedActv.id));
             setSelectedActv({});
+            setSubmittedActvIdx([]);
         } else if (modalType === 'FamEdit') {
             try {
                 const requestBody = {
@@ -214,7 +237,7 @@ export default function Adm() {
                         actv.id === selectedActv.id ? response.data : actv
                     )
                 );
-                setSelectedActv({});
+                setSelectedActv(response.data);
 
                 swalOptions.title = '성공!',
                 swalOptions.text = '활동자료가 성공적으로 수정되었습니다.';
@@ -226,21 +249,57 @@ export default function Adm() {
                 swalOptions.text = error.response.data.message,
                 swalOptions.icon = 'error';
             }
-            Swal.fire(swalOptions);
         } else if (modalType === 'EfmAdd') {
-            setFilteredEfs(prevList => [data, ...prevList]);
-            setSelectedEF(data);
+            try {
+                // POST 요청으로 서버에 데이터 전송
+                const response = await axiosInstance.post('/equip/coef', data);
+    
+                setFilteredEfs(prevList => [response.data, ...prevList]);
+                setSelectedEF({});
+                setSubmittedEFIdx([0]);
+                
+                swalOptions.title = '성공!',
+                swalOptions.text = `배출계수가 성공적으로 등록되었습니다.`;
+                swalOptions.icon = 'success';
+            } catch (error) {
+                swalOptions.title = '실패!',
+                swalOptions.text = error.response.data.message;
+                swalOptions.icon = 'error';
+            }
         } else if (modalType === 'EfmEdit') {
-            setFilteredEfs(prevList =>
-                prevList.map(item =>
-                    item.id === data.id ? { ...item, ...data } : item
-                )
-            );
+            try {
+                // POST 요청으로 서버에 데이터 전송
+                const response = await axiosInstance.patch('/equip/coef', data);
+    
+                setFilteredEfs(prevList =>
+                    prevList.map(item =>
+                        item.id === data.id ? { ...item, ...data } : item
+                    )
+                );
+                setSelectedEF(response.data);
+                
+                swalOptions.title = '성공!',
+                swalOptions.text = `${response.data.applyDvs}(이)가 성공적으로 수정되었습니다.`;
+                swalOptions.icon = 'success';
+            } catch (error) {
+                swalOptions.title = '실패!',
+                swalOptions.text = error.response.data.message;
+                swalOptions.icon = 'error';
+            }
         } else if (modalType === 'DeleteB') {
             // 선택된 활동자료를 actves 리스트에서 제거
             setFilteredEfs(prevList => prevList.filter(item => item.id !== selectedEF.id));
             setSelectedEF({});
+            setSubmittedEFIdx([]);
         }
+
+        // Swal.fire 실행 후, 성공 메시지가 표시되면 페이지 새로고침
+        Swal.fire(swalOptions).then(() => {
+            // 성공 후 페이지 새로고침
+            if(modalType !== 'DeleteA' && modalType !== 'DeleteB') {
+                window.location.reload();
+            }
+        });
     };
 
     // 모달 닫기
@@ -269,6 +328,7 @@ export default function Adm() {
                         <TableCustom 
                             title='활동자료목록' 
                             data={actves} 
+                            submittedRowIdx={submittedActvIdx} 
                             columns={equipActvColumns}
                             buttons={['Delete', 'Edit', 'Add']}
                             onClicks={[() => showModal('DeleteA'), () => showModal('FamEdit'), () => showModal('FamAdd')]}
@@ -311,6 +371,7 @@ export default function Adm() {
                             <TableCustom 
                                 title="배출계수목록" 
                                 data={filteredEfs}
+                                submittedRowIdx={submittedEFIdx} 
                                 columns={equipCoefColumns}
                                 buttons={["Delete", "Edit", "Add"]} 
                                 selectedRows={[selectedEF]} 

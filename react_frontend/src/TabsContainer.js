@@ -189,7 +189,7 @@ const DraggableTabNode = ({ index, moveTabNode, children }) => {
   );
 };
 
-const TabsContainer = forwardRef(({ handleLogout, user }, ref) => {
+const TabsContainer = forwardRef(({ handleLogout, user, handleMenuClick }, ref) => {
   const [tabs, setTabs] = useRecoilState(openTabsState);
   const [activeKey, setActiveKey] = useRecoilState(activeTabState);
   const navigate = useNavigate();
@@ -216,10 +216,8 @@ const TabsContainer = forwardRef(({ handleLogout, user }, ref) => {
   }, []);
 
   useEffect(() => {
-    if (activeKey) {
-      localStorage.setItem('activeTab', activeKey);
-      navigate(activeKey);
-    }
+    localStorage.setItem('activeTab', activeKey);
+    navigate(activeKey);
   }, [activeKey, navigate]);
 
   // 탭 상태를 로컬 스토리지에 저장
@@ -248,9 +246,6 @@ const TabsContainer = forwardRef(({ handleLogout, user }, ref) => {
     } else {
       navigate(path);
     }
-    localStorage.setItem('activeTab', path);
-    localStorage.removeItem("leftTableSub");
-    localStorage.removeItem("rightTableSub");
   };
 
   const removeTab = targetKey => {
@@ -277,8 +272,7 @@ const TabsContainer = forwardRef(({ handleLogout, user }, ref) => {
 
     setTabs(newTabs);
 
-    // If the active tab was the one removed, switch to the home tab
-    if (!newTabs.length || newActiveKey === '') {
+    if (newTabs.length === 1) {
       newActiveKey = '';
     }
 
