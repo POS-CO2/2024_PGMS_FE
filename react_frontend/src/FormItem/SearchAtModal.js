@@ -30,6 +30,7 @@ export default function SearchAtModal({ initialValues={}, name, label, required 
 
     useEffect(() => {
         if(Object.keys(initialValues).length !== 0) {
+            console.log(initialValues);
             setInputValue(initialValues.searchProject.pjtCode + '/' + initialValues.searchProject.pjtName);
         }
     }, [initialValues])

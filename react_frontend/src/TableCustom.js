@@ -331,7 +331,7 @@ export function TableCustomDoubleClickEdit({
             swalOptions.icon = 'success';
 
             // 수정된 데이터로 테이블 갱신
-            handleFormSubmit(response.data);
+            handleFormSubmit(formData);
 
         } catch (error) {
             swalOptions.title = '실패!',

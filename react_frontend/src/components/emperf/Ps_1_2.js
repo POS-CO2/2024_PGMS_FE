@@ -152,7 +152,7 @@ export default function Ps_1_2() {
     const handleFormSubmit = async (data) => {
         setFormData(data);
         setSelectedPjt(data.searchProject);
-
+console.log(data);
         let url = `/perf?pjtId=${data.searchProject.id}&actvYear=${data.actvYear}`;
         // emtnActvType이 존재하는 경우에만 URL에 추가
         if (data.emtnActvType) {
