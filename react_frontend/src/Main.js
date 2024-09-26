@@ -349,10 +349,11 @@ export default function Main() {
         };
         if (direction === "right") {
             for (const key of moveKeys){
-                const formDatas = {
+                const formDatas = [{
                     equipId: key[0],
                     actvDataId: key[1],
-                }
+                }]
+                console.log(formDatas);
                 try {
                     const {data} = await axiosInstance.post(`/equip/emission`, formDatas);    
                     swalOptions.title = '성공!',
@@ -461,7 +462,6 @@ export default function Main() {
             console.error("error");
         }
     }
-    console.log(alarm);
     return (
             <div className={gridStyles.grid_container}>
                 <Card className={gridStyles.box1} sx={{borderRadius:"10px", color:"white"}}>
@@ -471,10 +471,10 @@ export default function Main() {
                             {/* <SsidChartRoundedIcon sx={{width:"2rem",height:"2rem", paddingRight:"0.5rem"}}/> */}
                             PGMS
                         </div>
-                        <ConfigProvider theme={{token:{fontFamily:"SUITE-Regular"}}}>
+                        <ConfigProvider theme={{token:{fontFamily:"SUITE-Regular", fontSize:"1rem"}}}>
                         <Select defaultValue={selectedMyPjt?.pjtName} value={selectedMyPjt?.pjtName} onChange={(e) => handleDropClick(e)} style={{width:"20%", height:"2.5rem", fontSize:"4rem", color:"rgb(55, 57, 78)"}}>
                             {myPjt.map((pjt) => (
-                                <Select.Option key={pjt.id} value={pjt.pjtName}>
+                                <Select.Option key={pjt.id} value={pjt.pjtName} >
                                 {pjt.pjtName}
                                 </Select.Option>
                             ))}
@@ -487,49 +487,67 @@ export default function Main() {
                                 <div className={gridStyles.box1_1_logo}>
                                     <DataSaverOffOutlinedIcon fontSize='large' sx={{marginRight:"0.5rem"}}/>프로젝트 진행현황
                                 </div>
-                                <Progress percent={progressPjt()} strokeColor={twoColors} />
+                                <Progress percent={progressPjt()} strokeColor={twoColors} style={{marginBottom:"2rem"}}/>
                                 <div className={gridStyles.box1_1_logo}>
                                     <LeaderboardOutlinedIcon fontSize='large' sx={{marginRight:"0.5rem"}}/>전월 대비 실적Scope
                                 </div>
                                 <div className={gridStyles.box1_1_gauge}>
-                                    <div style={{height:"100%", marginTop:"2rem"}}>
+                                    <div style={{height:"100%"}}>
                                         {
-                                            scopeOne >= 0 ? (
-                                                <div style={{display:"flex", flexDirection:"row",width:"100%", height:"100%", justifyContent:"space-around", alignItems:"center", fontSize:"3rem", fontWeight:"bold", color:"red", gap:"1rem"}}>
-                                                    <WarningTwoTone fontSize='large' sx={{color:"red"}}/>
+                                            isNaN(scopeOne) ? (
+                                                <div style={{display:"flex", flexDirection:"row",width:"100%", height:"100%", justifyContent:"space-around", alignItems:"center", fontSize:"3rem", fontWeight:"bold", color:"rgb(55, 57, 78)", gap:"1rem"}}>
+                                                    <GppGoodTwoTone fontSize='large' sx={{color:"rgb(55, 57, 78)"}} />
                                                     <div>
-                                                    +{scopeOne}%
+                                                        No Data
                                                     </div>
                                                 </div>
                                             ) : (
-                                                <div style={{display:"flex", flexDirection:"row",width:"100%", height:"100%", justifyContent:"space-around", alignItems:"center", fontSize:"3rem", fontWeight:"bold", color:"#0eaa00", gap:"1rem"}}>
-                                                    <GppGoodTwoTone fontSize='large' sx={{color:"#0eaa00"}} />
-                                                    <div>
-                                                        {scopeOne}%
+                                                scopeOne >= 0 ? (
+                                                    <div style={{display:"flex", flexDirection:"row",width:"100%", height:"100%", justifyContent:"space-around", alignItems:"center", fontSize:"3rem", fontWeight:"bold", color:"red", gap:"1rem"}}>
+                                                        <WarningTwoTone fontSize='large' sx={{color:"red"}}/>
+                                                        <div>
+                                                        +{scopeOne}%
+                                                        </div>
                                                     </div>
-                                                </div>
+                                                ) : (
+                                                    <div style={{display:"flex", flexDirection:"row",width:"100%", height:"100%", justifyContent:"space-around", alignItems:"center", fontSize:"3rem", fontWeight:"bold", color:"#0eaa00", gap:"1rem"}}>
+                                                        <GppGoodTwoTone fontSize='large' sx={{color:"#0eaa00"}} />
+                                                        <div>
+                                                            {scopeOne}%
+                                                        </div>
+                                                    </div>
+                                                )
                                             )
                                         }
                                         <div className={gridStyles.box1_1_logo}>
                                             <SpeedIcon fontSize='large' sx={{marginRight:"0.5rem"}}/>실적Scope1
                                         </div>
                                     </div>
-                                    <div style={{height:"100%", marginTop:"2rem"}}>
+                                    <div style={{height:"100%"}}>
                                         {
-                                            scopeTwo >= 0 ? (
-                                                <div style={{display:"flex", flexDirection:"row",width:"100%", height:"100%", justifyContent:"space-around", alignItems:"center", fontSize:"3rem", fontWeight:"bold", color:"red", gap:"1rem"}}>
-                                                    <WarningTwoTone fontSize='large' sx={{color:"red"}}/>
+                                            isNaN(scopeTwo) ? (
+                                                <div style={{display:"flex", flexDirection:"row",width:"100%", height:"100%", justifyContent:"space-around", alignItems:"center", fontSize:"3rem", fontWeight:"bold", color:"rgb(55, 57, 78)", gap:"1rem"}}>
+                                                    <GppGoodTwoTone fontSize='large' sx={{color:"rgb(55, 57, 78)"}} />
                                                     <div>
-                                                    +{scopeTwo}%
+                                                        No Data
                                                     </div>
                                                 </div>
                                             ) : (
-                                                <div style={{display:"flex", flexDirection:"row",width:"100%", height:"100%", justifyContent:"space-around", alignItems:"center", fontSize:"3rem", fontWeight:"bold", color:"#0eaa00", gap:"1rem"}}>
-                                                    <GppGoodTwoTone fontSize='large' sx={{color:"#0eaa00"}} />
-                                                    <div>
-                                                        {scopeTwo}%
+                                                scopeTwo >= 0 ? (
+                                                    <div style={{display:"flex", flexDirection:"row",width:"100%", height:"100%", justifyContent:"space-around", alignItems:"center", fontSize:"3rem", fontWeight:"bold", color:"red", gap:"1rem"}}>
+                                                        <WarningTwoTone fontSize='large' sx={{color:"red"}}/>
+                                                        <div>
+                                                        +{scopeTwo}%
+                                                        </div>
                                                     </div>
-                                                </div>
+                                                ) : (
+                                                    <div style={{display:"flex", flexDirection:"row",width:"100%", height:"100%", justifyContent:"space-around", alignItems:"center", fontSize:"3rem", fontWeight:"bold", color:"#0eaa00", gap:"1rem"}}>
+                                                        <GppGoodTwoTone fontSize='large' sx={{color:"#0eaa00"}} />
+                                                        <div>
+                                                            {scopeTwo}%
+                                                        </div>
+                                                    </div>
+                                                )
                                             )
                                         }
                                     <div className={gridStyles.box1_1_logo}>
@@ -619,9 +637,6 @@ export default function Main() {
                                     <div className={gridStyles.box1_1_logo} style={{color:'white', fontSize:"1rem", paddingLeft:"2rem"}}>
                                         증빙자료 제출 현황
                                     </div>
-                                    <div className={gridStyles.box2_1_1_1_1}>
-                                    <Chip label={selectedMyPjt?.pjtName} variant="outlined" onClick={() => {}} sx={{backgroundColor:"white", fontSize:"1rem", fontWeight:"bold", width: "100%"}}/>
-                                    </div>
                                 </div>
                                 <div className={gridStyles.box2_swap}>
                                 <StyledRoot style={{height:"80%", width:"100%", margin:"0 auto", overflow: "hidden"}}>
@@ -674,13 +689,6 @@ export default function Main() {
                             </Card>
                         </div>
                     </div>
-                    
-                    {/* <Canvas>
-                            <ambientLight intensity={2.0} />
-                            <pointLight position={[10, 10, 10]} />
-                            <Earth />
-                            <OrbitControls />
-                        </Canvas> */}
                     <div className={gridStyles.box2_3}>
                         <div className={gridStyles.box2_3_1}>
                             <Card sx={{borderRadius:"10px", height:"100%", display:"flex", justifyContent:"center", alignContent:"center", flexDirection:"column", gap:"2%"}}>
@@ -703,6 +711,7 @@ export default function Main() {
                                     <Transfer
                                         dataSource={mockData}
                                         showSearch
+                                        titles={["미지정 배출원","지정 배출원"]}
                                         filterOption={filterOption}
                                         targetKeys={targetKeys}
                                         onChange={handleChange}
