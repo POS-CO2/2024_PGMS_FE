@@ -302,7 +302,6 @@ const polarAreaChartOptions = (labels) => {
             enabled: true,
             enabledOnSeries: undefined,
             formatter: function (val, opts) {
-                console.log(opts);
                 return `${val.toFixed(2)}%`;
             },
             textAnchor: 'middle',
@@ -476,7 +475,7 @@ export default function Main_Hp() {
             value: (totScope[toMonth-1] / totScope[toMonth-2] * 100).toFixed(2) ?? 0,
         },
     ]
-
+    console.log(emtn);
     const renderIcon = (e) => {
         switch (e) {
             case 'T0':  //공통

@@ -1,624 +1,1499 @@
-import React, { useState, useRef, useEffect } from 'react';
-import * as gridStyles from './assets/css/grid.css'
-import { Canvas, useFrame } from '@react-three/fiber';
-import { OrbitControls, Html } from '@react-three/drei';
-import * as THREE from 'three';
-import { TextureLoader } from 'three';
-import earthTextureUrl from './assets/images/earth.jpg';
-import { GaugeContainer, GaugeValueArc, GaugeReferenceArc, useGaugeState, Gauge, gaugeClasses} from '@mui/x-charts';
-import { Card,CardContent, FormControl, InputLabel, MenuItem, Chip, ButtonGroup, Button, IconButton } from '@mui/material';
-import { CustomBarChart, CustomLineChart } from './Chart';
-import { temp_data } from './assets/json/chartData';
-import SsidChartRoundedIcon from '@mui/icons-material/SsidChartRounded';
-import AutoGraphIcon from '@mui/icons-material/AutoGraph';
-import DataSaverOffOutlinedIcon from '@mui/icons-material/DataSaverOffOutlined';
-import SpeedIcon from '@mui/icons-material/Speed';
-import LeaderboardOutlinedIcon from '@mui/icons-material/LeaderboardOutlined';
-import SummarizeOutlinedIcon from '@mui/icons-material/SummarizeOutlined';
-import { ArrowBackIos, ArrowForward, ArrowForwardIos, Girl, MarginRounded } from '@mui/icons-material';
-import { color } from 'three/webgpu';
-import { Transfer, Select, Progress } from 'antd';
-import axiosInstance from './utils/AxiosInstance';
-import { Swiper, SwiperSlide } from 'swiper/react';
-import { EffectCoverflow, Pagination, Navigation, A11y, Grid } from 'swiper/modules';
+import React, { useState, useRef, useEffect, useCallback, memo } from 'react';
+import * as gridStyles from './assets/css/gridAdmin.css';
+import { useSpring, animated } from '@react-spring/web';
+import { Card, CircularProgress, Divider, IconButton, LinearProgress, Skeleton } from '@mui/material';
+import { Code, Menu, ManageAccounts, Terminal, PeopleAlt, Engineering, Business, Settings, Today, AddCircleTwoTone, RemoveCircleTwoTone, Person, RemoveCircleOutline, MoreHoriz, ScoreSharp } from '@mui/icons-material';
+import { SwiperSlide, Swiper } from 'swiper/react';
+import { Pagination, Navigation } from 'swiper/modules';
 import styled from 'styled-components';
-import 'swiper/css';
-import 'swiper/css/pagination';
-import 'swiper/css/effect-coverflow';
+import ApexCharts from 'react-apexcharts';
+import { useNavigate } from 'react-router-dom';
+import { useRecoilState } from "recoil";
+import { openTabsState, activeTabState } from './atoms/tabAtoms';
+import EcrLogo from './assets/images/ecrlogo.png';
+import TerminalLogo from './assets/images/terminal.png';
+import ContainerLogo from './assets/images/container.png';
+import ContainerAddLogo from './assets/images/containeradd.png';
+import ApiLogo from './assets/images/api.png';
+import { ConfigProvider, Tabs, DatePicker, Input, Select, Collapse } from 'antd';
+import dayjs from 'dayjs';
+import axiosInstance from './utils/AxiosInstance';
+import useFetchData from './customhook/useFetchData';
+import useInterval from './customhook/useInterval'
 import Swal from 'sweetalert2';
-import { green, yellow, red } from '@mui/material/colors';
 
-function GaugePointer() {
-    const { valueAngle, outerRadius, cx, cy } = useGaugeState();
+const { RangePicker } = DatePicker;
 
-    if (valueAngle === null) {
-        return null;
+const StyledDatePicker = styled(RangePicker)`
+    .ant-picker {
+        height: 80%;
+    }
+`;
+
+const StyledCollapse = styled(Collapse)`
+
+    .ant-collapse-item {
+        height: 100%;
     }
 
-    const target = {
-      x: cx + outerRadius * Math.sin(valueAngle),
-      y: cy - outerRadius * Math.cos(valueAngle),
-    };
-    return (
-        <g>
-            <circle cx={cx} cy={cy} r={5} fill="black" />
-            <path
-                d={`M ${cx} ${cy} L ${target.x} ${target.y}`}
-                stroke="red"
-                strokeWidth={3}
-            />
-        </g>
-    );
-}
+    .ant-collapse-header {
+        height: 100%;
+        align-items: center !important;
+    }
 
-function Earth() {
-    const earthRef = useRef();
-    const [hovered, setHovered] = useState(false);
-    const [hoveredCity, setHoveredCity] = useState(null);
+    .ant-collapse-expand-icon {
+        height: 100%;
+    }
 
-    // 도시 위치 및 이름
-    const cities = [
-        { name: 'New York', position: new THREE.Vector3(0.6, 0.5, 0.5) },
-        { name: 'London', position: new THREE.Vector3(0.5, 0.6, -0.4) },
-        { name: 'Tokyo', position: new THREE.Vector3(0.6, -0.5, 0.4) },
-    ];
+    .ant-collapse-header-text {
+        height: 100%;
+        align-items: center;
+    }
 
-    useFrame(() => {
-        if (earthRef.current) {
-            const rotation = earthRef.current.rotation;
-        }
-    });
+    .ant-collapse-content {
+        white-space: wrap;
+        overflow-x: auto;
+    }
 
-    // 텍스처 로더
-    const textureLoader = new TextureLoader();
-    const earthTexture = textureLoader.load(earthTextureUrl); // 텍스처 이미지 경로
+`;
 
-    return (
-        <mesh ref={earthRef}>
-            {/* 지구의 텍스처 */}
-            <sphereGeometry args={[2, 32, 32]} />
-            <meshStandardMaterial map={earthTexture} />
-            {cities.map((city, index) => (
-                <mesh
-                    key={index}
-                    position={city.position.toArray()}
-                    onPointerOver={() => {
-                        setHovered(true);
-                        setHoveredCity(city);
-                    }}
-                    onPointerOut={() => {
-                        setHovered(false);
-                        setHoveredCity(null);
-                    }}
-                >
-                <sphereGeometry args={[0.05, 16, 16]} />
-                <meshStandardMaterial color="red" />
-                {hovered && hoveredCity === city && (
-                <Html position={[city.position.x, city.position.y + 0.1, city.position.z]} distanceFactor={10}>
-                    <div style={{ color: 'white', backgroundColor: 'green', padding: '2px 5px', borderRadius: '3px' }}>
-                        {city.name}
-                    </div>
-                </Html>
-            )}
-                </mesh>
-        ))}
-        </mesh>
-    );
-}
+const TabsWrapper = styled.div`
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    overflow: hidden; /* 탭이 영역을 벗어나지 않도록 설정 */
+    width: 60%;
+    height: 100%;
+`;
+
+const TabContainer = styled.div`
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    flex-grow: 1;
+    padding-top: 16px;
+    padding-left: 14px;
+    padding-right: 16px; /* 탭과 유저 정보 사이의 간격 */
+    overflow: hidden;
+`;
+
+const StyledTabs = styled(Tabs)`
+    .ant-tabs .ant-tabs-top{
+        height: 100%;
+    }
+
+
+
+    .ant-tabs-tab .ant-tabs-tab-btn{
+        font-size:1.1rem;
+        font-weight: 600;
+        color: white;
+    }
+
+    .ant-tabs-tab:hover .ant-tabs-tab-btn {
+        font-size:20px;
+        color: #66C65E; /* 탭 호버 시 레이블 색상 변경 */
+    }
+
+    .ant-tabs-tab.ant-tabs-tab-active .ant-tabs-tab-btn {
+        color: #0EAA00; /* 활성화된 탭 레이블의 색상 변경 */
+    }
+
+    .ant-tabs-nav {
+        height:100%;
+    }
+
+    .ant-tabs-nav-wrap {
+        height: 100%;
+    }
+
+    .ant-tabs-nav-list {
+        height: 100% !important;
+    }
+`;
 
 const StyledRoot = styled.div`
     .swiper {
+
         &.swiper-initialized {
             width: 100%;
             height: 100%;
         }
         &-wrapper {
             display: flex;
-            width: 100rem;
+            flex-direction: column;
+            width: 100%;
             height: 100%;
         }
         &-slide {
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            flex-shrink: 0; // important
             width: 100%;
             height: 100%;
         },
-        &-slide-active{
-        }
-        &-slide-next {
-            width: 100%;
-            height: 95%;
-            margin: auto 0;
-        }
-        &-slide-prev {
-            width: 100%;
-            height: 95%;
-            margin: auto 0;
-        }
-        &-button-next {
-            z-idnex: 1;
-        }
     }    
 `;
 
-export default function Main_Admin() {
-
-    const [mockData, setMockData] = useState([]);
-    const [targetKeys, setTargetKeys] = useState([]);
-    const [myPjt, setMyPjt] = useState([]);
-    const [selectedMyPjt, setSelectedMyPjt] = useState(null);
-    const [scope, setScope] = useState([]);
-    const [info, setInfo] = useState({});
-    const [afterEmission, setAfterEmission] = useState([]);
-    const [beforeEmission, setBeforeEmission] = useState([]);
-    const [pjtStartYear, setPjtStartYear] = useState(0);
-    const [pjtStartMonth, setPjtStartMonth] = useState(0);
-    const [pjtEndYear, setPjtEndYear] = useState(0);
-    const [pjtEndMonth, setPjtEndMonth] = useState(0);
-    const [scopeOne, setScopeOne] = useState(0);
-    const [scopeTwo, setScopeTwo] = useState(0);
-    const [documentStatus, setDocumentStatus] = useState([]);
-
-    let today = new Date();
-    let toYear = today.getFullYear();
-    let toMonth = today.getMonth();
-
-    const getMock = (ae,be) => {
-        const tempTargetKeys = [];
-        const tempMockData = [];
-        const bae = ae.concat(be);
-        bae.map(v => {
-            const data = {
-                key: [v.equipId, v.actvDataId],
-                title: v.equipName,
-                description: v.equipLibName,
-                chosen: v.id != null,
-            }
-            if (data.chosen) {
-                tempTargetKeys.push(data.key);
-            }
-            tempMockData.push(data);
-        });
-        setMockData(tempMockData);
-        setTargetKeys(tempTargetKeys);
-    };
-
-    function calculateTotalMonths(startYear, startMonth, endYear, endMonth) {
-        const yearDifference = endYear - startYear;
-        
-        const monthDifference = endMonth - startMonth;
-        
-        const totalMonths = (yearDifference * 12) + monthDifference + 1;
-        
-        return totalMonths;
+const StyledChart = styled.div`
+    .apexcharts-canvas {
+        width: 80% !important;
+        height: 100% !important;
     }
+`;
 
-    useEffect(() => {
-        const fetchData = async () => {
-            try{
-                const pjtResponse = await axiosInstance.get(`/pjt/my`);
-                const myPjt = pjtResponse.data;
-                setMyPjt(myPjt);
+const StyledRoot2 = styled.div`
+    .swiper {
+        // position: relative;
+        // width: 100%;
+        // height: 100%;
 
-                if (myPjt.length > 0){
-                    const initialPjt = myPjt[0];
-                    setSelectedMyPjt(initialPjt);
-                    setPjtStartYear(initialPjt.ctrtFrYear);
-                    setPjtStartMonth(initialPjt.ctrtFrMth);
-                    setPjtEndYear(initialPjt.ctrtToYear);
-                    setPjtEndMonth(initialPjt.ctrtToMth);
-                    const chartResponse = await axiosInstance.get(`/perf/pjt?pjtId=${initialPjt.pjtId}&year=${toYear}`);
-                    const scope1Data = chartResponse.data.map(perf => perf.scope1 || null);
-                    const scope2Data = chartResponse.data.map(perf => perf.scope2 || null);
-                    const formattedChartPerfs = [
-                        { data: scope1Data, stack: 'A', label: 'Scope 1' },
-                        { data: scope2Data, stack: 'A', label: 'Scope 2' }
-                    ];
-                    setScope(formattedChartPerfs);
-                    // 실적스코프 전월대비 구하기
-                    setScopeOne(Math.floor(scope1Data[toMonth-1] / scope1Data[toMonth-2] * 100) ?? 0);
-                    setScopeTwo(Math.floor(scope2Data[toMonth-1] / scope2Data[toMonth-2] * 100) ?? 0);
+        &.swiper-initialized {
+            width: 100%;
+            height: 100%;
+        }
+        &-wrapper {
+            display: flex;
+            flex-direction: row;
+            width: 100%;
+            height: 100%;
+        }
+        &-slide {
+            flex-shrink: 0; // important
+            width: 100%;import useInterval from './customhook/useInterval';
 
-                    // 증빙자료 제출현황 3개월치 구하기
-                    const documentResponse = await axiosInstance.get(`/equip/document-status?pjtId=${initialPjt.pjtId}`);
-                    setDocumentStatus(documentResponse.data);
-                    console.log(initialPjt);
-                    // 배출원 지정 
-                    const emissionResponse = await axiosInstance.get(`/equip/emission?projectId=${initialPjt.pjtId}`);
-                    const ae = emissionResponse.data;
-                    setAfterEmission(ae);
-                    const beforeEmissionResponse = await axiosInstance.get(`/equip/emission/cand?projectId=${initialPjt.pjtId}`);
-                    const be = beforeEmissionResponse.data;
-                    setBeforeEmission(be);
-                    getMock(ae, be);
-                    
-                    console.log(documentResponse.data);
-                    console.log(ae);
-                    console.log(be);
+            height: 100%;
+        },
+    }    
+`;
+
+const Overlay = styled('div')({
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)', // 반투명 검정색
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    zIndex: 10001, // 스피너가 위에 보이도록 설정
+});
+
+const ChartOptions = (title, xdata) => {
+    const chartOption = {
+    chart: {
+        offsetY: 20,
+        type: "line",
+        toolbar: {
+            show: false
+        },
+        width: "auto",
+        height: 'auto',
+        responsive: [{
+            breakpoint: 600,
+            options: {
+                chart: {
+                width: '100%',
+                height: '100%',
+                },
+                legend: {
+                position: 'bottom'
                 }
             }
-            catch(error){
+            }],
+        },
+        grid: {
+            show: false,
+            xaxis: { 
+            show: false,
+            categories: xdata,
+            }
+        },
+        xaxis: {
+            categories: xdata,
+        },
+        yaxis: {
+            title: {
+            text: "배출량"
+            },
+            show: false,
+        },
+        stroke: {
+            width: 2,
+            curve: "smooth",
+        },
+        markers: {
+            size: 3,
+        },
+        dataLabels: {
+            enabled: false
+        },
+        tooltip: {
+            enabled: true,
+        },
+        colors: ["red"],
+        legend: {
+            position: "top",
+            horizontalAlign: "right",
+            show: false,
+        },
+        title: {
+            text: title,
+            align: 'left',
+            offsetX: 0,
+            offsetY: 0,
+            floating: false,
+            style: {
+                fontSize:  '25px',
+                fontWeight:  'bold',
+                color:  'rgb(55,57,78)',
+                fontFamily: "SUITE-Regular",
+            },
+        }
+    }
+    return chartOption;
+};
+
+const ProgressComponent = memo(({ progress }) => {
+    return (
+        <div style={{ width: "5%" }}>
+            <LinearProgress variant="determinate" value={progress} />
+        </div>
+    );
+});
+
+export default function Main_Admin() {
+    const today = new Date();
+    const defaultStartDate = dayjs(today).format('YYYY-MM-DD') + 'T00:00:00.000';
+    const defaultEndDate = dayjs(today).format('YYYY-MM-DD') + 'T23:59:59.999';
+
+    const [showMenuBar, setShowMenuBar] = useState(false);
+    const [main, setMain] = useState("server");
+    const [dateArray, setDateArray] = useState([]);
+    const [menuLogArray, setMenuLogArray] = useState([]);
+    const [serviceTab, setServiceTab] = useState("common");
+    const [selectedPeriod, setSelectedPeriod] = useState({
+        start: defaultStartDate,
+        end: defaultEndDate,
+    });
+    const [count, setCount] = useState(10);
+    const [errorCode, setErrorCode] = useState("");
+    const [errorLog, setErrorLog] = useState([]);
+    const [logLoading, setLogLoading] = useState(false);
+    const navigate = useNavigate();
+    const [openTabs, setOpenTabs] = useRecoilState(openTabsState);
+    const [activeKey, setActiveKey] = useRecoilState(activeTabState);
+
+    const handleButtonClick = (path, label) => {
+        const newTab = { key: path, tab: label };
+        if (!openTabs.find(tab => tab.key === path)) {
+          setOpenTabs([...openTabs, newTab]);  // 새로운 탭 추가
+        }
+        setActiveKey(path);  // activeKey를 변경
+        navigate(path);  // 경로 이동
+    };
+
+    const userCnt = useFetchData(`/sys/session`, 10000);
+    const commonUrl = '/sys/containers/item?clusterName=pgms_common&arn=arn:aws:ecs:ap-northeast-2:011528301196:service/pgms_common/';
+
+    const handleCountChange = (value) => {
+        setCount(value);
+    }
+
+    const handleErrorCodeChange = (value) => {
+        setErrorCode(value);
+    }
+    
+    const handleDateChange = (value) => {
+        if (value) {
+            const startDate = dayjs(value[0]).format('YYYY-MM-DD') + 'T00:00:00.000';
+            const endDate = dayjs(value[1]).format('YYYY-MM-DD') + 'T23:59:59.999';
+
+            setSelectedPeriod({
+                start: startDate,
+                end: endDate,
+            });
+        } else {
+            setSelectedPeriod({
+                start: defaultStartDate,
+                end: defaultEndDate,
+            });
+        }
+    }
+    
+    // 탭 체인지
+    const handleTabChange = async (key) => {
+        setServiceTab(key);
+    }
+
+    const tabItems = [
+        {
+            key: "common",
+            label: "공통",
+        },
+        {
+            key: "equipment",
+            label: "설비",
+        },
+        {
+            key: "project",
+            label: "프로젝트",
+        },
+        {
+            key: "anal",
+            label: "분석 및 예측",
+        },
+        {
+            key: "socket",
+            label: "채팅",
+        },
+    ]
+
+    const logItems = errorLog.map(data => ({
+        key: data.id,
+        label: <p>
+            {`서비스 명:`} <span style={{color:"white", fontWeight:"bold", fontSize:"1.2rem", padding:"0 0.5rem"}}>{data.serviceName}</span> 
+        {`에러 코드:`} <span style={{color:"white", fontWeight:"bold", fontSize:"1.2rem", padding:"0 0.5rem"}}>{data.errorCode}</span> 
+        {`사번:`} <span style={{color:"white", fontWeight:"bold", fontSize:"1.2rem", padding:"0 0.5rem"}}>{data.loginId ?? "x"}</span>
+        {`발생 일시:`} <span style={{color:"white", fontWeight:"bold", fontSize:"1.2rem", padding:"0 0.5rem"}}>{data.createDate}</span>
+        </p>,
+        children: <p>{data.message}</p>,
+    }))
+
+    const loadMoreLog = async () => {
+        if (!logLoading && errorLog.length > 0) {
+            setLogLoading(true);
+            try{
+                const lastLogId = errorLog[errorLog.length - 1].id;
+                const response = await axiosInstance.get(`/sys/error?serviceName=${serviceTab}&errorCode=${errorCode ?? ""}&startDate=${selectedPeriod.start ?? ""}&endDate=${selectedPeriod.end ?? ""}&count=${count}&objectId=${lastLogId}`);
+                const newLogs = response.data;
+
+                if (newLogs.length > 0) {
+                    setErrorLog((prevContent) => [...prevContent, ...newLogs]);
+                }
+            } catch(error) {
                 console.error(error);
             }
-        };
-        fetchData();
+            setLogLoading(false);
+        }
+    }
+
+    const springProps = useSpring({
+        transform: showMenuBar ? 'translateY(-20px)' : 'translateY(75px)',
+        config: {tension: 250, friction: 20},
+    });
+
+    const handleMouseOver = () => {
+        setShowMenuBar(true);
+    }
+    const handleMouseLeave = () => {
+        setShowMenuBar(false);
+    }
+
+    const handleServerClick = () => {
+        setMain("server");
+    }
+
+    const handleErrorLogClick = () => {
+        setMain("errorlog");
+    }
+    
+    const getLast7Days = () => {
+        const days = [];
+        
+    
+        for (let i = 0; i < 7; i++) {
+            const priorDate = new Date();
+            priorDate.setDate(today.getDate() - i);
+            
+            const year = priorDate.getFullYear();
+            const month = priorDate.getMonth() + 1;
+            const day = priorDate.getDate();
+        
+            days.push(`${year}-${String(month).padStart(2, '0')}-${day}`);
+        }
+    
+        return days.reverse(); // 과거 -> 현재 순으로 정렬
+    };
+
+    // 메뉴별 접속횟수관리 
+    useEffect(() => {
+        const xAxisChart = getLast7Days();
+        setDateArray(xAxisChart);
+        const fetchMenuLog = async () => {
+            try {
+                const menuCntResponse = await axiosInstance.get(`/sys/log/board?startDate=${xAxisChart[0]}`);
+                setMenuLogArray(menuCntResponse.data);
+            } catch (error) {
+                console.error(error);
+            }
+        }
+        fetchMenuLog();
         
     }, []);
 
-    useEffect(() => {
-        const fetchSelectedProjectData = async () => {
-            if (!selectedMyPjt) return;
-            setPjtStartYear(selectedMyPjt.ctrtFrYear);
-            setPjtStartMonth(selectedMyPjt.ctrtFrMth);
-            setPjtEndYear(selectedMyPjt.ctrtToYear);
-            setPjtEndMonth(selectedMyPjt.ctrtToMth);
+    const [commonContainer, setCommonContainer] = useState(null);
+    const [ccLoading, setCcLoading] = useState(false);
+    const [equipmentContainer, setEquipmentContainer] = useState(null);
+    const [eqLoading, setEqLoading] = useState(false);
+    const [projectContainer, setProjectContainer] = useState(null);
+    const [pjtLoading, setPjtLoading] = useState(false);
+    const [analContainer, setAnalContainer] = useState(null)
+    const [analLoading, setAnalLoading] = useState(false);
+    const [socketContainer, setSocketContainer] = useState(null);
+    const [skLoading, setSkLoading] = useState(false);
+    const [prePendingCm, setPrePendingCm] = useState(false);
+    const [prePendingEq, setPrePendingEq] = useState(false);
+    const [prePendingPj, setPrePendingPj] = useState(false);
+    const [prePendingAn, setPrePendingAn] = useState(false);
+    const [prePendingSk, setPrePendingSk] = useState(false);
+    const [progress, setProgress] = useState(0);
 
-            try {
-                const chartResponse = await axiosInstance.get(`/perf/pjt?pjtId=${selectedMyPjt.pjtId}&year=${toYear}`);
-                const scope1Data = chartResponse.data.map(perf => perf.scope1 || null);
-                const scope2Data = chartResponse.data.map(perf => perf.scope2 || null);
-                const formattedChartPerfs = [
-                    { data: scope1Data, stack: 'A', label: 'Scope 1' },
-                    { data: scope2Data, stack: 'A', label: 'Scope 2' }
-                ];
-                setScope(formattedChartPerfs);
-                setScopeOne(Math.floor(scope1Data[toMonth-1] / scope1Data[toMonth-2] * 100) ?? 0);
-                setScopeTwo(Math.floor(scope2Data[toMonth-1] / scope2Data[toMonth-2] * 100) ?? 0);
-
-                const documentResponse = await axiosInstance.get(`/equip/document-status?pjtId=${selectedMyPjt.pjtId}`);
-                setDocumentStatus(documentResponse.data);
-
-                const emissionResponse = await axiosInstance.get(`/equip/emission?projectId=${selectedMyPjt.pjtId}`);
-                const ae = emissionResponse.data;
-                setAfterEmission(ae);
-                const beforeEmissionResponse = await axiosInstance.get(`/equip/emission/cand?projectId=${selectedMyPjt.pjtId}`);
-                const be = beforeEmissionResponse.data;
-                setBeforeEmission(be);
-                getMock(ae, be);
-            } catch (error) {
-                console.error(error);
-            }
-        };
-        fetchSelectedProjectData();
-    }, [selectedMyPjt]);
-
-    useEffect(() => {
-        const fetchEmission = async () => {
-            if (!selectedMyPjt) return;
-            try {
-                const emissionResponse = await axiosInstance.get(`/equip/emission?projectId=${selectedMyPjt.pjtId}`);
-                const ae = emissionResponse.data;
-                if (JSON.stringify(ae) !== JSON.stringify(afterEmission)) {
-                    setAfterEmission(ae);
-                }
-            } catch (error) {
-                
-            }
+    const fetchCommonService = async () => {
+        try {
+            const commonResponse = await axiosInstance.get(commonUrl.concat('pgms_common_service'));
+            setCommonContainer(commonResponse.data);
+            setCcLoading(false);
+        } catch (error) {
+            console.log(error);
         }
-        fetchEmission();
-    }, [targetKeys]);
-
-    const filterOption = (inputValue, option) => option.description.indexOf(inputValue) > -1;
-
-    const handleChange = async (newTargetKeys, direction, moveKeys) => {
-        let swalOptions = {
-            confirmButtonText: '확인'
-        };
-        if (direction === "right") {
-            for (const key of moveKeys){
-                const formDatas = {
-                    equipId: key[0],
-                    actvDataId: key[1],
-                }
-                try {
-                    const {data} = await axiosInstance.post(`/equip/emission`, formDatas);    
-                    swalOptions.title = '성공!',
-                    swalOptions.text = `배출원이 성공적으로 등록되었습니다.`;
-                    swalOptions.icon = 'success';
-                    setTargetKeys(newTargetKeys);
-                } catch (error) {
-                    console.error(error);
-                    swalOptions.title = '실패!',
-                    swalOptions.text = error.response.data.message,
-                    swalOptions.icon = 'error';
-                }
-                
-            }
-        }
-        else {
-            for (const key of moveKeys){
-                const deleteData = afterEmission.find(item => item.equipId === key[0] && item.actvDataId === key[1]);
-                console.log(deleteData);
-                if (deleteData) {
-                    try {
-                        const {data} = await axiosInstance.delete(`/equip/emission?id=${deleteData.id}`);    
-                        swalOptions.title = '성공!',
-                        swalOptions.text = `배출원이 성공적으로 삭제되었습니다.`;
-                        swalOptions.icon = 'success';
-                        setTargetKeys(newTargetKeys);
-                    } catch (error) {
-                        console.error(error);
-                        swalOptions.title = '실패!',
-                        swalOptions.text = error.response.data.message,
-                        swalOptions.icon = 'error';
-                    }
-                }
-                else{
-                    console.error("no id");
-                }
-                
-            }
-        }
-        Swal.fire(swalOptions);
-
-        // setTargetKeys(newTargetKeys);
-    };
-
-    const handleDropClick = (e) => {
-        const selectedItem = myPjt.find(item => item.pjtName === e);
-        setSelectedMyPjt(selectedItem);
-
         
     }
 
-
-    const handleSearch = (dir, value) => {
-        console.log('search:', dir, value);
-    };
-
-    const settings = {
-        width: 200,
-        height: 200,
-    };
-
-    const scopeSettings1 = {
-        width: 175,
-        height: 175,
-        value: scopeOne,
-    };
-    const scopeSettings2 = {
-        width: 175,
-        height: 175,
-        value: scopeTwo,
-    };
-
-    const [year, setYear] = useState(null);
-
-    const handleYear = (event) => {
-        setYear(event.target.value);
+    const fetchEquipmentService = async () => {
+        try {
+            const equipmentResponse = await axiosInstance.get(commonUrl.concat('pgms_equipment_service'));    
+            setEquipmentContainer(equipmentResponse.data);
+            setEqLoading(false);
+        } catch (error) {
+            console.log(error);
+        }
+        
+        
     }
 
-    const twoColors = {
-        '0%': '#108ee9',
-        '100%': '#87d068',
-    };
-
-    const getStrokeColor = (value) => {
-        if (value <= 50) return green['A700'];
-        if (value <= 100) return yellow['800'];
-        return red['A700'];
-    };
-
-    const progressPjt = () => {
-        const entirePjt = calculateTotalMonths(pjtStartYear, pjtStartMonth, pjtEndYear, pjtEndMonth);
-        let nowPjt = calculateTotalMonths(pjtStartYear, pjtStartMonth, toYear, toMonth);
-        let result = Math.floor(nowPjt / entirePjt * 100);
-        return result;
+    const fetchProjectService = async () => {
+        try {
+            const projectResponse = await axiosInstance.get(commonUrl.concat('pgms_project_service'));
+            setProjectContainer(projectResponse.data);
+            setPjtLoading(false)    
+        } catch (error) {
+            console.log(error);
+        }
     }
+
+    const fetchAnalService = async () => {
+        try {
+            const analResponse = await axiosInstance.get(commonUrl.concat('pgms_anal_service'));
+            setAnalContainer(analResponse.data);
+            setAnalLoading(false);    
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
+    const fetchServiceData = async (url, setData, setLoading) => {
+        try {
+            const response = await axiosInstance.get(url);
+            setData(response.data);
+        } catch (error) {
+            console.error(error);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const handleFetch = async () => {
+        const commonUrl = '/sys/containers/item?clusterName=pgms_common&arn=arn:aws:ecs:ap-northeast-2:011528301196:service/pgms_common/';
+        const services = [
+            { url: commonUrl.concat('pgms_common_service'), setData: setCommonContainer, setLoading: setCcLoading },
+            { url: commonUrl.concat('pgms_equipment_service'), setData: setEquipmentContainer, setLoading: setEqLoading },
+            { url: commonUrl.concat('pgms_project_service'), setData: setProjectContainer, setLoading: setPjtLoading },
+            { url: commonUrl.concat('pgms_anal_service'), setData: setAnalContainer, setLoading: setAnalLoading },
+            { url: commonUrl.concat('pgms_socket_service'), setData: setSocketContainer, setLoading: setSkLoading }
+        ];
+
+        await Promise.all(services.map(service => fetchServiceData(service.url, service.setData, service.setLoading)));
+    };
+    const fetchData = useCallback(async () => {
+        try {
+            await Promise.all([
+                fetchCommonService(),
+                fetchEquipmentService(),
+                fetchProjectService(),
+                fetchAnalService(),
+                fetchSocketService(),
+            ]);
+        } catch (error) {
+            console.error(error);
+        }
+        console.log("삐빅");
+    }, []);
+
+    const fetchSocketService = async () => {
+        try {
+            const socketResponse = await axiosInstance.get(commonUrl.concat('pgms_socket_service'));
+            setSocketContainer(socketResponse.data);
+            setSkLoading(false);    
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
+    // useInterval(() => {
+    //     setProgress(prev => {
+    //         if (prev >= 100) {
+    //             return 0; 
+    //         }
+    //         return prev + 25;
+    //     });
+    // }, 1000 )
+    
+    useInterval(() => {
+        if (main === "server"){
+            fetchData();
+        }
+    }, 5000);
+
+    const handleContainerAddClick = async (data) => {
+        let swalOptions = {
+            confirmButtonText: '확인'
+        };
+        
+        try {
+            await axiosInstance.post(`/sys/containers/up?clusterName=pgms_common&arn=`.concat(data.arn));
+            
+            if (data.arn === "arn:aws:ecs:ap-northeast-2:011528301196:service/pgms_common/pgms_common_service") {
+                setPrePendingCm(true);
+                await fetchCommonService();
+                setPrePendingCm(false);
+            }
+            else if (data.arn === "arn:aws:ecs:ap-northeast-2:011528301196:service/pgms_common/pgms_equipment_service") {
+                setPrePendingEq(true);
+                await fetchEquipmentService();
+                setPrePendingEq(false);
+            }
+            else if (data.arn === "arn:aws:ecs:ap-northeast-2:011528301196:service/pgms_common/pgms_project_service") {
+                setPrePendingPj(true);
+                await fetchProjectService();
+                setPrePendingPj(false);
+            }
+            else if (data.arn === "arn:aws:ecs:ap-northeast-2:011528301196:service/pgms_common/pgms_anal_service") {
+                setPrePendingAn(true);
+                await fetchAnalService();
+                setPrePendingAn(false);
+            }
+            else if (data.arn === "arn:aws:ecs:ap-northeast-2:011528301196:service/pgms_common/pgms_socket_service") {
+                setPrePendingSk(true);
+                await fetchSocketService();
+                setPrePendingSk(false);
+            }
+            swalOptions.title = '성공!',
+            swalOptions.text = `성공적으로 등록되었습니다. 잠시만 기다려주세요.`;
+            swalOptions.icon = 'success';
+        } catch (error) {
+            swalOptions.title = '실패!',
+            swalOptions.text = error.response.data.message;
+            swalOptions.icon = 'error';
+        }
+        Swal.fire(swalOptions);
+    }
+
+    const handleContainerDeleteClick = async (data) => {
+        let swalOptions = {
+            confirmButtonText: '확인'
+        };
+        try {
+            await axiosInstance.post(`/sys/containers/down?clusterName=pgms_common&arn=`.concat(data.arn));
+            if (data.arn === "arn:aws:ecs:ap-northeast-2:011528301196:service/pgms_common/pgms_common_service") {
+                setPrePendingCm(true);
+                await fetchCommonService();
+                setPrePendingCm(false);
+            }
+            else if (data.arn === "arn:aws:ecs:ap-northeast-2:011528301196:service/pgms_common/pgms_equipment_service") {
+                setPrePendingEq(true);
+                await fetchEquipmentService();
+                setPrePendingEq(false);
+            }
+            else if (data.arn === "arn:aws:ecs:ap-northeast-2:011528301196:service/pgms_common/pgms_project_service") {
+                setPrePendingPj(true);
+                await fetchProjectService();
+                setPrePendingPj(false);
+            }
+            else if (data.arn === "arn:aws:ecs:ap-northeast-2:011528301196:service/pgms_common/pgms_anal_service") {
+                setPrePendingAn(true);
+                await fetchAnalService();
+                setPrePendingAn(false);
+            }
+            else if (data.arn === "arn:aws:ecs:ap-northeast-2:011528301196:service/pgms_common/pgms_socket_service") {
+                setPrePendingSk(true);
+                await fetchSocketService();
+                setPrePendingSk(false);
+            }
+            swalOptions.title = '성공!',
+            swalOptions.text = `성공적으로 삭제되었습니다. 잠시만 기다려주세요.`;
+            swalOptions.icon = 'success';
+        } catch (error) {
+            swalOptions.title = '실패!',
+            swalOptions.text = error.response.data.message;
+            swalOptions.icon = 'error';
+        }
+        Swal.fire(swalOptions);
+    }
+
+    // 예외 관리
+    useEffect(() => {
+        if (main === "errorlog") {
+            const fetchData = async () => {
+                const logResponse = await axiosInstance.get(`/sys/error?serviceName=${serviceTab}&errorCode=${errorCode ?? ""}&startDate=${selectedPeriod.start ?? ""}&endDate=${selectedPeriod.end ?? ""}&count=${count}`);
+                setErrorLog(logResponse.data);
+            }
+            
+            fetchData();
+        }
+    }, [selectedPeriod, errorCode, count, serviceTab, main])
 
     return (
-            <div className={gridStyles.grid_container}>
-                <Card className={gridStyles.box1} sx={{borderRadius:"15px", backgroundColor:"rgb(6, 10, 18)", color:"white"}}>
-                    <div className={gridStyles.box1_header}>
-                        
-                        {/* 로고  */}
-                        <div className={gridStyles.box1_logo}>
-                            {/* <SsidChartRoundedIcon sx={{width:"2rem",height:"2rem", paddingRight:"0.5rem"}}/> */}
-                            PGMSADMIN
+            <div className={gridStyles.main_grid}>
+                <div className={gridStyles.left_box}>
+                    <Card onClick={handleServerClick} sx={{width:"90%", height:"18%", borderRadius:"10px", margin:"0 auto", backgroundColor:"rgb(36,46,59)", margin:"0 auto", cursor:"pointer"}}>
+                        <div className={gridStyles.left_icon}>
+                            <img src={EcrLogo} alt='ecrlogo' style={{width:"100px", height:"100px"}}/>
                         </div>
-                        <Select defaultValue={selectedMyPjt?.pjtName} value={selectedMyPjt?.pjtName} onChange={(e) => handleDropClick(e)} style={{width:"20%", height:"2.5rem", fontSize:"4rem"}}>
-                            {myPjt.map(pjt => (
-                                <Select.Option key={pjt.id} value={pjt.pjtName}>
-                                {pjt.pjtName}
-                                </Select.Option>
-                            ))}
-                        </Select>
-                    </div>
-                    <div className={gridStyles.box1_comp}>
-                        <Card className={gridStyles.box1_1} sx={{borderRadius:"10px"}} >
-                            <div className={gridStyles.box1_1_head}>
-                                <div className={gridStyles.box1_1_logo}>
-                                    <DataSaverOffOutlinedIcon fontSize='large' sx={{marginRight:"0.5rem"}}/>프로젝트 진행현황
-                                </div>
-                                <Progress percent={progressPjt()} strokeColor={twoColors} />
-                                <div className={gridStyles.box1_1_logo}>
-                                    <LeaderboardOutlinedIcon fontSize='large' sx={{marginRight:"0.5rem"}}/>전월 대비 실적Scope
-                                </div>
-                                <div className={gridStyles.box1_1_gauge}>
-                                    <div>
-                                        <Gauge
-                                        {...scopeSettings1}
-                                        cornerRadius="50%"
-                                        sx={(theme) => ({
-                                            [`& .${gaugeClasses.valueText}`]: {
-                                            fontSize: 40,
-                                            color: 'white',
-                                            fontWeight: 700,
-                                            },
-                                            [`& .${gaugeClasses.valueArc}`]: {
-                                            fill: getStrokeColor(scopeSettings1.value),
-                                            },
-                                            [`& .${gaugeClasses.referenceArc}`]: {
-                                            fill: theme.palette.text.disabled,
-                                            },
-                                        })}
-                                        text={
-                                            ({ value }) => `${value}%`
-                                        }
-                                        />
-                                        <div className={gridStyles.box1_1_logo}>
-                                            <SpeedIcon fontSize='large' sx={{marginRight:"0.5rem"}}/>실적Scope1
+                        <div className={gridStyles.left_icon_title}>
+                            서버 관리
+                        </div>
+                    </Card>
+                    <Card onClick={handleErrorLogClick} sx={{width:"90%", height:"18%", borderRadius:"10px", backgroundColor:"rgb(209,214,221)", cursor:"pointer"}}>
+                        <div className={gridStyles.left_icon}>
+                            <img src={TerminalLogo} alt='terminal' style={{width:"100px", height:"100px", margin:"0 auto"}} />
+                        </div>
+                        <div className={gridStyles.left_icon_title}>
+                            예외 관리
+                        </div>
+                    </Card>
+                </div>
+                <div className={gridStyles.mid_box}> 
+                    <div className={gridStyles.real_board}>
+                            {main === "server" ? (
+                                // 서버관리
+                                <Card sx={{width:"98%", height:"100%", borderRadius:"10px"}}>
+                                    <div className={gridStyles.server_header}>
+                                        <div style={{width:"20%"}}>
+                                        서버관리
+                                        </div>
+                                        {/* <div style={{width:"5%"}}>
+                                        <LinearProgress variant="determinate" value={progress} />
+                                        </div> */}
+                                        <ProgressComponent progress={progress} />
+                                    </div>
+                                    <div className={gridStyles.server_list}>
+                                        <div className={gridStyles.server}>
+                                            <div className={gridStyles.server_info}>
+                                                <div className={gridStyles.server_logo}>
+                                                    <img src={ApiLogo} style={{width:"100px", height:"100px"}}/>
+                                                </div>
+                                                <div className={gridStyles.server_text}>
+                                                    공통 서비스
+                                                </div>
+                                                
+                                            </div>
+                                            <Divider orientation='vertical' variant='middle' flexItem/>
+                                            <StyledRoot2 style={{width:"75%", height:"100%", overflow:"hidden", position: "relative"}}>
+                                                {
+                                                    !ccLoading&&commonContainer !== null ? (
+                                                        <Swiper
+                                                            spaceBetween={30}    // 슬라이드 사이의 간격
+                                                            slidesPerView={3.5}     // 화면에 보여질 슬라이드 수
+                                                            // centeredSlides={true}
+                                                            pagination={{ clickable: true }}  // 페이지 네이션 (점으로 표시되는 네비게이션)
+                                                            navigation={true}           // 이전/다음 버튼 네비게이션
+                                                            modules={[Navigation, Pagination]}
+                                                        >
+                                                            {commonContainer.tasks.map(data => (
+                                                                <SwiperSlide style={{width:"100%", height:"100%"}}>
+                                                                    <div className={gridStyles.container}>
+                                                                        {
+                                                                            data.lastStatus === "RUNNING" ? (
+                                                                                <>
+                                                                                    <img src={ContainerLogo} style={{width:"85px", height:"85px"}}/>
+                                                                                    <div className={gridStyles.container_status}>
+                                                                                        {
+                                                                                            data.cpu !== null ? (
+                                                                                                <>
+                                                                                                <div style={{color: data.cpu >= 70 ? 'red' : 'black'}}>CPU : {data.cpu.toFixed(2)}%</div>
+                                                                                                <div>
+                                                                                                    RAM : {data.memory}MB
+                                                                                                </div>
+                                                                                                </>
+                                                                                            ) : (
+                                                                                                <div style={{display:"flex", justifyContent:"center", alignItems:"center"}}>
+                                                                                                데이터<br/>
+                                                                                                수집중 
+                                                                                                </div>
+                                                                                            )
+                                                                                        }
+                                                                                    </div>
+                                                                                </>
+                                                                            ) : (
+                                                                                <>
+                                                                                    <img src={ContainerAddLogo} style={{width:"85px", height:"85px", color:"grey", filter:"brightness(0) invert(0.7) opacity(0.5)"}}/>
+                                                                                    <div className={gridStyles.container_status} style={{width:"100%", height:"30%", display:"flex", justifyContent:"center", alignItems:"center"}}>
+                                                                                        <CircularProgress size="30px"/>
+                                                                                    </div>
+                                                                                </>
+                                                                            )
+                                                                        }
+                                                                    </div>
+                                                                </SwiperSlide>
+                                                            ))}
+                                                            <SwiperSlide style={{width:"100%", height:"100%"}}>
+                                                                <div className={gridStyles.container}>
+                                                                    <img src={ContainerAddLogo} style={{width:"85px", height:"85px", color:"grey", filter:"brightness(0) invert(0.7) opacity(0.5)"}} />
+                                                                    <div style={{display:"flex", flexDirection:"row"}}>
+                                                                        <div className={gridStyles.container_status} >
+                                                                            <IconButton color='success' onClick={() => handleContainerAddClick(commonContainer)}>
+                                                                                <AddCircleTwoTone />
+                                                                            </IconButton>
+                                                                        </div>
+                                                                        <div className={gridStyles.container_status} >
+                                                                            {commonContainer.taskCount === 1 ? (
+                                                                                <IconButton disabled color='error' onClick={() => handleContainerDeleteClick(commonContainer)}>
+                                                                                    <RemoveCircleTwoTone />
+                                                                                </IconButton>
+                                                                            ) : (
+                                                                                <IconButton color='error' onClick={() => handleContainerDeleteClick(commonContainer)}>
+                                                                                    <RemoveCircleTwoTone />
+                                                                                </IconButton>
+                                                                            )}
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </SwiperSlide>
+                                                        </Swiper>
+                                                    ) : (
+                                                        <div style={{display:"flex", flexDirection:"row", justifyContent:"space-around", alignContent:"center", width:"100%", height:"100%"}}>
+                                                            <Skeleton variant='h1' sx={{width:"20%", height:"90%", borderRadius:"10px", margin:"auto 0"}}/>
+                                                            <Skeleton variant='h1' sx={{width:"20%", height:"90%", borderRadius:"10px", margin:"auto 0"}}/>
+                                                            <Skeleton variant='h1' sx={{width:"20%", height:"90%", borderRadius:"10px", margin:"auto 0"}}/>
+                                                            <Skeleton variant='h1' sx={{width:"20%", height:"90%", borderRadius:"10px", margin:"auto 0"}}/>
+                                                        </div>
+                                                    )  
+                                                }
+                                                {prePendingCm && (
+                                                    <Overlay>
+                                                        <CircularProgress />
+                                                    </Overlay>
+                                                )}
+                                            </StyledRoot2>
+                                        </div>
+
+                                        <Divider />
+
+                                        <div className={gridStyles.server}>
+                                            <div className={gridStyles.server_info}>
+                                                <div className={gridStyles.server_logo}>
+                                                    <img src={ApiLogo} style={{width:"100px", height:"100px"}}/>
+                                                </div>
+                                                <div className={gridStyles.server_text}>
+                                                    설비 서비스
+                                                </div>
+                                                
+                                            </div>
+                                            <Divider orientation='vertical' variant='middle' flexItem/>
+                                            <StyledRoot2 style={{width:"75%", height:"100%", overflow:"hidden", position:"relative"}}>
+                                                {
+                                                    !eqLoading&&equipmentContainer !== null ? (
+                                                        <Swiper
+                                                            spaceBetween={30}    // 슬라이드 사이의 간격
+                                                            slidesPerView={3.5}     // 화면에 보여질 슬라이드 수
+                                                            // centeredSlides={true}
+                                                            pagination={{ clickable: true }}  // 페이지 네이션 (점으로 표시되는 네비게이션)
+                                                            navigation={true}           // 이전/다음 버튼 네비게이션
+                                                            modules={[Navigation, Pagination]}
+                                                        >
+                                                            {equipmentContainer.tasks.map(data => (
+                                                                <SwiperSlide style={{width:"100%", height:"100%"}}>
+                                                                    <div className={gridStyles.container}>
+                                                                        {
+                                                                            data.lastStatus === "RUNNING" ? (
+                                                                                <>
+                                                                                    <img src={ContainerLogo} style={{width:"85px", height:"85px"}}/>
+                                                                                    <div className={gridStyles.container_status}>
+                                                                                        {
+                                                                                            data.cpu !== null ? (
+                                                                                                <>
+                                                                                                <div style={{color: data.cpu >= 70 ? 'red' : 'black'}}>CPU : {data.cpu.toFixed(2)}%</div>
+                                                                                                <div>
+                                                                                                    RAM : {data.memory}MB
+                                                                                                </div>
+                                                                                                </>
+                                                                                            ) : (
+                                                                                                <div style={{display:"flex", justifyContent:"center", alignItems:"center"}}>
+                                                                                                데이터<br/>
+                                                                                                수집중 
+                                                                                                </div>
+                                                                                            )
+                                                                                        }
+                                                                                    </div>
+                                                                                </>
+                                                                            ) : (
+                                                                                <>
+                                                                                    <img src={ContainerAddLogo} style={{width:"85px", height:"85px", color:"grey", filter:"brightness(0) invert(0.7) opacity(0.5)"}}/>
+                                                                                    <div className={gridStyles.container_status} style={{width:"100%", height:"30%", display:"flex", justifyContent:"center", alignItems:"center"}}>
+                                                                                        <CircularProgress size="30px"/>
+                                                                                    </div>
+                                                                                </>
+                                                                            )
+                                                                        }
+                                                                    </div>
+                                                                </SwiperSlide>
+                                                            ))}
+                                                            <SwiperSlide style={{width:"100%", height:"100%"}}>
+                                                                <div className={gridStyles.container}>
+                                                                    <img src={ContainerAddLogo} style={{width:"85px", height:"85px", color:"grey", filter:"brightness(0) invert(0.7) opacity(0.5)"}} />
+                                                                    <div style={{display:"flex", flexDirection:"row"}}>
+                                                                        <div className={gridStyles.container_status} >
+                                                                            <IconButton color='success' onClick={() => handleContainerAddClick(equipmentContainer)}>
+                                                                                <AddCircleTwoTone />
+                                                                            </IconButton>
+                                                                        </div>
+                                                                        <div className={gridStyles.container_status}>
+                                                                            {equipmentContainer.taskCount === 1 ? (
+                                                                                <IconButton disabled color='error' onClick={() => handleContainerDeleteClick(equipmentContainer)}>
+                                                                                    <RemoveCircleTwoTone />
+                                                                                </IconButton>
+                                                                            ) : (
+                                                                                <IconButton color='error' onClick={() => handleContainerDeleteClick(equipmentContainer)}>
+                                                                                    <RemoveCircleTwoTone />
+                                                                                </IconButton>
+                                                                            )}
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </SwiperSlide>
+                                                        </Swiper>
+                                                    ) : (
+                                                        <div style={{display:"flex", flexDirection:"row", justifyContent:"space-around", alignContent:"center", width:"100%", height:"100%"}}>
+                                                            <Skeleton variant='h1' sx={{width:"20%", height:"90%", borderRadius:"10px", margin:"auto 0"}}/>
+                                                            <Skeleton variant='h1' sx={{width:"20%", height:"90%", borderRadius:"10px", margin:"auto 0"}}/>
+                                                            <Skeleton variant='h1' sx={{width:"20%", height:"90%", borderRadius:"10px", margin:"auto 0"}}/>
+                                                            <Skeleton variant='h1' sx={{width:"20%", height:"90%", borderRadius:"10px", margin:"auto 0"}}/>
+                                                        </div>
+                                                    )  
+                                                }
+                                                {prePendingEq && (
+                                                    <Overlay>
+                                                        <CircularProgress />
+                                                    </Overlay>
+                                                )}
+                                            </StyledRoot2>
+                                        </div>
+                                        <Divider />
+                                        <div className={gridStyles.server}>
+                                            <div className={gridStyles.server_info}>
+                                                <div className={gridStyles.server_logo}>
+                                                    <img src={ApiLogo} style={{width:"100px", height:"100px"}}/>
+                                                </div>
+                                                <div className={gridStyles.server_text}>
+                                                    프로젝트 서비스
+                                                </div>
+                                                
+                                            </div>
+                                            <Divider orientation='vertical' variant='middle' flexItem/>
+                                            <StyledRoot2 style={{width:"75%", height:"100%", overflow:"hidden", position:"relative"}}>
+                                                {
+                                                    !pjtLoading&&projectContainer !== null ? (
+                                                        <Swiper
+                                                            spaceBetween={30}    // 슬라이드 사이의 간격
+                                                            slidesPerView={3.5}     // 화면에 보여질 슬라이드 수
+                                                            // centeredSlides={true}
+                                                            pagination={{ clickable: true }}  // 페이지 네이션 (점으로 표시되는 네비게이션)
+                                                            navigation={true}           // 이전/다음 버튼 네비게이션
+                                                            modules={[Navigation, Pagination]}
+                                                        >
+                                                            {projectContainer.tasks.map(data => (
+                                                                <SwiperSlide style={{width:"100%", height:"100%"}}>
+                                                                    <div className={gridStyles.container}>
+                                                                        {
+                                                                            data.lastStatus === "RUNNING" ? (
+                                                                                <>
+                                                                                    <img src={ContainerLogo} style={{width:"85px", height:"85px"}}/>
+                                                                                    <div className={gridStyles.container_status}>
+                                                                                        {
+                                                                                            data.cpu !== null ? (
+                                                                                                <>
+                                                                                                <div style={{color: data.cpu >= 70 ? 'red' : 'black'}}>CPU : {data.cpu.toFixed(2)}%</div>
+                                                                                                <div>
+                                                                                                    RAM : {data.memory}MB
+                                                                                                </div>
+                                                                                                </>
+                                                                                            ) : (
+                                                                                                <div style={{display:"flex", justifyContent:"center", alignItems:"center"}}>
+                                                                                                데이터<br/>
+                                                                                                수집중 
+                                                                                                </div>
+                                                                                            )
+                                                                                        }
+                                                                                    </div>
+                                                                                </>
+                                                                            ) : (
+                                                                                <>
+                                                                                    <img src={ContainerAddLogo} style={{width:"85px", height:"85px", color:"grey", filter:"brightness(0) invert(0.7) opacity(0.5)"}}/>
+                                                                                    <div className={gridStyles.container_status} style={{width:"100%", height:"30%", display:"flex", justifyContent:"center", alignItems:"center"}}>
+                                                                                        <CircularProgress size="30px"/>
+                                                                                    </div>
+                                                                                </>
+                                                                            )
+                                                                        }
+                                                                    </div>
+                                                                </SwiperSlide>
+                                                            ))}
+                                                            <SwiperSlide style={{width:"100%", height:"100%"}}>
+                                                                <div className={gridStyles.container}>
+                                                                    <img src={ContainerAddLogo} style={{width:"85px", height:"85px", color:"grey", filter:"brightness(0) invert(0.7) opacity(0.5)"}} />
+                                                                    <div style={{display:"flex", flexDirection:"row"}}>
+                                                                        <div className={gridStyles.container_status} >
+                                                                            <IconButton color='success' onClick={() => handleContainerAddClick(projectContainer)}>
+                                                                                <AddCircleTwoTone />
+                                                                            </IconButton>
+                                                                        </div>
+                                                                        <div className={gridStyles.container_status} >
+                                                                            {projectContainer.taskCount === 1 ? (
+                                                                                <IconButton disabled color='error' onClick={() => handleContainerDeleteClick(projectContainer)}>
+                                                                                    <RemoveCircleTwoTone />
+                                                                                </IconButton>
+                                                                            ) : (
+                                                                                <IconButton color='error' onClick={() => handleContainerDeleteClick(projectContainer)}>
+                                                                                    <RemoveCircleTwoTone />
+                                                                                </IconButton>
+                                                                            )}
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </SwiperSlide>
+                                                        </Swiper>
+                                                    ) : (
+                                                        <div style={{display:"flex", flexDirection:"row", justifyContent:"space-around", alignContent:"center", width:"100%", height:"100%"}}>
+                                                            <Skeleton variant='h1' sx={{width:"20%", height:"90%", borderRadius:"10px", margin:"auto 0"}}/>
+                                                            <Skeleton variant='h1' sx={{width:"20%", height:"90%", borderRadius:"10px", margin:"auto 0"}}/>
+                                                            <Skeleton variant='h1' sx={{width:"20%", height:"90%", borderRadius:"10px", margin:"auto 0"}}/>
+                                                            <Skeleton variant='h1' sx={{width:"20%", height:"90%", borderRadius:"10px", margin:"auto 0"}}/>
+                                                        </div>
+                                                    )  
+                                                }
+                                                {prePendingPj && (
+                                                    <Overlay>
+                                                        <CircularProgress />
+                                                    </Overlay>
+                                                )}
+                                            </StyledRoot2>
+                                        </div>
+                                        <Divider />
+                                        <div className={gridStyles.server}>
+                                            <div className={gridStyles.server_info}>
+                                                <div className={gridStyles.server_logo}>
+                                                    <img src={ApiLogo} style={{width:"100px", height:"100px"}}/>
+                                                </div>
+                                                <div className={gridStyles.server_text}>
+                                                    분석 & 예측 서비스
+                                                </div>
+                                                
+                                            </div>
+                                            <Divider orientation='vertical' variant='middle' flexItem/>
+                                            <StyledRoot2 style={{width:"75%", height:"100%", overflow:"hidden", position:"relative"}}>
+                                            {
+                                                    !analLoading&&analContainer !== null ? (
+                                                        <Swiper
+                                                            spaceBetween={30}    // 슬라이드 사이의 간격
+                                                            slidesPerView={3.5}     // 화면에 보여질 슬라이드 수
+                                                            // centeredSlides={true}
+                                                            pagination={{ clickable: true }}  // 페이지 네이션 (점으로 표시되는 네비게이션)
+                                                            navigation={true}           // 이전/다음 버튼 네비게이션
+                                                            modules={[Navigation, Pagination]}
+                                                        >
+                                                            {analContainer.tasks.map(data => (
+                                                                <SwiperSlide style={{width:"100%", height:"100%"}}>
+                                                                    <div className={gridStyles.container}>
+                                                                        {
+                                                                            data.lastStatus === "RUNNING" ? (
+                                                                                <>
+                                                                                    <img src={ContainerLogo} style={{width:"85px", height:"85px"}}/>
+                                                                                    <div className={gridStyles.container_status}>
+                                                                                        {
+                                                                                            data.cpu !== null ? (
+                                                                                                <>
+                                                                                                <div style={{color: data.cpu >= 70 ? 'red' : 'black'}}>CPU : {data.cpu.toFixed(2)}%</div>
+                                                                                                <div>
+                                                                                                    RAM : {data.memory}MB
+                                                                                                </div>
+                                                                                                </>
+                                                                                            ) : (
+                                                                                                <div style={{display:"flex", justifyContent:"center", alignItems:"center"}}>
+                                                                                                데이터<br/>
+                                                                                                수집중 
+                                                                                                </div>
+                                                                                            )
+                                                                                        }
+                                                                                    </div>
+                                                                                </>
+                                                                            ) : (
+                                                                                <>
+                                                                                    <img src={ContainerAddLogo} style={{width:"85px", height:"85px", color:"grey", filter:"brightness(0) invert(0.7) opacity(0.5)"}}/>
+                                                                                    <div className={gridStyles.container_status} style={{width:"100%", height:"30%", display:"flex", justifyContent:"center", alignItems:"center"}}>
+                                                                                        <CircularProgress size="30px"/>
+                                                                                    </div>
+                                                                                </>
+                                                                            )
+                                                                        }
+                                                                    </div>
+                                                                </SwiperSlide>
+                                                            ))}
+                                                            <SwiperSlide style={{width:"100%", height:"100%"}}>
+                                                                <div className={gridStyles.container}>
+                                                                    <img src={ContainerAddLogo} style={{width:"85px", height:"85px", color:"grey", filter:"brightness(0) invert(0.7) opacity(0.5)"}} />
+                                                                    <div style={{display:"flex", flexDirection:"row"}}>
+                                                                        <div className={gridStyles.container_status} >
+                                                                            <IconButton color='success' onClick={() => handleContainerAddClick(analContainer)}>
+                                                                                <AddCircleTwoTone />
+                                                                            </IconButton>
+                                                                        </div>
+                                                                        <div className={gridStyles.container_status}>
+                                                                            {analContainer.taskCount === 1 ? (
+                                                                                <IconButton disabled color='error' onClick={() => handleContainerDeleteClick(analContainer)}>
+                                                                                    <RemoveCircleTwoTone />
+                                                                                </IconButton>
+                                                                            ) : (
+                                                                                <IconButton color='error' onClick={() => handleContainerDeleteClick(analContainer)}>
+                                                                                    <RemoveCircleTwoTone />
+                                                                                </IconButton>
+                                                                            )}
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </SwiperSlide>
+                                                        </Swiper>
+                                                    ) : (
+                                                        <div style={{display:"flex", flexDirection:"row", justifyContent:"space-around", alignContent:"center", width:"100%", height:"100%"}}>
+                                                            <Skeleton variant='h1' sx={{width:"20%", height:"90%", borderRadius:"10px", margin:"auto 0"}}/>
+                                                            <Skeleton variant='h1' sx={{width:"20%", height:"90%", borderRadius:"10px", margin:"auto 0"}}/>
+                                                            <Skeleton variant='h1' sx={{width:"20%", height:"90%", borderRadius:"10px", margin:"auto 0"}}/>
+                                                            <Skeleton variant='h1' sx={{width:"20%", height:"90%", borderRadius:"10px", margin:"auto 0"}}/>
+                                                        </div>
+                                                    )  
+                                                }
+                                                {prePendingAn && (
+                                                    <Overlay>
+                                                        <CircularProgress />
+                                                    </Overlay>
+                                                )}
+                                            </StyledRoot2>
+                                        </div>
+                                        <Divider />
+                                        <div className={gridStyles.server}>
+                                            <div className={gridStyles.server_info}>
+                                                <div className={gridStyles.server_logo}>
+                                                    <img src={ApiLogo} style={{width:"100px", height:"100px"}}/>
+                                                </div>
+                                                <div className={gridStyles.server_text}>
+                                                    채팅 서비스
+                                                </div>
+                                                
+                                            </div>
+                                            <Divider orientation='vertical' variant='middle' flexItem/>
+                                            <StyledRoot2 style={{width:"75%", height:"100%", overflow:"hidden", position:"relative"}}>
+                                                {
+                                                    !skLoading&&socketContainer !== null ? (
+                                                        <Swiper
+                                                            spaceBetween={30}    // 슬라이드 사이의 간격
+                                                            slidesPerView={3.5}     // 화면에 보여질 슬라이드 수
+                                                            // centeredSlides={true}
+                                                            pagination={{ clickable: true }}  // 페이지 네이션 (점으로 표시되는 네비게이션)
+                                                            navigation={true}           // 이전/다음 버튼 네비게이션
+                                                            modules={[Navigation, Pagination]}
+                                                        >
+                                                            {socketContainer.tasks.map(data => (
+                                                                <SwiperSlide style={{width:"100%", height:"100%"}}>
+                                                                    <div className={gridStyles.container}>
+                                                                        {
+                                                                            data.lastStatus === "RUNNING" ? (
+                                                                                <>
+                                                                                    <img src={ContainerLogo} style={{width:"85px", height:"85px"}}/>
+                                                                                    <div className={gridStyles.container_status}>
+                                                                                        {
+                                                                                            data.cpu !== null ? (
+                                                                                                <>
+                                                                                                <div style={{color: data.cpu >= 70 ? 'red' : 'black'}}>CPU : {data.cpu.toFixed(2)}%</div>
+                                                                                                <div>
+                                                                                                    RAM : {data.memory}MB
+                                                                                                </div>
+                                                                                                </>
+                                                                                            ) : (
+                                                                                                <div style={{display:"flex", justifyContent:"center", alignItems:"center"}}>
+                                                                                                데이터<br/>
+                                                                                                수집중 
+                                                                                                </div>
+                                                                                            )
+                                                                                        }
+                                                                                    </div>
+                                                                                </>
+                                                                            ) : (
+                                                                                <>
+                                                                                    <img src={ContainerAddLogo} style={{width:"85px", height:"85px", color:"grey", filter:"brightness(0) invert(0.7) opacity(0.5)"}}/>
+                                                                                    <div className={gridStyles.container_status} style={{width:"100%", height:"30%", display:"flex", justifyContent:"center", alignItems:"center"}}>
+                                                                                        <CircularProgress size="30px"/>
+                                                                                    </div>
+                                                                                </>
+                                                                            )
+                                                                        }
+                                                                    </div>
+                                                                </SwiperSlide>
+                                                            ))}
+                                                            <SwiperSlide style={{width:"100%", height:"100%"}}>
+                                                                <div className={gridStyles.container}>
+                                                                    <img src={ContainerAddLogo} style={{width:"85px", height:"85px", color:"grey", filter:"brightness(0) invert(0.7) opacity(0.5)"}} />
+                                                                    <div style={{display:"flex", flexDirection:"row"}}>
+                                                                        <div className={gridStyles.container_status} >
+                                                                            <IconButton color='success' onClick={() => handleContainerAddClick(socketContainer)}>
+                                                                                <AddCircleTwoTone />
+                                                                            </IconButton>
+                                                                        </div>
+                                                                        <div className={gridStyles.container_status} >
+                                                                            {socketContainer.taskCount === 1 ? (
+                                                                                <IconButton disabled color='error' onClick={() => handleContainerDeleteClick(socketContainer)}>
+                                                                                    <RemoveCircleTwoTone />
+                                                                                </IconButton>
+                                                                            ) : (
+                                                                                <IconButton color='error' onClick={() => handleContainerDeleteClick(socketContainer)}>
+                                                                                    <RemoveCircleTwoTone />
+                                                                                </IconButton>
+                                                                            )}
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </SwiperSlide>
+                                                        </Swiper>
+                                                    ) : (
+                                                        <div style={{display:"flex", flexDirection:"row", justifyContent:"space-around", alignContent:"center", width:"100%", height:"100%"}}>
+                                                            <Skeleton variant='h1' sx={{width:"20%", height:"90%", borderRadius:"10px", margin:"auto 0"}}/>
+                                                            <Skeleton variant='h1' sx={{width:"20%", height:"90%", borderRadius:"10px", margin:"auto 0"}}/>
+                                                            <Skeleton variant='h1' sx={{width:"20%", height:"90%", borderRadius:"10px", margin:"auto 0"}}/>
+                                                            <Skeleton variant='h1' sx={{width:"20%", height:"90%", borderRadius:"10px", margin:"auto 0"}}/>
+                                                        </div>
+                                                    )  
+                                                }
+                                                {prePendingSk && (
+                                                    <Overlay>
+                                                        <CircularProgress />
+                                                    </Overlay>
+                                                )}
+                                            </StyledRoot2>
+                                        </div>
+                                        <Divider />
+                                    </div>
+                                </Card>
+                            ) : (
+                                // 로그관리
+                                <Card sx={{width:"98%", height:"100%", borderRadius:"10px", backgroundColor:"rgb(30,30,30)", border:"3px solid rgb(100,100,100)", display:"flex", flexDirection:"column"}}>
+                                    <div className={gridStyles.log_header}>
+                                        <div style={{display:"flex", flexDirection:"row", gap:"2rem", alignItems:"center"}}>
+                                            <ConfigProvider
+                                            locale={{locale:"ko"}}
+                                            theme={{
+                                                components:{
+                                                    DatePicker:{
+                                                        // activeBorderColor: "#66C65E",
+                                                        activeBorderColor:"#0EAA00",
+                                                        cellActiveWithRangeBg : "#c3e59e",
+                                                        cellRangeBorderColor:"#0EAA00",
+                                                        hoverBorderColor:"#0EAA00",
+                                                        multipleItemBg:"#0EAA00",
+                                                        addonBg:"#0EAA00",
+                                                        multipleItemBorderColor:"#0EAA00"
+
+                                                    },
+                                                },
+                                                token:{
+                                                    colorPrimary: "#0EAA00",
+                                                    fontFamily:"SUITE-Regular",
+                                                }
+                                            }}>
+                                                <TabsWrapper>
+                                                    <TabContainer>
+                                                        <StyledTabs 
+                                                            defaultActiveKey='common'
+                                                            onChange={handleTabChange}
+                                                            items={tabItems}
+                                                        />
+                                                    </TabContainer>
+                                                </TabsWrapper>
+                                                <StyledDatePicker 
+                                                    defaultValue={[dayjs(today), dayjs(today)]}
+                                                    onChange={handleDateChange}
+                                                />
+                                            </ConfigProvider>
+                                        </div>
+                                        <div style={{display:"flex", justifyContent:"space-between", alignItems:"center", gap:"1rem", paddingRight:"1rem"}}>
+                                            <div style={{width:"20px", height:"20px", borderRadius:"50%", backgroundColor:"rgb(245,191,79)", textAlign:"center", verticalAlign:"middle", color:"white", fontWeight:"bold"}}></div>
+                                            <div style={{width:"20px", height:"20px", borderRadius:"50%", backgroundColor:"rgb(97,197,84)", textAlign:"center", verticalAlign:"middle", color:"white", fontWeight:"bold"}}></div>
+                                            <div style={{width:"20px", height:"20px", borderRadius:"50%", backgroundColor:"rgb(236,106,94)", textAlign:"center", verticalAlign:"middle", color:"white", fontWeight:"bold"}}></div>
                                         </div>
                                     </div>
-                                    <dib>
-                                    <Gauge
-                                    {...scopeSettings2}
-                                    cornerRadius="50%"
-                                    sx={(theme) => ({
-                                        [`& .${gaugeClasses.valueText}`]: {
-                                        fontSize: 40,
-                                        color: 'white',
-                                        fontWeight: 700,
-                                        },
-                                        [`& .${gaugeClasses.valueArc}`]: {
-                                        fill: getStrokeColor(scopeSettings2.value),
-                                        },
-                                        [`& .${gaugeClasses.referenceArc}`]: {
-                                        fill: theme.palette.text.disabled,
-                                        },
-                                    })}
-                                    text={
-                                        ({ value }) => `${value}%`
-                                    }
-                                    />
-                                    <div className={gridStyles.box1_1_logo}>
-                                        <SpeedIcon fontSize='large' sx={{marginRight:"0.5rem"}}/>실적Scope2
+                                    <div className={gridStyles.log_content}>
+                                            <div className={gridStyles.log_content_header}>
+                                                <ConfigProvider
+                                                    theme={{
+                                                        token:{
+                                                            colorPrimary:"#0eaa00",
+                                                            fontFamily:"SUITE-Regular",
+                                                        }
+                                                }}>
+                                                {/* <div style={{width:"fit-content", fontSize:"1.2rem", fontWeight:"500", display:"flex", alignItems:"center", justifyContent:"center", color:"white", gap:"0.5rem"}}>
+                                                    <Person sx={{color:"white"}} />UserId 
+                                                </div>
+                                                <Input placeholder='UserId' value={userId} onChange={(e) => setUserId(e.target.value)} style={{width:"10%"}}/> */}
+                                                <div style={{width:"fit-content", fontSize:"1.2rem", fontWeight:"500", display:"flex", alignItems:"center", justifyContent:"center", color:"white", gap:"0.5rem"}}>
+                                                    <RemoveCircleOutline sx={{color:"white"}} /> ErrorCode
+                                                </div>
+                                                <Select 
+                                                    showSearch
+                                                    placeholder="ErrorCode"
+                                                    optionFilterProp='label'
+                                                    onChange={handleErrorCodeChange}
+                                                    onSearch={(value) => console.log(value)}
+                                                    options={[
+                                                        {
+                                                            value: 400,
+                                                            label: "400",
+                                                        },
+                                                        {
+                                                            value: 405,
+                                                            label: "405",
+                                                        },
+                                                        {
+                                                            value: 500,
+                                                            label: "500",
+                                                        },
+                                                    ]}
+                                                    style={{width:"10%"}}
+                                                />
+                                                <div style={{width:"fit-content", fontSize:"1.2rem", fontWeight:"500", display:"flex", alignItems:"center", justifyContent:"center", color:"white", gap:"0.5rem"}}>
+                                                    <Terminal sx={{color:"white"}} /> 출력개수
+                                                </div>
+                                                <Select 
+                                                    placeholder="ErrorCode"
+                                                    onChange={handleCountChange}
+                                                    options={[
+                                                        {
+                                                            value: 10,
+                                                            label: "10",
+                                                        },
+                                                        {
+                                                            value: 20,
+                                                            label: "20",
+                                                        },
+                                                        {
+                                                            value: 40,
+                                                            label: "40",
+                                                        },
+                                                    ]}
+                                                    defaultValue={10}
+                                                    style={{width:"10%"}}
+                                                />
+                                                </ConfigProvider>
+                                            </div>
+                                            <div>
+                                                <ConfigProvider
+                                                theme={{
+                                                    components:{
+                                                        Collapse:{
+                                                            contentBg: "black",
+                                                        }
+                                                    },
+                                                    token:{
+                                                        colorPrimary:"#0eaa00",
+                                                        fontFamily:"SUITE-Regular",
+                                                        colorText:"#20de07",
+                                                        colorBorder:"black",
+                                                        fontSize:"1.1rem"
+                                                    }
+                                                }}>
+                                                    <StyledCollapse accordion items={logItems} style={{alignItems:"center"}}/>
+                                                </ConfigProvider>
+                                            </div>
+                                            {logLoading ? (
+                                                <div style={{margin:"0 auto"}}>
+                                                    <CircularProgress color="success" />
+                                                </div>
+                                            ) : (
+                                                <div style={{margin:"0 auto"}}>
+                                                    <IconButton sx={{color:"grey", fontSize:"0.8rem", fontWeight:"500"}} onClick={loadMoreLog}>
+                                                        <MoreHoriz sx={{color:"white"}}/> LoadMore
+                                                    </IconButton>
+                                                </div>
+                                            )}
                                     </div>
-                                    </dib>
+                                </Card>
+                            )}
+                        {/* 아래 메뉴 바로가기 구현부 */}
+                        <animated.div
+                            style={{
+                                ...springProps, // useSpring 애니메이션 스타일 적용
+                            }}
+                            className={gridStyles.menu_bar}
+                            onMouseEnter={handleMouseOver}
+                            onMouseLeave={handleMouseLeave}
+                            >
+                            <Card
+                                sx={{
+                                width: "98%",
+                                height: "70%",
+                                borderRadius: "10px",
+                                backgroundColor: "rgba(0,0,30,0.3)",
+                                backdropFilter: "blur(2px)",
+                                display: "flex",
+                                justifyContent: "center",
+                                alignItems: "center",
+                                }}
+                            >
+                                <div className={gridStyles.icon_box}>
+                                {/* 바로가기 구현 필요 */}
+                                <Card
+                                    onClick={() => handleButtonClick('/cm', '코드 관리')}
+                                    sx={{
+                                    backgroundColor: "rgb(211,245,230)",
+                                    width: "4rem",
+                                    height: "4rem",
+                                    display: "flex",
+                                    justifyContent: "center",
+                                    alignItems: "center",
+                                    borderRadius: "10px",
+                                    cursor:"pointer"
+                                    }}
+                                >
+                                    <Code fontSize="large" sx={{ color: "white" }} />
+                                </Card>
+                                <Card
+                                    onClick={() => handleButtonClick('/um', '사용자 관리')}
+                                    sx={{
+                                    backgroundColor: "rgb(196,247,254)",
+                                    width: "4rem",
+                                    height: "4rem",
+                                    display: "flex",
+                                    justifyContent: "center",
+                                    alignItems: "center",
+                                    borderRadius: "10px",
+                                    cursor:"pointer"
+                                    }}
+                                >
+                                    <ManageAccounts fontSize="large" sx={{ color: "white" }} />
+                                </Card>
+                                <Card
+                                    onClick={() => handleButtonClick('/mm', '메뉴 관리')}
+                                    sx={{
+                                    backgroundColor: "rgb(253,241,187)",
+                                    width: "4rem",
+                                    height: "4rem",
+                                    display: "flex",
+                                    justifyContent: "center",
+                                    alignItems: "center",
+                                    borderRadius: "10px",
+                                    cursor:"pointer"
+                                    }}
+                                >
+                                    <Menu fontSize="large" sx={{ color: "white" }} />
+                                </Card>
+                                <Card
+                                    onClick={() => handleButtonClick('/mal', '접속로그 조회')}
+                                    sx={{
+                                    backgroundColor: "rgb(213,212,249)",
+                                    width: "4rem",
+                                    height: "4rem",
+                                    display: "flex",
+                                    justifyContent: "center",
+                                    alignItems: "center",
+                                    borderRadius: "10px",
+                                    cursor:"pointer"
+                                    }}
+                                >
+                                    <Terminal fontSize="large" sx={{ color: "white" }} />
+                                </Card>
+                                </div>
+                            </Card>
+                        </animated.div>
+                    </div>
+                </div>
+                <div className={gridStyles.right_box}>
+                    {/* 동시접속자 */}
+                    <div className={gridStyles.right_box_top}>
+                        <Card sx={{width:"95%", height:"100%", borderRadius:"10px"}}>
+                            <div className={gridStyles.right_box_text}>
+                                접속자 수
+                            </div>
+                            <div className={gridStyles.right_box_user}>
+                                <div className={gridStyles.online_dot}>●</div>
+                                <div className={gridStyles.online_user}>
+                                    {userCnt.data.TOTAL}
+                                </div>
+                                <div className={gridStyles.online_icon}>
+                                    <PeopleAlt fontSize='large' sx={{color:"gray"}} />
+                                </div>
+                            </div>
+                            <div className={gridStyles.right_box_access}>
+                                <div className={gridStyles.online_access}>
+                                    <Engineering fontSize='small' sx={{color:"gray"}} />
+                                    {userCnt.data.FP}
+                                </div>
+                                <div className={gridStyles.online_access}>
+                                    <Business fontSize='small' sx={{color:"gray"}} />
+                                    {userCnt.data.HP}
+                                </div>
+                                <div className={gridStyles.online_access}>
+                                    <Settings fontSize='small' sx={{color:"gray"}} />
+                                    {userCnt.data.ADMIN}
                                 </div>
                             </div>
                         </Card>
-                        <Card className={gridStyles.box1_2} sx={{borderRadius:"10px", backgroundColor: "rgb(23, 27, 38)"}}>
-                            <CustomBarChart data={scope}/>
-                        </Card>
                     </div>
-                </Card>
-                <div className={gridStyles.box2}>
-                    <div className={gridStyles.box2_1}>
-                        <div className={gridStyles.box2_1_1}>
-                            <Card 
-                                className={gridStyles.box2_1_1_card}
-                                sx={{
-                                borderRadius:"15px",
-                                height:"100%", 
-                                background:"linear-gradient(to right, #66C869, #02A007)", 
-                                width:"100%",
-                                display:"flex"
-                                }}>
-                                <div className={gridStyles.box2_1_1_1}>
-                                    <div className={gridStyles.box1_1_logo} style={{color:'white'}}>
-                                        <SummarizeOutlinedIcon fontSize='large' sx={{margin:"0 0.3rem 0 1rem"}}/>증빙자료 제출 현황
-                                    </div>
-                                    <div className={gridStyles.box2_1_1_1_1}>
-                                    <Chip label={selectedMyPjt?.pjtName} variant="outlined" onClick={() => {}} sx={{backgroundColor:"white", fontSize:"1rem", fontWeight:"bold", width: "100%"}}/>
-                                    </div>
-                                </div>
-                                <div className={gridStyles.box2_swap}>
-                                <StyledRoot style={{height:"80%", width:"100%", margin:"0 auto", overflow: "hidden"}}>
+                    {/* 메뉴별 접속 차트 */}
+                    <div className={gridStyles.right_box_bottom}>
+                        <Card sx={{width:"95%", height:"100%", borderRadius:"10px"}} >
+                            <div className={gridStyles.right_bottom_logo}>
+                                메뉴별 접속 현황
+                            </div>
+                            <StyledRoot style={{width:"100%", height:"100%", overflow:"hidden"}}>
                                 <Swiper
-                                    effect={'coverflow'}
-                                    spaceBetween={15}    // 슬라이드 사이의 간격
-                                    slidesPerView={2}     // 화면에 보여질 슬라이드 수
-                                    coverflowEffect={{
-                                        rotate: 60,
-                                        stretch: 10,
-                                        depth: 100,
-                                        modifier: 1,
-                                        slideShadows: true,
-                                    }}
-                                    
-                                    centeredSlides={true}
+                                    direction='vertical'
+                                    spaceBetween={30}    // 슬라이드 사이의 간격
+                                    slidesPerView={3.5}     // 화면에 보여질 슬라이드 수
+                                    // centeredSlides={true}
                                     pagination={{ clickable: true }}  // 페이지 네이션 (점으로 표시되는 네비게이션)
                                     navigation={true}           // 이전/다음 버튼 네비게이션
-                                    modules={[Navigation, Pagination, EffectCoverflow]}
-                                    >
-                                    {documentStatus.map(document => (
-                                        <SwiperSlide style={{width:"100%", alignContent:"center"}}>
-                                            <div style={{ backgroundColor: 'white', width:'60rem', height: '100%', borderRadius:"15px", boxShadow:"0 0 10px"}}>
-                                                <Gauge 
-                                                    {...settings}
-                                                    value={document.currentCnt}
-                                                    valueMax={document.totalCnt}
-                                                    cornerRadius="50%"
-                                                    sx={(theme) => ({
-                                                        [`& .${gaugeClasses.valueText}`]: {
-                                                        fontSize: "1.5rem",
-                                                        fontWeight:"bold",
-                                                        },
-                                                        [`& .${gaugeClasses.valueArc}`]: {
-                                                        fill: '#008CFF',
-                                                        },
-                                                        [`& .${gaugeClasses.referenceArc}`]: {
-                                                        fill: theme.palette.text.disabled,
-                                                        },
-                                                        margin: "1rem auto",
-                                                    })}
-                                                    text={
-                                                        ({ value, valueMax }) => `${value} / ${valueMax}`
-                                                    }
-                                                />
-                                                <div style={{fontSize:"2rem", fontWeight:"bold", textAlign:"center", marginTop:"1rem"}}>
-                                                {`${document.year}년 ${document.mth}월`}
-                                                <br/>
-                                                </div>
-                                            </div>
-                                        </SwiperSlide>
-                                    ))}
-                                    
-                                    </Swiper>
-                                    </StyledRoot>
-                                </div>
-                            </Card>
-                        </div>
-                    </div>
-                    <div className={gridStyles.box2_2}>
-                        <Card sx={{borderRadius:"10px", height:"100%", backgroundColor:"black"}}>
-                        <Canvas>
-                            <ambientLight intensity={2.0} />
-                            <pointLight position={[10, 10, 10]} />
-                            <Earth />
-                            <OrbitControls />
-                        </Canvas>
+                                    modules={[Navigation, Pagination]}
+                                >
+                                    {
+                                        menuLogArray.map(data => (
+                                            <SwiperSlide style={{width:"100%", height:"100%"}}>
+                                                <Card sx={{backgroundColor:"white", width:"90%", height:"100%", margin:"1rem auto", borderRadius:"15px", display:"flex", flexDirection:"column", backgroundColor:"rgb(241,244,248)"}}>
+                                                    <StyledChart style={{width:"80%", margin:"0 auto"}}>
+                                                        <ApexCharts
+                                                            options={ChartOptions(data.menuName, dateArray)}
+                                                            series={[{
+                                                                name: "접속자",
+                                                                data: data.dateCountList.map(d => d.count) // 차트 데이터
+                                                            }]}
+                                                            type="line"
+                                                            height="100%"
+                                                        />
+                                                    </StyledChart>
+                                                </Card>
+                                            </SwiperSlide>
+                                        ))
+                                    }
+                                    <SwiperSlide style={{width:"100%", height:"100%"}}>
+                                    </SwiperSlide>
+                                </Swiper>
+                            </StyledRoot>
                         </Card>
-                    </div>
-                    
-                    <div className={gridStyles.box2_3}>
-                        <div className={gridStyles.box2_3_1}>
-                            <Card sx={{borderRadius:"10px", height:"100%", display:"flex", justifyContent:"center", alignContent:"center", flexDirection:"column", gap:"2%"}}>
-                                <div style={{
-                                    width:"100%",
-                                    height:"10%", 
-                                    background:"linear-gradient(to right, rgb(74, 122, 230), rgb(42, 69, 178))", 
-                                    display:"flex",
-                                    justifyContent:"space-between",
-                                    fontWeight:"bold",
-                                    alignItems:"center",
-                                    padding:"0 5%"
-                                }}>
-                                    <div style={{width:"20%", color:"white", fontSize:"1rem"}}>
-                                        배출원 지정
-                                    </div>
-                                </div>
-                                <div style={{margin:"0 auto", height:"90%"}}>
-                                    <Transfer
-                                        dataSource={mockData}
-                                        showSearch
-                                        filterOption={filterOption}
-                                        targetKeys={targetKeys}
-                                        onChange={handleChange}
-                                        onSearch={handleSearch}
-                                        render={(item) => item.title}
-                                        style={{
-                                            height:"95%",
-                                        }}
-                                        listStyle={{
-                                            height:"100%"
-                                        }}
-                                    />
-                                </div>
-                            </Card>
-                        </div>
                     </div>
                 </div>
             </div>

@@ -28,6 +28,7 @@ import Ea from './components/analfc/Ea';
 import Ca from './components/analfc/Ca';
 import Error404 from './Error404';
 import axiosInstance from './utils/AxiosInstance';
+import { CircularProgress } from '@mui/material';
 
 export default function App() {
     const [token, setToken] = useState(null);
@@ -90,7 +91,7 @@ export default function App() {
     }, []);
 
     if (loading) {
-        return <div>Loading...</div>; // 로딩 상태일 때 표시할 화면
+        return <CircularProgress color='success' sx={{position:"fixed", top:"50%", right:"50%"}}/>; // 로딩 상태일 때 표시할 화면
     }
 
     return (

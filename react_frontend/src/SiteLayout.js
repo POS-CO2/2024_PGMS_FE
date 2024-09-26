@@ -48,21 +48,21 @@ const mapMenuDataToItems = (menuData) => {
         menuItem.name === '시스템관리' ? <SettingOutlined /> : <></>;
   
       // 하위 메뉴를 재귀적으로 매핑
-      const mapChildren = (children) => {
+    const mapChildren = (children) => {
         return children.map(childItem => {
-          if (childItem.menu && childItem.menu.length > 0) {
+            if (childItem.menu && childItem.menu.length > 0) {
             return {
                 key: `${childItem.id}`,
                 label: childItem.name,
                 children: mapChildren(childItem.menu),  // 하위 메뉴가 있을 때만 children 추가
             };
-          } else {
+            } else {
             return {
                 key: `${childItem.id}`,
                 label: `${childItem.name}${childItem.accessUser !== 'FP' ? '*' : ''}`,  //현장이 볼 수 없는 메뉴명 뒤에 * 붙이기
                 path: childItem.url,  // 하위 메뉴가 없을 경우 path를 직접 설정
             };
-          }
+            }
         });
     };
         return {
@@ -195,7 +195,7 @@ export default function SiteLayout({handleLogout, menus, user}){
                     chatOpen ? (
                         <Chat handleCloseClick={handleCloseClick}/>
                     ) : (
-                            <Box component="span" onClick={handleChatClick} sx={{borderRadius:"50%", backgroundColor:"rgb(14, 170, 0)", position:"fixed", bottom: "16px", right:"16px", width:"70px", height:"70px", display:"flex", justifyContent:"center", alignItems:"center", cursor:"pointer"}}>
+                            <Box component="span" onClick={handleChatClick} sx={{borderRadius:"50%", backgroundColor:"rgb(14, 170, 0)", position:"fixed", bottom: "16px", right:"16px", width:"70px", height:"70px", display:"flex", justifyContent:"center", alignItems:"center", cursor:"pointer", zIndex:"1000"}}>
                                 <Badge color='error' badgeContent={totCnt} >
                                     <ChatBubble fontSize='large' sx={{color:"white"}}/>
                                 </Badge>

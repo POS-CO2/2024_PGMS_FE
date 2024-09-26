@@ -2077,7 +2077,7 @@ export function MmAddModal({ isModalOpen, handleOk, handleCancel, rowData }) {
         if (!formData.accessUser) newError.accessUser = '접근권한을 선택해주세요.';
         if (!formData.menuOrder) newError.menuOrder = '메뉴순서를 선택해주세요.';
 
-        if (Object.keys(newError).length > 0) {
+        if (Object.keys(newError)?.length > 0) {
             setError(newError);
             return;
         }

@@ -5,7 +5,7 @@ import { OrbitControls, Html } from '@react-three/drei';
 import * as THREE from 'three';
 import { TextureLoader } from 'three';
 import earthTextureUrl from './assets/images/earth.jpg';
-import { GaugeContainer, GaugeValueArc, GaugeReferenceArc, useGaugeState, Gauge, gaugeClasses} from '@mui/x-charts';
+import { GaugeContainer, GaugeValueArc, GaugeReferenceArc, useGaugeState, Gauge, gaugeClasses, BarChart} from '@mui/x-charts';
 import { Card,CardContent, FormControl, InputLabel, MenuItem, Chip, ButtonGroup, Button, IconButton } from '@mui/material';
 import { CustomBarChart, CustomLineChart } from './Chart';
 import { temp_data } from './assets/json/chartData';
@@ -15,7 +15,7 @@ import DataSaverOffOutlinedIcon from '@mui/icons-material/DataSaverOffOutlined';
 import SpeedIcon from '@mui/icons-material/Speed';
 import LeaderboardOutlinedIcon from '@mui/icons-material/LeaderboardOutlined';
 import SummarizeOutlinedIcon from '@mui/icons-material/SummarizeOutlined';
-import { ArrowBackIos, ArrowForward, ArrowForwardIos, Girl, MarginRounded } from '@mui/icons-material';
+import { ArrowBackIos, ArrowForward, ArrowForwardIos, Girl, GppGoodTwoTone, MarginRounded, NotificationsActive, NotificationsOff, Star, WarningRounded, WarningTwoTone } from '@mui/icons-material';
 import { color } from 'three/webgpu';
 import { Transfer, Select, Progress, ConfigProvider } from 'antd';
 import axiosInstance from './utils/AxiosInstance';
@@ -51,60 +51,60 @@ function GaugePointer() {
     );
 }
 
-function Earth() {
-    const earthRef = useRef();
-    const [hovered, setHovered] = useState(false);
-    const [hoveredCity, setHoveredCity] = useState(null);
+// function Earth() {
+//     const earthRef = useRef();
+//     const [hovered, setHovered] = useState(false);
+//     const [hoveredCity, setHoveredCity] = useState(null);
 
-    // 도시 위치 및 이름
-    const cities = [
-        { name: 'New York', position: new THREE.Vector3(0.6, 0.5, 0.5) },
-        { name: 'London', position: new THREE.Vector3(0.5, 0.6, -0.4) },
-        { name: 'Tokyo', position: new THREE.Vector3(0.6, -0.5, 0.4) },
-    ];
+//     // 도시 위치 및 이름
+//     const cities = [
+//         { name: 'New York', position: new THREE.Vector3(0.6, 0.5, 0.5) },
+//         { name: 'London', position: new THREE.Vector3(0.5, 0.6, -0.4) },
+//         { name: 'Tokyo', position: new THREE.Vector3(0.6, -0.5, 0.4) },
+//     ];
 
-    useFrame(() => {
-        if (earthRef.current) {
-            const rotation = earthRef.current.rotation;
-        }
-    });
+//     useFrame(() => {
+//         if (earthRef.current) {
+//             const rotation = earthRef.current.rotation;
+//         }
+//     });
 
-    // 텍스처 로더
-    const textureLoader = new TextureLoader();
-    const earthTexture = textureLoader.load(earthTextureUrl); // 텍스처 이미지 경로
+//     // 텍스처 로더
+//     const textureLoader = new TextureLoader();
+//     const earthTexture = textureLoader.load(earthTextureUrl); // 텍스처 이미지 경로
 
-    return (
-        <mesh ref={earthRef}>
-            {/* 지구의 텍스처 */}
-            <sphereGeometry args={[2, 32, 32]} />
-            <meshStandardMaterial map={earthTexture} />
-            {cities.map((city, index) => (
-                <mesh
-                    key={index}
-                    position={city.position.toArray()}
-                    onPointerOver={() => {
-                        setHovered(true);
-                        setHoveredCity(city);
-                    }}
-                    onPointerOut={() => {
-                        setHovered(false);
-                        setHoveredCity(null);
-                    }}
-                >
-                <sphereGeometry args={[0.05, 16, 16]} />
-                <meshStandardMaterial color="red" />
-                {hovered && hoveredCity === city && (
-                <Html position={[city.position.x, city.position.y + 0.1, city.position.z]} distanceFactor={10}>
-                    <div style={{ color: 'white', backgroundColor: 'green', padding: '2px 5px', borderRadius: '3px' }}>
-                        {city.name}
-                    </div>
-                </Html>
-            )}
-                </mesh>
-        ))}
-        </mesh>
-    );
-}
+//     return (
+//         <mesh ref={earthRef}>
+//             {/* 지구의 텍스처 */}
+//             <sphereGeometry args={[2, 32, 32]} />
+//             <meshStandardMaterial map={earthTexture} />
+//             {cities.map((city, index) => (
+//                 <mesh
+//                     key={index}
+//                     position={city.position.toArray()}
+//                     onPointerOver={() => {
+//                         setHovered(true);
+//                         setHoveredCity(city);
+//                     }}
+//                     onPointerOut={() => {
+//                         setHovered(false);
+//                         setHoveredCity(null);
+//                     }}
+//                 >
+//                 <sphereGeometry args={[0.05, 16, 16]} />
+//                 <meshStandardMaterial color="red" />
+//                 {hovered && hoveredCity === city && (
+//                 <Html position={[city.position.x, city.position.y + 0.1, city.position.z]} distanceFactor={10}>
+//                     <div style={{ color: 'white', backgroundColor: 'green', padding: '2px 5px', borderRadius: '3px' }}>
+//                         {city.name}
+//                     </div>
+//                 </Html>
+//             )}
+//                 </mesh>
+//         ))}
+//         </mesh>
+//     );
+// }
 
 const StyledRoot = styled.div`
     .swiper {
@@ -119,26 +119,51 @@ const StyledRoot = styled.div`
         }
         &-slide {
             display: flex;
+            flex-shrink: 0;
             align-items: center;
             justify-content: center;
             width: 100%;
-            height: 100%;
+            height: 90%;
+            margin: auto 0;
         },
         &-slide-active{
         }
         &-slide-next {
             width: 100%;
-            height: 95%;
+            height: 85%;
             margin: auto 0;
+            
         }
         &-slide-prev {
             width: 100%;
-            height: 95%;
+            height: 85%;
             margin: auto 0;
+            
         }
         &-button-next {
             z-idnex: 1;
         }
+    }    
+`;
+
+const StyledRootColumn = styled.div`
+    .swiper {
+
+        &.swiper-initialized {
+            width: 100%;
+            height: 100%;
+        }
+        &-wrapper {
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+            height: 100%;
+        }
+        &-slide {
+            flex-shrink: 0; // important
+            width: 100%;
+            height: 100%;
+        },
     }    
 `;
 
@@ -159,6 +184,10 @@ export default function Main() {
     const [scopeOne, setScopeOne] = useState(0);
     const [scopeTwo, setScopeTwo] = useState(0);
     const [documentStatus, setDocumentStatus] = useState([]);
+    const [dpPjt, setDpPjt] = useState([]);
+    const [scopeOneData, setScopeOneData] = useState([]);
+    const [scopeTwoData, setScopeTwoData] = useState([]);
+    const [alarm, setAlarm] = useState([]);
 
     let today = new Date();
     let toYear = today.getFullYear();
@@ -171,7 +200,7 @@ export default function Main() {
         bae.map(v => {
             const data = {
                 key: [v.equipId, v.actvDataId],
-                title: v.equipName,
+                title: `${v.equipName} (${v.actvDataName})`,
                 description: v.equipLibName,
                 chosen: v.id != null,
             }
@@ -199,9 +228,16 @@ export default function Main() {
             try{
                 const pjtResponse = await axiosInstance.get(`/pjt/my`);
                 const myPjt = pjtResponse.data;
+                console.log(myPjt);
                 setMyPjt(myPjt);
+                
 
                 if (myPjt.length > 0){
+                    const initialAlarms = myPjt.map((data) => ({
+                        id: data.id,
+                        alarmYn: data.alarmYn,
+                    }));
+                    setAlarm(initialAlarms)
                     const initialPjt = myPjt[0];
                     setSelectedMyPjt(initialPjt);
                     setPjtStartYear(initialPjt.ctrtFrYear);
@@ -217,13 +253,14 @@ export default function Main() {
                     ];
                     setScope(formattedChartPerfs);
                     // 실적스코프 전월대비 구하기
-                    setScopeOne(Math.floor(scope1Data[toMonth-1] / scope1Data[toMonth-2] * 100) ?? 0);
-                    setScopeTwo(Math.floor(scope2Data[toMonth-1] / scope2Data[toMonth-2] * 100) ?? 0);
-
+                    setScopeOne(Math.floor(scope1Data[toMonth-1] / scope1Data[toMonth-2] * 100 - 100) ?? 0);
+                    setScopeOneData([scope1Data[toMonth-2] ?? 0, scope1Data[toMonth-1] ?? 0]);
+                    setScopeTwo(Math.floor(scope2Data[toMonth-1] / scope2Data[toMonth-2] * 100 - 100) ?? 0);
+                    setScopeTwoData([scope2Data[toMonth-2] ?? 0, scope2Data[toMonth-1] ?? 0]);
+                    
                     // 증빙자료 제출현황 3개월치 구하기
                     const documentResponse = await axiosInstance.get(`/equip/document-status?pjtId=${initialPjt.pjtId}`);
                     setDocumentStatus(documentResponse.data);
-                    console.log(initialPjt);
                     // 배출원 지정 
                     const emissionResponse = await axiosInstance.get(`/equip/emission?projectId=${initialPjt.pjtId}`);
                     const ae = emissionResponse.data;
@@ -233,9 +270,6 @@ export default function Main() {
                     setBeforeEmission(be);
                     getMock(ae, be);
                     
-                    console.log(documentResponse.data);
-                    console.log(ae);
-                    console.log(be);
                 }
             }
             catch(error){
@@ -247,6 +281,11 @@ export default function Main() {
     }, []);
 
     useEffect(() => {
+        const fetchMyPjt = async () => {
+            const pjtResponse = await axiosInstance.get(`/pjt/my`);
+            const myPjt = pjtResponse.data;
+            setMyPjt(myPjt);
+        };
         const fetchSelectedProjectData = async () => {
             if (!selectedMyPjt) return;
             setPjtStartYear(selectedMyPjt.ctrtFrYear);
@@ -263,8 +302,10 @@ export default function Main() {
                     { data: scope2Data, stack: 'A', label: 'Scope 2' }
                 ];
                 setScope(formattedChartPerfs);
-                setScopeOne(Math.floor(scope1Data[toMonth-1] / scope1Data[toMonth-2] * 100) ?? 0);
-                setScopeTwo(Math.floor(scope2Data[toMonth-1] / scope2Data[toMonth-2] * 100) ?? 0);
+                setScopeOne(Math.floor(scope1Data[toMonth-1] / scope1Data[toMonth-2] * 100 - 100) ?? 0);
+                setScopeOneData([scope1Data[toMonth-2] ?? 0, scope1Data[toMonth-1] ?? 0]);
+                setScopeTwo(Math.floor(scope2Data[toMonth-1] / scope2Data[toMonth-2] * 100 - 100) ?? 0);
+                setScopeTwoData([scope2Data[toMonth-2] ?? 0, scope2Data[toMonth-1] ?? 0]);
 
                 const documentResponse = await axiosInstance.get(`/equip/document-status?pjtId=${selectedMyPjt.pjtId}`);
                 setDocumentStatus(documentResponse.data);
@@ -280,6 +321,7 @@ export default function Main() {
                 console.error(error);
             }
         };
+        fetchMyPjt();
         fetchSelectedProjectData();
     }, [selectedMyPjt]);
 
@@ -293,7 +335,7 @@ export default function Main() {
                     setAfterEmission(ae);
                 }
             } catch (error) {
-                
+                console.error(error);
             }
         }
         fetchEmission();
@@ -329,7 +371,6 @@ export default function Main() {
         else {
             for (const key of moveKeys){
                 const deleteData = afterEmission.find(item => item.equipId === key[0] && item.actvDataId === key[1]);
-                console.log(deleteData);
                 if (deleteData) {
                     try {
                         const {data} = await axiosInstance.delete(`/equip/emission?id=${deleteData.id}`);    
@@ -338,7 +379,6 @@ export default function Main() {
                         swalOptions.icon = 'success';
                         setTargetKeys(newTargetKeys);
                     } catch (error) {
-                        console.error(error);
                         swalOptions.title = '실패!',
                         swalOptions.text = error.response.data.message,
                         swalOptions.icon = 'error';
@@ -352,14 +392,11 @@ export default function Main() {
         }
         Swal.fire(swalOptions);
 
-        // setTargetKeys(newTargetKeys);
     };
 
     const handleDropClick = (e) => {
         const selectedItem = myPjt.find(item => item.pjtName === e);
         setSelectedMyPjt(selectedItem);
-
-        
     }
 
 
@@ -372,32 +409,9 @@ export default function Main() {
         height: 200,
     };
 
-    const scopeSettings1 = {
-        width: 175,
-        height: 175,
-        value: scopeOne,
-    };
-    const scopeSettings2 = {
-        width: 175,
-        height: 175,
-        value: scopeTwo,
-    };
-
-    const [year, setYear] = useState(null);
-
-    const handleYear = (event) => {
-        setYear(event.target.value);
-    }
-
     const twoColors = {
         '0%': '#108ee9',
         '100%': '#87d068',
-    };
-
-    const getStrokeColor = (value) => {
-        if (value <= 50) return green['A700'];
-        if (value <= 100) return yellow['800'];
-        return red['A700'];
     };
 
     const progressPjt = () => {
@@ -407,19 +421,59 @@ export default function Main() {
         return result;
     }
 
+    const handleSetDpPjt = async (e) => {
+        let swalOptions = {
+            confirmButtonText: '확인'
+        };
+        console.log(e);
+        const formData = {
+            pjtId : e.pjtId,
+        }
+        try {
+            const {data} = await axiosInstance.patch(`/pjt/selected`, formData);
+            swalOptions.title = '성공!',
+            swalOptions.text = `대표프로젝트가 성공적으로 설정되었습니다.`;
+            swalOptions.icon = 'success';
+        } catch (error) {
+            swalOptions.title = '실패!',
+            swalOptions.text = `${error.response.data.message}`;
+            swalOptions.icon = 'error';
+        }
+        setDpPjt(e);
+        setSelectedMyPjt(e);
+        Swal.fire(swalOptions);
+    }
+    
+    const handleSetAlarm = async (e) => {    
+        try {
+            const request = await axiosInstance.patch(`/pjt/my/alarm?projectUserId=${e.id}`);
+            console.log(request);
+            console.log("success");
+            setAlarm((prev) => 
+                prev.map((item) => 
+                    item.id === e.id 
+                    ? { ...item, alarmYn: item.alarmYn === 'y' ? 'n' : 'y'} 
+                    : item
+                )
+            );
+
+        } catch (error) {
+            console.error("error");
+        }
+    }
+    console.log(alarm);
     return (
             <div className={gridStyles.grid_container}>
-                <Card className={gridStyles.box1} sx={{borderRadius:"15px", backgroundColor:"rgb(6, 10, 18)", color:"white"}}>
+                <Card className={gridStyles.box1} sx={{borderRadius:"10px", color:"white"}}>
                     <div className={gridStyles.box1_header}>
-                        
                         {/* 로고  */}
                         <div className={gridStyles.box1_logo}>
                             {/* <SsidChartRoundedIcon sx={{width:"2rem",height:"2rem", paddingRight:"0.5rem"}}/> */}
                             PGMS
                         </div>
                         <ConfigProvider theme={{token:{fontFamily:"SUITE-Regular"}}}>
-                        <Select defaultValue={selectedMyPjt?.pjtName} value={selectedMyPjt?.pjtName} onChange={(e) => handleDropClick(e)} style={{width:"20%", height:"2.5rem", fontSize:"4rem"}}>
-                            {myPjt.map(pjt => (
+                        <Select defaultValue={selectedMyPjt?.pjtName} value={selectedMyPjt?.pjtName} onChange={(e) => handleDropClick(e)} style={{width:"20%", height:"2.5rem", fontSize:"4rem", color:"rgb(55, 57, 78)"}}>
+                            {myPjt.map((pjt) => (
                                 <Select.Option key={pjt.id} value={pjt.pjtName}>
                                 {pjt.pjtName}
                                 </Select.Option>
@@ -438,56 +492,50 @@ export default function Main() {
                                     <LeaderboardOutlinedIcon fontSize='large' sx={{marginRight:"0.5rem"}}/>전월 대비 실적Scope
                                 </div>
                                 <div className={gridStyles.box1_1_gauge}>
-                                    <div>
-                                        <Gauge
-                                        {...scopeSettings1}
-                                        cornerRadius="50%"
-                                        sx={(theme) => ({
-                                            [`& .${gaugeClasses.valueText}`]: {
-                                            fontSize: 40,
-                                            color: 'white',
-                                            fontWeight: 700,
-                                            },
-                                            [`& .${gaugeClasses.valueArc}`]: {
-                                            fill: getStrokeColor(scopeSettings1.value),
-                                            },
-                                            [`& .${gaugeClasses.referenceArc}`]: {
-                                            fill: theme.palette.text.disabled,
-                                            },
-                                        })}
-                                        text={
-                                            ({ value }) => `${value}%`
+                                    <div style={{height:"100%", marginTop:"2rem"}}>
+                                        {
+                                            scopeOne >= 0 ? (
+                                                <div style={{display:"flex", flexDirection:"row",width:"100%", height:"100%", justifyContent:"space-around", alignItems:"center", fontSize:"3rem", fontWeight:"bold", color:"red", gap:"1rem"}}>
+                                                    <WarningTwoTone fontSize='large' sx={{color:"red"}}/>
+                                                    <div>
+                                                    +{scopeOne}%
+                                                    </div>
+                                                </div>
+                                            ) : (
+                                                <div style={{display:"flex", flexDirection:"row",width:"100%", height:"100%", justifyContent:"space-around", alignItems:"center", fontSize:"3rem", fontWeight:"bold", color:"#0eaa00", gap:"1rem"}}>
+                                                    <GppGoodTwoTone fontSize='large' sx={{color:"#0eaa00"}} />
+                                                    <div>
+                                                        {scopeOne}%
+                                                    </div>
+                                                </div>
+                                            )
                                         }
-                                        />
                                         <div className={gridStyles.box1_1_logo}>
                                             <SpeedIcon fontSize='large' sx={{marginRight:"0.5rem"}}/>실적Scope1
                                         </div>
                                     </div>
-                                    <dib>
-                                    <Gauge
-                                    {...scopeSettings2}
-                                    cornerRadius="50%"
-                                    sx={(theme) => ({
-                                        [`& .${gaugeClasses.valueText}`]: {
-                                        fontSize: 40,
-                                        color: 'white',
-                                        fontWeight: 700,
-                                        },
-                                        [`& .${gaugeClasses.valueArc}`]: {
-                                        fill: getStrokeColor(scopeSettings2.value),
-                                        },
-                                        [`& .${gaugeClasses.referenceArc}`]: {
-                                        fill: theme.palette.text.disabled,
-                                        },
-                                    })}
-                                    text={
-                                        ({ value }) => `${value}%`
-                                    }
-                                    />
+                                    <div style={{height:"100%", marginTop:"2rem"}}>
+                                        {
+                                            scopeTwo >= 0 ? (
+                                                <div style={{display:"flex", flexDirection:"row",width:"100%", height:"100%", justifyContent:"space-around", alignItems:"center", fontSize:"3rem", fontWeight:"bold", color:"red", gap:"1rem"}}>
+                                                    <WarningTwoTone fontSize='large' sx={{color:"red"}}/>
+                                                    <div>
+                                                    +{scopeTwo}%
+                                                    </div>
+                                                </div>
+                                            ) : (
+                                                <div style={{display:"flex", flexDirection:"row",width:"100%", height:"100%", justifyContent:"space-around", alignItems:"center", fontSize:"3rem", fontWeight:"bold", color:"#0eaa00", gap:"1rem"}}>
+                                                    <GppGoodTwoTone fontSize='large' sx={{color:"#0eaa00"}} />
+                                                    <div>
+                                                        {scopeTwo}%
+                                                    </div>
+                                                </div>
+                                            )
+                                        }
                                     <div className={gridStyles.box1_1_logo}>
                                         <SpeedIcon fontSize='large' sx={{marginRight:"0.5rem"}}/>실적Scope2
                                     </div>
-                                    </dib>
+                                    </div>
                                 </div>
                             </div>
                         </Card>
@@ -498,6 +546,65 @@ export default function Main() {
                     </div>
                 </Card>
                 <div className={gridStyles.box2}>
+                    {/* 대표프로젝트설정 */}
+                    <div className={gridStyles.box2_2}>
+                        <Card sx={{borderRadius:"10px", height:"100%"}}>
+                            <div className={gridStyles.box2_2_title}>
+                                대표프로젝트설정
+                            </div>
+                            <div className={gridStyles.box2_2_pjt}>
+                                <StyledRootColumn style={{width:"100%", height:"100%", overflow:"hidden"}}>
+                                    <Swiper
+                                        direction='vertical'
+                                        spaceBetween={30}    // 슬라이드 사이의 간격
+                                        slidesPerView={2}     // 화면에 보여질 슬라이드 수
+                                        pagination={{ clickable: true }}  // 페이지 네이션 (점으로 표시되는 네비게이션)
+                                        navigation={true}           // 이전/다음 버튼 네비게이션
+                                        modules={[Navigation, Pagination]}
+                                    >
+                                        {myPjt.map((data, idx) => {
+                                            
+                                            const matchingAlarm = alarm.find(e => e.id === data.id)
+                                            
+                                            return (
+                                            <SwiperSlide style={{width:"100%", height:"100%"}}>
+                                                <Card sx={{backgroundColor:"white", width:"90%", height:"100%", margin:"1rem auto", borderRadius:"15px", display:"flex", flexDirection:"column", backgroundColor:"rgb(241,244,248)"}}>
+                                                    <div className={gridStyles.star}>
+                                                        {idx === 0 ? (
+                                                            <IconButton>
+                                                                <Star fontSize='large' sx={{color:"#ffd700"}} />
+                                                            </IconButton>
+                                                        ): (
+                                                            <IconButton onClick={() => handleSetDpPjt(data)}>
+                                                                <Star fontSize='large' sx={{color:"gray"}}/>
+                                                            </IconButton>
+                                                        )}
+                                                        {matchingAlarm?.alarmYn === "y"? (
+                                                            <IconButton onClick={() => handleSetAlarm(data)}>
+                                                                <NotificationsActive fontSize='large' sx={{color:"gold"}}/>
+                                                            </IconButton>
+                                                        ) : (
+                                                            <IconButton onClick={() => handleSetAlarm(data)}>
+                                                                <NotificationsOff fontSize='large' />
+                                                            </IconButton>
+                                                        )}
+                                                    </div>
+                                                    <div className={gridStyles.dp_pjt}>
+                                                        {`${data.pjtName}`}
+                                                    </div>
+                                                    <div className={gridStyles.dp_pjt_period}>
+                                                        {`${data.ctrtFrYear}년${data.ctrtFrMth}월~${data.ctrtToYear}년${data.ctrtToMth}월`}
+                                                    </div>
+                                                </Card>    
+                                            </SwiperSlide>
+                                        )})}
+                                        <SwiperSlide>
+                                        </SwiperSlide>
+                                    </Swiper>
+                                </StyledRootColumn>
+                            </div>
+                        </Card>
+                    </div>
                     <div className={gridStyles.box2_1}>
                         <div className={gridStyles.box2_1_1}>
                             <Card 
@@ -505,13 +612,12 @@ export default function Main() {
                                 sx={{
                                 borderRadius:"15px",
                                 height:"100%", 
-                                background:"linear-gradient(to right, #66C869, #02A007)", 
                                 width:"100%",
                                 display:"flex"
                                 }}>
                                 <div className={gridStyles.box2_1_1_1}>
-                                    <div className={gridStyles.box1_1_logo} style={{color:'white'}}>
-                                        <SummarizeOutlinedIcon fontSize='large' sx={{margin:"0 0.3rem 0 1rem"}}/>증빙자료 제출 현황
+                                    <div className={gridStyles.box1_1_logo} style={{color:'white', fontSize:"1rem", paddingLeft:"2rem"}}>
+                                        증빙자료 제출 현황
                                     </div>
                                     <div className={gridStyles.box2_1_1_1_1}>
                                     <Chip label={selectedMyPjt?.pjtName} variant="outlined" onClick={() => {}} sx={{backgroundColor:"white", fontSize:"1rem", fontWeight:"bold", width: "100%"}}/>
@@ -520,21 +626,13 @@ export default function Main() {
                                 <div className={gridStyles.box2_swap}>
                                 <StyledRoot style={{height:"80%", width:"100%", margin:"0 auto", overflow: "hidden"}}>
                                 <Swiper
-                                    effect={'coverflow'}
-                                    spaceBetween={15}    // 슬라이드 사이의 간격
+                                    dir="rtl"
+                                    spaceBetween={100}    // 슬라이드 사이의 간격
                                     slidesPerView={2}     // 화면에 보여질 슬라이드 수
-                                    coverflowEffect={{
-                                        rotate: 60,
-                                        stretch: 10,
-                                        depth: 100,
-                                        modifier: 1,
-                                        slideShadows: true,
-                                    }}
-                                    
                                     centeredSlides={true}
                                     pagination={{ clickable: true }}  // 페이지 네이션 (점으로 표시되는 네비게이션)
                                     navigation={true}           // 이전/다음 버튼 네비게이션
-                                    modules={[Navigation, Pagination, EffectCoverflow]}
+                                    modules={[Navigation, Pagination]}
                                     >
                                     {documentStatus.map(document => (
                                         <SwiperSlide style={{width:"100%", alignContent:"center"}}>
@@ -548,6 +646,7 @@ export default function Main() {
                                                         [`& .${gaugeClasses.valueText}`]: {
                                                         fontSize: "1.5rem",
                                                         fontWeight:"bold",
+                                                        color:"rgb(55, 57, 78)",
                                                         },
                                                         [`& .${gaugeClasses.valueArc}`]: {
                                                         fill: '#008CFF',
@@ -558,10 +657,10 @@ export default function Main() {
                                                         margin: "1rem auto",
                                                     })}
                                                     text={
-                                                        ({ value, valueMax }) => `${value} / ${valueMax}`
+                                                        ({ value, valueMax }) => `${valueMax} / ${value}`
                                                     }
                                                 />
-                                                <div style={{fontSize:"2rem", fontWeight:"bold", textAlign:"center", marginTop:"1rem"}}>
+                                                <div style={{fontSize:"2rem", fontWeight:"bold", textAlign:"center", marginTop:"1rem", color:"rgb(55, 57, 78)"}}>
                                                 {`${document.year}년 ${document.mth}월`}
                                                 <br/>
                                                 </div>
@@ -575,17 +674,13 @@ export default function Main() {
                             </Card>
                         </div>
                     </div>
-                    <div className={gridStyles.box2_2}>
-                        <Card sx={{borderRadius:"10px", height:"100%", backgroundColor:"black"}}>
-                        <Canvas>
+                    
+                    {/* <Canvas>
                             <ambientLight intensity={2.0} />
                             <pointLight position={[10, 10, 10]} />
                             <Earth />
                             <OrbitControls />
-                        </Canvas>
-                        </Card>
-                    </div>
-                    
+                        </Canvas> */}
                     <div className={gridStyles.box2_3}>
                         <div className={gridStyles.box2_3_1}>
                             <Card sx={{borderRadius:"10px", height:"100%", display:"flex", justifyContent:"center", alignContent:"center", flexDirection:"column", gap:"2%"}}>
@@ -597,14 +692,14 @@ export default function Main() {
                                     justifyContent:"space-between",
                                     fontWeight:"bold",
                                     alignItems:"center",
-                                    padding:"0 5%"
+                                    padding:"0 2rem"
                                 }}>
                                     <div style={{width:"20%", color:"white", fontSize:"1rem"}}>
                                         배출원 지정
                                     </div>
                                 </div>
                                 <div style={{margin:"0 auto", height:"90%"}}>
-                                    <ConfigProvider theme={{token:{fontFamily:"SUITE-Regular"}}} >
+                                    <ConfigProvider theme={{token:{fontFamily:"SUITE-Regular", color:"rgb(55, 57, 78)"}}} >
                                     <Transfer
                                         dataSource={mockData}
                                         showSearch
@@ -617,7 +712,9 @@ export default function Main() {
                                             height:"95%",
                                         }}
                                         listStyle={{
-                                            height:"100%"
+                                            height:"100%",
+                                            width:250,
+                                            textOverflow:"ellipsis",
                                         }}
                                     />
                                     </ConfigProvider>
