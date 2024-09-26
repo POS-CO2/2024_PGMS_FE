@@ -15,7 +15,7 @@ import DataSaverOffOutlinedIcon from '@mui/icons-material/DataSaverOffOutlined';
 import SpeedIcon from '@mui/icons-material/Speed';
 import LeaderboardOutlinedIcon from '@mui/icons-material/LeaderboardOutlined';
 import SummarizeOutlinedIcon from '@mui/icons-material/SummarizeOutlined';
-import { ArrowBackIos, ArrowForward, ArrowForwardIos, Girl, GppGoodTwoTone, MarginRounded, NotificationsActive, NotificationsOff, Star, WarningRounded, WarningTwoTone } from '@mui/icons-material';
+import { ArrowBackIos, ArrowForward, ArrowForwardIos, Girl, GppGoodTwoTone, MarginRounded, NotificationsActive, NotificationsOff, SdCardAlertTwoTone, Star, WarningRounded, WarningTwoTone } from '@mui/icons-material';
 import { color } from 'three/webgpu';
 import { Transfer, Select, Progress, ConfigProvider } from 'antd';
 import axiosInstance from './utils/AxiosInstance';
@@ -496,7 +496,7 @@ export default function Main() {
                                         {
                                             isNaN(scopeOne) ? (
                                                 <div style={{display:"flex", flexDirection:"row",width:"100%", height:"100%", justifyContent:"space-around", alignItems:"center", fontSize:"3rem", fontWeight:"bold", color:"rgb(55, 57, 78)", gap:"1rem"}}>
-                                                    <GppGoodTwoTone fontSize='large' sx={{color:"rgb(55, 57, 78)"}} />
+                                                    <SdCardAlertTwoTone fontSize='large' sx={{color:"rgb(55,57,78)"}} />
                                                     <div>
                                                         No Data
                                                     </div>
@@ -527,7 +527,7 @@ export default function Main() {
                                         {
                                             isNaN(scopeTwo) ? (
                                                 <div style={{display:"flex", flexDirection:"row",width:"100%", height:"100%", justifyContent:"space-around", alignItems:"center", fontSize:"3rem", fontWeight:"bold", color:"rgb(55, 57, 78)", gap:"1rem"}}>
-                                                    <GppGoodTwoTone fontSize='large' sx={{color:"rgb(55, 57, 78)"}} />
+                                                    <SdCardAlertTwoTone fontSize='large' sx={{color:"rgb(55,57,78)"}} />
                                                     <div>
                                                         No Data
                                                     </div>
@@ -568,7 +568,7 @@ export default function Main() {
                     <div className={gridStyles.box2_2}>
                         <Card sx={{borderRadius:"10px", height:"100%"}}>
                             <div className={gridStyles.box2_2_title}>
-                                대표프로젝트설정
+                                대표 프로젝트 설정
                             </div>
                             <div className={gridStyles.box2_2_pjt}>
                                 <StyledRootColumn style={{width:"100%", height:"100%", overflow:"hidden"}}>
