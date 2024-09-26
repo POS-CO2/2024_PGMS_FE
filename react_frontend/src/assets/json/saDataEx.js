@@ -59,32 +59,32 @@ export const saData = [
 export const avgUnitPerDivData = [
     {
         "divCode": "플랜트사업본부",
-        "avgEmissionQtyPerSales": 105638.99816504265,
+        "avgEmissionQtyPerSales": 23451,
         "formattedAvgEmissionQtyPerSales": "105,638.998165"
     },
     {
         "divCode": "건축사업본부",
-        "avgEmissionQtyPerSales": 123456,
+        "avgEmissionQtyPerSales": 35612,
         "formattedAvgEmissionQtyPerSales": "123,456"
     },
     {
         "divCode": "인프라사업본부",
-        "avgEmissionQtyPerSales": 17125.85536547434,
+        "avgEmissionQtyPerSales": 12456,
         "formattedAvgEmissionQtyPerSales": "17,125.855365"
     },
     {
         "divCode": "1CEALD00",
-        "avgEmissionQtyPerSales": 105638.99816504265,
+        "avgEmissionQtyPerSales": 43512,
         "formattedAvgEmissionQtyPerSales": "105,638.998165"
     },
     {
         "divCode": "2CEBOI00",
-        "avgEmissionQtyPerSales": 0,
+        "avgEmissionQtyPerSales": 33124,
         "formattedAvgEmissionQtyPerSales": "0"
     },
     {
         "divCode": "3D000859",
-        "avgEmissionQtyPerSales": 17125.85536547434,
+        "avgEmissionQtyPerSales": 24215,
         "formattedAvgEmissionQtyPerSales": "17,125.855365"
     }
 ]
@@ -110,57 +110,57 @@ export const avgUnitPerDivData2 = [
 // 상품별 평균 원단위
 export const unitPerProdData = [
     {
-        "divCode": "1201",
+        "prodTypeCode": "1201",
         "avgEmissionQtyPerSales": 54321,
         "formattedAvgEmissionQtyPerSales": "12,345"
     },
     {
-        "divCode": "902",
+        "prodTypeCode": "902",
         "avgEmissionQtyPerSales": 78522,
         "formattedAvgEmissionQtyPerSales": "17,125.855365"
     },
     {
-        "divCode": "904",
+        "prodTypeCode": "904",
         "avgEmissionQtyPerSales": 37541,
         "formattedAvgEmissionQtyPerSales": "55,555"
     },
     {
-        "divCode": "907",
+        "prodTypeCode": "907",
         "avgEmissionQtyPerSales": 41238,
         "formattedAvgEmissionQtyPerSales": "106,799.866277"
     },
     {
-        "divCode": "453",
+        "prodTypeCode": "453",
         "avgEmissionQtyPerSales": 41253,
         "formattedAvgEmissionQtyPerSales": "12,345"
     },
     {
-        "divCode": "562",
+        "prodTypeCode": "562",
         "avgEmissionQtyPerSales": 12537,
         "formattedAvgEmissionQtyPerSales": "17,125.855365"
     },
     {
-        "divCode": "947",
+        "prodTypeCode": "947",
         "avgEmissionQtyPerSales": 84231,
         "formattedAvgEmissionQtyPerSales": "55,555"
     },
     {
-        "divCode": "847",
+        "prodTypeCode": "847",
         "avgEmissionQtyPerSales": 24358,
         "formattedAvgEmissionQtyPerSales": "106,799.866277"
     },
     {
-        "divCode": "753",
+        "prodTypeCode": "753",
         "avgEmissionQtyPerSales": 12537,
         "formattedAvgEmissionQtyPerSales": "17,125.855365"
     },
     {
-        "divCode": "5378",
+        "prodTypeCode": "5378",
         "avgEmissionQtyPerSales": 84231,
         "formattedAvgEmissionQtyPerSales": "55,555"
     },
     {
-        "divCode": "125",
+        "prodTypeCode": "125",
         "avgEmissionQtyPerSales": 24358,
         "formattedAvgEmissionQtyPerSales": "106,799.866277"
     }

@@ -14,8 +14,6 @@ import * as chartStyles from "../../assets/css/chart.css"
 import * as saStyles from "../../assets/css/sa.css"
 import * as XLSX from 'xlsx';
 
-import {avgUnitPerDivData,avgUnitPerDivData2} from "../../assets/json/saDataEx.js"
-
 export default function Sa() {
     const [formData, setFormData] = useRecoilState(revAnaSearchForm); // 검색 데이터
     const [salesTableData, setSalesTableData] = useState([]); // 목록 표
@@ -42,7 +40,7 @@ export default function Sa() {
 
         url = `/anal/sales/div?startDate=${startDate}&endDate=${endDate}`;
         const perDivChartResponse = await axiosInstance.get(url);
-        setAvgUnitPerDiv(perDivChartResponse.data);
+       setAvgUnitPerDiv(perDivChartResponse.data);
         url = `/anal/sales/prod?startDate=${startDate}&endDate=${endDate}`;
         const perProdChartResponse = await axiosInstance.get(url);
         setUnitPerProd(perProdChartResponse.data);

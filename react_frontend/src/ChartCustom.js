@@ -24,7 +24,7 @@ export default function ChartCustom({ title, data }) {
                         },
                     ]}
                     leftAxis={null}
-                    colors={['rgb(53, 98, 227)', 'rgb(196, 218, 250)']}
+                    colors={['#ccd2eb', '#ffdfdc']}
                     sx={{
                         //change left yAxis label styles
                         "& .MuiChartsAxis-left .MuiChartsAxis-tickLabel": {
