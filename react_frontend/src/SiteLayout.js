@@ -1,4 +1,6 @@
 import React, {useState, useRef, useEffect} from 'react';
+import { useRecoilState } from "recoil";
+import { itemsState } from './atoms/tabAtoms';
 import { useNavigate, Outlet } from 'react-router-dom';
 import styled from 'styled-components';
 import Sidebar from './Sidebar';
@@ -78,17 +80,15 @@ const mapMenuDataToItems = (menuData) => {
 
 export default function SiteLayout({handleLogout, menus, user}){
     const [loading, setLoading] = useState(false);
-
+    const [items, setItems] = useRecoilState(itemsState);
     const [collapsed, setCollapsed] = useState(false);
     const [openKeys, setOpenKeys] = useState([]);
     const [chatOpen, setChatOpen] = useState(false);
     const navigate = useNavigate();
     const tabsContainerRef = useRef(null);
     
-    let items = mapMenuDataToItems(menus);
-
     useEffect(() => {
-        items = mapMenuDataToItems(menus);
+        setItems(mapMenuDataToItems(menus));
     }, [menus]);
 
     const toggleCollapsed = () => {
@@ -96,6 +96,9 @@ export default function SiteLayout({handleLogout, menus, user}){
     }
 
     const handleMenuClick = async e => {
+        // console.log("menus", menus);
+        // console.log("items", items);
+        // console.log("e", e);
         setLoading(true);
         const item = findItemByKey(items, e.key);
         if (item && item.path) {

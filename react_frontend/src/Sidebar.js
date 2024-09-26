@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import Favorite from './Favorite';
 import { LeftOutlined } from '@ant-design/icons';
 import { Button, ConfigProvider, Menu, List } from 'antd';
@@ -119,6 +119,17 @@ const theme = {
 }
 
 export default function Sidebar({ collapsed, toggleCollapsed, items, onMenuClick, openKeys, onOpenChange }) {
+  const [selectedKeys, setSelectedKeys] = useState([]);
+
+  const handleMenuClick = (e) => {
+    setSelectedKeys([e.key]);  // 클릭된 메뉴 항목의 key를 selectedKeys로 설정
+    onMenuClick(e);            // 기존 메뉴 클릭 핸들러 호출
+  };
+
+  useEffect(() => {
+    console.log("selectedKeys", selectedKeys);
+  }, [selectedKeys])
+  
   return (
     <SidebarContainer $collapsed={collapsed}>
 
@@ -141,9 +152,10 @@ export default function Sidebar({ collapsed, toggleCollapsed, items, onMenuClick
           theme="light"
           inlineCollapsed={collapsed}
           items={items}
-          onClick={onMenuClick}
+          onClick={handleMenuClick}
           openKeys={openKeys}
           onOpenChange={onOpenChange}
+          selectedKeys={selectedKeys}
         />
       </ConfigProvider>
 

@@ -21,7 +21,12 @@ export default function Tep() {
     const [content, setContent] = useRecoilState(tepSelectedBtnState);
 
     useEffect(() => {
-        handleFormSubmit(formData);
+        if(Object.keys(formData).length !== 0) {
+            handleFormSubmit(formData);
+        }
+        else {
+            handleFormSubmit({year: new Date().getFullYear()})
+        }
         handleButtonClick(content);
     }, []);
 
@@ -66,7 +71,6 @@ export default function Tep() {
                 initialValues={formData} 
                 onFormSubmit={handleFormSubmit} 
                 formFields={formField_tep} 
-                //autoSubmitOnInit={true}
             />
 
             {(!formData || Object.keys(formData).length === 0) ? (

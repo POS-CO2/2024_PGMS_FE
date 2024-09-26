@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useRecoilState } from "recoil";
-import { clAnaSearchForm } from '../../atoms/searchFormAtoms';
+import { revAnaSearchForm } from '../../atoms/searchFormAtoms';
 import SearchForms from "../../SearchForms";
 import { formField_sa } from "../../assets/json/searchFormData";
 import TableCustom from "../../TableCustom.js";
@@ -17,7 +17,7 @@ import * as XLSX from 'xlsx';
 import {avgUnitPerDivData,avgUnitPerDivData2} from "../../assets/json/saDataEx.js"
 
 export default function Sa() {
-    const [formData, setFormData] = useRecoilState(clAnaSearchForm); // 검색 데이터
+    const [formData, setFormData] = useRecoilState(revAnaSearchForm); // 검색 데이터
     const [salesTableData, setSalesTableData] = useState([]); // 목록 표
     const [avgUnitPerDiv, setAvgUnitPerDiv] = useState([]); // 본부별 평균 원단위
     const [unitPerProd, setUnitPerProd] = useState([]); // 상품별 원단위
