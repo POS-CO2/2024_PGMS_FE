@@ -74,6 +74,11 @@ export default function Sa() {
         XLSX.writeFile(wb, `${fileName}.xlsx`);
     };
 
+    // 서치폼이 변경될 때 목록 clear
+    const handleFieldsChange = () => {
+        setFormData({});
+    };
+
     function AvgUnitPerDivChart() {
         return (
             <>
@@ -199,7 +204,12 @@ export default function Sa() {
                 {"분석및예측 > 매출액별 분석"}
             </div>
 
-            <SearchForms initialValues={formData} onFormSubmit={handleFormSubmit} formFields={formField_sa} />
+            <SearchForms 
+                initialValues={formData} 
+                onFormSubmit={handleFormSubmit} 
+                formFields={formField_sa} 
+                handleFieldsChange={handleFieldsChange}
+            />
 
             {(!formData || Object.keys(formData).length === 0) ? (
                 <></>
