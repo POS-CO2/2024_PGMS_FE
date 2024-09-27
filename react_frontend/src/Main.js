@@ -395,7 +395,7 @@ export default function Main() {
     }
     return (
         <>
-            <div className={gridStyles.grid_container}>
+            <div className={gridStyles.grid_container} >
                 <Card className={gridStyles.box1} sx={{borderRadius:"10px", color:"white"}}>
                     <div className={gridStyles.box1_header}>
                         {/* 로고  */}
@@ -664,12 +664,13 @@ export default function Main() {
                         </div>
                     </div>
                 </div>
+                {isLoading && 
+                    <Overlay >
+                        <CircularProgress />
+                    </Overlay>
+                }
             </div>
-            {isLoading && 
-                <Overlay >
-                    <CircularProgress />
-                </Overlay>
-            }
+            
         </>
     );
 }
