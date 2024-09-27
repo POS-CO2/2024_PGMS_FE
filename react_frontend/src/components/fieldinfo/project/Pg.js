@@ -42,45 +42,45 @@ export default function Pg() {
             label: item.name,
         }));
     };
+
+    const fetchProject = async () => {
+        try {
+            const response = await axiosInstance.get(`/pjt?pgmsYn=y`);
+            setProjects(response.data);
+        } catch (error) {
+            console.log(error);
+        }
+    };
+
+    const fetchDropDown = async () => {
+        try {
+            // 여러 개의 비동기 작업을 병렬로 실행하기 위해 await Promise.all 사용
+            const [optionsDiv, optionsPS, optionsReg] = await Promise.all([
+                fetchOptions('본부코드'),
+                fetchOptions('프로젝트진행상태'),
+                fetchOptions('지역코드')
+            ]);
+
+            // formField_pg를 업데이트
+            const updateFormFields = formField_pg.map(field => {
+                if (field.name === 'divCode') {
+                    return { ...field, options: optionsDiv };
+                } else if (field.name === 'pjtProgStus') {
+                    return { ...field, options: optionsPS };
+                } else if (field.name === 'reg') {
+                    return { ...field, options: optionsReg };
+                } else {
+                    return field;
+                }
+            });
+
+            setFormFields(updateFormFields);
+        } catch (error) {
+            console.error(error);
+        }
+    };
     
     useEffect(() => {
-        const fetchProject = async () => {
-            try {
-                const response = await axiosInstance.get(`/pjt?pgmsYn=y`);
-                setProjects(response.data);
-            } catch (error) {
-                console.log(error);
-            }
-        };
-
-        const fetchDropDown = async () => {
-            try {
-                // 여러 개의 비동기 작업을 병렬로 실행하기 위해 await Promise.all 사용
-                const [optionsDiv, optionsPS, optionsReg] = await Promise.all([
-                    fetchOptions('본부코드'),
-                    fetchOptions('프로젝트진행상태'),
-                    fetchOptions('지역코드')
-                ]);
-    
-                // formField_pg를 업데이트
-                const updateFormFields = formField_pg.map(field => {
-                    if (field.name === 'divCode') {
-                        return { ...field, options: optionsDiv };
-                    } else if (field.name === 'pjtProgStus') {
-                        return { ...field, options: optionsPS };
-                    } else if (field.name === 'reg') {
-                        return { ...field, options: optionsReg };
-                    } else {
-                        return field;
-                    }
-                });
-
-                setFormFields(updateFormFields);
-            } catch (error) {
-                console.error(error);
-            }
-        };
-    
         fetchDropDown();
         fetchProject();
 
@@ -233,6 +233,7 @@ export default function Pg() {
                 onFormSubmit={handleFormSubmit} 
                 formFields={formFields} 
                 handleFieldsChange={handleFieldsChange}
+                handleEmptyFields={fetchProject}
             />
 
             <div className={pdsStyles.main_grid}>
