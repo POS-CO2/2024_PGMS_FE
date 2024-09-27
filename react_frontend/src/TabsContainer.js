@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef, forwardRef, useImperativeHandle } from 'react';
-import { useRecoilState } from "recoil";
-import { openTabsState, activeTabState, itemsState } from './atoms/tabAtoms';
+import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
+import { openTabsState, activeTabState, itemsState, selectedKeyState, openKeysState } from './atoms/tabAtoms';
 import { Tabs, Dropdown, Menu, Button, Tooltip } from 'antd';
 import { CloseOutlined, CloseCircleOutlined } from '@ant-design/icons';
 import GTranslateIcon from '@mui/icons-material/GTranslate';
@@ -197,7 +197,9 @@ const TabsContainer = forwardRef(({ handleLogout, user, handleMenuClick }, ref) 
   const [activeKey, setActiveKey] = useRecoilState(activeTabState);
   const navigate = useNavigate();
   const homeTabAdded = useRef(false); // 홈 탭이 추가되었는지 추적하는 플래그
-  const [items, setItems] = useRecoilState(itemsState);
+  const items = useRecoilValue(itemsState);
+  const setSelectedKeys = useSetRecoilState(selectedKeyState);
+  const [openKeys, setOpenKeys] = useRecoilState(openKeysState);
 
   useEffect(() => {
     const savedTabs = JSON.parse(localStorage.getItem(TABS_STORAGE_KEY)) || [];
@@ -253,13 +255,34 @@ const TabsContainer = forwardRef(({ handleLogout, user, handleMenuClick }, ref) 
     }, null);
   };
 
+  const findParentItem = (items, childKey) => {
+    return items.reduce((acc, item) => {
+        if (acc) return acc;
+        if (item.children && item.children.some(child => child.key === childKey)) {
+            return item;  // 해당 childKey를 가진 부모 아이템을 반환
+        }
+        if (item.children) {
+            return findParentItem(item.children, childKey); // 재귀적으로 탐색
+        }
+        return null;
+    }, null);
+  };
+
   const onTabChange = path => {
     setActiveKey(path);
 
     // 메뉴 클릭을 처리
     const item = findItemByPath(items, path);
+    
     if (item) {
-        handleMenuClick({ key: item.key });
+      setSelectedKeys([item.key]);
+      handleMenuClick({ key: item.key });
+
+      // 대분류(상위 메뉴)를 찾아 openKeys에 추가
+      const parentItem = findParentItem(items, item.key);
+      if (parentItem) {
+        setOpenKeys([...openKeys, parentItem.key]);
+      }
     }
 
     if (path === '') {  // 홈 탭을 클릭했을 때 명시적으로 홈 경로로 이동

@@ -82,7 +82,6 @@ export default function SiteLayout({handleLogout, menus, user}){
     const [loading, setLoading] = useState(false);
     const [items, setItems] = useRecoilState(itemsState);
     const [collapsed, setCollapsed] = useState(false);
-    const [openKeys, setOpenKeys] = useState([]);
     const [chatOpen, setChatOpen] = useState(false);
     const navigate = useNavigate();
     const tabsContainerRef = useRef(null);
@@ -96,9 +95,6 @@ export default function SiteLayout({handleLogout, menus, user}){
     }
 
     const handleMenuClick = async e => {
-        // console.log("menus", menus);
-        // console.log("items", items);
-        // console.log("e", e);
         setLoading(true);
         const item = findItemByKey(items, e.key);
         if (item && item.path) {
@@ -107,16 +103,6 @@ export default function SiteLayout({handleLogout, menus, user}){
         }
         setLoading(false);
         const response = await axiosInstance.post(`/sys/log/click?menuId=${item.key}`);
-    };
-
-    // 마지막으로 선택한 대분류 토글만 내리기
-    const handleOpenChange = (keys) => {
-        const latestOpenKey = keys.find(key => !openKeys.includes(key));
-        if (items.map(item => item.key).includes(latestOpenKey)) {
-        setOpenKeys(latestOpenKey ? [latestOpenKey] : []);
-        } else {
-        setOpenKeys(keys);
-        }
     };
 
     // 메뉴를 클릭했을 때, key값으로 item을 찾음
@@ -144,8 +130,6 @@ export default function SiteLayout({handleLogout, menus, user}){
                     toggleCollapsed={toggleCollapsed}
                     onMenuClick={handleMenuClick}
                     items={items}
-                    openKeys={openKeys}
-                    onOpenChange={handleOpenChange}
                 />
                 <ContentContainer>
                     <StyledTabsContainer 
@@ -178,8 +162,6 @@ export default function SiteLayout({handleLogout, menus, user}){
                 toggleCollapsed={toggleCollapsed}
                 onMenuClick={handleMenuClick}
                 items={items}
-                openKeys={openKeys}
-                onOpenChange={handleOpenChange}
             />
             <ContentContainer>
                 <TabsContainer 

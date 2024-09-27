@@ -172,7 +172,6 @@ export default function Pg() {
                 });
 
                 const response = await axiosInstance.post("/pjt", requestBody);
-                console.log("resPjt", response.data);
 
                 setProjects(prevPjts => [...response.data, ...prevPjts]);
                 setSelectedPjt({});

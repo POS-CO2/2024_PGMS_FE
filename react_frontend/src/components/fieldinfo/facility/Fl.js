@@ -41,9 +41,6 @@ export default function Fl() {
 
     const fetchOptions = async (unitType) => {
         const response = await axiosInstance.get(`/sys/unit?unitType=${unitType}`);
-        // console.log("unitType", unitType);
-        // console.log("response", response.data);
-        // console.log("Array.isArray", Array.isArray(response.data))
         return response.data.map(item => ({
             value: item.code,
             label: item.name,
@@ -89,16 +86,13 @@ export default function Fl() {
                     }
                 });
                 
-                console.log("updateFormFields", updateFormFields);
                 setFormFields(updateFormFields);
             } catch (error) {
-                console.log("aaaa", error);
                 console.error(error);
             }
         };
         
         fetchDropDown();
-        console.log("aaaa");
         // formData값이 없으면 설비LIB을 findAll, 있으면(이전 탭의 검색기록이 있으면) 그 값을 불러옴
         Object.keys(formData).length === 0 ? fetchEqLib() : handleFormSubmit(formData);
     }, []);
@@ -132,7 +126,6 @@ export default function Fl() {
 
         try {
             const response = await axiosInstance.get("/equip/lib", {params});
-            console.log("response", response.data);
             setEqLibs(response.data);
 
             //설비LIB 목록에 selectedEqLib 있는지 확인

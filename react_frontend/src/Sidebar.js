@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from 'react';
+import { useRecoilState } from 'recoil';
+import { selectedKeyState, openKeysState } from './atoms/tabAtoms';
 import Favorite from './Favorite';
 import { LeftOutlined } from '@ant-design/icons';
 import { Button, ConfigProvider, Menu, List } from 'antd';
@@ -118,18 +120,25 @@ const theme = {
   }
 }
 
-export default function Sidebar({ collapsed, toggleCollapsed, items, onMenuClick, openKeys, onOpenChange }) {
-  const [selectedKeys, setSelectedKeys] = useState([]);
+export default function Sidebar({ collapsed, toggleCollapsed, items, onMenuClick }) {
+  const [selectedKeys, setSelectedKeys] = useRecoilState(selectedKeyState);
+  const [openKeys, setOpenKeys] = useRecoilState(openKeysState);
 
   const handleMenuClick = (e) => {
     setSelectedKeys([e.key]);  // 클릭된 메뉴 항목의 key를 selectedKeys로 설정
     onMenuClick(e);            // 기존 메뉴 클릭 핸들러 호출
   };
 
-  useEffect(() => {
-    console.log("selectedKeys", selectedKeys);
-  }, [selectedKeys])
-  
+  // 마지막으로 선택한 대분류 토글만 내리기
+  const handleOpenChange = (keys) => {
+    const latestOpenKey = keys.find(key => !openKeys.includes(key));
+    if (items.map(item => item.key).includes(latestOpenKey)) {
+      setOpenKeys(latestOpenKey ? [latestOpenKey] : []);
+    } else {
+      setOpenKeys(keys);
+    }
+  };
+
   return (
     <SidebarContainer $collapsed={collapsed}>
 
@@ -154,13 +163,13 @@ export default function Sidebar({ collapsed, toggleCollapsed, items, onMenuClick
           items={items}
           onClick={handleMenuClick}
           openKeys={openKeys}
-          onOpenChange={onOpenChange}
+          onOpenChange={handleOpenChange}
           selectedKeys={selectedKeys}
         />
       </ConfigProvider>
 
       {/* 즐겨찾기 섹션 (사이드바가 접혔을 때는 숨기기) */}
-      {!collapsed && <Favorite />}
+      {!collapsed && <Favorite handleMenuClick={onMenuClick} />}
 
     </SidebarContainer>
   );
