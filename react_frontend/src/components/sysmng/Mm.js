@@ -370,7 +370,6 @@ export default function Mm({menus, handleMenuSet}) {
             accessUser: selectedMenu.accessUser,
             menuOrder: selectedMenu.menuOrder
         }
-        console.log(formData);
         try {
             const {data} = await axiosInstance.patch('/sys/menu', formData);
             swalOptions.title = '성공!',
@@ -401,22 +400,43 @@ export default function Mm({menus, handleMenuSet}) {
         },
     ]
     
-    let res = [];
-    function parseMenu(menuArray, bd = null, md = null) {
+    // let res = [];
+    // function parseMenu(menuArray, bd = null, md = null) {
+    //     menuArray.forEach(item => {
+    //         if (item.level === 1) {
+    //             parseMenu(item.menu, item.name, null);
+    //         } else if (item.level === 2) {
+    //             if (item.menu && item.menu.length > 0) {
+    //             parseMenu(item.menu, bd, item.name);
+    //             } else {
+    //             res.push({ id: item.id, level: item.level, url: item.url, name: item.name, accessUser: item.accessUser, bd, md: item.name, sd: null });
+    //             }
+    //         } else if (item.level === 3) {
+    //             res.push({ id: item.id, level: item.level, url: item.url, name: item.name, accessUser: item.accessUser, bd, md, sd: item.name });
+    //         }
+    //     });
+    // }
+    function parseMenu(menuArray, bd = null, md = null, result = []) {
         menuArray.forEach(item => {
             if (item.level === 1) {
-                parseMenu(item.menu, item.name, null);
+                parseMenu(item.menu, item.name, null, result);  // result 배열을 넘겨줍니다
             } else if (item.level === 2) {
                 if (item.menu && item.menu.length > 0) {
-                parseMenu(item.menu, bd, item.name);
+                    parseMenu(item.menu, bd, item.name, result);
                 } else {
-                res.push({ id: item.id, level: item.level, url: item.url, name: item.name, accessUser: item.accessUser, bd, md: item.name, sd: null });
+                    result.push({ id: item.id, level: item.level, url: item.url, name: item.name, accessUser: item.accessUser, bd, md: item.name, sd: null });
                 }
             } else if (item.level === 3) {
-                res.push({ id: item.id, level: item.level, url: item.url, name: item.name, accessUser: item.accessUser, bd, md, sd: item.name });
+                result.push({ id: item.id, level: item.level, url: item.url, name: item.name, accessUser: item.accessUser, bd, md, sd: item.name });
             }
         });
+        return result;
     }
+
+    const res = React.useMemo(() => {
+        return menus.reduce((acc, menu) => parseMenu(menu.menu, menu.name, null, acc), []);
+    }, [menus]);
+
     const findNameById = (id, upperDirArray) => {
         const item = upperDirArray.find(entry => entry.id === id);
         return item ? item : null; // 해당하는 항목이 없으면 `null`을 반환
@@ -454,21 +474,18 @@ export default function Mm({menus, handleMenuSet}) {
         }
     }, [selectedUpperDir]);
     menus.forEach(menu => parseMenu(menu.menu, menu.name, null));
-    const [fpMenu, setFpMenu] = useState(res.filter(e => e.accessUser === "FP"));
-    const [hpMenu, setHpMenu] = useState(res.filter(e => e.accessUser === "HP"));
-    const [adminMenu, setAdminMenu] = useState(res.filter(e => e.accessUser === "ADMIN"));
+    // const [fpMenu, setFpMenu] = useState(res.filter(e => e.accessUser === "FP"));
+    // const [hpMenu, setHpMenu] = useState(res.filter(e => e.accessUser === "HP"));
+    // const [adminMenu, setAdminMenu] = useState(res.filter(e => e.accessUser === "ADMIN"));
 
     const [expanded, setExpanded] = useState();
 
     const handleExpanded = (panel) => (event, isExpanded) => {
         setExpanded(isExpanded ? panel : false);
     }
-
-    useEffect(() => {
-        setFpMenu(res.filter(e => e.accessUser === "FP"));
-        setHpMenu(res.filter(e => e.accessUser === "HP"));
-        setAdminMenu(res.filter(e => e.accessUser === "ADMIN"));
-    }, [res])
+    const fpMenu = React.useMemo(() => res.filter(e => e.accessUser === "FP"), [res]);
+    const hpMenu = React.useMemo(() => res.filter(e => e.accessUser === "HP"), [res]);
+    const adminMenu = React.useMemo(() => res.filter(e => e.accessUser === "ADMIN"), [res]);
 
     return (
         <>
