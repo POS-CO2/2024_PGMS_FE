@@ -257,7 +257,7 @@ export function TableCustomDoubleClickEdit({
                         actvYear: item.actvYear,
                         actvMth: item.actvMth,
                         fee: null, // 비용은 null로 설정
-                        actvQty: parseInt((item.newActvQty).replace(/,/g, ''), 10) // 쉼표를 제거하고 정수로 변환
+                        actvQty: isNaN(parseInt((item.newActvQty).replace(/,/g, ''), 10)) ? 'NaN' : parseInt((item.newActvQty).replace(/,/g, ''), 10)
                     }));
         
                 return {
@@ -266,7 +266,7 @@ export function TableCustomDoubleClickEdit({
                     quantityList: updatedQuantities
                 };
             });
-
+            
             const response = await axiosInstance.put("/perf", requestBody);
 
             swalOptions.title = '성공!',
@@ -316,7 +316,7 @@ export function TableCustomDoubleClickEdit({
                         id: item.id,
                         actvYear: item.actvYear,
                         actvMth: item.actvMth,
-                        fee: parseInt((item.newFee).replace(/,/g, ''), 10), // 쉼표를 제거하고 정수로 변환
+                        fee: isNaN(parseInt((item.newActvQty).replace(/,/g, ''), 10)) ? 'NaN' : parseInt((item.newActvQty).replace(/,/g, ''), 10),
                         actvQty: null // 사용량은 null로 설정
                     }));
         
