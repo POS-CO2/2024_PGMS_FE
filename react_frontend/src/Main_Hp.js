@@ -470,13 +470,7 @@ export default function Main_Hp() {
                 return <></>;
         }
     };
-    console.log(emtn);
 
-    const content = (
-        emtn?.actvQtyEmtnEquipList?.map(v => (
-            <div>hello</div>
-        ))
-    );
     
     return (
         <>

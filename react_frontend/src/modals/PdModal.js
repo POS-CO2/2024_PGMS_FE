@@ -1248,6 +1248,7 @@ export function DeleteModal({ isModalOpen, handleOk, handleCancel, rowData, rowD
             swalOptions.title = '실패!',
             swalOptions.text = error.response.data.message,
             swalOptions.icon = 'error';
+            handleCancel();
         }
         Swal.fire(swalOptions);
     };
