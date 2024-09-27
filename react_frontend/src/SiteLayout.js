@@ -129,7 +129,7 @@ export default function SiteLayout({handleLogout, menus, user}){
     }, null);
 
     const handleChatClick = () => {
-        setChatOpen(true);
+        setChatOpen(!chatOpen);
     }
 
     const handleCloseClick = () => {
@@ -187,6 +187,9 @@ export default function SiteLayout({handleLogout, menus, user}){
                     user={user} 
                     handleMenuClick={handleMenuClick}
                     ref={tabsContainerRef} 
+                    chatOpen={chatOpen}
+                    handleChatClick={handleChatClick}
+                    totCnt={totCnt}
                 />
                 <div style={{ overflowY: 'auto' }}>
                     <Outlet />
@@ -195,11 +198,7 @@ export default function SiteLayout({handleLogout, menus, user}){
                     chatOpen ? (
                         <Chat handleCloseClick={handleCloseClick}/>
                     ) : (
-                            <Box component="span" onClick={handleChatClick} sx={{borderRadius:"50%", backgroundColor:"rgb(14, 170, 0)", position:"fixed", bottom: "16px", right:"16px", width:"70px", height:"70px", display:"flex", justifyContent:"center", alignItems:"center", cursor:"pointer", zIndex:"1000"}}>
-                                <Badge color='error' badgeContent={totCnt} >
-                                    <ChatBubble fontSize='large' sx={{color:"white"}}/>
-                                </Badge>
-                            </Box>
+                            <></>
                     )
                 }
             </ContentContainer>

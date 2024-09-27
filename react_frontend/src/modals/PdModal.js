@@ -222,7 +222,7 @@ export function FlAddModal({ isModalOpen, handleOk, handleCancel, dropDown }) {
 
                 <div className={rmStyles.submit_container}>
                     <div className={rmStyles.search_item}>
-                        <div className={rmStyles.search_title}>설비라이브러리명</div>
+                        <div className={rmStyles.search_title}>설비LIB명</div>
                         <Input
                             value={eqLibName}
                             allowClear={{ clearIcon: <CloseOutlined style={{color: "red"}} /> }}
@@ -354,7 +354,7 @@ export function FlEditModal({ isModalOpen, handleOk, handleCancel, rowData, drop
 
             <div className={rmStyles.submit_container}>
                 <div className={rmStyles.search_item}>
-                    <div className={rmStyles.search_title}>설비라이브러리명</div>
+                    <div className={rmStyles.search_title}>설비LIB명</div>
                     <Input
                         value={eqLibName}
                         allowClear={{ clearIcon: <CloseOutlined style={{color: "red"}} /> }}
@@ -1103,25 +1103,25 @@ export function CmAddModal({ isModalOpen, handleOk, handleCancel }) {
                         {"코드그룹ID"}
                     </div>
                     {/* <TextField size="small" id='codeGrpNo' value={codeGrpNo} onChange={(e) => setCodeGrpNo(e.target.value)} label="코드 그룹 번호" variant='outlined' sx={{ width: "20rem" }} /> */}
-                    <Input id='codeGrpNo' value={codeGrpNo} onChange={(e) => setCodeGrpNo(e.target.value)} label="코드그룹번호" style={{width:"18rem"}} />
+                    <Input id='codeGrpNo' value={codeGrpNo} allowClear={{ clearIcon: <CloseOutlined style={{color: "red"}} /> }} onChange={(e) => setCodeGrpNo(e.target.value)} label="코드그룹번호" style={{width:"18rem"}} />
                     {error.codeGrpNo && <div className={modalStyles.error_message}>{error.codeGrpNo}</div>}
                 </div>
                 <div className={sysStyles.text_field}>
                     <div className={sysStyles.text}>{"코드그룹명"}</div>
                     {/* <TextField size="small" id='codeGrpName' value={codeGrpName} onChange={(e) => setCodeGrpName(e.target.value)} label="코드 그룹 명" variant='outlined' sx={{ width: "20rem" }} /> */}
-                    <Input id='codeGrpName' value={codeGrpName} onChange={(e) => setCodeGrpName(e.target.value)} label="코드그룹명" style={{width:"18rem"}} />
+                    <Input id='codeGrpName' value={codeGrpName} allowClear={{ clearIcon: <CloseOutlined style={{color: "red"}} /> }} onChange={(e) => setCodeGrpName(e.target.value)} label="코드그룹명" style={{width:"18rem"}} />
                     {error.codeGrpName && <div className={modalStyles.error_message}>{error.codeGrpName}</div>}
                 </div>
                 <div className={sysStyles.text_field}>
                     <div className={sysStyles.text}>{"영문명"}</div>
                     {/* <TextField size="small" id='codeGrpNameEn' value={codeGrpNameEn} onChange={(e) => setCodeGrpNameEn(e.target.value)} label="영문 명" variant='outlined' sx={{ width: "20rem" }} /> */}
-                    <Input id='codeGrpNameEn' value={codeGrpNameEn} onChange={(e) => setCodeGrpNameEn(e.target.value)} label="영문명" style={{width:"18rem"}} />
+                    <Input id='codeGrpNameEn' value={codeGrpNameEn} allowClear={{ clearIcon: <CloseOutlined style={{color: "red"}} /> }} onChange={(e) => setCodeGrpNameEn(e.target.value)} label="영문명" style={{width:"18rem"}} />
                     {error.codeGrpNameEn && <div className={modalStyles.error_message}>{error.codeGrpNameEn}</div>}
                 </div>
                 <div className={sysStyles.text_field}>
                     <div className={sysStyles.text}>{"노트"}</div>
                     {/* <TextField size="small" id='note' value={note} onChange={(e) => setNote(e.target.value)} label="노트" variant='outlined' sx={{ width: "20rem" }} /> */}
-                    <Input id='note' value={note} onChange={(e) => setNote(e.target.value)} label="노트" style={{width:"18rem"}} />
+                    <Input id='note' value={note} allowClear={{ clearIcon: <CloseOutlined style={{color: "red"}} /> }} onChange={(e) => setNote(e.target.value)} label="노트" style={{width:"18rem"}} />
                 </div>
             </div>
             <div style={{display:"flex", justifyContent:"center", alignContent:"center"}}>
@@ -1183,22 +1183,22 @@ export function CmEditModal({ isModalOpen, handleOk, handleCancel, rowData }) {
                     <div className={sysStyles.text}>
                         {"코드그룹ID"}
                     </div>
-                    <Input id='codeGrpNo' value={codeGrpNo} onChange={(e) => setCodeGrpNo(e.target.value)} label="코드그룹번호" style={{width:"18rem"}} />
+                    <Input id='codeGrpNo' value={codeGrpNo} allowClear={{ clearIcon: <CloseOutlined style={{color: "red"}} /> }} onChange={(e) => setCodeGrpNo(e.target.value)} label="코드그룹번호" style={{width:"18rem"}} />
                     {error.codeGrpNo && <div className={modalStyles.error_message}>{error.codeGrpNo}</div>}
                 </div>
                 <div className={sysStyles.text_field}>
                     <div className={sysStyles.text}>{"코드그룹명"}</div>
-                    <Input id='codeGrpName' value={codeGrpName} onChange={(e) => setCodeGrpName(e.target.value)} label="코드그룹명" style={{width:"18rem"}} />
+                    <Input id='codeGrpName' value={codeGrpName} allowClear={{ clearIcon: <CloseOutlined style={{color: "red"}} /> }} onChange={(e) => setCodeGrpName(e.target.value)} label="코드그룹명" style={{width:"18rem"}} />
                     {error.codeGrpName && <div className={modalStyles.error_message}>{error.codeGrpName}</div>}
                 </div>
                 <div className={sysStyles.text_field}>
                     <div className={sysStyles.text}>{"영문명"}</div>
-                    <Input id='codeGrpNameEn' value={codeGrpNameEn} onChange={(e) => setCodeGrpNameEn(e.target.value)} label="영문명" style={{width:"18rem"}} />
+                    <Input id='codeGrpNameEn' value={codeGrpNameEn} allowClear={{ clearIcon: <CloseOutlined style={{color: "red"}} /> }} onChange={(e) => setCodeGrpNameEn(e.target.value)} label="영문명" style={{width:"18rem"}} />
                     {error.codeGrpNameEn && <div className={modalStyles.error_message}>{error.codeGrpNameEn}</div>}
                 </div>
                 <div className={sysStyles.text_field}>
                     <div className={sysStyles.text}>{"노트"}</div>
-                    <Input id='note' value={note} onChange={(e) => setNote(e.target.value)} label="노트" style={{width:"18rem"}} />
+                    <Input id='note' value={note} allowClear={{ clearIcon: <CloseOutlined style={{color: "red"}} /> }} onChange={(e) => setNote(e.target.value)} label="노트" style={{width:"18rem"}} />
                 </div>
             </div>
             <div style={{display:"flex", justifyContent:"center", alignContent:"center"}}>
@@ -1241,13 +1241,14 @@ export function DeleteModal({ isModalOpen, handleOk, handleCancel, rowData, rowD
             }
             
             swalOptions.title = '성공!',
-            swalOptions.text = `${rowName}(이)가 성공적으로 삭제되었습니다.`;
+            swalOptions.text = `${rowName}이(가) 성공적으로 삭제되었습니다.`;
             swalOptions.icon = 'success';
             handleOk();
         } catch (error) {
             swalOptions.title = '실패!',
             swalOptions.text = error.response.data.message,
             swalOptions.icon = 'error';
+            handleCancel();
         }
         Swal.fire(swalOptions);
     };
@@ -1339,29 +1340,29 @@ export function CmListAddModal({ isModalOpen, handleOk, handleCancel, rowData })
                 <div className={sysStyles.text_field}>
                     <div className={sysStyles.text}>{"코드번호"}</div>
                     {/* <TextField size='small' id='code' value={code} onChange={(e) => setCode(e.target.value)} label="코드" variant='outlined' sx={{ width: "20rem" }} /> */}
-                    <Input id='code' value={code} onChange={(e) => setCode(e.target.value)} label="코드" style={{width:"18rem"}} />
+                    <Input id='code' value={code} allowClear={{ clearIcon: <CloseOutlined style={{color: "red"}} /> }} onChange={(e) => setCode(e.target.value)} label="코드" style={{width:"18rem"}} />
                     {error.code && <div className={modalStyles.error_message}>{error.code}</div>}
                 </div>
                 <div className={sysStyles.text_field}>
                     <div className={sysStyles.text}>{"코드명"}</div>
                     {/* <TextField size='small' id='codeName' value={codeName} onChange={(e) => setCodeName(e.target.value)} label="코드 명" variant='outlined' sx={{ width: "20rem" }} /> */}
-                    <Input id='codeName' value={codeName} onChange={(e) => setCodeName(e.target.value)} label="코드 명" style={{width:"18rem"}} />
+                    <Input id='codeName' value={codeName} allowClear={{ clearIcon: <CloseOutlined style={{color: "red"}} /> }} onChange={(e) => setCodeName(e.target.value)} label="코드 명" style={{width:"18rem"}} />
                     {error.codeName && <div className={modalStyles.error_message}>{error.codeName}</div>}
                 </div>
                 <div className={sysStyles.text_field}>
                     <div className={sysStyles.text}>{"속성1"}</div>
                     {/* <TextField size='small' id='attri1' value={attri1} onChange={(e) => setAttri1(e.target.value)} label="속성1" variant='outlined' sx={{ width: "20rem" }} /> */}
-                    <Input id='attri1' value={attri1} onChange={(e) => setAttri1(e.target.value)} label="속성1" style={{width:"18rem"}} />
+                    <Input id='attri1' value={attri1} allowClear={{ clearIcon: <CloseOutlined style={{color: "red"}} /> }} onChange={(e) => setAttri1(e.target.value)} label="속성1" style={{width:"18rem"}} />
                 </div>
                 <div className={sysStyles.text_field}>
                     <div className={sysStyles.text}>{"속성2"}</div>
                     {/* <TextField size='small' id='attri2' value={attri2} onChange={(e) => setAttri2(e.target.value)} label="속성2" variant='outlined' sx={{ width: "20rem" }} /> */}
-                    <Input id='attri2' value={attri2} onChange={(e) => setAttri2(e.target.value)} label="속성2" style={{width:"18rem"}} />
+                    <Input id='attri2' value={attri2} allowClear={{ clearIcon: <CloseOutlined style={{color: "red"}} /> }} onChange={(e) => setAttri2(e.target.value)} label="속성2" style={{width:"18rem"}} />
                 </div>
                 <div className={sysStyles.text_field}>
                     <div className={sysStyles.text}>{"노트"}</div>
                     {/* <TextField size='small' id='note' value={note} onChange={(e) => setNote(e.target.value)} label="노트" variant='outlined' sx={{ width: "20rem" }} /> */}
-                    <Input id='note' value={note} onChange={(e) => setNote(e.target.value)} label="노트" style={{width:"18rem"}} />
+                    <Input id='note' value={note} allowClear={{ clearIcon: <CloseOutlined style={{color: "red"}} /> }} onChange={(e) => setNote(e.target.value)} label="노트" style={{width:"18rem"}} />
                 </div>
             </div>
             <div style={{display:"flex", justifyContent:"center", alignContent:"center"}}>
@@ -1438,30 +1439,30 @@ export function CmListEditModal({ isModalOpen, handleOk, handleCancel, rowData }
                 <div className={sysStyles.text_field}>
                     <div className={sysStyles.text}>{"코드"}</div>
                     {/* <TextField size='small' id='code' value={code} onChange={(e) => setCode(e.target.value)} label="코드" variant='outlined' sx={{ width: "20rem" }} /> */}
-                    <Input id='code' value={code} onChange={(e) => setCode(e.target.value)} label="코드" style={{width:"18rem"}} />
+                    <Input id='code' value={code} allowClear={{ clearIcon: <CloseOutlined style={{color: "red"}} /> }} onChange={(e) => setCode(e.target.value)} label="코드" style={{width:"18rem"}} />
                     {error.code && <div className={modalStyles.error_message}>{error.code}</div>}
                 </div>
                 <div className={sysStyles.text_field}>
                     <div className={sysStyles.text}>{"코드명"}</div>
                     {/* <TextField size='small' id='codeName' value={codeName} onChange={(e) => setCodeName(e.target.value)} label="코드 명" variant='outlined' sx={{ width: "20rem" }} /
                     > */}
-                    <Input id='codeName' value={codeName} onChange={(e) => setCodeName(e.target.value)} label="코드 명" style={{width:"18rem"}} />
+                    <Input id='codeName' value={codeName} allowClear={{ clearIcon: <CloseOutlined style={{color: "red"}} /> }} onChange={(e) => setCodeName(e.target.value)} label="코드 명" style={{width:"18rem"}} />
                     {error.codeName && <div className={modalStyles.error_message}>{error.codeName}</div>}
                 </div>
                 <div className={sysStyles.text_field}>
                     <div className={sysStyles.text}>{"속성1"}</div>
                     {/* <TextField size='small' id='attri1' value={attri1} onChange={(e) => setAttri1(e.target.value)} label="속성1" variant='outlined' sx={{ width: "20rem" }} /> */}
-                    <Input id='attri1' value={attri1} onChange={(e) => setAttri1(e.target.value)} label="속성1" style={{width:"18rem"}} />
+                    <Input id='attri1' value={attri1} allowClear={{ clearIcon: <CloseOutlined style={{color: "red"}} /> }} onChange={(e) => setAttri1(e.target.value)} label="속성1" style={{width:"18rem"}} />
                 </div>
                 <div className={sysStyles.text_field}>
                     <div className={sysStyles.text}>{"속성2"}</div>
                     {/* <TextField size='small' id='attri2' value={attri2} onChange={(e) => setAttri2(e.target.value)} label="속성2" variant='outlined' sx={{ width: "20rem" }} /> */}
-                    <Input id='attri2' value={attri2} onChange={(e) => setAttri2(e.target.value)} label="속성2" style={{width:"18rem"}} />
+                    <Input id='attri2' value={attri2} allowClear={{ clearIcon: <CloseOutlined style={{color: "red"}} /> }} onChange={(e) => setAttri2(e.target.value)} label="속성2" style={{width:"18rem"}} />
                 </div>
                 <div className={sysStyles.text_field}>
                     <div className={sysStyles.text}>{"노트"}</div>
                     {/* <TextField size='small' id='note' value={note} onChange={(e) => setNote(e.target.value)} label="노트" variant='outlined' sx={{ width: "20rem" }} /> */}
-                    <Input id='note' value={note} onChange={(e) => setNote(e.target.value)} label="노트" style={{width:"18rem"}} />
+                    <Input id='note' value={note} allowClear={{ clearIcon: <CloseOutlined style={{color: "red"}} /> }} onChange={(e) => setNote(e.target.value)} label="노트" style={{width:"18rem"}} />
                 </div>
             </div>
             <div style={{display:"flex", justifyContent:"center", alignContent:"center"}}>
@@ -1568,12 +1569,12 @@ export function EfmAddModal({ isModalOpen, handleOk, handleCancel, rowData }) {
                     <div className={sysStyles.text}>
                         {"적용년도"}
                     </div>
-                    <Input id='applyYear' value={applyYear} onChange={e => setApplyYear(e.target.value)} label="적용년도" style={{width:"18rem"}} />
+                    <Input id='applyYear' value={applyYear} allowClear={{ clearIcon: <CloseOutlined style={{color: "red"}} /> }} onChange={e => setApplyYear(e.target.value)} label="적용년도" style={{width:"18rem"}} />
                     {error.applyYear && <div className={modalStyles.error_message}>{error.applyYear}</div>}
                 </div>
                 <div className={sysStyles.text_field}>
                     <div className={sysStyles.text}>{"적용구분"}</div>
-                    <Select value={selectedApplyDvs} onChange={(value) => {setSelectedApplyDvs(value)}} style={{width:"18rem", height:"2rem",fontSize:"4rem"}}>
+                    <Select value={selectedApplyDvs} allowClear={{ clearIcon: <CloseOutlined style={{color: "red"}} /> }} onChange={(value) => {setSelectedApplyDvs(value)}} style={{width:"18rem", height:"2rem",fontSize:"4rem"}}>
                     {applyDvs.map(option => (
                         <Select.Option key={option.code} value={option.code}>
                             {option.name}
@@ -1584,7 +1585,7 @@ export function EfmAddModal({ isModalOpen, handleOk, handleCancel, rowData }) {
                 </div>
                 <div className={sysStyles.text_field}>
                     <div className={sysStyles.text}>{"계수구분코드"}</div>
-                    <Select value={selectedCoefClassCode} onChange={(value) => handleInputUnitChange(value)} style={{width:"18rem", height:"2rem",fontSize:"4rem"}}>
+                    <Select value={selectedCoefClassCode} allowClear={{ clearIcon: <CloseOutlined style={{color: "red"}} /> }} onChange={(value) => handleInputUnitChange(value)} style={{width:"18rem", height:"2rem",fontSize:"4rem"}}>
                     {coefClassCode.map(option => (
                         <Select.Option key={option.code} value={option.code}>
                             {option.name}
@@ -1594,8 +1595,8 @@ export function EfmAddModal({ isModalOpen, handleOk, handleCancel, rowData }) {
                     {error.coefClassCode && <div className={modalStyles.error_message}>{error.coefClassCode}</div>}
                 </div>
                 <div className={sysStyles.text_field}>
-                    <div className={sysStyles.text}>{"가스코드"}</div>
-                    <Select value={selectedGhgCode} onChange={(value) => {setSelectedGhgCode(value)}} style={{width:"18rem", height:"2rem",fontSize:"4rem"}}>
+                    <div className={sysStyles.text}>{"온실가스코드"}</div>
+                    <Select value={selectedGhgCode} allowClear={{ clearIcon: <CloseOutlined style={{color: "red"}} /> }} placeholder="계수구분코드를 선택해주세요." onChange={(value) => {setSelectedGhgCode(value)}} style={{width:"18rem", height:"2rem",fontSize:"4rem"}}>
                     {ghgCode.map(option => (
                         <Select.Option key={option.code} value={option.code}>
                             {option.name}
@@ -1605,12 +1606,12 @@ export function EfmAddModal({ isModalOpen, handleOk, handleCancel, rowData }) {
                 </div>
                 <div className={sysStyles.text_field}>
                     <div className={sysStyles.text}>{"단위"}</div>
-                    <Input id='unitCode' value={unitCode} disabled label="단위" style={{width:"18rem"}} />
+                    <Input id='unitCode' allowClear={{ clearIcon: <CloseOutlined style={{color: "red"}} /> }} value={unitCode} disabled label="단위" style={{width:"18rem"}} />
                     {error.unitCode && <div className={modalStyles.error_message}>{error.unitCode}</div>}
                 </div>
                 <div className={sysStyles.text_field}>
                     <div className={sysStyles.text}>{"계수"}</div>
-                    <Input id='coef' value={coef} onChange={(e) => setCoef(e.target.value)} label="계수" style={{width:"18rem"}} />
+                    <Input id='coef' value={coef} allowClear={{ clearIcon: <CloseOutlined style={{color: "red"}} /> }} onChange={(e) => setCoef(e.target.value)} label="계수" style={{width:"18rem"}} />
                     {error.coef && <div className={modalStyles.error_message}>{error.coef}</div>}
                 </div>
             </div>
@@ -1735,12 +1736,12 @@ export function EfmEditModal({ isModalOpen, handleOk, handleCancel, rowData }) {
                     <div className={sysStyles.text}>
                         {"적용년도"}
                     </div>
-                    <Input id='applyYear' value={applyYear} onChange={e => setApplyYear(e.target.value)} label="적용 년도" style={{width:"18rem"}} />
+                    <Input id='applyYear' allowClear={{ clearIcon: <CloseOutlined style={{color: "red"}} /> }} value={applyYear} onChange={e => setApplyYear(e.target.value)} label="적용 년도" style={{width:"18rem"}} />
                     {error.applyYear && <div className={modalStyles.error_message}>{error.applyYear}</div>}
                 </div>
                 <div className={sysStyles.text_field}>
                     <div className={sysStyles.text}>{"적용구분"}</div>
-                    <Select value={selectedApplyDvs} onChange={(value) => {setSelectedApplyDvs(value)}} style={{width:"18rem", height:"2rem", fontSize:"4rem"}}>
+                    <Select value={selectedApplyDvs} allowClear={{ clearIcon: <CloseOutlined style={{color: "red"}} /> }} onChange={(value) => {setSelectedApplyDvs(value)}} style={{width:"18rem", height:"2rem", fontSize:"4rem"}}>
                     {applyDvs.map(option => (
                         <Select.Option key={option.code} value={option.code}>
                             {option.name}
@@ -1751,7 +1752,7 @@ export function EfmEditModal({ isModalOpen, handleOk, handleCancel, rowData }) {
                 </div>
                 <div className={sysStyles.text_field}>
                     <div className={sysStyles.text}>{"계수구분코드"}</div>
-                    <Select value={selectedCoefClassCode} onChange={(value) => handleInputUnitChange(value)} style={{width:"18rem", height:"2rem",fontSize:"4rem"}}>
+                    <Select value={selectedCoefClassCode} allowClear={{ clearIcon: <CloseOutlined style={{color: "red"}} /> }} onChange={(value) => handleInputUnitChange(value)} style={{width:"18rem", height:"2rem",fontSize:"4rem"}}>
                     {coefClassCode.map(option => (
                         <Select.Option key={option.code} value={option.code}>
                             {option.name}
@@ -1761,8 +1762,8 @@ export function EfmEditModal({ isModalOpen, handleOk, handleCancel, rowData }) {
                     {error.coefClassCode && <div className={modalStyles.error_message}>{error.coefClassCode}</div>}
                 </div>
                 <div className={sysStyles.text_field}>
-                    <div className={sysStyles.text}>{"가스코드"}</div>
-                    <Select value={selectedGhgCode} onChange={(value) => setSelectedGhgCode(value)} style={{width:"18rem", height:"2rem",fontSize:"4rem"}}>
+                    <div className={sysStyles.text}>{"온실가스코드"}</div>
+                    <Select value={selectedGhgCode} allowClear={{ clearIcon: <CloseOutlined style={{color: "red"}} /> }} onChange={(value) => setSelectedGhgCode(value)} style={{width:"18rem", height:"2rem",fontSize:"4rem"}}>
                     {ghgCode.map(option => (
                         <Select.Option key={option.code} value={option.code}>
                             {option.name}
@@ -1772,12 +1773,12 @@ export function EfmEditModal({ isModalOpen, handleOk, handleCancel, rowData }) {
                 </div>
                 <div className={sysStyles.text_field}>
                     <div className={sysStyles.text}>{"단위"}</div>
-                    <Input id='unitCode' value={unitCode} disabled label="단위" style={{width:"18rem"}} />
+                    <Input id='unitCode' value={unitCode} allowClear={{ clearIcon: <CloseOutlined style={{color: "red"}} /> }} disabled label="단위" style={{width:"18rem"}} />
                     {error.unitCode && <div className={modalStyles.error_message}>{error.unitCode}</div>}
                 </div>
                 <div className={sysStyles.text_field}>
                     <div className={sysStyles.text}>{"계수"}</div>
-                    <Input id='coef' value={coef} onChange={(e) => setCoef(e.target.value)} label="계수" style={{width:"18rem"}} />
+                    <Input id='coef' value={coef} allowClear={{ clearIcon: <CloseOutlined style={{color: "red"}} /> }} onChange={(e) => setCoef(e.target.value)} label="계수" style={{width:"18rem"}} />
                     {error.coef && <div className={modalStyles.error_message}>{error.coef}</div>}
                 </div>
             </div>
@@ -1845,7 +1846,7 @@ export function FmAddModal({ isModalOpen, handleOk, handleCancel, rowData }) {
             // handleOk을 호출하여 모달을 닫고 상위 컴포넌트에 알림
             handleOk(data);
             swalOptions.title = '성공!',
-            swalOptions.text = `${formData.equipName}가 성공적으로 등록되었습니다.`;
+            swalOptions.text = `${formData.equipName}이(가) 성공적으로 등록되었습니다.`;
             swalOptions.icon = 'success';
         } catch (error) {
             swalOptions.title = '실패!',
@@ -1992,24 +1993,24 @@ export function UmAddModal({ isModalOpen, handleOk, handleCancel }) {
             <div className={sysStyles.card_box}>
                 <div className={sysStyles.text_field}>
                     <div className={sysStyles.text} style={{marginTop:"0.5rem"}}>{"이름"}</div>
-                    <Input id='userName' value={userName} onChange={e => setUserName(e.target.value)} label="이름" style={{width:"18rem"}} />
+                    <Input id='userName' value={userName} allowClear={{ clearIcon: <CloseOutlined style={{color: "red"}} /> }} onChange={e => setUserName(e.target.value)} label="이름" style={{width:"18rem"}} />
                     {error.userName && <div className={modalStyles.error_message}>{error.userName}</div>}
                 </div>
                 <div className={sysStyles.text_field}>
                     <div className={sysStyles.text}>
                         {"로그인ID"}
                     </div>
-                    <Input id='loginId' value={loginId} onChange={e => setLoginId(e.target.value)} label="로그인ID" style={{width:"18rem"}} />
+                    <Input id='loginId' value={loginId} allowClear={{ clearIcon: <CloseOutlined style={{color: "red"}} /> }} onChange={e => setLoginId(e.target.value)} label="로그인ID" style={{width:"18rem"}} />
                     {error.loginId && <div className={modalStyles.error_message}>{error.loginId}</div>}
                 </div>
                 <div className={sysStyles.text_field}>
                     <div className={sysStyles.text}>{"비밀번호"}</div>
-                    <Input id='password' value={password} onChange={e => setPassword(e.target.value)} label="비밀번호" style={{width:"18rem"}} />
+                    <Input id='password' value={password} allowClear={{ clearIcon: <CloseOutlined style={{color: "red"}} /> }} onChange={e => setPassword(e.target.value)} label="비밀번호" style={{width:"18rem"}} />
                     {error.password && <div className={modalStyles.error_message}>{error.password}</div>}
                 </div>
                 <div className={sysStyles.text_field}>
                     <div className={sysStyles.text}>{"부서명"}</div>
-                    <Select value={selectedDept} onChange={(value) => setSelectedDept(value)} style={{width:"18rem", height:"2rem",fontSize:"4rem"}}>
+                    <Select value={selectedDept} allowClear={{ clearIcon: <CloseOutlined style={{color: "red"}} /> }} onChange={(value) => setSelectedDept(value)} style={{width:"18rem", height:"2rem",fontSize:"4rem"}}>
                     {dept.map(option => (
                         <Select.Option key={option.value} value={option.value}>
                             {option.label}
@@ -2020,7 +2021,7 @@ export function UmAddModal({ isModalOpen, handleOk, handleCancel }) {
                 </div>
                 <div className={sysStyles.text_field}>
                     <div className={sysStyles.text}>{"접근권한"}</div>
-                    <Select value={selectedRole} onChange={(value) => setSelectedRole(value)} style={{width:"18rem", height:"2rem", fontSize:"4rem"}}>
+                    <Select value={selectedRole} allowClear={{ clearIcon: <CloseOutlined style={{color: "red"}} /> }} onChange={(value) => setSelectedRole(value)} style={{width:"18rem", height:"2rem", fontSize:"4rem"}}>
                     {access.map(option => (
                         <Select.Option key={option.value} value={option.value}>
                             {option.label}
@@ -2090,7 +2091,7 @@ export function MmAddModal({ isModalOpen, handleOk, handleCancel, rowData }) {
             // handleOk을 호출하여 모달을 닫고 상위 컴포넌트에 알림
             handleOk(data);
             swalOptions.title = '성공!',
-            swalOptions.text = `${formData.menuName}가 성공적으로 등록되었습니다.`;
+            swalOptions.text = `${formData.menuName}이(가) 성공적으로 등록되었습니다.`;
             swalOptions.icon = 'success';
         } catch (error) {
             swalOptions.title = '실패!',
@@ -2144,12 +2145,12 @@ export function MmAddModal({ isModalOpen, handleOk, handleCancel, rowData }) {
                     <div className={sysStyles.text}>
                         {"메뉴이름"}
                     </div>
-                    <Input id='menuName' value={menuName} onChange={e => setMenuName(e.target.value)} label="메뉴이름" style={{width:"18rem"}} />
+                    <Input id='menuName' value={menuName} allowClear={{ clearIcon: <CloseOutlined style={{color: "red"}} /> }} onChange={e => setMenuName(e.target.value)} label="메뉴이름" style={{width:"18rem"}} />
                     {error.menuName && <div className={modalStyles.error_message}>{error.menuName}</div>}
                 </div>
                 <div className={sysStyles.text_field}>
                     <div className={sysStyles.text}>{"상위폴더"}</div>
-                    <Select value={selectedUpperDir} onChange={(e) => {setSelectedUpperDir(e)}} style={{width:"18rem", height:"2rem", fontSize:"4rem"}}>
+                    <Select value={selectedUpperDir} allowClear={{ clearIcon: <CloseOutlined style={{color: "red"}} /> }} onChange={(e) => {setSelectedUpperDir(e)}} style={{width:"18rem", height:"2rem", fontSize:"4rem"}}>
                     {upperDir.map(option => (
                         <Select.Option key={option.id} value={option.id}>
                             {option.name}
@@ -2160,11 +2161,11 @@ export function MmAddModal({ isModalOpen, handleOk, handleCancel, rowData }) {
                 </div>
                 <div className={sysStyles.text_field}>
                     <div className={sysStyles.text}>{"Url주소"}</div>
-                    <Input id='address' value={url} onChange={e => setUrl(e.target.value)} label="Url주소" style={{width:"18rem"}} />
+                    <Input id='address' value={url} placeholder='Url주소가 없으면 분류폴더로 인식합니다.' allowClear={{ clearIcon: <CloseOutlined style={{color: "red"}} /> }} onChange={e => setUrl(e.target.value)} label="Url주소" style={{width:"18rem"}} />
                 </div>
                 <div className={sysStyles.text_field}>
                     <div className={sysStyles.text}>{"메뉴순서"}</div>
-                    <Select placeholder={"메뉴순서"} value={orderMenu} onChange={(value) => setOrderMenu(value)} style={{width:"18rem", height:"2rem", fontSize:"4rem"}}>
+                    <Select placeholder={"메뉴순서"} value={orderMenu} allowClear={{ clearIcon: <CloseOutlined style={{color: "red"}} /> }} onChange={(value) => setOrderMenu(value)} style={{width:"18rem", height:"2rem", fontSize:"4rem"}}>
                     {orderMenuList.map(option => (
                         <Select.Option key={option} value={option}>
                             {option}
@@ -2175,7 +2176,7 @@ export function MmAddModal({ isModalOpen, handleOk, handleCancel, rowData }) {
                 </div>
                 <div className={sysStyles.text_field}>
                     <div className={sysStyles.text}>{"접근권한"}</div>
-                    <Select placeholder={"접근권한"} value={selectedRole} onChange={(value) => setSelectedRole(value)} style={{width:"18rem", height:"2rem", fontSize:"4rem"}}>
+                    <Select placeholder={"접근권한"} value={selectedRole} allowClear={{ clearIcon: <CloseOutlined style={{color: "red"}} /> }} onChange={(value) => setSelectedRole(value)} style={{width:"18rem", height:"2rem", fontSize:"4rem"}}>
                     {access.map(option => (
                         <Select.Option key={option.value} value={option.value}>
                             {option.label}

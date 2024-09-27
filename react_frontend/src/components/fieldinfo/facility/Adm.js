@@ -279,7 +279,7 @@ export default function Adm() {
                 setSelectedEF(response.data);
                 
                 swalOptions.title = '성공!',
-                swalOptions.text = `${response.data.applyDvs}(이)가 성공적으로 수정되었습니다.`;
+                swalOptions.text = `${response.data.applyDvs}이(가) 성공적으로 수정되었습니다.`;
                 swalOptions.icon = 'success';
             } catch (error) {
                 swalOptions.title = '실패!',
@@ -326,7 +326,7 @@ export default function Adm() {
                 <div className={pdsStyles.contents_container}>
                     <Card sx={{ width: "50%", height: "auto", borderRadius: "0.5rem" }}>
                         <TableCustom 
-                            title='활동자료목록' 
+                            title='활동자료 목록' 
                             data={actves} 
                             submittedRowIdx={submittedActvIdx} 
                             columns={equipActvColumns}
@@ -369,7 +369,7 @@ export default function Adm() {
                             <div className={pdsStyles.table_title} style={{ padding: "8px" }}>배출계수목록</div>
                         </div> : (
                             <TableCustom 
-                                title="배출계수목록" 
+                                title="배출계수 목록" 
                                 data={filteredEfs}
                                 submittedRowIdx={submittedEFIdx} 
                                 columns={equipCoefColumns}

@@ -1,110 +1,21 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import * as gridStyles from './assets/css/grid.css'
-import { Canvas, useFrame } from '@react-three/fiber';
-import { OrbitControls, Html } from '@react-three/drei';
-import * as THREE from 'three';
-import { TextureLoader } from 'three';
-import earthTextureUrl from './assets/images/earth.jpg';
-import { GaugeContainer, GaugeValueArc, GaugeReferenceArc, useGaugeState, Gauge, gaugeClasses, BarChart} from '@mui/x-charts';
-import { Card,CardContent, FormControl, InputLabel, MenuItem, Chip, ButtonGroup, Button, IconButton } from '@mui/material';
-import { CustomBarChart, CustomLineChart } from './Chart';
-import { temp_data } from './assets/json/chartData';
-import SsidChartRoundedIcon from '@mui/icons-material/SsidChartRounded';
-import AutoGraphIcon from '@mui/icons-material/AutoGraph';
+import { useGaugeState, Gauge, gaugeClasses } from '@mui/x-charts';
+import { Card, CircularProgress, IconButton } from '@mui/material';
+import { CustomBarChart } from './Chart';
 import DataSaverOffOutlinedIcon from '@mui/icons-material/DataSaverOffOutlined';
 import SpeedIcon from '@mui/icons-material/Speed';
 import LeaderboardOutlinedIcon from '@mui/icons-material/LeaderboardOutlined';
-import SummarizeOutlinedIcon from '@mui/icons-material/SummarizeOutlined';
-import { ArrowBackIos, ArrowForward, ArrowForwardIos, Girl, GppGoodTwoTone, MarginRounded, NotificationsActive, NotificationsOff, Star, WarningRounded, WarningTwoTone } from '@mui/icons-material';
-import { color } from 'three/webgpu';
+import { GppGoodTwoTone, NotificationsActive, NotificationsOff, SdCardAlertTwoTone, Star, WarningTwoTone } from '@mui/icons-material';
 import { Transfer, Select, Progress, ConfigProvider } from 'antd';
 import axiosInstance from './utils/AxiosInstance';
 import { Swiper, SwiperSlide } from 'swiper/react';
-import { EffectCoverflow, Pagination, Navigation, A11y, Grid } from 'swiper/modules';
+import { Pagination, Navigation } from 'swiper/modules';
 import styled from 'styled-components';
 import 'swiper/css';
 import 'swiper/css/pagination';
 import 'swiper/css/effect-coverflow';
 import Swal from 'sweetalert2';
-import { green, yellow, red } from '@mui/material/colors';
-
-function GaugePointer() {
-    const { valueAngle, outerRadius, cx, cy } = useGaugeState();
-
-    if (valueAngle === null) {
-        return null;
-    }
-
-    const target = {
-      x: cx + outerRadius * Math.sin(valueAngle),
-      y: cy - outerRadius * Math.cos(valueAngle),
-    };
-    return (
-        <g>
-            <circle cx={cx} cy={cy} r={5} fill="black" />
-            <path
-                d={`M ${cx} ${cy} L ${target.x} ${target.y}`}
-                stroke="red"
-                strokeWidth={3}
-            />
-        </g>
-    );
-}
-
-// function Earth() {
-//     const earthRef = useRef();
-//     const [hovered, setHovered] = useState(false);
-//     const [hoveredCity, setHoveredCity] = useState(null);
-
-//     // 도시 위치 및 이름
-//     const cities = [
-//         { name: 'New York', position: new THREE.Vector3(0.6, 0.5, 0.5) },
-//         { name: 'London', position: new THREE.Vector3(0.5, 0.6, -0.4) },
-//         { name: 'Tokyo', position: new THREE.Vector3(0.6, -0.5, 0.4) },
-//     ];
-
-//     useFrame(() => {
-//         if (earthRef.current) {
-//             const rotation = earthRef.current.rotation;
-//         }
-//     });
-
-//     // 텍스처 로더
-//     const textureLoader = new TextureLoader();
-//     const earthTexture = textureLoader.load(earthTextureUrl); // 텍스처 이미지 경로
-
-//     return (
-//         <mesh ref={earthRef}>
-//             {/* 지구의 텍스처 */}
-//             <sphereGeometry args={[2, 32, 32]} />
-//             <meshStandardMaterial map={earthTexture} />
-//             {cities.map((city, index) => (
-//                 <mesh
-//                     key={index}
-//                     position={city.position.toArray()}
-//                     onPointerOver={() => {
-//                         setHovered(true);
-//                         setHoveredCity(city);
-//                     }}
-//                     onPointerOut={() => {
-//                         setHovered(false);
-//                         setHoveredCity(null);
-//                     }}
-//                 >
-//                 <sphereGeometry args={[0.05, 16, 16]} />
-//                 <meshStandardMaterial color="red" />
-//                 {hovered && hoveredCity === city && (
-//                 <Html position={[city.position.x, city.position.y + 0.1, city.position.z]} distanceFactor={10}>
-//                     <div style={{ color: 'white', backgroundColor: 'green', padding: '2px 5px', borderRadius: '3px' }}>
-//                         {city.name}
-//                     </div>
-//                 </Html>
-//             )}
-//                 </mesh>
-//         ))}
-//         </mesh>
-//     );
-// }
 
 const StyledRoot = styled.div`
     .swiper {
@@ -167,6 +78,19 @@ const StyledRootColumn = styled.div`
     }    
 `;
 
+const Overlay = styled('div')({
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)', // 반투명 검정색
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    zIndex: 10001, // 스피너가 위에 보이도록 설정
+});
+
 export default function Main() {
 
     const [mockData, setMockData] = useState([]);
@@ -174,7 +98,6 @@ export default function Main() {
     const [myPjt, setMyPjt] = useState([]);
     const [selectedMyPjt, setSelectedMyPjt] = useState(null);
     const [scope, setScope] = useState([]);
-    const [info, setInfo] = useState({});
     const [afterEmission, setAfterEmission] = useState([]);
     const [beforeEmission, setBeforeEmission] = useState([]);
     const [pjtStartYear, setPjtStartYear] = useState(0);
@@ -188,11 +111,12 @@ export default function Main() {
     const [scopeOneData, setScopeOneData] = useState([]);
     const [scopeTwoData, setScopeTwoData] = useState([]);
     const [alarm, setAlarm] = useState([]);
+    const [isLoading, setIsLoading] = useState(false);
 
     let today = new Date();
     let toYear = today.getFullYear();
     let toMonth = today.getMonth();
-
+    
     const getMock = (ae,be) => {
         const tempTargetKeys = [];
         const tempMockData = [];
@@ -282,9 +206,12 @@ export default function Main() {
 
     useEffect(() => {
         const fetchMyPjt = async () => {
+            console.log(1);
+            setIsLoading(true)
             const pjtResponse = await axiosInstance.get(`/pjt/my`);
             const myPjt = pjtResponse.data;
             setMyPjt(myPjt);
+            console.log(2);
         };
         const fetchSelectedProjectData = async () => {
             if (!selectedMyPjt) return;
@@ -294,7 +221,15 @@ export default function Main() {
             setPjtEndMonth(selectedMyPjt.ctrtToMth);
 
             try {
-                const chartResponse = await axiosInstance.get(`/perf/pjt?pjtId=${selectedMyPjt.pjtId}&year=${toYear}`);
+                console.log(3);
+                const [chartResponse, documentResponse, emissionResponse, beforeEmissionResponse] = await Promise.all([
+                    axiosInstance.get(`/perf/pjt?pjtId=${selectedMyPjt.pjtId}&year=${toYear}`),
+                    axiosInstance.get(`/equip/document-status?pjtId=${selectedMyPjt.pjtId}`),
+                    axiosInstance.get(`/equip/emission?projectId=${selectedMyPjt.pjtId}`),
+                    axiosInstance.get(`/equip/emission/cand?projectId=${selectedMyPjt.pjtId}`)
+                ]);
+    
+                // Process chart data
                 const scope1Data = chartResponse.data.map(perf => perf.scope1 || null);
                 const scope2Data = chartResponse.data.map(perf => perf.scope2 || null);
                 const formattedChartPerfs = [
@@ -302,21 +237,20 @@ export default function Main() {
                     { data: scope2Data, stack: 'A', label: 'Scope 2' }
                 ];
                 setScope(formattedChartPerfs);
-                setScopeOne(Math.floor(scope1Data[toMonth-1] / scope1Data[toMonth-2] * 100 - 100) ?? 0);
-                setScopeOneData([scope1Data[toMonth-2] ?? 0, scope1Data[toMonth-1] ?? 0]);
-                setScopeTwo(Math.floor(scope2Data[toMonth-1] / scope2Data[toMonth-2] * 100 - 100) ?? 0);
-                setScopeTwoData([scope2Data[toMonth-2] ?? 0, scope2Data[toMonth-1] ?? 0]);
-
-                const documentResponse = await axiosInstance.get(`/equip/document-status?pjtId=${selectedMyPjt.pjtId}`);
+                setScopeOne(Math.floor(scope1Data[toMonth - 1] / scope1Data[toMonth - 2] * 100 - 100) ?? 0);
+                setScopeOneData([scope1Data[toMonth - 2] ?? 0, scope1Data[toMonth - 1] ?? 0]);
+                setScopeTwo(Math.floor(scope2Data[toMonth - 1] / scope2Data[toMonth - 2] * 100 - 100) ?? 0);
+                setScopeTwoData([scope2Data[toMonth - 2] ?? 0, scope2Data[toMonth - 1] ?? 0]);
+    
+                // Set document and emission data
                 setDocumentStatus(documentResponse.data);
-
-                const emissionResponse = await axiosInstance.get(`/equip/emission?projectId=${selectedMyPjt.pjtId}`);
-                const ae = emissionResponse.data;
-                setAfterEmission(ae);
-                const beforeEmissionResponse = await axiosInstance.get(`/equip/emission/cand?projectId=${selectedMyPjt.pjtId}`);
-                const be = beforeEmissionResponse.data;
-                setBeforeEmission(be);
-                getMock(ae, be);
+                setAfterEmission(emissionResponse.data);
+                setBeforeEmission(beforeEmissionResponse.data);
+    
+                // Update mock data
+                getMock(emissionResponse.data, beforeEmissionResponse.data);
+                console.log(4);
+                setIsLoading(false);
             } catch (error) {
                 console.error(error);
             }
@@ -349,10 +283,11 @@ export default function Main() {
         };
         if (direction === "right") {
             for (const key of moveKeys){
-                const formDatas = {
+                const formDatas = [{
                     equipId: key[0],
                     actvDataId: key[1],
-                }
+                }]
+                console.log(formDatas);
                 try {
                     const {data} = await axiosInstance.post(`/equip/emission`, formDatas);    
                     swalOptions.title = '성공!',
@@ -425,7 +360,6 @@ export default function Main() {
         let swalOptions = {
             confirmButtonText: '확인'
         };
-        console.log(e);
         const formData = {
             pjtId : e.pjtId,
         }
@@ -447,8 +381,6 @@ export default function Main() {
     const handleSetAlarm = async (e) => {    
         try {
             const request = await axiosInstance.patch(`/pjt/my/alarm?projectUserId=${e.id}`);
-            console.log(request);
-            console.log("success");
             setAlarm((prev) => 
                 prev.map((item) => 
                     item.id === e.id 
@@ -461,9 +393,9 @@ export default function Main() {
             console.error("error");
         }
     }
-    console.log(alarm);
     return (
-            <div className={gridStyles.grid_container}>
+        <>
+            <div className={gridStyles.grid_container} >
                 <Card className={gridStyles.box1} sx={{borderRadius:"10px", color:"white"}}>
                     <div className={gridStyles.box1_header}>
                         {/* 로고  */}
@@ -471,10 +403,10 @@ export default function Main() {
                             {/* <SsidChartRoundedIcon sx={{width:"2rem",height:"2rem", paddingRight:"0.5rem"}}/> */}
                             PGMS
                         </div>
-                        <ConfigProvider theme={{token:{fontFamily:"SUITE-Regular"}}}>
+                        <ConfigProvider theme={{token:{fontFamily:"SUITE-Regular", fontSize:"1rem"}}}>
                         <Select defaultValue={selectedMyPjt?.pjtName} value={selectedMyPjt?.pjtName} onChange={(e) => handleDropClick(e)} style={{width:"20%", height:"2.5rem", fontSize:"4rem", color:"rgb(55, 57, 78)"}}>
                             {myPjt.map((pjt) => (
-                                <Select.Option key={pjt.id} value={pjt.pjtName}>
+                                <Select.Option key={pjt.id} value={pjt.pjtName} >
                                 {pjt.pjtName}
                                 </Select.Option>
                             ))}
@@ -487,49 +419,67 @@ export default function Main() {
                                 <div className={gridStyles.box1_1_logo}>
                                     <DataSaverOffOutlinedIcon fontSize='large' sx={{marginRight:"0.5rem"}}/>프로젝트 진행현황
                                 </div>
-                                <Progress percent={progressPjt()} strokeColor={twoColors} />
+                                <Progress percent={progressPjt()} strokeColor={twoColors} style={{marginBottom:"2rem"}}/>
                                 <div className={gridStyles.box1_1_logo}>
                                     <LeaderboardOutlinedIcon fontSize='large' sx={{marginRight:"0.5rem"}}/>전월 대비 실적Scope
                                 </div>
                                 <div className={gridStyles.box1_1_gauge}>
-                                    <div style={{height:"100%", marginTop:"2rem"}}>
+                                    <div style={{height:"100%"}}>
                                         {
-                                            scopeOne >= 0 ? (
-                                                <div style={{display:"flex", flexDirection:"row",width:"100%", height:"100%", justifyContent:"space-around", alignItems:"center", fontSize:"3rem", fontWeight:"bold", color:"red", gap:"1rem"}}>
-                                                    <WarningTwoTone fontSize='large' sx={{color:"red"}}/>
+                                            isNaN(scopeOne) ? (
+                                                <div style={{display:"flex", flexDirection:"row",width:"100%", height:"100%", justifyContent:"space-around", alignItems:"center", fontSize:"3rem", fontWeight:"bold", color:"rgb(55, 57, 78)", gap:"1rem"}}>
+                                                    <SdCardAlertTwoTone fontSize='large' sx={{color:"rgb(55,57,78)"}} />
                                                     <div>
-                                                    +{scopeOne}%
+                                                        No Data
                                                     </div>
                                                 </div>
                                             ) : (
-                                                <div style={{display:"flex", flexDirection:"row",width:"100%", height:"100%", justifyContent:"space-around", alignItems:"center", fontSize:"3rem", fontWeight:"bold", color:"#0eaa00", gap:"1rem"}}>
-                                                    <GppGoodTwoTone fontSize='large' sx={{color:"#0eaa00"}} />
-                                                    <div>
-                                                        {scopeOne}%
+                                                scopeOne >= 0 ? (
+                                                    <div style={{display:"flex", flexDirection:"row",width:"100%", height:"100%", justifyContent:"space-around", alignItems:"center", fontSize:"3rem", fontWeight:"bold", color:"red", gap:"1rem"}}>
+                                                        <WarningTwoTone fontSize='large' sx={{color:"red"}}/>
+                                                        <div>
+                                                        +{scopeOne}%
+                                                        </div>
                                                     </div>
-                                                </div>
+                                                ) : (
+                                                    <div style={{display:"flex", flexDirection:"row",width:"100%", height:"100%", justifyContent:"space-around", alignItems:"center", fontSize:"3rem", fontWeight:"bold", color:"#0eaa00", gap:"1rem"}}>
+                                                        <GppGoodTwoTone fontSize='large' sx={{color:"#0eaa00"}} />
+                                                        <div>
+                                                            {scopeOne}%
+                                                        </div>
+                                                    </div>
+                                                )
                                             )
                                         }
                                         <div className={gridStyles.box1_1_logo}>
                                             <SpeedIcon fontSize='large' sx={{marginRight:"0.5rem"}}/>실적Scope1
                                         </div>
                                     </div>
-                                    <div style={{height:"100%", marginTop:"2rem"}}>
+                                    <div style={{height:"100%"}}>
                                         {
-                                            scopeTwo >= 0 ? (
-                                                <div style={{display:"flex", flexDirection:"row",width:"100%", height:"100%", justifyContent:"space-around", alignItems:"center", fontSize:"3rem", fontWeight:"bold", color:"red", gap:"1rem"}}>
-                                                    <WarningTwoTone fontSize='large' sx={{color:"red"}}/>
+                                            isNaN(scopeTwo) ? (
+                                                <div style={{display:"flex", flexDirection:"row",width:"100%", height:"100%", justifyContent:"space-around", alignItems:"center", fontSize:"3rem", fontWeight:"bold", color:"rgb(55, 57, 78)", gap:"1rem"}}>
+                                                    <SdCardAlertTwoTone fontSize='large' sx={{color:"rgb(55,57,78)"}} />
                                                     <div>
-                                                    +{scopeTwo}%
+                                                        No Data
                                                     </div>
                                                 </div>
                                             ) : (
-                                                <div style={{display:"flex", flexDirection:"row",width:"100%", height:"100%", justifyContent:"space-around", alignItems:"center", fontSize:"3rem", fontWeight:"bold", color:"#0eaa00", gap:"1rem"}}>
-                                                    <GppGoodTwoTone fontSize='large' sx={{color:"#0eaa00"}} />
-                                                    <div>
-                                                        {scopeTwo}%
+                                                scopeTwo >= 0 ? (
+                                                    <div style={{display:"flex", flexDirection:"row",width:"100%", height:"100%", justifyContent:"space-around", alignItems:"center", fontSize:"3rem", fontWeight:"bold", color:"red", gap:"1rem"}}>
+                                                        <WarningTwoTone fontSize='large' sx={{color:"red"}}/>
+                                                        <div>
+                                                        +{scopeTwo}%
+                                                        </div>
                                                     </div>
-                                                </div>
+                                                ) : (
+                                                    <div style={{display:"flex", flexDirection:"row",width:"100%", height:"100%", justifyContent:"space-around", alignItems:"center", fontSize:"3rem", fontWeight:"bold", color:"#0eaa00", gap:"1rem"}}>
+                                                        <GppGoodTwoTone fontSize='large' sx={{color:"#0eaa00"}} />
+                                                        <div>
+                                                            {scopeTwo}%
+                                                        </div>
+                                                    </div>
+                                                )
                                             )
                                         }
                                     <div className={gridStyles.box1_1_logo}>
@@ -550,7 +500,7 @@ export default function Main() {
                     <div className={gridStyles.box2_2}>
                         <Card sx={{borderRadius:"10px", height:"100%"}}>
                             <div className={gridStyles.box2_2_title}>
-                                대표프로젝트설정
+                                대표 프로젝트 설정
                             </div>
                             <div className={gridStyles.box2_2_pjt}>
                                 <StyledRootColumn style={{width:"100%", height:"100%", overflow:"hidden"}}>
@@ -593,7 +543,7 @@ export default function Main() {
                                                         {`${data.pjtName}`}
                                                     </div>
                                                     <div className={gridStyles.dp_pjt_period}>
-                                                        {`${data.ctrtFrYear}년${data.ctrtFrMth}월~${data.ctrtToYear}년${data.ctrtToMth}월`}
+                                                        {`${data.ctrtFrYear}년 ${data.ctrtFrMth}월 ~ ${data.ctrtToYear}년 ${data.ctrtToMth}월`}
                                                     </div>
                                                 </Card>    
                                             </SwiperSlide>
@@ -618,9 +568,6 @@ export default function Main() {
                                 <div className={gridStyles.box2_1_1_1}>
                                     <div className={gridStyles.box1_1_logo} style={{color:'white', fontSize:"1rem", paddingLeft:"2rem"}}>
                                         증빙자료 제출 현황
-                                    </div>
-                                    <div className={gridStyles.box2_1_1_1_1}>
-                                    <Chip label={selectedMyPjt?.pjtName} variant="outlined" onClick={() => {}} sx={{backgroundColor:"white", fontSize:"1rem", fontWeight:"bold", width: "100%"}}/>
                                     </div>
                                 </div>
                                 <div className={gridStyles.box2_swap}>
@@ -674,13 +621,6 @@ export default function Main() {
                             </Card>
                         </div>
                     </div>
-                    
-                    {/* <Canvas>
-                            <ambientLight intensity={2.0} />
-                            <pointLight position={[10, 10, 10]} />
-                            <Earth />
-                            <OrbitControls />
-                        </Canvas> */}
                     <div className={gridStyles.box2_3}>
                         <div className={gridStyles.box2_3_1}>
                             <Card sx={{borderRadius:"10px", height:"100%", display:"flex", justifyContent:"center", alignContent:"center", flexDirection:"column", gap:"2%"}}>
@@ -703,6 +643,7 @@ export default function Main() {
                                     <Transfer
                                         dataSource={mockData}
                                         showSearch
+                                        titles={["미지정 배출원","지정 배출원"]}
                                         filterOption={filterOption}
                                         targetKeys={targetKeys}
                                         onChange={handleChange}
@@ -723,6 +664,13 @@ export default function Main() {
                         </div>
                     </div>
                 </div>
+                {isLoading && 
+                    <Overlay >
+                        <CircularProgress />
+                    </Overlay>
+                }
             </div>
+            
+        </>
     );
 }

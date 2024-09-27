@@ -3,9 +3,9 @@
     flex-direction: column;
     gap: 1rem 1rem;
     box-sizing: border-box;
-    margin: 1rem auto;
+    margin: 0 auto;
     width: 96%;
-    height: 95vh;
+    height: 93vh;
 }
 
 .box1_header {

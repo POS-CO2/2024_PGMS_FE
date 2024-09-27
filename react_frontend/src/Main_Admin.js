@@ -526,7 +526,6 @@ export default function Main_Admin() {
         } catch (error) {
             console.error(error);
         }
-        console.log("삐빅");
     }, []);
 
     const fetchSocketService = async () => {
@@ -539,15 +538,6 @@ export default function Main_Admin() {
         }
     }
 
-    // useInterval(() => {
-    //     setProgress(prev => {
-    //         if (prev >= 100) {
-    //             return 0; 
-    //         }
-    //         return prev + 25;
-    //     });
-    // }, 1000 )
-    
     useInterval(() => {
         if (main === "server"){
             fetchData();
@@ -679,12 +669,9 @@ export default function Main_Admin() {
                                 <Card sx={{width:"98%", height:"100%", borderRadius:"10px"}}>
                                     <div className={gridStyles.server_header}>
                                         <div style={{width:"20%"}}>
-                                        서버관리
+                                        서버 관리
                                         </div>
-                                        {/* <div style={{width:"5%"}}>
-                                        <LinearProgress variant="determinate" value={progress} />
-                                        </div> */}
-                                        <ProgressComponent progress={progress} />
+                                        {/* <ProgressComponent progress={progress} /> */}
                                     </div>
                                     <div className={gridStyles.server_list}>
                                         <div className={gridStyles.server}>
@@ -756,7 +743,7 @@ export default function Main_Admin() {
                                                                             </IconButton>
                                                                         </div>
                                                                         <div className={gridStyles.container_status} >
-                                                                            {commonContainer.taskCount === 1 ? (
+                                                                            {commonContainer.taskCount === 1 || commonContainer.taskCount === 0 ? (
                                                                                 <IconButton disabled color='error' onClick={() => handleContainerDeleteClick(commonContainer)}>
                                                                                     <RemoveCircleTwoTone />
                                                                                 </IconButton>
@@ -786,9 +773,7 @@ export default function Main_Admin() {
                                                 )}
                                             </StyledRoot2>
                                         </div>
-
                                         <Divider />
-
                                         <div className={gridStyles.server}>
                                             <div className={gridStyles.server_info}>
                                                 <div className={gridStyles.server_logo}>
@@ -858,7 +843,7 @@ export default function Main_Admin() {
                                                                             </IconButton>
                                                                         </div>
                                                                         <div className={gridStyles.container_status}>
-                                                                            {equipmentContainer.taskCount === 1 ? (
+                                                                            {equipmentContainer.taskCount === 1 || equipmentContainer.taskCount === 0 ? (
                                                                                 <IconButton disabled color='error' onClick={() => handleContainerDeleteClick(equipmentContainer)}>
                                                                                     <RemoveCircleTwoTone />
                                                                                 </IconButton>
@@ -958,7 +943,7 @@ export default function Main_Admin() {
                                                                             </IconButton>
                                                                         </div>
                                                                         <div className={gridStyles.container_status} >
-                                                                            {projectContainer.taskCount === 1 ? (
+                                                                            {projectContainer.taskCount === 1 || projectContainer.taskCount === 0 ? (
                                                                                 <IconButton disabled color='error' onClick={() => handleContainerDeleteClick(projectContainer)}>
                                                                                     <RemoveCircleTwoTone />
                                                                                 </IconButton>
@@ -1058,7 +1043,7 @@ export default function Main_Admin() {
                                                                             </IconButton>
                                                                         </div>
                                                                         <div className={gridStyles.container_status}>
-                                                                            {analContainer.taskCount === 1 ? (
+                                                                            {analContainer.taskCount === 1 || analContainer.taskCount === 0 ? (
                                                                                 <IconButton disabled color='error' onClick={() => handleContainerDeleteClick(analContainer)}>
                                                                                     <RemoveCircleTwoTone />
                                                                                 </IconButton>
@@ -1158,7 +1143,7 @@ export default function Main_Admin() {
                                                                             </IconButton>
                                                                         </div>
                                                                         <div className={gridStyles.container_status} >
-                                                                            {socketContainer.taskCount === 1 ? (
+                                                                            {socketContainer.taskCount === 1 || socketContainer.taskCount === 0 ? (
                                                                                 <IconButton disabled color='error' onClick={() => handleContainerDeleteClick(socketContainer)}>
                                                                                     <RemoveCircleTwoTone />
                                                                                 </IconButton>
@@ -1247,10 +1232,6 @@ export default function Main_Admin() {
                                                             fontFamily:"SUITE-Regular",
                                                         }
                                                 }}>
-                                                {/* <div style={{width:"fit-content", fontSize:"1.2rem", fontWeight:"500", display:"flex", alignItems:"center", justifyContent:"center", color:"white", gap:"0.5rem"}}>
-                                                    <Person sx={{color:"white"}} />UserId 
-                                                </div>
-                                                <Input placeholder='UserId' value={userId} onChange={(e) => setUserId(e.target.value)} style={{width:"10%"}}/> */}
                                                 <div style={{width:"fit-content", fontSize:"1.2rem", fontWeight:"500", display:"flex", alignItems:"center", justifyContent:"center", color:"white", gap:"0.5rem"}}>
                                                     <RemoveCircleOutline sx={{color:"white"}} /> ErrorCode
                                                 </div>
@@ -1260,7 +1241,12 @@ export default function Main_Admin() {
                                                     optionFilterProp='label'
                                                     onChange={handleErrorCodeChange}
                                                     onSearch={(value) => console.log(value)}
+                                                    defaultValue={"All"}
                                                     options={[
+                                                        {
+                                                            value: "",
+                                                            label: "All"
+                                                        },
                                                         {
                                                             value: 400,
                                                             label: "400",
@@ -1360,7 +1346,7 @@ export default function Main_Admin() {
                                 <Card
                                     onClick={() => handleButtonClick('/cm', '코드 관리')}
                                     sx={{
-                                    backgroundColor: "rgb(211,245,230)",
+                                    backgroundColor: "rgb(115 213 170)",
                                     width: "4rem",
                                     height: "4rem",
                                     display: "flex",
@@ -1375,7 +1361,7 @@ export default function Main_Admin() {
                                 <Card
                                     onClick={() => handleButtonClick('/um', '사용자 관리')}
                                     sx={{
-                                    backgroundColor: "rgb(196,247,254)",
+                                    backgroundColor: "rgb(137 231 244)",
                                     width: "4rem",
                                     height: "4rem",
                                     display: "flex",
@@ -1390,7 +1376,7 @@ export default function Main_Admin() {
                                 <Card
                                     onClick={() => handleButtonClick('/mm', '메뉴 관리')}
                                     sx={{
-                                    backgroundColor: "rgb(253,241,187)",
+                                    backgroundColor: "rgb(255 232 131)",
                                     width: "4rem",
                                     height: "4rem",
                                     display: "flex",
@@ -1405,7 +1391,7 @@ export default function Main_Admin() {
                                 <Card
                                     onClick={() => handleButtonClick('/mal', '접속로그 조회')}
                                     sx={{
-                                    backgroundColor: "rgb(213,212,249)",
+                                    backgroundColor: "rgb(192 191 249)",
                                     width: "4rem",
                                     height: "4rem",
                                     display: "flex",
@@ -1458,7 +1444,12 @@ export default function Main_Admin() {
                     <div className={gridStyles.right_box_bottom}>
                         <Card sx={{width:"95%", height:"100%", borderRadius:"10px"}} >
                             <div className={gridStyles.right_bottom_logo}>
+                                <div>
                                 메뉴별 접속 현황
+                                </div>
+                                <div style={{fontSize:"0.8rem", color:"grey"}}>
+                                    일주일간
+                                </div>
                             </div>
                             <StyledRoot style={{width:"100%", height:"100%", overflow:"hidden"}}>
                                 <Swiper
