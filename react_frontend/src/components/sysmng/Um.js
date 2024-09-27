@@ -132,7 +132,7 @@ export default function Um() {
                 setSubmittedUserIdx([0]);
 
                 swalOptions.title = '성공!',
-                swalOptions.text = `${data.userName}(이)가 성공적으로 등록되었습니다.`;
+                swalOptions.text = `${data.userName}이(가) 성공적으로 등록되었습니다.`;
                 swalOptions.icon = 'success';
             } catch (error) {
                 swalOptions.title = '실패!',
@@ -183,7 +183,7 @@ export default function Um() {
             setSelectedUser(data ?? {});
             setPassword(null);
             swalOptions.title = '성공!',
-            swalOptions.text = `${formData.userName}이 성공적으로 수정되었습니다.`;
+            swalOptions.text = `${formData.userName}이(가) 성공적으로 수정되었습니다.`;
             swalOptions.icon = 'success';
         } catch (error) {
             swalOptions.title = '실패!',

@@ -1241,7 +1241,7 @@ export function DeleteModal({ isModalOpen, handleOk, handleCancel, rowData, rowD
             }
             
             swalOptions.title = '성공!',
-            swalOptions.text = `${rowName}(이)가 성공적으로 삭제되었습니다.`;
+            swalOptions.text = `${rowName}이(가) 성공적으로 삭제되었습니다.`;
             swalOptions.icon = 'success';
             handleOk();
         } catch (error) {
@@ -1845,7 +1845,7 @@ export function FmAddModal({ isModalOpen, handleOk, handleCancel, rowData }) {
             // handleOk을 호출하여 모달을 닫고 상위 컴포넌트에 알림
             handleOk(data);
             swalOptions.title = '성공!',
-            swalOptions.text = `${formData.equipName}가 성공적으로 등록되었습니다.`;
+            swalOptions.text = `${formData.equipName}이(가) 성공적으로 등록되었습니다.`;
             swalOptions.icon = 'success';
         } catch (error) {
             swalOptions.title = '실패!',
@@ -2090,7 +2090,7 @@ export function MmAddModal({ isModalOpen, handleOk, handleCancel, rowData }) {
             // handleOk을 호출하여 모달을 닫고 상위 컴포넌트에 알림
             handleOk(data);
             swalOptions.title = '성공!',
-            swalOptions.text = `${formData.menuName}가 성공적으로 등록되었습니다.`;
+            swalOptions.text = `${formData.menuName}이(가) 성공적으로 등록되었습니다.`;
             swalOptions.icon = 'success';
         } catch (error) {
             swalOptions.title = '실패!',

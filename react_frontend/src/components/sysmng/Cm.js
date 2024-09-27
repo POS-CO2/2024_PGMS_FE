@@ -145,7 +145,7 @@ export default function Cm() {
                 setSubmittedCGIdx([0]);
 
                 swalOptions.title = '성공!',
-                swalOptions.text = `${data.codeGrpName}가 성공적으로 등록되었습니다.`;
+                swalOptions.text = `${data.codeGrpName}이(가) 성공적으로 등록되었습니다.`;
                 swalOptions.icon = 'success';
             } catch (error) {
                 swalOptions.title = '실패!',
@@ -164,7 +164,7 @@ export default function Cm() {
                 setSubmittedCLIdx([0]);
 
                 swalOptions.title = '성공!',
-                swalOptions.text = `${data.codeName}가 성공적으로 등록되었습니다.`;
+                swalOptions.text = `${data.codeName}이(가) 성공적으로 등록되었습니다.`;
                 swalOptions.icon = 'success';
             } catch (error) {
                 swalOptions.title = '실패!',
@@ -184,7 +184,7 @@ export default function Cm() {
                 setSelectedCodeGroup(response.data);
 
                 swalOptions.title = '성공!',
-                swalOptions.text = `${data.codeGrpName}이 성공적으로 수정되었습니다.`;
+                swalOptions.text = `${data.codeGrpName}이(가) 성공적으로 수정되었습니다.`;
                 swalOptions.icon = 'success';
             } catch (error) {
                 swalOptions.title = '실패!',
@@ -205,7 +205,7 @@ export default function Cm() {
                 setSelectedCode(response.data);
 
                 swalOptions.title = '성공!',
-                swalOptions.text = `${data.codeName}이 성공적으로 수정되었습니다.`;
+                swalOptions.text = `${data.codeName}이(가) 성공적으로 수정되었습니다.`;
                 swalOptions.icon = 'success';
             } catch (error) {
                 swalOptions.title = '실패!',

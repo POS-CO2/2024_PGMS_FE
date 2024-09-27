@@ -123,6 +123,7 @@ const StyledTreeItemLabelText = styled(Typography)({
     color: 'inherit',
     // fontFamily: 'General Sans',
     fontWeight: 500,
+    fontSize:"1rem",
 });
 
 function CustomLabel({ icon: Icon, expandable, children, ...other }) {
@@ -373,7 +374,7 @@ export default function Mm({menus, handleMenuSet}) {
         try {
             const {data} = await axiosInstance.patch('/sys/menu', formData);
             swalOptions.title = '성공!',
-            swalOptions.text = `${formData.menuName}이 성공적으로 수정되었습니다.`;
+            swalOptions.text = `${formData.menuName}이(가) 성공적으로 수정되었습니다.`;
             swalOptions.icon = 'success';
         } catch (error) {
             console.error(error);
@@ -388,15 +389,15 @@ export default function Mm({menus, handleMenuSet}) {
     const access = [
         {
             value: 'FP',
-            label: '현장담당자'
+            label: '현장 담당자'
         },
         {
             value: 'HP',
-            label: '본사담당자'
+            label: '본사 담당자'
         },
         {
             value: 'ADMIN',
-            label: '시스템관리자'
+            label: '시스템 관리자'
         },
     ]
     
