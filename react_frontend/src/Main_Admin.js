@@ -353,7 +353,7 @@ export default function Main_Admin() {
         label: <p>
             {`서비스 명:`} <span style={{color:"white", fontWeight:"bold", fontSize:"1.2rem", padding:"0 0.5rem"}}>{data.serviceName}</span> 
         {`에러 코드:`} <span style={{color:"white", fontWeight:"bold", fontSize:"1.2rem", padding:"0 0.5rem"}}>{data.errorCode}</span> 
-        {`사번:`} <span style={{color:"white", fontWeight:"bold", fontSize:"1.2rem", padding:"0 0.5rem"}}>{data.loginId ?? "x"}</span>
+        {`로그인ID:`} <span style={{color:"white", fontWeight:"bold", fontSize:"1.2rem", padding:"0 0.5rem"}}>{data.loginId ?? "x"}</span>
         {`발생 일시:`} <span style={{color:"white", fontWeight:"bold", fontSize:"1.2rem", padding:"0 0.5rem"}}>{data.createDate}</span>
         </p>,
         children: <p>{data.message}</p>,
