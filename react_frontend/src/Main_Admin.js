@@ -669,7 +669,7 @@ export default function Main_Admin() {
                                 <Card sx={{width:"98%", height:"100%", borderRadius:"10px"}}>
                                     <div className={gridStyles.server_header}>
                                         <div style={{width:"20%"}}>
-                                        서버관리
+                                        서버 관리
                                         </div>
                                         {/* <ProgressComponent progress={progress} /> */}
                                     </div>

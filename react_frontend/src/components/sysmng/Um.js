@@ -221,7 +221,7 @@ export default function Um() {
             />
             <div className={sysStyles.main_grid}>
                 <Card className={sysStyles.card_box} sx={{width:"50%", height:"80vh", borderRadius:"15px"}}>
-                    <TableCustom title="사용자목록" columns={userColumns} data={userList} submittedRowIdx={submittedUserIdx} buttons={['Delete', 'Add']} selectedRows={[selectedUser]} onClicks={[handleDeleteClick, handleAddClick]} onRowClick={(e) => handleRowClick(e)} modals={
+                    <TableCustom title="사용자 목록" columns={userColumns} data={userList} submittedRowIdx={submittedUserIdx} buttons={['Delete', 'Add']} selectedRows={[selectedUser]} onClicks={[handleDeleteClick, handleAddClick]} onRowClick={(e) => handleRowClick(e)} modals={
                         [
                             isModalOpen.UmAdd && {
                                 "modalType" : 'UmAdd',
@@ -250,7 +250,7 @@ export default function Um() {
                             <div className={sysStyles.card_box}>
                             <div className={sysStyles.text_field} style={{marginTop:"2rem",width:"50%"}}>
                                 <div className={sysStyles.text}>
-                                    {"로그인 아이디"}
+                                    {"로그인ID"}
                                 </div>
                                 <TextField size="small" id='loginId'  variant='outlined' onChange={handleInputChange} defaultValue={selectedUser.loginId} value={selectedUser.loginId} sx={{width:"100%"}}/>
                             </div>
@@ -265,7 +265,7 @@ export default function Um() {
                                     <TextField size="small" id='userName'  variant='outlined' onChange={handleInputChange} defaultValue={selectedUser.userName} value={selectedUser.userName} sx={{width:"100%"}}/>
                             </div>
                             <div className={sysStyles.text_field} style={{marginTop:"0.5rem",width:"50%"}}>
-                                <div className={sysStyles.text}>{"부서 명"}</div>
+                                <div className={sysStyles.text}>{"부서명"}</div>
                                     <Select value={selectedUser.deptCode} onChange={(value) => handleInputChange({ target: { id: 'deptCode', value} })} defaultValue={selectedUser.deptCode} style={{width:"100%", height:"2.5rem", fontSize:"4rem"}}>
                                     {dept.map(option => (
                                         <Select.Option key={option.value} value={option.value}>
