@@ -174,6 +174,11 @@ export default function Ps_1_2() {
         }
     };
 
+    // 서치폼이 변경될 때 목록 clear
+    const handleFieldsChange = () => {
+        setFormData({});
+    };
+
     function Usage({ data }) {
 
         const [isModalOpen, setIsModalOpen] = useState(false);
@@ -341,6 +346,7 @@ export default function Ps_1_2() {
                 onFormSubmit={handleFormSubmit}
                 formFields={formFields.map(field => field.name === 'actvYear' ? { ...field, disabled: actvYearDisabled } : field)} // actvYear 필드의 disabled 상태 반영
                 onProjectSelect={onProjectSelect} 
+                handleFieldsChange={handleFieldsChange}
             />
             
             {(!formData || Object.keys(formData).length === 0) ? 

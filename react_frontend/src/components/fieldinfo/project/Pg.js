@@ -101,6 +101,7 @@ export default function Pg() {
     // 조회 버튼 클릭시 호출될 함수
     const handleFormSubmit = async (data) => {
         setFormData(data);
+        setExpandedRow(null);
 
         // data.calendar가 정의되어 있지 않거나 값이 없는 경우를 처리하기 위해 설정
         // ISO 형식 문자열을 dayjs로 변환
@@ -219,6 +220,11 @@ export default function Pg() {
         showModal('Delete');
     };
 
+    // 서치폼이 변경될 때 프로젝트 목록 clear
+    const handleFieldsChange = () => {
+        setProjects([]);
+    };
+
     return (
         <>
             <div className={mainStyles.breadcrumb}>현장정보 &gt; 프로젝트 &gt; 프로젝트 관리</div>
@@ -226,6 +232,7 @@ export default function Pg() {
                 initialValues={formData}
                 onFormSubmit={handleFormSubmit} 
                 formFields={formFields} 
+                handleFieldsChange={handleFieldsChange}
             />
 
             <div className={pdsStyles.main_grid}>

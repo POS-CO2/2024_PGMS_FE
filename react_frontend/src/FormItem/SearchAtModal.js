@@ -45,6 +45,7 @@ export default function SearchAtModal({ initialValues={}, name, label, required 
         form.setFieldsValue({ [name]: selectedData  });
         setInputValue(selectedData.pjtCode + '/' + selectedData.pjtName); // SearchProjectModal.js 에서 [pjt.pjtCode, pjt.pjtName]을 pjt로 넘겨주어 변경
 
+        form.validateFields([name]) // 명시적으로 onFieldsChange를 트리거
         if (onProjectSelect) {  // onProjectSelect 콜백이 존재하는 경우 호출
             onProjectSelect(data);
         }

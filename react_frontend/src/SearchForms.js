@@ -61,10 +61,9 @@ const formItemComponents = {
     SearchAtModal
 };
 
-export default function SearchForms({ initialValues={}, onFormSubmit, formFields, autoSubmitOnInit=false, onProjectSelect=()=>{} }) {
+export default function SearchForms({ initialValues={}, onFormSubmit, formFields, autoSubmitOnInit=false, onProjectSelect=()=>{}, handleFieldsChange=()=>{} }) {
     const [form] = Form.useForm();
     const [isInitialSubmit, setIsInitialSubmit] = useState(autoSubmitOnInit); // 첫 렌더링 여부를 추적하는 상태
-    const [isFormChanged, setIsFormChanged] = useState(false); // 폼 변경 여부 상태
 
     // 폼 초기값 설정
     useEffect(() => {
@@ -93,20 +92,26 @@ export default function SearchForms({ initialValues={}, onFormSubmit, formFields
         }
     }, []);
 
-    // 폼 변경을 감지해서 버튼 색상 변경
-    const handleFieldsChange = () => {
-        setIsFormChanged(true); // 폼이 변경되면 상태 업데이트
-    };
-
     // 조회 버튼 클릭 시 호출될 함수
     const handleFinish = (values) => {
         onFormSubmit(values);
-        setIsFormChanged(false);
     };
 
     const handleProjectSelect = (selectedData) => {
         if (onProjectSelect) {
             onProjectSelect(selectedData, form); // form을 함께 전달
+        }
+    };
+
+    const handleFieldsChangeWrapper = (changedFields, allFields) => {
+        const shouldTriggerChange = !changedFields.some(field => {
+            // 변경된 필드 중 InputText 타입이 있는지 확인
+            const fieldType = formFields.find(f => f.name === field.name[0])?.type;
+            return fieldType === 'InputText';
+        });
+    
+        if (shouldTriggerChange) {
+            handleFieldsChange(changedFields, allFields);
         }
     };
 
@@ -116,7 +121,7 @@ export default function SearchForms({ initialValues={}, onFormSubmit, formFields
             layout="vertical" 
             className={searchFormStyles.form_container} 
             onFinish={handleFinish}
-            onFieldsChange={handleFieldsChange}
+            onFieldsChange={handleFieldsChangeWrapper}
         >
             {formFields.map((field, index) => {
                 const FormItemComponent = formItemComponents[field.type];
@@ -140,7 +145,7 @@ export default function SearchForms({ initialValues={}, onFormSubmit, formFields
                     />
                 )
             })}
-            <SearchBtn isFormChanged={isFormChanged} />
+            <SearchBtn />
         </StyledForm>
     );
 };
