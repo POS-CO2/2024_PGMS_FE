@@ -86,6 +86,11 @@ export const avgUnitPerDivData = [
         "divCode": "3D000859",
         "avgEmissionQtyPerSales": 24215,
         "formattedAvgEmissionQtyPerSales": "17,125.855365"
+    },
+    {
+        "divCode": "3D000877",
+        "avgEmissionQtyPerSales": 31245,
+        "formattedAvgEmissionQtyPerSales": "17,125.855365"
     }
 ]
 
