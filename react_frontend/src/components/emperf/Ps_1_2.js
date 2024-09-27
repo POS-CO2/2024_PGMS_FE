@@ -114,7 +114,9 @@ export default function Ps_1_2() {
             }
             if (Object.keys(formData).length === 0) {
                 form.setFieldsValue({ actvYear: yearOptions[0].value });
+                console.log("aaaa");
             }
+
         }
     };
 
@@ -355,7 +357,7 @@ export default function Ps_1_2() {
                     <Card sx={{ height: "auto", padding: "0.5rem", borderRadius: "0.5rem" }}>
                         <div className={pdsStyles.table_title} style={{ padding: "0 1rem"}}>프로젝트 상세정보</div>
 
-                        <div className={pdsStyles.row} style={{ padding: "0.5rem 1rem"}}>
+                        <div className={pdsStyles.row} style={{ padding: "0.5rem 1rem" }}>
                             <div className={pdsStyles.pjt_data_container}>프로젝트 지역
                                 <div className={pdsStyles.code}>{selectedPjt.pjtType} / {selectedPjt.regCode}</div>
                             </div>

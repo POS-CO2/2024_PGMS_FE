@@ -13,12 +13,6 @@ export const modalState = atom({
   },
 });
 
-// 선택된 프로젝트
-export const selectedPjtState = atom({
-  key: 'selectedPjtState',
-  default: {},
-});
-
 // 선택된 버튼
 export const selectedButtonState = atom({
   key: 'selectedButtonState',
