@@ -11,7 +11,7 @@ import * as gridStyles from './assets/css/gridHp.css'
 import styled from 'styled-components';
 import axiosInstance from './utils/AxiosInstance';
 import { DataThresholding, Delete, ElectricBolt, KeyboardArrowDown, KeyboardArrowUp, KeyboardDoubleArrowDown, KeyboardDoubleArrowUp, LeaderboardOutlined, LocalFireDepartment, MoreHoriz, MoveDown, OilBarrel, Public, WaterDrop, WorkspacePremium } from '@mui/icons-material';
-import { Popover } from 'antd';
+import { ConfigProvider, Popover } from 'antd';
 
 const StyledChart = styled.div`
     .apexcharts-canvas {
@@ -473,7 +473,7 @@ export default function Main_Hp() {
     console.log(emtn);
 
     const content = (
-        emtn.actvQtyEmtnEquipList.map(v => (
+        emtn?.actvQtyEmtnEquipList?.map(v => (
             <div>hello</div>
         ))
     );
@@ -638,17 +638,34 @@ export default function Main_Hp() {
                                 >
                                     {emtn.map((data) => (
                                         <SwiperSlide style={{width:"100%", height:"100%"}}>
-                                            <Popover placement='left' title={data.emtnActvType} content={content} arrow={true}>
-                                                <Card sx={{backgroundColor:"white", width:"90%", height:"100%", margin:"1rem auto", borderRadius:"15px", display:"flex", flexDirection:"column", backgroundColor:"rgb(241,244,248)"}}>
-                                                    <div className={gridStyles.left_bottom_1}>
-                                                        <div className={gridStyles.right_swiper_box_logo}>
-                                                            {renderIcon(data.actvDataDvs)}
-                                                            {data.emtnActvType}
-                                                        </div>
+                                            <ConfigProvider
+                                            theme={{
+                                                token:{
+                                                    fontFamily:"SUITE-Regular",
+                                                    fontSize:"1.2rem"
+                                                }
+                                            }} >
+                                                <Popover placement='left' title={data.emtnActvType} content={data.actvQtyEmtnEquipList.map(v => (
+                                                <div style={{display:"flex", flexDirection:"row", justifyContent:"space-between", alignContent:"center", gap:"1rem"}}>
+                                                    <div>
+                                                    {v.equipLibName}
                                                     </div>
-                                                    <div className={gridStyles.right_swiper_emtn}>{`${data.formattedTotalActvQty !== "" ? data.formattedTotalActvQty : 0} ${data.inputUnitCode}`}</div>
-                                                </Card>
-                                            </Popover>
+                                                    <div>
+                                                        {`${v.formattedEquipActvQty} ${data.inputUnitCode}`}
+                                                    </div>
+                                                </div>
+                                                ))} arrow={true}>
+                                                    <Card sx={{backgroundColor:"white", width:"90%", height:"100%", margin:"1rem auto", borderRadius:"15px", display:"flex", flexDirection:"column", backgroundColor:"rgb(241,244,248)"}}>
+                                                        <div className={gridStyles.left_bottom_1}>
+                                                            <div className={gridStyles.right_swiper_box_logo}>
+                                                                {renderIcon(data.actvDataDvs)}
+                                                                {data.emtnActvType}
+                                                            </div>
+                                                        </div>
+                                                        <div className={gridStyles.right_swiper_emtn}>{`${data.formattedTotalActvQty !== "" ? data.formattedTotalActvQty : 0} ${data.inputUnitCode}`}</div>
+                                                    </Card>
+                                                </Popover>
+                                            </ConfigProvider>
                                         </SwiperSlide>
                                     ))}
                                 </Swiper>
