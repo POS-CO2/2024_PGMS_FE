@@ -213,13 +213,15 @@ export function TableCustomDoubleClickEdit({
             swalOptions.text = '매출액이 성공적으로 수정되었습니다.';
             swalOptions.icon = 'success';
 
-            handleFormSubmit(response.data);
-
         } catch (error) {
             swalOptions.title = '실패!',
             swalOptions.text = error.response.data.message,
             swalOptions.icon = 'error';
         }
+
+        // 테이블 갱신
+        handleFormSubmit(formData);
+
         setEditedRows([]);
         Swal.fire(swalOptions);
     };
@@ -269,16 +271,17 @@ export function TableCustomDoubleClickEdit({
 
             swalOptions.title = '성공!',
             swalOptions.text = '활동량이 성공적으로 수정되었습니다.';
-            swalOptions.icon = 'success';
-
-            // 수정된 데이터로 테이블 갱신
-            handleFormSubmit(formData);
+            swalOptions.icon = 'success';            
 
         } catch (error) {
             swalOptions.title = '실패!',
             swalOptions.text = error.response.data.message;
             swalOptions.icon = 'error';
         }
+
+        // 테이블 갱신
+        handleFormSubmit(formData);
+
         setEditedRows([]);
         Swal.fire(swalOptions);
     };
@@ -330,14 +333,15 @@ export function TableCustomDoubleClickEdit({
             swalOptions.text = '활동량이 성공적으로 수정되었습니다.';
             swalOptions.icon = 'success';
 
-            // 수정된 데이터로 테이블 갱신
-            handleFormSubmit(formData);
-
         } catch (error) {
             swalOptions.title = '실패!',
             swalOptions.text = error.response.data.message,
             swalOptions.icon = 'error';
         }
+
+        // 테이블 갱신
+        handleFormSubmit(formData);
+
         setEditedRows([]);
         Swal.fire(swalOptions);
     };
