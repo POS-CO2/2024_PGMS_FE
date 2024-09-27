@@ -19,7 +19,7 @@ export default function Rm({pjtId}) {
     useEffect(() => {
         handleYearChange(year);
         transformToRevChart(revenues);
-    }, [])
+    }, [pjtId])
 
     const transformToRevChart = (data) => {
         //data가 빈 배열인지 확인

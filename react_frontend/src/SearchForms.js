@@ -66,6 +66,9 @@ export default function SearchForms({ initialValues={}, onFormSubmit, formFields
     const [isInitialSubmit, setIsInitialSubmit] = useState(autoSubmitOnInit); // 첫 렌더링 여부를 추적하는 상태
     const [changedFieldsState, setChangedFieldsState] = useState({}); // InputText 필드 변경 여부 상태
 
+    useEffect(() => {
+        console.log("changedFieldsState", changedFieldsState)
+    }, [changedFieldsState])
     // 폼 초기값 설정
     useEffect(() => {
         form.setFieldsValue(initialValues);
@@ -137,8 +140,14 @@ export default function SearchForms({ initialValues={}, onFormSubmit, formFields
                     }
                 });
             } else if (typeof handleEmptyFields === 'function') {
+                setChangedFieldsState({});
                 handleEmptyFields(); // 단일 함수 호출
             }
+        }
+
+        // handleEmptyFields 파라미터를 넘겼을경우(첫 렌더링시에 디폴트 리스트가 떠야하는 경우)
+        if (handleEmptyFields && handleEmptyFields.length > 0) {
+            
         }
     };
 
