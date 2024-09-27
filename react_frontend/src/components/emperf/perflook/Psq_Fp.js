@@ -99,6 +99,8 @@ export default function Psq_Fp() {
             // 옵션 데이터가 있으면 드롭다운을 활성화, default값 설정
             if (yearOptions.length > 0) {
                 setActvYearDisabled(false);
+            }
+            if (Object.keys(formData).length === 0) {
                 form.setFieldsValue({ actvYear: yearOptions[0].value });
             }
         }
@@ -275,6 +277,11 @@ export default function Psq_Fp() {
         document.body.removeChild(a);
     };
 
+    // 서치폼이 변경될 때 목록 clear
+    const handleFieldsChange = () => {
+        setSelectedPjt({});
+    };
+
     return (
         <div>
             <div className={mainStyle.breadcrumb}>
@@ -284,9 +291,11 @@ export default function Psq_Fp() {
                 initialValues={formData}
                 onFormSubmit={handleFormSubmit}
                 formFields={formFields.map(field => field.name === 'actvYear' ? { ...field, disabled: actvYearDisabled } : field)} // actvYear 필드의 disabled 상태 반영
-                onProjectSelect={onProjectSelect} />
+                onProjectSelect={onProjectSelect} 
+                handleFieldsChange={handleFieldsChange}
+            />
            
-            {(!formData || Object.keys(formData).length === 0) ? 
+           {(!selectedPjt || Object.keys(selectedPjt).length === 0) ? 
                 <></> :
                 <div className={pdsStyles.main_grid}>
                     <Card sx={{ height: "auto", padding: "0.5rem", borderRadius: "0.5rem" }}>

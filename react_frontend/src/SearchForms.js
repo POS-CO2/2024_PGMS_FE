@@ -66,9 +66,6 @@ export default function SearchForms({ initialValues={}, onFormSubmit, formFields
     const [isInitialSubmit, setIsInitialSubmit] = useState(autoSubmitOnInit); // 첫 렌더링 여부를 추적하는 상태
     const [changedFieldsState, setChangedFieldsState] = useState({}); // InputText 필드 변경 여부 상태
 
-    useEffect(() => {
-        console.log("changedFieldsState", changedFieldsState)
-    }, [changedFieldsState])
     // 폼 초기값 설정
     useEffect(() => {
         form.setFieldsValue(initialValues);
