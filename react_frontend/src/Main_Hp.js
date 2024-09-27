@@ -625,7 +625,7 @@ export default function Main_Hp() {
                         </div>
                         <div className={gridStyles.right_swiper_area}>
                             <div style={{fontWeight:"bold", fontSize:"22px", marginLeft:"0.5rem", color:"rgb(55, 57, 78)"}}>
-                                배출량
+                                활동량
                             </div>
                             <StyledRoot2 style={{width:"100%", height:"100%", overflow:"hidden"}}>
                                 <Swiper
