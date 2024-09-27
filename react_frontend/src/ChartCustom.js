@@ -2,7 +2,7 @@ import React from 'react';
 import { BarChart } from '@mui/x-charts';
 import * as chartStyles from "./assets/css/chart.css"
 //search by pjt
-export default function ChartCustom({ title, data }) {
+export default function ChartCustom({ title, data, unit }) {
     const validatedData = Array.isArray(data) ? data : [];
 
     return (
@@ -12,7 +12,10 @@ export default function ChartCustom({ title, data }) {
             <div style={{ width: "100%", height: "30rem" }}>
                 <BarChart
                     borderRadius={10}
-                    series={validatedData }
+                    series={validatedData.map((item) => ({
+                        ...item,
+                        valueFormatter: (value) => value !== null ? `${value} ${unit}` : null,
+                    }))}
                     barLabel={(item, context) => {
                         return context.bar.height < 60 ? null : item.value?.toFixed(2).toString();
                     }}

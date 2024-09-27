@@ -376,7 +376,7 @@ console.log(data);
                             selected={content === 'actvQty'} 
                             onClick={() => handleButtonClick('actvQty')}
                         >
-                            사용량
+                            활동량
                         </CustomButton>
                         <CustomButton 
                             selected={content === 'fee'} 

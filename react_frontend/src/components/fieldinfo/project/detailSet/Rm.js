@@ -19,7 +19,7 @@ export default function Rm({pjtId}) {
     useEffect(() => {
         handleYearChange(year);
         transformToRevChart(revenues);
-    }, [])
+    }, [pjtId])
 
     const transformToRevChart = (data) => {
         //data가 빈 배열인지 확인
@@ -80,7 +80,7 @@ export default function Rm({pjtId}) {
                 />
             </Card>
             <Card sx={{ width: "70%", borderRadius: "0.5rem" }}>
-                <ChartCustom title={"매출액차트"} data={chartReves} />
+                <ChartCustom title={"매출액차트"} data={chartReves} unit={'원'} />
             </Card>
         </>
     );

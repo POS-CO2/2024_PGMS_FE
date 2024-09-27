@@ -99,6 +99,8 @@ export default function Psq_Fp() {
             // 옵션 데이터가 있으면 드롭다운을 활성화, default값 설정
             if (yearOptions.length > 0) {
                 setActvYearDisabled(false);
+            }
+            if (Object.keys(formData).length === 0) {
                 form.setFieldsValue({ actvYear: yearOptions[0].value });
             }
         }
@@ -136,9 +138,9 @@ export default function Psq_Fp() {
             setChartPerfs(formattedChartPerfs);
 
             // 표
-            const scope1TableData = { scope: 'scope1 (kgGHG)' };
-            const scope2TableData = { scope: 'scope2 (kgGHG)' };
-            const totalTableData = { scope: 'total (kgGHG)' };
+            const scope1TableData = { scope: 'scope1' };
+            const scope2TableData = { scope: 'scope2' };
+            const totalTableData = { scope: 'total' };
 
             let scope1Sum = 0;
             let scope2Sum = 0;
@@ -213,8 +215,6 @@ export default function Psq_Fp() {
 
         setEmissionTableData(emissionPerfsData);
     };
-
-    const valueFormatter = (item) => `${item.value}`;
 
     // Dropdown에서 항목 선택 시 호출되는 함수
     const handleMenuClick = async ({ key }) => {
@@ -332,10 +332,10 @@ export default function Psq_Fp() {
                     <div className={pdsStyles.contents_container}>
                         {content === 'chart' && 
                             <>
-                                <Card className={saStyles.card_box} sx={{ width: "50%", height: "auto", borderRadius: "15px" }}>
-                                    <ChartCustom title={"프로젝트 실적 차트"} data={chartPerfs} />
+                                <Card className={saStyles.card_box} sx={{ width: "60%", height: "auto", borderRadius: "15px" }}>
+                                    <ChartCustom title={"프로젝트 실적 차트"} data={chartPerfs} unit={'kgGHG'} />
                                 </Card>
-                                <Card className={saStyles.card_box} sx={{ width: "50%", height: "auto", borderRadius: "15px" }}>
+                                <Card className={saStyles.card_box} sx={{ width: "40%", height: "auto", borderRadius: "15px" }}>
                                     <div className={psqStyles.title_container}>
                                         <div className={chartStyles.chart_title}>{"설비별 실적 차트"}</div>
 
@@ -366,7 +366,7 @@ export default function Psq_Fp() {
                                                 cornerRadius: 3,
                                                 //innerRadius: 50,
                                                 outerRadius: 150,
-                                                valueFormatter,
+                                                valueFormatter: (item) => `${item.value} kgGHG`,
                                                 arcLabel: (item) => `${item.arcLabel}`,
                                                 arcLabelMinAngle: 35,
                                             },
@@ -379,10 +379,10 @@ export default function Psq_Fp() {
                         {content === 'table' && 
                             <div className={psqStyles.table_container}>
                                 <Card className={psqStyles.table_card} sx={{ width: "100%", height: "fit-contents", borderRadius: "15px" }}>
-                                    <TableCustom columns={emissionPerfPjtColumns} title="배출원별 실적" data={emissionTableData} buttons={['DownloadExcel']} onClicks={[() => onDownloadExcelClick("배출원별 실적", emissionTableData, emissionPerfPjtColumns)]} pagination={false} />
+                                    <TableCustom columns={emissionPerfPjtColumns} title="배출원별 실적 (단위:kgGHG)" data={emissionTableData} buttons={['DownloadExcel']} onClicks={[() => onDownloadExcelClick("배출원별 실적", emissionTableData, emissionPerfPjtColumns)]} pagination={false} />
                                 </Card>
                                 <Card className={psqStyles.table_card} sx={{ width: "100%", height: "fit-contents", borderRadius: "15px" }}>
-                                    <TableCustom columns={perfPjtColumns} title="scope별 실적" data={perfsData} buttons={['DownloadExcel']} onClicks={[() => onDownloadExcelClick("scope별 실적", perfsData, perfPjtColumns)]} pagination={false} />
+                                    <TableCustom columns={perfPjtColumns} title="scope별 실적 (단위:kgGHG)" data={perfsData} buttons={['DownloadExcel']} onClicks={[() => onDownloadExcelClick("scope별 실적", perfsData, perfPjtColumns)]} pagination={false} />
                                 </Card>
                             </div>
                         }

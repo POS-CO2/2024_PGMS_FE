@@ -130,8 +130,8 @@ export default function Ea() {
                                         faded: { innerRadius: 30, additionalRadius: -30, color: 'gray' },
                                         cornerRadius: 3,
                                         outerRadius: 150,
-                                        //valueFormatter,
-                                        arcLabel: (item) => `${item.arcLabel}%`,
+                                        valueFormatter: (item) => `${item.value} kgGHG`,
+                                        arcLabel: (item) => `${item.arcLabel}`,
                                         arcLabelMinAngle: 35,
                                     },
                                 ]}

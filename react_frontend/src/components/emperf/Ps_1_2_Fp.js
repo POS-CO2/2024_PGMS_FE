@@ -108,6 +108,8 @@ export default function Ps_1_2_Fp() {
             // 옵션 데이터가 있으면 드롭다운을 활성화, default값 설정
             if (yearOptions.length > 0) {
                 setActvYearDisabled(false);
+            }
+            if (Object.keys(formData).length === 0) {
                 form.setFieldsValue({ actvYear: yearOptions[0].value });
             }
         }
@@ -371,7 +373,7 @@ export default function Ps_1_2_Fp() {
                             selected={content === 'actvQty'} 
                             onClick={() => handleButtonClick('actvQty')}
                         >
-                            사용량
+                            활동량
                         </CustomButton>
                         <CustomButton 
                             selected={content === 'fee'} 

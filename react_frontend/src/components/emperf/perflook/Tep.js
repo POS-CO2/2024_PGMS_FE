@@ -100,7 +100,7 @@ export default function Tep() {
 function ChartTab({ data }) {
     return (
         <Card sx={{ width: "100%", height: "100%", borderRadius: "15px" }}>
-            <ChartCustom title={"총량실적차트"} data={data} />
+            <ChartCustom title={"총량실적차트"} data={data} unit={'kgGHG'} />
         </Card>
     )
 }
@@ -141,7 +141,7 @@ function TableTab({ data }) {
 
     return (
         <Card sx={{ width: "100%", height: "100%", borderRadius: "15px" }}>
-            <TableCustom columns={perfTotalColumns} title="총량실적표" data={data} buttons={['DownloadExcel']} onClicks={[() => onDownloadExcelClick(data)]} monthPagination={true} />
+            <TableCustom columns={perfTotalColumns} title="총량실적표 (단위:kgGHG)" data={data} buttons={['DownloadExcel']} onClicks={[() => onDownloadExcelClick(data)]} monthPagination={true} />
         </Card>
     )
 }

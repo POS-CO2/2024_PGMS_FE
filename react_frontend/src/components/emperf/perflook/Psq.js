@@ -187,8 +187,6 @@ export default function Psq() {
 
         setEmissionTableData(emissionPerfsData);
     };
-
-    const valueFormatter = (item) => `${item.value}`;
         
     // Dropdown에서 항목 선택 시 호출되는 함수
     const handleMenuClick = async ({ key }) => {
@@ -307,10 +305,10 @@ export default function Psq() {
                     <div className={pdsStyles.contents_container}>
                         {content === 'chart' && 
                             <>
-                                <Card className={saStyles.card_box} sx={{ width: "50%", height: "auto", borderRadius: "15px" }}>
-                                    <ChartCustom title={"프로젝트 실적 차트"} data={chartPerfs} />
+                                <Card className={saStyles.card_box} sx={{ width: "60%", height: "auto", borderRadius: "15px" }}>
+                                    <ChartCustom title={"프로젝트 실적 차트"} data={chartPerfs} unit={'kgGHG'} />
                                 </Card>
-                                <Card className={saStyles.card_box} sx={{ width: "50%", height: "auto", borderRadius: "15px" }}>
+                                <Card className={saStyles.card_box} sx={{ width: "40%", height: "auto", borderRadius: "15px" }}>
                                     <div className={psqStyles.title_container}>
                                         <div className={chartStyles.chart_title}>{"설비별 실적 차트"}</div>
 
@@ -341,7 +339,7 @@ export default function Psq() {
                                                 cornerRadius: 3,
                                                 //innerRadius: 50,
                                                 outerRadius: 150,
-                                                valueFormatter,
+                                                valueFormatter: (item) => `${item.value} kgGHG`,
                                                 arcLabel: (item) => `${item.arcLabel}`,
                                                 arcLabelMinAngle: 35,
                                             },

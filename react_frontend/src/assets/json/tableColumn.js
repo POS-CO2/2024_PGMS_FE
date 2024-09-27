@@ -135,9 +135,9 @@ for (let month = 0; month < 12; month++) {
 export const perfTotalColumns = [
     { key: 'actvYear', label: '활동시작년', hidden: true },
     { key: 'actvMth', label: '월', hidden: false },
-    { key: 'scope1', label: 'Scope1배출량(kgGHG)', hidden: false },
-    { key: 'scope2', label: 'Scope2배출량(kgGHG)', hidden: false },
-    { key: 'total', label: '총배출량(kgGHG)', hidden: false },
+    { key: 'scope1', label: 'Scope1배출량', hidden: false },
+    { key: 'scope2', label: 'Scope2배출량', hidden: false },
+    { key: 'total', label: '총배출량', hidden: false },
 ]
 
 export const emissionPerfPjtColumns = [
@@ -242,15 +242,15 @@ export const salesAnalColumns = [
     //{ key: 'totalEmissionQty', label: '총배출량', hidden: true },
     //{ key: 'totalSales', label: '매출액', hidden: true },
     //{ key: 'emissionQtyPerSales', label: '배출량/매출액', hidden: true },
-    { key: 'formattedTotalEmissionQty', label: '총배출량(tCO2)', hidden: false },
+    { key: 'formattedTotalEmissionQty', label: '총배출량(kgGHG)', hidden: false },
     { key: 'formattedTotalSales', label: '매출액(백만원)', hidden: false },
     { key: 'formattedEmissionQtyPerSales', label: '배출량/매출액', hidden: false },
 ]
 
 export const equipAnalLibColumns = [
     { key: 'equipLibName', label: '설비LIB명', hidden: false },
-    { key: 'totalEmissionQty', label: '총배출량', hidden: true },
-    { key: 'formattedTotalEmissionQty', label: '총배출량', hidden: false },
+    { key: 'totalEmissionQty', label: '총배출량(kgGHG)', hidden: true },
+    { key: 'formattedTotalEmissionQty', label: '총배출량(kgGHG)', hidden: false },
 ]
 
 export const equipAnalTypeColumns = [
