@@ -190,9 +190,7 @@ export default function Pg() {
 
             // Swal.fire 실행 후, 성공 메시지가 표시되면 페이지 새로고침
             Swal.fire(swalOptions).then(() => {
-                // 성공 후 페이지 새로고침
                 setExpandedRow(null);
-                window.location.reload();
             });
         } else if (modalType === 'Delete') {
             try {

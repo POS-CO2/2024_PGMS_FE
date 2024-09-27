@@ -281,13 +281,7 @@ export default function Fl() {
             }
         }
 
-        // Swal.fire 실행 후, 성공 메시지가 표시되면 페이지 새로고침
-        Swal.fire(swalOptions).then(() => {
-            // 성공 후 페이지 새로고침
-            if(modalType !== 'DeleteA' && modalType !== 'DeleteB') {
-                window.location.reload();
-            }
-        });
+        Swal.fire(swalOptions);
     };
 
     // 모달 닫기
