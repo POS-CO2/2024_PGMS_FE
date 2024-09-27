@@ -17,3 +17,9 @@ export const favState = atom({
     key: 'favState',
     default: [],
 });
+
+// 포맷된 메뉴 목록
+export const itemsState = atom({
+  key: 'itemsState',
+  default: [],
+});

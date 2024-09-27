@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef, forwardRef, useImperativeHandle } from 'react';
 import { useRecoilState } from "recoil";
-import { openTabsState, activeTabState } from './atoms/tabAtoms';
+import { openTabsState, activeTabState, itemsState } from './atoms/tabAtoms';
 import { Tabs, Dropdown, Menu, Button, Tooltip } from 'antd';
 import { CloseOutlined, CloseCircleOutlined } from '@ant-design/icons';
 import GTranslateIcon from '@mui/icons-material/GTranslate';
@@ -199,6 +199,7 @@ const TabsContainer = forwardRef(({ handleLogout, user, handleMenuClick, handleC
   const [activeKey, setActiveKey] = useRecoilState(activeTabState);
   const navigate = useNavigate();
   const homeTabAdded = useRef(false); // 홈 탭이 추가되었는지 추적하는 플래그
+  const [items, setItems] = useRecoilState(itemsState);
 
   useEffect(() => {
     const savedTabs = JSON.parse(localStorage.getItem(TABS_STORAGE_KEY)) || [];
@@ -244,8 +245,25 @@ const TabsContainer = forwardRef(({ handleLogout, user, handleMenuClick, handleC
     },
   }));
 
+  // 경로를 기준으로 메뉴 항목 찾기
+  const findItemByPath = (items, path) => {
+    return items.reduce((acc, item) => {
+        if (acc) return acc;
+        if (item.path === path) return item;
+        if (item.children) return findItemByPath(item.children, path);
+        return null;
+    }, null);
+  };
+
   const onTabChange = path => {
     setActiveKey(path);
+
+    // 메뉴 클릭을 처리
+    const item = findItemByPath(items, path);
+    if (item) {
+        handleMenuClick({ key: item.key });
+    }
+
     if (path === '') {  // 홈 탭을 클릭했을 때 명시적으로 홈 경로로 이동
       navigate('');
     } else {
