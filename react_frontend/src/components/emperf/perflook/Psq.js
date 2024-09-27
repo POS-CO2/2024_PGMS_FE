@@ -110,9 +110,9 @@ export default function Psq() {
             setChartPerfs(formattedChartPerfs);
 
             // 표
-            const scope1TableData = { scope: 'scope1 (kgGHG)' };
-            const scope2TableData = { scope: 'scope2 (kgGHG)' };
-            const totalTableData = { scope: 'total (kgGHG)' };
+            const scope1TableData = { scope: 'scope1' };
+            const scope2TableData = { scope: 'scope2' };
+            const totalTableData = { scope: 'total' };
 
             let scope1Sum = 0;
             let scope2Sum = 0;
@@ -354,10 +354,10 @@ export default function Psq() {
                         {content === 'table' && 
                             <div className={psqStyles.table_container}>
                                 <Card className={psqStyles.table_card} sx={{ width: "100%", height: "fit-contents", borderRadius: "15px" }}>
-                                    <TableCustom columns={emissionPerfPjtColumns} title="배출원별 실적" data={emissionTableData} buttons={['DownloadExcel']} onClicks={[() => onDownloadExcelClick("배출원별 실적", emissionTableData, emissionPerfPjtColumns)]} pagination={false} />
+                                    <TableCustom columns={emissionPerfPjtColumns} title="배출원별 실적 (단위:kgGHG)" data={emissionTableData} buttons={['DownloadExcel']} onClicks={[() => onDownloadExcelClick("배출원별 실적", emissionTableData, emissionPerfPjtColumns)]} pagination={false} />
                                 </Card>
                                 <Card className={psqStyles.table_card} sx={{ width: "100%", height: "fit-contents", borderRadius: "15px" }}>
-                                    <TableCustom columns={perfPjtColumns} title="scope별 실적" data={perfsData} buttons={['DownloadExcel']} onClicks={[() => onDownloadExcelClick("scope별 실적", perfsData, perfPjtColumns)]} pagination={false} />
+                                    <TableCustom columns={perfPjtColumns} title="scope별 실적 (단위:kgGHG)" data={perfsData} buttons={['DownloadExcel']} onClicks={[() => onDownloadExcelClick("scope별 실적", perfsData, perfPjtColumns)]} pagination={false} />
                                 </Card>
                             </div>
                         }
