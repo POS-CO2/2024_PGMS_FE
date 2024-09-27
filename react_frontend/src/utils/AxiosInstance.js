@@ -1,4 +1,5 @@
 import axios from 'axios';
+import Swal from 'sweetalert2';
 
 
 const axiosInstance = axios.create({
@@ -30,14 +31,20 @@ axiosInstance.interceptors.response.use(
         return response;
     },
     error => {
+        let swalOptions = {
+            confirmButtonText: '확인'
+        }
         // 응답 에러 처리 (예: 토큰 만료 시 로그아웃)
         if (error.response.status === 401) {
             localStorage.removeItem('token');
             window.location.href = '/';
         }
         if (error.response.status == 500){
-            alert("서버에러 발생 관리자 문의 요망");
+            swalOptions.title = '실패!',
+            swalOptions.text = error.response.data.message;
+            swalOptions.icon = 'error';
         }
+        Swal.fire(swalOptions);
         return Promise.reject(error);
     }
 );
