@@ -41,7 +41,7 @@ axiosInstance.interceptors.response.use(
         }
         if (error.response.status == 500){
             swalOptions.title = '실패!',
-            swalOptions.text = error.response.data.message;
+            swalOptions.text = "서버 내부에서 에러가 발생허였습니다. 관리자에게 문의해주세요.";
             swalOptions.icon = 'error';
         }
         Swal.fire(swalOptions);

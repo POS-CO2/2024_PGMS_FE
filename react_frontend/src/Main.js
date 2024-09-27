@@ -611,7 +611,7 @@ export default function Main() {
                                                         {`${data.pjtName}`}
                                                     </div>
                                                     <div className={gridStyles.dp_pjt_period}>
-                                                        {`${data.ctrtFrYear}년${data.ctrtFrMth}월~${data.ctrtToYear}년${data.ctrtToMth}월`}
+                                                        {`${data.ctrtFrYear}년 ${data.ctrtFrMth}월 ~ ${data.ctrtToYear}년 ${data.ctrtToMth}월`}
                                                     </div>
                                                 </Card>    
                                             </SwiperSlide>

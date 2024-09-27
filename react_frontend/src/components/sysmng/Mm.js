@@ -518,12 +518,12 @@ export default function Mm({menus, handleMenuSet}) {
                         />
                         <div className={sysStyles.text_field} style={{marginTop:"2rem"}}>
                             <div className={sysStyles.text}>
-                                {"메뉴 이름"}
+                                {"메뉴이름"}
                             </div>
                             <Input id='menuName' value={selectedMenu.name} onChange={(e) => handleInputChangeText('name', e.target.value)} label="메뉴명" style={{width:"18rem", marginTop:"0.5rem"}} />
                         </div>
                         <div className={sysStyles.text_field}>
-                            <div className={sysStyles.text}>{"상위 폴더"}</div>
+                            <div className={sysStyles.text}>{"상위폴더"}</div>
                                 <Select value={selectedMenu.parentDir} onChange={(e) => {handleInputChange('parentDirId', e);}} style={{marginTop:"0.5rem",width:"18rem", height:"2rem", fontSize:"4rem"}}>
                                 {upperDir.map(option => (
                                     <Select.Option key={option.id} value={option.id}>
@@ -533,11 +533,11 @@ export default function Mm({menus, handleMenuSet}) {
                                 </Select>
                         </div>
                         <div className={sysStyles.text_field}>
-                            <div className={sysStyles.text}>{"Url 주소"}</div>
-                            <Input id='address' value={selectedMenu.url} onChange={(e) => handleInputChangeText('url', e.target.value)} label="Url" style={{width:"18rem", marginTop:"0.5rem"}} />
+                            <div className={sysStyles.text}>{"Url주소"}</div>
+                            <Input id='address' value={selectedMenu.url} placeholder='Url 주소가 없으면 분류폴더로 인식합니다.' onChange={(e) => handleInputChangeText('url', e.target.value)} label="Url" style={{width:"18rem", marginTop:"0.5rem"}} />
                         </div>
                         <div className={sysStyles.text_field}>
-                            <div className={sysStyles.text}>{"메뉴 순서"}</div>
+                            <div className={sysStyles.text}>{"메뉴순서"}</div>
                             <Select value={selectedMenu.menuOrder} onChange={(e) => handleInputChangeText('menuOrder', e)} style={{marginTop:"0.5rem",width:"18rem", height:"2rem", fontSize:"4rem"}}>
                             {menuOrderList.map(option => (
                                 <Select.Option key={option} value={option}>
@@ -547,8 +547,8 @@ export default function Mm({menus, handleMenuSet}) {
                             </Select>
                         </div>
                         <div className={sysStyles.text_field}>
-                            <div className={sysStyles.text}>{"접근 권한"}</div>
-                            <Select placeholder={"접근 권한"} defaultValue={selectedMenu.accessUser} value={selectedMenu.accessUser} onChange={(value) => handleInputChangeText('accessUser', value)} style={{marginTop:"0.5rem",width:"18rem", height:"2rem", fontSize:"4rem"}}>
+                            <div className={sysStyles.text}>{"접근권한"}</div>
+                            <Select placeholder={"접근권한"} defaultValue={selectedMenu.accessUser} value={selectedMenu.accessUser} onChange={(value) => handleInputChangeText('accessUser', value)} style={{marginTop:"0.5rem",width:"18rem", height:"2rem", fontSize:"4rem"}}>
                             {access.map(option => (
                                 <Select.Option key={option.value} value={option.value}>
                                     {option.label}

@@ -31,7 +31,7 @@ export const equipColumns = [
 
 export const equipLibColumns = [
     { key: 'id', label: 'id', hidden: true },
-    { key: 'equipLibName', label: '설비라이브러리명', hidden: false },
+    { key: 'equipLibName', label: '설비LIB명', hidden: false },
     { key: 'equipDvs', label: '설비구분', hidden: false },
     { key: 'equipType', label: '설비유형', hidden: false },
     { key: 'equipSpecUnit', label: '설비사양단위', hidden: false },
@@ -85,8 +85,8 @@ export const equipActvColumns = [
     { key: 'actvDataName', label: '활동자료명', hidden: false },
     { key: 'actvDataDvs', label: '활동자료구분', hidden: false },
     { key: 'emtnActvType', label: '배출활동유형', hidden: false },
-    { key: 'calUnitCode', label: '산정단위코드', hidden: false },
-    { key: 'inputUnitCode', label: '입력단위코드', hidden: false },
+    { key: 'inputUnitCode', label: '입력단위', hidden: false },
+    { key: 'calUnitCode', label: '산정단위', hidden: false },
     { key: 'unitConvCoef', label: '단위환산계수', hidden: false },
 ]
 
@@ -94,10 +94,10 @@ export const equipCoefColumns = [
     { key: 'id', label: 'id', hidden: true },
     { key: 'applyYear', label: '적용년도', hidden: false },
     { key: 'applyDvs', label: '적용구분', hidden: false },
+    { key: 'coefClassCode', label: '계수구분코드', hidden: false },
     { key: 'ghgCode', label: '온실가스코드', hidden: false },
-    { key: 'coefClassCode', label: '계수종류코드', hidden: false },
-    { key: 'unitCode', label: '단위코드', hidden: false },
-    { key: 'coef', label: '값', hidden: false },
+    { key: 'unitCode', label: '단위', hidden: false },
+    { key: 'coef', label: '계수', hidden: false },
 ]
 
 export const pjtSalesColumns = [
