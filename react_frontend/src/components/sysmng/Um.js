@@ -258,7 +258,7 @@ export default function Um() {
                                 <div className={sysStyles.text}>
                                     {"비밀번호"}
                                 </div>
-                                <TextField size="small" id='password'  variant='outlined' onChange={(e) => setPassword(e.target.value)} value={password} sx={{width:"100%"}}/>
+                                <TextField size="small" placeholder='비밀번호를 입력하지 않으면 기존 비밀번호가 유지됩니다.' id='password'  variant='outlined' onChange={(e) => setPassword(e.target.value)} value={password} sx={{width:"100%"}}/>
                             </div>
                             <div className={sysStyles.text_field} style={{marginTop:"0.5rem",width:"50%"}}>
                                 <div className={sysStyles.text}>{"이름 "}</div>
