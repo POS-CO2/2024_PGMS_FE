@@ -133,6 +133,11 @@
     animation: fadeIn 0.5s forwards; /* 애니메이션 추가 */
 }
 
+.star {
+    color: red;
+    font-size: 0.9rem;
+}
+
 /* 애니메이션 정의 */
 @keyframes fadeIn {
     from {
