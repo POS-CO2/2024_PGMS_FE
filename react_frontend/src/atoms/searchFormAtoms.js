@@ -1,5 +1,4 @@
 import { atom } from 'recoil';
-import { localStorageEffect } from './localStorageEffect';
 
 // 활동량 관리 메뉴의 서치폼
 export const emissionSourceForm = atom({

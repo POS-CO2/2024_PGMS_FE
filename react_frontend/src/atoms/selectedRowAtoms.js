@@ -1,5 +1,4 @@
 import { atom } from 'recoil';
-import { localStorageEffect } from './localStorageEffect';
 
 // 선택된 프로젝트(프로젝트 관리)
 export const selectedPjtMgrState = atom({
