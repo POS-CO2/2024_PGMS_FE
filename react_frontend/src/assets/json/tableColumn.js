@@ -241,10 +241,10 @@ export const salesAnalColumns = [
     { key: 'prodTypeCode', label: '상품', hidden: false },
     //{ key: 'totalEmissionQty', label: '총배출량', hidden: true },
     //{ key: 'totalSales', label: '매출액', hidden: true },
-    //{ key: 'emissionQtyPerSales', label: '원단위', hidden: true },
+    //{ key: 'emissionQtyPerSales', label: '배출량/매출액', hidden: true },
     { key: 'formattedTotalEmissionQty', label: '총배출량(tCO2)', hidden: false },
     { key: 'formattedTotalSales', label: '매출액(백만원)', hidden: false },
-    { key: 'formattedEmissionQtyPerSales', label: '원단위', hidden: false },
+    { key: 'formattedEmissionQtyPerSales', label: '배출량/매출액', hidden: false },
 ]
 
 export const equipAnalLibColumns = [
