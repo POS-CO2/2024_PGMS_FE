@@ -8,7 +8,6 @@ import { useNavigate } from 'react-router-dom';
 import { useDrag, useDrop, DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import Main from './Main';
-import Language from './Language';
 import styled from 'styled-components';
 import { ChatTwoTone } from '@mui/icons-material';
 import { Badge, IconButton } from '@mui/material';
