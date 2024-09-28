@@ -61,7 +61,7 @@ const formItemComponents = {
     SearchAtModal
 };
 
-export default function SearchForms({ initialValues={}, onFormSubmit, formFields, autoSubmitOnInit=false, onProjectSelect=()=>{} }) {
+export default function SearchForms({ initialValues={}, onFormSubmit, formFields, autoSubmitOnInit=false, onProjectSelect=()=>{}, rowWidth='100%' }) {
     const [form] = Form.useForm();
     const [isInitialSubmit, setIsInitialSubmit] = useState(autoSubmitOnInit); // 첫 렌더링 여부를 추적하는 상태
     const [isFormChanged, setIsFormChanged] = useState(false); // 폼 변경 여부 상태
@@ -118,28 +118,31 @@ export default function SearchForms({ initialValues={}, onFormSubmit, formFields
             onFinish={handleFinish}
             onFieldsChange={handleFieldsChange}
         >
-            {formFields.map((field, index) => {
-                const FormItemComponent = formItemComponents[field.type];
-                return (
-                    <FormItemComponent
-                        key={index}
-                        initialValues={initialValues}
-                        name={field.name}
-                        label={field.label}
-                        required={field.required}
-                        modalType={field.modalType}
-                        options={field.options}
-                        form={form}
-                        defaultSelected={field.defaultSelected}
+            <div className={searchFormStyles.row} style={{ maxWidth: rowWidth }}>
+                {formFields.map((field, index) => {
+                    const FormItemComponent = formItemComponents[field.type];
+                    return (
+                        <FormItemComponent
+                            key={index}
+                            initialValues={initialValues}
+                            name={field.name}
+                            label={field.label}
+                            required={field.required}
+                            modalType={field.modalType}
+                            options={field.options}
+                            form={form}
+                            defaultSelected={field.defaultSelected}
 
-                        disabled={field.disabled} // disabled 상태 전달
-                        placeholder={field.placeholder} // placeholder 전달
+                            disabled={field.disabled} // disabled 상태 전달
+                            placeholder={field.placeholder} // placeholder 전달
 
-                        // name이 'searchProject'인 경우에만 onProjectSelect 전달
-                        onProjectSelect={field.name === 'searchProject' ? handleProjectSelect : ()=>{}} // 프로젝트 선택 시 대상년도 설정
-                    />
-                )
-            })}
+                            // name이 'searchProject'인 경우에만 onProjectSelect 전달
+                            onProjectSelect={field.name === 'searchProject' ? handleProjectSelect : ()=>{}} // 프로젝트 선택 시 대상년도 설정
+                        />
+                    )
+                })}
+            </div>
+
             <SearchBtn isFormChanged={isFormChanged} />
         </StyledForm>
     );

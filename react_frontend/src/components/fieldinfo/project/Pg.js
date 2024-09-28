@@ -229,6 +229,7 @@ export default function Pg() {
                 initialValues={formData}
                 onFormSubmit={handleFormSubmit} 
                 formFields={formFields} 
+                rowWidth='63rem'
             />
 
             <div className={pdsStyles.main_grid}>
