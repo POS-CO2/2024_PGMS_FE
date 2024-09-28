@@ -1,11 +1,15 @@
 import React, { useEffect, useState } from 'react';
+import { useRecoilState } from "recoil";
+import { selectedPjtState } from '../atoms/pdsAtoms';
 import * as formItemStyles from '../assets/css/formItem.css';
 import { Form, Button, Input } from 'antd';
 import ModalComponent from "./ModalComponent";
 import SearchProjectModal from "./SearchProjectModal";
 import styled from 'styled-components';
 
-const StyledButton = styled.button`
+const StyledButton = styled(({ htmlType, ...props }) => (
+    <button {...props} />
+))`
   background-color: #0EAA00; /* 원하는 배경색으로 설정 */
   color: white; /* 텍스트 색상 */
   border: none;
@@ -27,12 +31,23 @@ const StyledButton = styled.button`
 export default function SearchAtModal({ initialValues={}, name, label, required = false, modalType = "검색", form, onProjectSelect=()=>{} }) {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [inputValue, setInputValue] = useState("");
+    const [selectedPjt, setSelectedPjt] = useRecoilState(selectedPjtState);
 
     useEffect(() => {
         if(Object.keys(initialValues).length !== 0) {
             setInputValue(initialValues.searchProject.pjtCode + '/' + initialValues.searchProject.pjtName);
         }
     }, [initialValues])
+    
+    useEffect(() => {
+        if(Object.keys(selectedPjt).length !== 0) {
+            setInputValue(selectedPjt.pjtCode + '/' + selectedPjt.pjtName);
+            form.setFieldsValue({ [name]: selectedPjt });
+            if (onProjectSelect) {  // onProjectSelect 콜백이 존재하는 경우 호출
+                onProjectSelect(selectedPjt);
+            }
+        }
+    }, [selectedPjt])
 
     const showModal = (e) => {
         e.preventDefault(); // 기본 동작 방지
@@ -41,13 +56,11 @@ export default function SearchAtModal({ initialValues={}, name, label, required 
     
     const searchProject = (data) => {
         setIsModalOpen(false);
-        const selectedData = data;
-        form.setFieldsValue({ [name]: selectedData  });
-        setInputValue(selectedData.pjtCode + '/' + selectedData.pjtName); // SearchProjectModal.js 에서 [pjt.pjtCode, pjt.pjtName]을 pjt로 넘겨주어 변경
+        setSelectedPjt(data);
+        form.setFieldsValue({ [name]: data  });
+        setInputValue(data.pjtCode + '/' + data.pjtName); // SearchProjectModal.js 에서 [pjt.pjtCode, pjt.pjtName]을 pjt로 넘겨주어 변경
 
-        if (onProjectSelect) {  // onProjectSelect 콜백이 존재하는 경우 호출
-            onProjectSelect(data);
-        }
+        form.validateFields([name]) // 명시적으로 onFieldsChange를 트리거
     };
 
     const handleCancel = () => {
