@@ -96,12 +96,9 @@ export const eqLibState = atom({
 });
 
 // 선택된 설비LIB
-export const selectedEqLibState = atom({
-  key: 'selectedEqLibState',
+export const selectedEquipLibState = atom({
+  key: 'selectedEquipLibState',
   default: {},
-  effects: [
-    localStorageEffect('selectedEqLibState'), // 로컬 스토리지와 동기화
-],
 });
 
 // 배출원 목록
