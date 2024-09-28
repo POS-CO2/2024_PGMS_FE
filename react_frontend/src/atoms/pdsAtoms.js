@@ -62,8 +62,8 @@ export const eqLibState = atom({
 });
 
 // 선택된 설비LIB
-export const selectedEqLibState = atom({
-  key: 'selectedEqLibState',
+export const selectedEquipLibState = atom({
+  key: 'selectedEquipLibState',
   default: {},
 });
 

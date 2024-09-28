@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useRecoilState } from 'recoil';
 import {
-    eqState, selectedEqState, eqLibState, selectedEqLibState
+    eqState, selectedEqState, eqLibState, selectedEquipLibState
     } from '../../../../atoms/pdsAtoms';
 import {
         useHandleOkAction, useModalActions, useHandleSubmitAction,
@@ -70,7 +70,7 @@ export default function Fd({pjtId}) {
     const [equips, setEquips] = useRecoilState(eqState);
     const [selectedEq, setSelectedEq] = useRecoilState(selectedEqState);
     const [eqLibs, setEqLibs] = useRecoilState(eqLibState);
-    const [selectedEqLib, setSelectedEqLib] = useRecoilState(selectedEqLibState);
+    const [selectedEqLib, setSelectedEqLib] = useRecoilState(selectedEquipLibState);
     const [submittedEqLibIdx, setSubmittedEqLibIdx] = useState([]);
 
     // 드롭다운 리스트

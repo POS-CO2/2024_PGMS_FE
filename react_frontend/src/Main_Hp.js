@@ -514,7 +514,7 @@ export default function Main_Hp() {
                     <div className={gridStyles.left_box_top}>
                         {cardStyles.map((style, index) => (
                             <Card 
-                                key={{index}}
+                                key={index}
                                 sx={{
                                     ...style,
                                     cursor: "pointer",
@@ -625,7 +625,7 @@ export default function Main_Hp() {
                                 modules={[Navigation, Pagination]}
                             >
                                 {saleAmount.map((data, idx) => (
-                                    <SwiperSlide style={{width:"100%", height:"100%"}}>
+                                    <SwiperSlide key={data.pjtName || idx} style={{width:"100%", height:"100%"}}>
                                         <Card sx={{backgroundColor:"white", width:"95%", height:"70%", margin:"1rem auto", borderRadius:"15px", display:"flex", flexDirection:"column"}}>
                                             <div className={gridStyles.left_bottom_1}>
                                                 <div className={gridStyles.left_bottom_medal}>
@@ -670,8 +670,8 @@ export default function Main_Hp() {
                                     navigation={true}           // 이전/다음 버튼 네비게이션
                                     modules={[Navigation, Pagination]}
                                 >
-                                    {emtn.map((data) => (
-                                        <SwiperSlide style={{width:"100%", height:"100%"}}>
+                                    {emtn.map((data, idx) => (
+                                        <SwiperSlide key={data.emtnActvType || idx} style={{width:"100%", height:"100%"}}>
                                             <Card sx={{backgroundColor:"white", width:"90%", height:"100%", margin:"1rem auto", borderRadius:"15px", display:"flex", flexDirection:"column", backgroundColor:"rgb(241,244,248)"}}>
                                                 <div className={gridStyles.left_bottom_1}>
                                                     <div className={gridStyles.right_swiper_box_logo}>
