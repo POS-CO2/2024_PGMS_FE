@@ -11,7 +11,6 @@ import * as gridStyles from './assets/css/gridHp.css'
 import styled from 'styled-components';
 import axiosInstance from './utils/AxiosInstance';
 import { DataThresholding, Delete, ElectricBolt, KeyboardArrowDown, KeyboardArrowUp, KeyboardDoubleArrowDown, KeyboardDoubleArrowUp, LeaderboardOutlined, LocalFireDepartment, MoreHoriz, MoveDown, OilBarrel, Public, WaterDrop, WorkspacePremium } from '@mui/icons-material';
-import { ConfigProvider, Popover } from 'antd';
 
 const StyledChart = styled.div`
     .apexcharts-canvas {
@@ -220,6 +219,33 @@ const miniChartOptions = (title, toMonth) => {
     return chartOption;
 };
 
+const donutChartOptions = (label) => {
+    const chartOption = {
+        options: {
+            chart: {
+                width: 380,
+                type: 'polarArea',
+            },
+            labels: label,
+            responsive: [{
+                breakpoint: 480,
+                options: {
+                chart: {
+                    width: 200
+                },
+                legend: {
+                    position: 'bottom'
+                }
+            }
+            }]
+        },
+        chart: {
+            fontFamily:"SUITE-Regular",
+        }
+    }
+        return chartOption;
+}
+
 const chartSeries = (data, beforeData, toYear) => {
     const charData = [
         {
@@ -249,6 +275,14 @@ const miniChartSeries = (data, beforeData, toYear, toMonth) => {
 }
 
 const polarChartSeries = (data) => {
+    // const charData = data.map(e => {
+    //     return {
+    //         name: e.emtnActvType,
+    //         data: e.formattedTotalActvQty ? parseInt(e.formattedTotalActvQty, 10) : 0
+    //     };
+    // });
+    // console.log(data);
+    // console.log(charData);
     return data;
 }
 
@@ -416,6 +450,7 @@ export default function Main_Hp() {
                 setEmtn(emtnData);
                 setEmtnName(prev => prev.concat(emtnData.map(e=>e.emtnActvType)));
                 setEmtnAmt(prev => prev.concat(emtnData.map(e=>e.totalActvQty ?? 0)));
+                //parseInt(item.formattedTotalActvQty.replace(/,/g, ''), 10)
                 
 
             } catch (error) {
@@ -440,6 +475,7 @@ export default function Main_Hp() {
             value: (totScope[toMonth-1] / totScope[toMonth-2] * 100).toFixed(2) ?? 0,
         },
     ]
+    console.log(emtn);
     const renderIcon = (e) => {
         switch (e) {
             case 'T0':  //공통
@@ -471,7 +507,6 @@ export default function Main_Hp() {
         }
     };
 
-    
     return (
         <>
             <div className={gridStyles.maingrid}>
@@ -479,7 +514,7 @@ export default function Main_Hp() {
                     <div className={gridStyles.left_box_top}>
                         {cardStyles.map((style, index) => (
                             <Card 
-                                key={{index}}
+                                key={index}
                                 sx={{
                                     ...style,
                                     cursor: "pointer",
@@ -545,6 +580,9 @@ export default function Main_Hp() {
                                 )}
                             </Card>
                         ))}
+                        {/* <Card sx={{backgroundColor:"white",width:"25%", height: "100%"}}>ㅁ</Card>
+                        <Card sx={{backgroundColor:"white", width:"25%", height: "90%"}}>b</Card>
+                        <Card sx={{backgroundColor:"white", width:"25%", height: "90%"}}>c</Card> */}
                     </div>
                     <div className={gridStyles.left_box_chart}>
                         <StyledChart style={{width:"100%", height:"100%"}}>
@@ -581,12 +619,13 @@ export default function Main_Hp() {
                             <Swiper
                                 spaceBetween={30}    // 슬라이드 사이의 간격
                                 slidesPerView={3.5}     // 화면에 보여질 슬라이드 수
+                                // centeredSlides={true}
                                 pagination={{ clickable: true }}  // 페이지 네이션 (점으로 표시되는 네비게이션)
                                 navigation={true}           // 이전/다음 버튼 네비게이션
                                 modules={[Navigation, Pagination]}
                             >
                                 {saleAmount.map((data, idx) => (
-                                    <SwiperSlide style={{width:"100%", height:"100%"}}>
+                                    <SwiperSlide key={data.pjtName || idx} style={{width:"100%", height:"100%"}}>
                                         <Card sx={{backgroundColor:"white", width:"95%", height:"70%", margin:"1rem auto", borderRadius:"15px", display:"flex", flexDirection:"column"}}>
                                             <div className={gridStyles.left_bottom_1}>
                                                 <div className={gridStyles.left_bottom_medal}>
@@ -619,47 +658,29 @@ export default function Main_Hp() {
                         </div>
                         <div className={gridStyles.right_swiper_area}>
                             <div style={{fontWeight:"bold", fontSize:"22px", marginLeft:"0.5rem", color:"rgb(55, 57, 78)"}}>
-                                활동량
+                                배출량
                             </div>
                             <StyledRoot2 style={{width:"100%", height:"100%", overflow:"hidden"}}>
                                 <Swiper
                                     direction='vertical'
                                     spaceBetween={40}    // 슬라이드 사이의 간격
                                     slidesPerView={3.5}     // 화면에 보여질 슬라이드 수
+                                    // centeredSlides={true}
                                     pagination={{ clickable: true }}  // 페이지 네이션 (점으로 표시되는 네비게이션)
                                     navigation={true}           // 이전/다음 버튼 네비게이션
                                     modules={[Navigation, Pagination]}
                                 >
-                                    {emtn.map((data) => (
-                                        <SwiperSlide style={{width:"100%", height:"100%"}}>
-                                            <ConfigProvider
-                                            theme={{
-                                                token:{
-                                                    fontFamily:"SUITE-Regular",
-                                                    fontSize:"1.2rem"
-                                                }
-                                            }} >
-                                                <Popover placement='left' title={data.emtnActvType} content={data.actvQtyEmtnEquipList.map(v => (
-                                                <div style={{display:"flex", flexDirection:"row", justifyContent:"space-between", alignContent:"center", gap:"1rem"}}>
-                                                    <div>
-                                                    {v.equipLibName}
-                                                    </div>
-                                                    <div>
-                                                        {`${v.formattedEquipActvQty} ${data.inputUnitCode}`}
+                                    {emtn.map((data, idx) => (
+                                        <SwiperSlide key={data.emtnActvType || idx} style={{width:"100%", height:"100%"}}>
+                                            <Card sx={{backgroundColor:"white", width:"90%", height:"100%", margin:"1rem auto", borderRadius:"15px", display:"flex", flexDirection:"column", backgroundColor:"rgb(241,244,248)"}}>
+                                                <div className={gridStyles.left_bottom_1}>
+                                                    <div className={gridStyles.right_swiper_box_logo}>
+                                                        {renderIcon(data.actvDataDvs)}
+                                                        {data.emtnActvType}
                                                     </div>
                                                 </div>
-                                                ))} arrow={true}>
-                                                    <Card sx={{backgroundColor:"white", width:"90%", height:"100%", margin:"1rem auto", borderRadius:"15px", display:"flex", flexDirection:"column", backgroundColor:"rgb(241,244,248)"}}>
-                                                        <div className={gridStyles.left_bottom_1}>
-                                                            <div className={gridStyles.right_swiper_box_logo}>
-                                                                {renderIcon(data.actvDataDvs)}
-                                                                {data.emtnActvType}
-                                                            </div>
-                                                        </div>
-                                                        <div className={gridStyles.right_swiper_emtn}>{`${data.formattedTotalActvQty !== "" ? data.formattedTotalActvQty : 0} ${data.inputUnitCode}`}</div>
-                                                    </Card>
-                                                </Popover>
-                                            </ConfigProvider>
+                                                <div className={gridStyles.right_swiper_emtn}>{`${data.formattedTotalActvQty !== "" ? data.formattedTotalActvQty : 0} ${data.inputUnitCode}`}</div>
+                                            </Card>
                                         </SwiperSlide>
                                     ))}
                                 </Swiper>
