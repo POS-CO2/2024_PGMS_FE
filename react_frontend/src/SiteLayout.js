@@ -59,7 +59,12 @@ const mapMenuDataToItems = (menuData) => {
             } else {
             return {
                 key: `${childItem.id}`,
-                label: `${childItem.name}${childItem.accessUser !== 'FP' ? '*' : ''}`,  //현장이 볼 수 없는 메뉴명 뒤에 * 붙이기
+                label: (
+                    <>
+                        {childItem.name}
+                        {childItem.accessUser !== 'FP' && <span style={{ color: '#FF7474' }}>*</span>} {/* * 기호를 빨간색으로 표시 */}
+                    </>
+                ),
                 path: childItem.url,  // 하위 메뉴가 없을 경우 path를 직접 설정
             };
             }
@@ -70,7 +75,7 @@ const mapMenuDataToItems = (menuData) => {
             label: 
                 <>
                     {menuItem.name}
-                    {menuItem.accessUser !== 'FP' ? '*' : ''}   {/*현장이 볼 수 없는 메뉴명 뒤에 * 붙이기 */}
+                    {menuItem.accessUser !== 'FP' && <span style={{ color: '#FF7474' }}>*</span>} {/* 현장이 볼 수 없는 메뉴명 뒤에 *을 빨간색으로 */}
                 </>,
             icon: icon,
             children: mapChildren(menuItem.menu),

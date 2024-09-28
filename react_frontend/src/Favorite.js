@@ -138,7 +138,7 @@ const Favorite = ({ handleMenuClick = ()=>{} }) => {
                   renderItem={item => (
                   <List.Item onClick={() => onFavClick(item.menuName)}>
                       <IconContainer>
-                          <StarOutlined />
+                          <StarOutlined style={{ color: '#FFCC00' }}/>
                       </IconContainer>
                       <FavoriteItem>
                           {item.menuName}
