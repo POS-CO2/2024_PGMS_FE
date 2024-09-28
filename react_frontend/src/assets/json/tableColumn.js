@@ -196,7 +196,7 @@ export const equipDocumentColumns = [
     { key: 'id', label: 'id', hidden: true },
     { key: 'actvYear', label: '활동년도', hidden: true },
     { key: 'actvMth', label: '활동월', hidden: false },
-    { key: 'name', label: '이름', hidden: false },
+    { key: 'name', label: '자료명', hidden: false },
     { key: 'creatorDeptCode', label: '등록자 부서명', hidden: true },
     { key: 'creatorName', label: '등록자', hidden: false },
 ]
