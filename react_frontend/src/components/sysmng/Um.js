@@ -24,6 +24,14 @@ export default function Um() {
         const leftTableSub = localStorage.getItem("leftTableSub");
         return leftTableSub ? JSON.parse(leftTableSub) : [];
     });
+    const [dept, setDept] = useState([]);
+    const [selectedUser, setSelectedUser] = useRecoilState(selectedUserState);
+    const [editable, setEditable] = useState(true);
+    const [patchedUserList, setPatchedUserList] = useState(userList);
+    const [isModalOpen, setIsModalOpen] = useState({
+        Delete: false,
+        UmAdd: false,
+    });
 
     const access = [
         {
@@ -90,7 +98,7 @@ export default function Um() {
         setFormData(e);
     }
 
-    const [selectedUser, setSelectedUser] = useRecoilState(selectedUserState);
+    
 
     const handleRowClick = (data) => {
         const e = data.row;
@@ -99,10 +107,7 @@ export default function Um() {
         setEditable(true);
     };
 
-    const [isModalOpen, setIsModalOpen] = useState({
-        Delete: false,
-        UmAdd: false,
-    });
+    
 
     const showModal = (modalType) => {
         setIsModalOpen(prevState => ({...prevState, [modalType]: true}));
@@ -152,7 +157,7 @@ export default function Um() {
         showModal('UmAdd');
     }
 
-    const [editable, setEditable] = useState(true);
+    
     
     const handleEditClick = async () => {
         const selectedDept = dept.find(option => option.label === selectedUser.deptCode) || {};
@@ -192,7 +197,6 @@ export default function Um() {
         showModal('Delete');
     }
 
-    
     const handleInputChange = (e) => {
         const { id, value } = e.target;
         setSelectedUser(prevState => ({
@@ -201,14 +205,25 @@ export default function Um() {
         }));
     };
 
-    const [dept, setDept] = useState([]);
-
     // 서치폼이 변경될 때 목록 clear
     const handleFieldsChange = () => {
         setUserList([]);
         setSelectedUser({});
     };
-    
+
+    useEffect(() => {
+        const updateKoreanRole = () => {
+            const updatedList = userList.map(data => ({
+                ...data,
+                role: data.role === "FP" ? "현장 담당자" : (
+                    data.role === "HP" ? "본사 담당자" : "시스템 관리자"
+                )
+            }))
+            setPatchedUserList(updatedList);
+        }
+        updateKoreanRole();
+    }, [userList])
+
     return (
         <>
             <div className={mainStyle.breadcrumb}>
@@ -248,8 +263,7 @@ export default function Um() {
                     </Card>
                     <Card className={sysStyles.card_box} sx={{width:"50%", borderRadius:"15px", height:"80vh"}}>
                         {(!selectedUser || Object.keys(selectedUser).length !== 0) ? (
-                            <ConfigProvider
-                            theme={{token:{fontFamily:"SUITE-Regular"}}}>
+                            <ConfigProvider theme={{token:{fontFamily:"SUITE-Regular"}}}>
                                 <TableCustom title='사용자 상세정보' buttons={['DoubleClickEdit']} onClicks={[handleEditClick]} table={false} 
                                 selectedRows={[selectedUser]}/>
                                 <div className={sysStyles.card_box}>
@@ -290,10 +304,30 @@ export default function Um() {
                                         </Select>
                                 </div>
                             </div>
+                            <div className={sysStyles.text_field} style={{marginTop:"0.5rem",width:"50%"}}>
+                                <div className={sysStyles.text}><span className={modalStyles.star}>*</span>{"부서명"}</div>
+                                    <Select value={selectedUser.deptCode} onChange={(value) => handleInputChange({ target: { id: 'deptCode', value} })} defaultValue={selectedUser.deptCode} style={{width:"100%", height:"2.5rem", fontSize:"4rem"}}>
+                                    {dept.map(option => (
+                                        <Select.Option key={option.value} value={option.value}>
+                                            {option.label}
+                                        </Select.Option>
+                                    ))}
+                                    </Select>
+                            </div>
+                            <div className={sysStyles.text_field} style={{marginTop:"0.5rem",width:"50%"}}>
+                                <div className={sysStyles.text}><span className={modalStyles.star}>*</span>{"접근권한"}</div>
+                                    <Select value={selectedUser.role} onChange={(value) => handleInputChange({ target: { id: 'role', value } })} defaultValue={selectedUser.role} style={{width:"100%", height:"2.5rem", fontSize:"4rem"}}>
+                                    {access.map(option => (
+                                        <Select.Option key={option.value} value={option.value}>
+                                            {option.label}
+                                        </Select.Option>
+                                    ))}
+                                    </Select>
+                            </div>
                             </ConfigProvider>
                         ) : (
-                            <TableCustom title='사용자 상세정보' table={false} />
-                        )}
+                        <TableCustom title='사용자 상세정보' table={false} />
+                    )}
                     </Card>
                 </div>
             }

@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import * as chatStyles from './assets/css/chat.css'
-import { ChatOutlined, Close, Person, Search } from "@mui/icons-material";
+import { CampaignTwoTone, ChatOutlined, Close, Person, Search } from "@mui/icons-material";
 import { Avatar, IconButton } from "@mui/material";
 import UserList from "./chat/UserList";
 import ChatList from "./chat/ChatList";
@@ -15,6 +15,13 @@ export default function Chat({ handleCloseClick }) {
     const [chatContent, setChatContent] = useState([]); 
     const ws = useRef(null);
     const [roomChange, setRoomChange] = useState(false);
+
+    const noticeUser = {
+        id: 0,
+        userName: "공지사항",
+        role: "NOTICE",
+        deptCode: "",
+    }
 
     const handleUserClick = (e) => {
         setStatus("user");
@@ -82,10 +89,14 @@ export default function Chat({ handleCloseClick }) {
 
     const handleChattingClick = async (e) => {
         setChatUser(e);
+        console.log("1", e);
         const chatResponse = await axiosInstance.get(`/chat?targetId=${e.id}&messageId=${chatContent.length === 0 ? 4000000000 : chatContent[chatContent.length - 1].messageId}&count=${10}`);
         setChatContent(chatResponse.data);
         try {
-            const enterPost = await axiosInstance.post(`/chat/enter?targetId=${e.id}`);
+            if (e.id !== 0){
+                const enterPost = await axiosInstance.post(`/chat/enter?targetId=${e.id}`);
+                
+            }
             setStatus("chatting");
         } catch (error) {
             console.error(error);
@@ -95,7 +106,7 @@ export default function Chat({ handleCloseClick }) {
     const fetchRoom = async () => {
         const roomResponse = await axiosInstance.get(`/chat/room`);
         const roomData = roomResponse.data;
-        
+        console.log(roomData);
         const updatedRoomData = roomData.map((room) => {
             const filteredUsers = room.users.filter((user) => user.id !== me.id); // localStorage의 user.id와 일치하지 않는 사용자들만 남기기
             return {
@@ -132,12 +143,16 @@ export default function Chat({ handleCloseClick }) {
         }
         if (data.role === "FP") {
             return <Avatar sx={{ bgcolor: "rgb(14, 170, 0)", fontSize:"1rem", fontWeight:"bold" }} >현장</Avatar>
+            
         }
         else if (data.role === "HP") {
             return <Avatar sx={{ bgcolor: "rgb(74, 122, 230)", fontSize:"1rem", fontWeight:"bold" }} >본사</Avatar>
         }
-        else {
+        else if (data.role === "ADMIN") {
             return <Avatar sx={{ bgcolor: "orange", fontSize:"1.3rem", fontWeight:"bold" }} >관리</Avatar>
+        }
+        else {
+            return <CampaignTwoTone sx={{bgcolor:"rgb(64,64,64)", width:"40px", height:"40px", borderRadius:"50%", color:"white"}}/>
         }
     }
 
@@ -164,21 +179,21 @@ export default function Chat({ handleCloseClick }) {
             </div>
             <div className={chatStyles.board}>
                 <div className={chatStyles.board_header}>
-                    <IconButton >
+                    {/* <IconButton >
                         <Search />
-                    </IconButton>
+                    </IconButton> */}
                     <IconButton onClick={handleCloseClick}>
                         <Close />
                     </IconButton>
                 </div>
                 {
                     status === "user" ? (
-                        <UserList UserListIcon={UserListIcon} handleChattingClick={handleChattingClick} fpUser={fpUser} hpUser={hpUser} adminUser={adminUser} me={me} />
+                        <UserList UserListIcon={UserListIcon} handleChattingClick={handleChattingClick} noticeUser={noticeUser} fpUser={fpUser} hpUser={hpUser} adminUser={adminUser} me={me} />
                     ) : (
                         status === "chat" ? (
-                            <ChatList UserListIcon={UserListIcon} ws={ws.current} handleChattingClick={handleChattingClick} room={room} fetchRoom={fetchRoom} roomChange={roomChange} setRoomChange={setRoomChange}/>
+                            <ChatList UserListIcon={UserListIcon} ws={ws.current} handleChattingClick={handleChattingClick} noticeUser={noticeUser} room={room} fetchRoom={fetchRoom} roomChange={roomChange} setRoomChange={setRoomChange}/>
                         ) : (
-                            <Chatting UserListIcon={UserListIcon} ws={ws.current} handleChatListClick={handleChatListClick} handleRead={handleRead} handleReadAll={handleReadAll} updateChatList={updateChatList} chatContent={chatContent} fetchRoom={fetchRoom} setChatContent={setChatContent} roomChange={roomChange} setRoomChange={setRoomChange} chatUser={chatUser} me={me}/>
+                            <Chatting UserListIcon={UserListIcon} ws={ws.current} handleChatListClick={handleChatListClick} noticeUser={noticeUser} handleRead={handleRead} handleReadAll={handleReadAll} updateChatList={updateChatList} chatContent={chatContent} fetchRoom={fetchRoom} setChatContent={setChatContent} roomChange={roomChange} setRoomChange={setRoomChange} chatUser={chatUser} me={me}/>
                         )
                         
                     )

@@ -1,4 +1,4 @@
-import { Card } from '@mui/material';
+import { Card, Divider } from '@mui/material';
 import React, { useState, useRef, useEffect } from 'react';
 import ApexChart from "react-apexcharts";
 import { Swiper, SwiperSlide } from 'swiper/react';
@@ -394,6 +394,7 @@ export default function Main_Hp() {
     const [emtn, setEmtn] = useState([]);
     const [emtnName, setEmtnName] = useState([]);
     const [emtnAmt, setEmtnAmt] = useState([]);
+    const [emissionAmt, setEmissionAmt] = useState([]);
 
     let today = new Date();
     let toYear = today.getFullYear();
@@ -450,7 +451,7 @@ export default function Main_Hp() {
                 setEmtn(emtnData);
                 setEmtnName(prev => prev.concat(emtnData.map(e=>e.emtnActvType)));
                 setEmtnAmt(prev => prev.concat(emtnData.map(e=>e.totalActvQty ?? 0)));
-                //parseInt(item.formattedTotalActvQty.replace(/,/g, ''), 10)
+                setEmissionAmt(prev => prev.concat(emtnData.map(e => e.totalEmissionQty ?? 0)));
                 
 
             } catch (error) {
@@ -460,7 +461,7 @@ export default function Main_Hp() {
         fetchChartData()
 
     }, [])
-
+    console.log(emissionAmt);
     const topData = [
         {
             name: "Scope1",
@@ -649,7 +650,7 @@ export default function Main_Hp() {
                         <StyledChart2 style={{width:"100%", height:"100%"}}>
                             <ApexChart
                                 options={polarAreaChartOptions(emtnName)}
-                                series={polarChartSeries(emtnAmt)}
+                                series={polarChartSeries(emissionAmt)}
                                 type="pie"
                                 width={"100%"}
                                 height={"100%"}
@@ -658,7 +659,7 @@ export default function Main_Hp() {
                         </div>
                         <div className={gridStyles.right_swiper_area}>
                             <div style={{fontWeight:"bold", fontSize:"22px", marginLeft:"0.5rem", color:"rgb(55, 57, 78)"}}>
-                                배출량
+                                배출량 및 활동량
                             </div>
                             <StyledRoot2 style={{width:"100%", height:"100%", overflow:"hidden"}}>
                                 <Swiper
@@ -687,7 +688,6 @@ export default function Main_Hp() {
                             </StyledRoot2>
                         </div>
                     </Card>
-                    
                 </div>
             </div>
         </>

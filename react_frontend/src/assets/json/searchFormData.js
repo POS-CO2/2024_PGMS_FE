@@ -84,10 +84,10 @@ export const formField_um = [
 ]
 
 export const formField_mal = [
-    { type: 'InputText', name: 'userName', label: "사용자명"},
+    { type: 'InputText', name: 'userName', label: "이름"},
     { type: 'InputText', name: 'loginId', label: "로그인ID"},
     { type: 'DropDown', name: 'deptCode', label: "부서명", options: []},
-    { type: 'DropDown', name: 'role', label: '권한', required: false, options: [
+    { type: 'DropDown', name: 'role', label: '접근권한', required: false, options: [
         {value: 'FP', label: '현장 담당자'},
         {value: 'HP', label: '본사 담당자'},
         {value: 'ADMIN', label: '시스템 관리자'},
