@@ -2,10 +2,24 @@ import React, { useEffect, useRef, useState } from "react";
 import * as chatStyles from '../assets/css/chat.css'
 import { ArrowBackIosNew, ArrowDownward, Send } from "@mui/icons-material";
 import { Chip, CircularProgress, Divider, Fab, IconButton, Snackbar } from "@mui/material";
-import { ConfigProvider, Input } from "antd";
+import { Button, ConfigProvider, Input } from "antd";
 import TextArea from "antd/es/input/TextArea";
 import axiosInstance from "../utils/AxiosInstance";
 import {useInView} from 'react-intersection-observer';
+import styled from "styled-components";
+
+const StyledButton = styled(Button)`
+    .ant-btn-default {
+        background-color: #0eaa00;
+        color: white;
+    }
+
+    .ant-btn {
+        background-color: #0eaa00;
+        color: white;
+    }
+
+`;
 
 export default function Chatting({ UserListIcon ,handleChatListClick, chatUser, noticeUser, me, chatContent, setChatContent, handleRead,handleReadAll, ws, fetchRoom, roomChange, setRoomChange, updateChatList}) {
 
@@ -118,6 +132,7 @@ export default function Chatting({ UserListIcon ,handleChatListClick, chatUser, 
 
     const markAsRead = async (messageId) => {
         try {
+            console.log("messageId", messageId);
             await axiosInstance.post(`/chat/check?objectId=${messageId}`);
         } catch (error) {
             console.error('Failed to mark message as read:', error);
@@ -144,11 +159,9 @@ export default function Chatting({ UserListIcon ,handleChatListClick, chatUser, 
                 handleReadAll();
             }
             else if (message.type === 'KEYBOARD' && message.receiverId === me.id){
-                console.log(message);
                 setShowIsTyping(true);
 
                 if (typingIndicatorTimeoutRef.current) {
-                    console.log(typingIndicatorTimeoutRef.current);
                     clearTimeout(typingIndicatorTimeoutRef.current);
                 }
 
@@ -210,6 +223,39 @@ export default function Chatting({ UserListIcon ,handleChatListClick, chatUser, 
                             {data.message}
                             {!data.readYn && <div style={{position: "absolute",bottom: "0", left:"-1rem", color:"rgb(14, 170, 0)"}}>1</div>}
                         </div>
+                        <ConfigProvider 
+                        theme={{
+                            components:{
+                                Button:{
+                                    borderColorDisabled:"white",
+                                    defaultBg:"#0eaa00",
+                                    defaultBorderColor:"#0eaa00",
+                                    defaultColor:"white",
+                                    defaultHoverBg:"white",
+                                    defaultHoverColor:"#0eaa00",
+                                    defaultHoverBorderColor:"#0eaa00"
+
+                                }
+                            },
+                            token:{
+                                fontFamily:"SUITE-Regular"
+                            }
+                        }}
+                        >
+                        {data.senderId === 0 && (
+                            !data.readYn ? (
+                                <StyledButton onClick={() => markAsRead(data.id)}>
+                                    읽음
+                                </StyledButton>
+                            ) : (
+                                <StyledButton disabled >
+                                    읽음
+                                </StyledButton>
+                            )
+
+                        )}
+                        </ConfigProvider>
+                        
                     </div>
                 ))}
                 {/* {isLoading && <CircularProgress color="success" sx={{margin:"0 auto"}}/>} */}
@@ -242,7 +288,7 @@ export default function Chatting({ UserListIcon ,handleChatListClick, chatUser, 
                                     <TextArea 
                                     value={text} 
                                     onChange={(e) => handleKeyboard(e)} 
-                                    placeholder="메시지 수신만 가능합니다." 
+                                    placeholder={"메시지 수신만 가능합니다.\n확인 후 읽음 버튼을 눌러주세요."} 
                                     onKeyDown={handleKeyPress}
                                     disabled
                                     autoSize={{
