@@ -36,7 +36,7 @@ const UserIcon = ({data}) => {
         return <Avatar sx={{ bgcolor: "orange", fontSize:"1.3rem", fontWeight:"bold", width:"50px", height:"50px" }} >관리</Avatar>
     }
     else {
-        return <CampaignTwoTone fontSize='large' sx={{bgcolor:"gold", width:"50px", height:"50px", borderRadius:"50%", color:"red"}}/>
+        return <CampaignTwoTone sx={{bgcolor:"rgb(64,64,64)", width:"50px", height:"50px", borderRadius:"50%", color:"white"}}/>
     }
 }
 

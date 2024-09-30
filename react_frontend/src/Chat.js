@@ -149,7 +149,7 @@ export default function Chat({ handleCloseClick }) {
             return <Avatar sx={{ bgcolor: "orange", fontSize:"1.3rem", fontWeight:"bold" }} >관리</Avatar>
         }
         else {
-            return <CampaignTwoTone fontSize='large' sx={{bgcolor:"gold", width:"40px", height:"40px", borderRadius:"50%", color:"red"}}/>
+            return <CampaignTwoTone sx={{bgcolor:"rgb(64,64,64)", width:"40px", height:"40px", borderRadius:"50%", color:"white"}}/>
         }
     }
 
