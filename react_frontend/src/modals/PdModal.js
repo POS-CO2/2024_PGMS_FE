@@ -1579,14 +1579,20 @@ export function EfmAddModal({ isModalOpen, handleOk, handleCancel, rowData }) {
                     {error.coefClassCode && <div className={modalStyles.error_message}>{error.coefClassCode}</div>}
                 </div>
                 <div className={sysStyles.text_field}>
-                    <div className={sysStyles.text}>{"온실가스코드"}</div>
-                    <Select value={selectedGhgCode} allowClear={{ clearIcon: <CloseOutlined style={{color: "red"}} /> }} placeholder="계수구분코드를 선택해주세요." onChange={(value) => {setSelectedGhgCode(value)}} style={{width:"18rem", height:"2rem",fontSize:"4rem"}}>
-                    {ghgCode.map(option => (
-                        <Select.Option key={option.code} value={option.code}>
-                            {option.name}
-                        </Select.Option>
-                    ))}
-                    </Select>
+                    <div className={sysStyles.text}><span className={modalStyles.star}>*</span>{"온실가스코드"}</div>
+                    {ghgCode.length !== 0 ? (
+                        <Select value={selectedGhgCode} allowClear={{ clearIcon: <CloseOutlined style={{color: "red"}} /> }} placeholder="계수구분코드를 선택해주세요." onChange={(value) => {setSelectedGhgCode(value)}} style={{width:"18rem", height:"2rem",fontSize:"4rem"}}>
+                        {ghgCode.map(option => (
+                            <Select.Option key={option.code} value={option.code}>
+                                {option.name}
+                            </Select.Option>
+                        ))}
+                        </Select>
+                    ) : (
+                        <Select disabled placeholder="순발열량은 온실가스코드가 없습니다." style={{width:"18rem", height:"2rem",fontSize:"4rem"}}>
+                        </Select>
+                    )}
+                    
                 </div>
                 <div className={sysStyles.text_field}>
                     <div className={sysStyles.text}><span className={modalStyles.star}>*</span>{"단위"}</div>
@@ -1624,9 +1630,6 @@ export function EfmEditModal({ isModalOpen, handleOk, handleCancel, rowData }) {
     const [error, setError] = useState({});
 
     const handleSelect = async() => {
-        let swalOptions = {
-            confirmButtonText: '확인'
-        };
 
         const formData = {
             id: rowData.id,
@@ -1648,7 +1651,6 @@ export function EfmEditModal({ isModalOpen, handleOk, handleCancel, rowData }) {
             setError(newError);
             return;
         }
-
         setError({});
 
         // handleOk을 호출하여 모달을 닫고 상위 컴포넌트에 알림
@@ -1748,14 +1750,20 @@ export function EfmEditModal({ isModalOpen, handleOk, handleCancel, rowData }) {
                     {error.coefClassCode && <div className={modalStyles.error_message}>{error.coefClassCode}</div>}
                 </div>
                 <div className={sysStyles.text_field}>
-                    <div className={sysStyles.text}>{"온실가스코드"}</div>
-                    <Select value={selectedGhgCode} placeholder="계수구분코드를 선택해주세요." allowClear={{ clearIcon: <CloseOutlined style={{color: "red"}} /> }} onChange={(value) => setSelectedGhgCode(value)} style={{width:"18rem", height:"2rem",fontSize:"4rem"}}>
-                    {ghgCode.map(option => (
-                        <Select.Option key={option.code} value={option.code}>
-                            {option.name}
-                        </Select.Option>
-                    ))}
-                    </Select>
+                    <div className={sysStyles.text}><span className={modalStyles.star}>*</span>{"온실가스코드"}</div>
+                    {ghgCode.length !== 0 ? (
+                        <Select value={selectedGhgCode} placeholder="계수구분코드를 선택해주세요." allowClear={{ clearIcon: <CloseOutlined style={{color: "red"}} /> }} onChange={(value) => setSelectedGhgCode(value)} style={{width:"18rem", height:"2rem",fontSize:"4rem"}}>
+                        {ghgCode.map(option => (
+                            <Select.Option key={option.code} value={option.code}>
+                                {option.name}
+                            </Select.Option>
+                        ))}
+                        </Select>
+                    ) : (
+                        <Select disabled placeholder="순발열량은 온실가스코드가 없습니다." style={{width:"18rem", height:"2rem",fontSize:"4rem"}}>
+                        </Select>
+                    )}
+                    
                 </div>
                 <div className={sysStyles.text_field}>
                     <div className={sysStyles.text}><span className={modalStyles.star}>*</span>{"단위"}</div>
