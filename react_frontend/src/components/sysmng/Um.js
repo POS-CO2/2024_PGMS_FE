@@ -24,6 +24,14 @@ export default function Um() {
         const leftTableSub = localStorage.getItem("leftTableSub");
         return leftTableSub ? JSON.parse(leftTableSub) : [];
     });
+    const [dept, setDept] = useState([]);
+    const [selectedUser, setSelectedUser] = useRecoilState(selectedUserState);
+    const [editable, setEditable] = useState(true);
+    const [patchedUserList, setPatchedUserList] = useState(userList);
+    const [isModalOpen, setIsModalOpen] = useState({
+        Delete: false,
+        UmAdd: false,
+    });
 
     const access = [
         {
@@ -91,7 +99,7 @@ export default function Um() {
         setFormData(e);
     }
 
-    const [selectedUser, setSelectedUser] = useRecoilState(selectedUserState);
+    
 
     const handleRowClick = (data) => {
         const e = data.row;
@@ -100,10 +108,7 @@ export default function Um() {
         setEditable(true);
     };
 
-    const [isModalOpen, setIsModalOpen] = useState({
-        Delete: false,
-        UmAdd: false,
-    });
+    
 
     const showModal = (modalType) => {
         setIsModalOpen(prevState => ({...prevState, [modalType]: true}));
@@ -159,7 +164,7 @@ export default function Um() {
         showModal('UmAdd');
     }
 
-    const [editable, setEditable] = useState(true);
+    
     
     const handleEditClick = async () => {
         const selectedDept = dept.find(option => option.label === selectedUser.deptCode) || {};
@@ -199,7 +204,6 @@ export default function Um() {
         showModal('Delete');
     }
 
-    
     const handleInputChange = (e) => {
         const { id, value } = e.target;
         setSelectedUser(prevState => ({
@@ -208,7 +212,20 @@ export default function Um() {
         }));
     };
 
-    const [dept, setDept] = useState([]);
+    useEffect(() => {
+        const updateKoreanRole = () => {
+            const updatedList = userList.map(data => ({
+                ...data,
+                role: data.role === "FP" ? "현장 담당자" : (
+                    data.role === "HP" ? "본사 담당자" : "시스템 관리자"
+                )
+            }))
+            setPatchedUserList(updatedList);
+        }
+        updateKoreanRole();
+    }, [userList])
+
+    
     
     return (
         <>
@@ -222,7 +239,7 @@ export default function Um() {
             />
             <div className={sysStyles.main_grid}>
                 <Card className={sysStyles.card_box} sx={{width:"50%", height:"77vh", borderRadius:"15px"}}>
-                    <TableCustom title="사용자 목록" columns={userColumns} data={userList} submittedRowIdx={submittedUserIdx} buttons={['Delete', 'Add']} selectedRows={[selectedUser]} onClicks={[handleDeleteClick, handleAddClick]} onRowClick={(e) => handleRowClick(e)} modals={
+                    <TableCustom title="사용자 목록" columns={userColumns} data={patchedUserList} submittedRowIdx={submittedUserIdx} buttons={['Delete', 'Add']} selectedRows={[selectedUser]} onClicks={[handleDeleteClick, handleAddClick]} onRowClick={(e) => handleRowClick(e)} modals={
                         [
                             isModalOpen.UmAdd && {
                                 "modalType" : 'UmAdd',
@@ -250,6 +267,10 @@ export default function Um() {
                             selectedRows={[selectedUser]}/>
                             <div className={sysStyles.card_box}>
                             <div className={sysStyles.text_field} style={{marginTop:"2rem",width:"50%"}}>
+                                <div className={sysStyles.text}><span className={modalStyles.star}>*</span>{"이름 "}</div>
+                                    <TextField size="small" id='userName'  variant='outlined' onChange={handleInputChange} defaultValue={selectedUser.userName} value={selectedUser.userName} sx={{width:"100%"}}/>
+                            </div>
+                            <div className={sysStyles.text_field} style={{marginTop:"0.5rem",width:"50%"}}>
                                 <div className={sysStyles.text}>
                                     <span className={modalStyles.star}>*</span>{"로그인ID"}
                                 </div>
@@ -262,10 +283,6 @@ export default function Um() {
                                 <TextField size="small" placeholder='비밀번호를 입력하지 않으면 기존 비밀번호가 유지됩니다.' id='password'  variant='outlined' onChange={(e) => setPassword(e.target.value)} value={password} sx={{width:"100%"}}/>
                             </div>
                             <div className={sysStyles.text_field} style={{marginTop:"0.5rem",width:"50%"}}>
-                                <div className={sysStyles.text}><span className={modalStyles.star}>*</span>{"이름 "}</div>
-                                    <TextField size="small" id='userName'  variant='outlined' onChange={handleInputChange} defaultValue={selectedUser.userName} value={selectedUser.userName} sx={{width:"100%"}}/>
-                            </div>
-                            <div className={sysStyles.text_field} style={{marginTop:"0.5rem",width:"50%"}}>
                                 <div className={sysStyles.text}><span className={modalStyles.star}>*</span>{"부서명"}</div>
                                     <Select value={selectedUser.deptCode} onChange={(value) => handleInputChange({ target: { id: 'deptCode', value} })} defaultValue={selectedUser.deptCode} style={{width:"100%", height:"2.5rem", fontSize:"4rem"}}>
                                     {dept.map(option => (
@@ -276,7 +293,7 @@ export default function Um() {
                                     </Select>
                             </div>
                             <div className={sysStyles.text_field} style={{marginTop:"0.5rem",width:"50%"}}>
-                                <div className={sysStyles.text}><span className={modalStyles.star}>*</span>{"권한"}</div>
+                                <div className={sysStyles.text}><span className={modalStyles.star}>*</span>{"접근권한"}</div>
                                     <Select value={selectedUser.role} onChange={(value) => handleInputChange({ target: { id: 'role', value } })} defaultValue={selectedUser.role} style={{width:"100%", height:"2.5rem", fontSize:"4rem"}}>
                                     {access.map(option => (
                                         <Select.Option key={option.value} value={option.value}>

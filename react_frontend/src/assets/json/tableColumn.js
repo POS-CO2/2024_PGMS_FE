@@ -41,7 +41,7 @@ export const codeColumns = [
     { key: 'id', label: 'id', hidden: true },
     { key: 'codeGrpNo', label: '코드그룹ID', hidden: false },
     { key: 'codeGrpName', label: '코드그룹명', hidden: false },
-    { key: 'code', label: '코드번호', hidden: false },
+    { key: 'code', label: '코드ID', hidden: false },
     { key: 'codeName', label: '코드명', hidden: false },
     { key: 'attri1', label: '속성1', hidden: false },
     { key: 'attri2', label: '속성2', hidden: false },
@@ -49,19 +49,19 @@ export const codeColumns = [
 ]
 
 export const codeGroupColumns = [
-    { key: 'codeGrpNo', label: '코드그룹번호', hidden: false },
+    { key: 'codeGrpNo', label: '코드그룹ID', hidden: false },
     { key: 'codeGrpName', label: '코드그룹명', hidden: false },
-    { key: 'codeGrpNameEn', label: '코드그룹영문명', hidden: true },
+    { key: 'codeGrpNameEn', label: '코드그룹영문명', hidden: false },
     { key: 'note', label: '노트', hidden: false },
 ]
 
 export const userColumns = [
     { key: 'id', label: 'id', hidden: true },
-    { key: 'loginId', label: '로그인ID', hidden: false },
     { key: 'userName', label: '이름', hidden: false },
+    { key: 'loginId', label: '로그인ID', hidden: false },
     { key: 'password', label: '비밀번호', hidden: true },
     { key: 'deptCode', label: '부서명', hidden: false },
-    { key: 'role', label: '역할', hidden: false }
+    { key: 'role', label: '접근권한', hidden: false }
 ]
 
 export const menuTableColumns = [
