@@ -221,7 +221,7 @@ export default function Um() {
                 formFields={formFields}
             />
             <div className={sysStyles.main_grid}>
-                <Card className={sysStyles.card_box} sx={{width:"50%", height:"75vh", borderRadius:"15px"}}>
+                <Card className={sysStyles.card_box} sx={{width:"50%", height:"77vh", borderRadius:"15px"}}>
                     <TableCustom title="사용자 목록" columns={userColumns} data={userList} submittedRowIdx={submittedUserIdx} buttons={['Delete', 'Add']} selectedRows={[selectedUser]} onClicks={[handleDeleteClick, handleAddClick]} onRowClick={(e) => handleRowClick(e)} modals={
                         [
                             isModalOpen.UmAdd && {
@@ -242,7 +242,7 @@ export default function Um() {
                         ].filter(Boolean)
                     }/>
                 </Card>
-                <Card className={sysStyles.card_box} sx={{width:"50%", borderRadius:"15px", height:"75vh"}}>
+                <Card className={sysStyles.card_box} sx={{width:"50%", borderRadius:"15px", height:"77vh"}}>
                     {(!selectedUser || Object.keys(selectedUser).length !== 0) ? (
                         <ConfigProvider
                         theme={{token:{fontFamily:"SUITE-Regular"}}}>
