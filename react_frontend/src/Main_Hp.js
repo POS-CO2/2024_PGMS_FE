@@ -1,4 +1,4 @@
-import { Card } from '@mui/material';
+import { Card, Divider } from '@mui/material';
 import React, { useState, useRef, useEffect } from 'react';
 import ApexChart from "react-apexcharts";
 import { Swiper, SwiperSlide } from 'swiper/react';
@@ -360,6 +360,7 @@ export default function Main_Hp() {
     const [emtn, setEmtn] = useState([]);
     const [emtnName, setEmtnName] = useState([]);
     const [emtnAmt, setEmtnAmt] = useState([]);
+    const [emissionAmt, setEmissionAmt] = useState([]);
 
     let today = new Date();
     let toYear = today.getFullYear();
@@ -416,6 +417,7 @@ export default function Main_Hp() {
                 setEmtn(emtnData);
                 setEmtnName(prev => prev.concat(emtnData.map(e=>e.emtnActvType)));
                 setEmtnAmt(prev => prev.concat(emtnData.map(e=>e.totalActvQty ?? 0)));
+                setEmissionAmt(prev => prev.concat(emtnData.map(e => e.totalEmissionQty ?? 0)));
                 
 
             } catch (error) {
@@ -425,7 +427,7 @@ export default function Main_Hp() {
         fetchChartData()
 
     }, [])
-
+    console.log(emissionAmt);
     const topData = [
         {
             name: "Scope1",
@@ -610,7 +612,7 @@ export default function Main_Hp() {
                         <StyledChart2 style={{width:"100%", height:"100%"}}>
                             <ApexChart
                                 options={polarAreaChartOptions(emtnName)}
-                                series={polarChartSeries(emtnAmt)}
+                                series={polarChartSeries(emissionAmt)}
                                 type="pie"
                                 width={"100%"}
                                 height={"100%"}
@@ -619,7 +621,7 @@ export default function Main_Hp() {
                         </div>
                         <div className={gridStyles.right_swiper_area}>
                             <div style={{fontWeight:"bold", fontSize:"22px", marginLeft:"0.5rem", color:"rgb(55, 57, 78)"}}>
-                                활동량
+                                배출량 및 활동량
                             </div>
                             <StyledRoot2 style={{width:"100%", height:"100%", overflow:"hidden"}}>
                                 <Swiper
@@ -639,15 +641,20 @@ export default function Main_Hp() {
                                                     fontSize:"1.2rem"
                                                 }
                                             }} >
-                                                <Popover placement='left' title={data.emtnActvType} content={data.actvQtyEmtnEquipList.map(v => (
-                                                <div style={{display:"flex", flexDirection:"row", justifyContent:"space-between", alignContent:"center", gap:"1rem"}}>
-                                                    <div>
-                                                    {v.equipLibName}
+                                                <Popover placement='left' title={data.emtnActvType} content={data.emtnEquipQtyList.map(v => (
+                                                    <div style={{display:"flex", flexDirection:"row", justifyContent:"space-between", alignContent:"center", gap:"1rem"}}>
+                                                        <div>
+                                                            {v.equipLibName}
+                                                        </div>
+                                                        <div style={{textAlign:"right"}}>
+                                                            <div>
+                                                                {v.formattedEquipEmissionQty}
+                                                            </div>
+                                                            <div style={{fontSize:"0.9rem", color:"grey"}}>
+                                                            {`${v.formattedEquipActvQty} ${data.inputUnitCode}`}
+                                                            </div>
+                                                        </div>
                                                     </div>
-                                                    <div>
-                                                        {`${v.formattedEquipActvQty} ${data.inputUnitCode}`}
-                                                    </div>
-                                                </div>
                                                 ))} arrow={true}>
                                                     <Card sx={{backgroundColor:"white", width:"90%", height:"100%", margin:"1rem auto", borderRadius:"15px", display:"flex", flexDirection:"column", backgroundColor:"rgb(241,244,248)"}}>
                                                         <div className={gridStyles.left_bottom_1}>
@@ -656,7 +663,14 @@ export default function Main_Hp() {
                                                                 {data.emtnActvType}
                                                             </div>
                                                         </div>
-                                                        <div className={gridStyles.right_swiper_emtn}>{`${data.formattedTotalActvQty !== "" ? data.formattedTotalActvQty : 0} ${data.inputUnitCode}`}</div>
+                                                        <div className={gridStyles.right_swiper_emtn}>
+                                                            <div>
+                                                                {data.formattedTotalEmissionQty}
+                                                            </div>
+                                                            <div style={{fontSize:"large", color:"grey"}}>
+                                                                {`${data.formattedTotalActvQty !== "" ? data.formattedTotalActvQty : 0} ${data.inputUnitCode}`}
+                                                            </div>
+                                                        </div>
                                                     </Card>
                                                 </Popover>
                                             </ConfigProvider>
@@ -666,7 +680,6 @@ export default function Main_Hp() {
                             </StyledRoot2>
                         </div>
                     </Card>
-                    
                 </div>
             </div>
         </>
