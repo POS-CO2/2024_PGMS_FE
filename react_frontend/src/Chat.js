@@ -89,11 +89,14 @@ export default function Chat({ handleCloseClick }) {
 
     const handleChattingClick = async (e) => {
         setChatUser(e);
-        console.log(e);
+        console.log("1", e);
         const chatResponse = await axiosInstance.get(`/chat?targetId=${e.id}&messageId=${chatContent.length === 0 ? 4000000000 : chatContent[chatContent.length - 1].messageId}&count=${10}`);
         setChatContent(chatResponse.data);
         try {
-            const enterPost = await axiosInstance.post(`/chat/enter?targetId=${e.id}`);
+            if (e.id !== 0){
+                const enterPost = await axiosInstance.post(`/chat/enter?targetId=${e.id}`);
+                
+            }
             setStatus("chatting");
         } catch (error) {
             console.error(error);
