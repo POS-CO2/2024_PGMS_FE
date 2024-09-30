@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useRecoilState } from "recoil";
-import { selectedPjtState } from '../atoms/pdsAtoms';
+import { selectedPjtState } from '../atoms/searchFormAtoms';
 import * as formItemStyles from '../assets/css/formItem.css';
 import { Form, Button, Input } from 'antd';
 import ModalComponent from "./ModalComponent";

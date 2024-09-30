@@ -19,7 +19,7 @@ export default function Rm({pjtId}) {
     useEffect(() => {
         handleYearChange(year);
         transformToRevChart(revenues);
-    }, [])
+    }, [pjtId])
 
     const transformToRevChart = (data) => {
         //data가 빈 배열인지 확인
@@ -65,7 +65,7 @@ export default function Rm({pjtId}) {
         <>
             <Card sx={{ width: "30%", height: "auto", borderRadius: "0.5rem" }}>
                 <TableCustomDoubleClickEdit 
-                    title='매출액목록' 
+                    title='매출액 목록' 
                     data={revenues}
                     columns={pjtSalesColumns}                
                     buttons={['DoubleClickEdit']}

@@ -62,6 +62,11 @@ export default function Tep() {
         }
     };
 
+    // 서치폼이 변경될 때 목록 clear
+    const handleFieldsChange = () => {
+        setFormData({});
+    };
+
     return (
         <div>
             <div className={mainStyle.breadcrumb}>
@@ -71,6 +76,7 @@ export default function Tep() {
                 initialValues={formData} 
                 onFormSubmit={handleFormSubmit} 
                 formFields={formField_tep} 
+                handleFieldsChange={handleFieldsChange}
             />
 
             {(!formData || Object.keys(formData).length === 0) ? (

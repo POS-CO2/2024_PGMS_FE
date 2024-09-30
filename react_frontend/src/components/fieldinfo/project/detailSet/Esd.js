@@ -127,7 +127,7 @@ export default function Esd({pjtId}) {
         <>
             <Card sx={{ width: "50%", height: "auto", borderRadius: "0.5rem" }}>
                 <TableCustom
-                    title='배출원목록' 
+                    title='배출원 목록' 
                     data={emSources}
                     submittedRowIdx={submittedEsdIdx}
                     columns={equipEmissionColumns}                 
@@ -170,10 +170,10 @@ export default function Esd({pjtId}) {
             <Card sx={{ width: "50%", borderRadius: "0.5rem", paddingBottom: "20px" }}>
                 {(!selectedES || Object.keys(selectedES).length === 0) ?
                 <div className={pdsStyles.card_container}>
-                    <div className={pdsStyles.table_title} style={{ padding: "8px" }}>증빙자료목록</div>
+                    <div className={pdsStyles.table_title} style={{ padding: "8px" }}>증빙자료 목록</div>
                 </div> : (
                     <TableCustom 
-                        title='증빙자료목록' 
+                        title='증빙자료 목록' 
                         data={filteredSDs} 
                         submittedRowIdx={submittedSDIdx}
                         columns={equipDocumentColumns}

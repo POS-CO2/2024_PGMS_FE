@@ -20,33 +20,33 @@ export default function Mal() {
     const [showUser, setShowUser] = useState(true);
     const [dept, setDept] = useState([]);
 
+    const fetchUserList = async () => {
+        try {
+            const {data} = await axiosInstance.get("/sys/user");
+            setUser(data);
+        } catch (error) {
+            console.log(error);
+        }
+    };
+
+    const fetchDeptCode = async () => {
+        try {
+            const res = await axiosInstance.get("/sys/unit?unitType=부서코드");
+            const options = res.data.map(dept => ({
+                value: dept.code,
+                label: dept.name,
+            }));
+            setDept(options);
+            const updateFormFields = formField_mal.map(field => 
+            field.name === 'deptCode' ? {...field, options } : field);
+            setFormFields(updateFormFields);
+            console.log("updateFormFields", updateFormFields);
+        } catch (error) {
+            console.error(error);
+        }
+    };
+
     useEffect(() => {
-        const fetchUserList = async () => {
-            try {
-                const {data} = await axiosInstance.get("/sys/user");
-                setUser(data);
-            } catch (error) {
-                console.log(error);
-            }
-        };
-
-        const fetchDeptCode = async () => {
-            try {
-                const res = await axiosInstance.get("/sys/unit?unitType=부서코드");
-                const options = res.data.map(dept => ({
-                    value: dept.code,
-                    label: dept.name,
-                }));
-                setDept(options);
-                const updateFormFields = formField_mal.map(field => 
-                field.name === 'deptCode' ? {...field, options } : field);
-                setFormFields(updateFormFields);
-                console.log("updateFormFields", updateFormFields);
-            } catch (error) {
-                console.error(error);
-            }
-        };
-
         fetchDeptCode();
 
         // formData값이 없으면 코드 그룹ID 목록을 findAll, 있으면(이전 탭의 검색기록이 있으면) 그 값을 불러옴
@@ -91,8 +91,11 @@ export default function Mal() {
         }
     }
 
-    useEffect(() => {
-    }, [user])
+    // 서치폼이 변경될 때 목록 clear
+    const handleFieldsChange = () => {
+        setUser([]);
+        setSelectedUser({});
+    };
 
     return (
         <>
@@ -103,26 +106,32 @@ export default function Mal() {
                 initialValues={formData} 
                 onFormSubmit={handleFormSubmit} 
                 formFields={formFields} 
+                handleFieldsChange={handleFieldsChange}
+                handleEmptyFields={fetchUserList}
             />
-            <div className={sysStyles.main_grid}>
-                {showUser ? (
-                    <Card className={sysStyles.card_box} sx={{width:"50%", height:"75vh", borderRadius:"15px"}}>
-                        <TableCustom title="사용자 목록" data={user} button="" onRowClick={handleRowClick} columns={userColumns}/>
-                    </Card>
-                ) : (
-                    <Card className={sysStyles.card_box} sx={{width:"50%", height:"75vh", borderRadius:"15px"}}>
-                        <TableCustom title="사용자 목록" data={user} button="" onRowClick={handleRowClick} columns={userColumns}/>
-                    </Card>
-                )}
-                
-                <Card className={sysStyles.card_box} sx={{width:"50%", height:"75vh", borderRadius:"15px"}}>
-                    {showLog ? (
-                        <TableCustom title="메뉴 접속 로그" data={log} button="" columns={menuLogColumns}/>
+
+            {(!user || user.length === 0) ? 
+                <></> :
+                <div className={sysStyles.main_grid}>
+                    {showUser ? (
+                        <Card className={sysStyles.card_box} sx={{width:"50%", height:"75vh", borderRadius:"15px"}}>
+                            <TableCustom title="사용자 목록" data={user} button="" onRowClick={handleRowClick} columns={userColumns}/>
+                        </Card>
                     ) : (
-                        <TableCustom title='메뉴 접속 로그' table={false} />
+                        <Card className={sysStyles.card_box} sx={{width:"50%", height:"75vh", borderRadius:"15px"}}>
+                            <TableCustom title="사용자 목록" data={user} button="" onRowClick={handleRowClick} columns={userColumns}/>
+                        </Card>
                     )}
-                </Card>
-            </div>
+                    
+                    <Card className={sysStyles.card_box} sx={{width:"50%", height:"75vh", borderRadius:"15px"}}>
+                        {showLog ? (
+                            <TableCustom title="메뉴 접속 로그" data={log} button="" columns={menuLogColumns}/>
+                        ) : (
+                            <TableCustom title='메뉴 접속 로그' table={false} />
+                        )}
+                    </Card>
+                </div>
+            }
         </>
     );
 }

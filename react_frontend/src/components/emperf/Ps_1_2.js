@@ -114,7 +114,9 @@ export default function Ps_1_2() {
             }
             if (Object.keys(formData).length === 0) {
                 form.setFieldsValue({ actvYear: yearOptions[0].value });
+                console.log("aaaa");
             }
+
         }
     };
 
@@ -172,6 +174,11 @@ export default function Ps_1_2() {
             setUsagePerfs(usageFilteredPerfs);
             setAmountUsedPerfs(amountUsedFilteredPerfs);
         }
+    };
+
+    // 서치폼이 변경될 때 목록 clear
+    const handleFieldsChange = () => {
+        setFormData({});
     };
 
     function Usage({ data }) {
@@ -341,6 +348,7 @@ export default function Ps_1_2() {
                 onFormSubmit={handleFormSubmit}
                 formFields={formFields.map(field => field.name === 'actvYear' ? { ...field, disabled: actvYearDisabled } : field)} // actvYear 필드의 disabled 상태 반영
                 onProjectSelect={onProjectSelect} 
+                handleFieldsChange={handleFieldsChange}
             />
             
             {(!formData || Object.keys(formData).length === 0) ? 
@@ -349,7 +357,7 @@ export default function Ps_1_2() {
                     <Card sx={{ height: "auto", padding: "0.5rem", borderRadius: "0.5rem" }}>
                         <div className={pdsStyles.table_title} style={{ padding: "0 1rem"}}>프로젝트 상세정보</div>
 
-                        <div className={pdsStyles.row} style={{ padding: "0.5rem 1rem"}}>
+                        <div className={pdsStyles.row} style={{ padding: "0.5rem 1rem" }}>
                             <div className={pdsStyles.pjt_data_container}>프로젝트 지역
                                 <div className={pdsStyles.code}>{selectedPjt.pjtType} / {selectedPjt.regCode}</div>
                             </div>

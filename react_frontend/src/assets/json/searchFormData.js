@@ -104,12 +104,12 @@ export const formField_efm = [
 export const formField_pg = [
     { type: 'InputText', name: 'pjtCode', label: '프로젝트코드'},
     { type: 'InputText', name: 'pjtName', label: '프로젝트명'},
-    { type: 'InputText', name: 'managerId', label: '담당자사번'},
-    { type: 'InputText', name: 'managerName', label: '담당자명'},
+    { type: 'DropDown', name: 'reg', label: '지역', options: []},
+    { type: 'SelectCalendar', name: 'calendar', label: '조회기간' },
     { type: 'DropDown', name: 'divCode', label: '본부명', options: []},
     { type: 'DropDown', name: 'pjtProgStus', label: '프로젝트진행상태', options: []},
-    { type: 'DropDown', name: 'reg', label: '지역', options: []},
-    { type: 'SelectCalendar', name: 'calendar', label: '조회기간' }
+    { type: 'InputText', name: 'managerId', label: '담당자사번'},
+    { type: 'InputText', name: 'managerName', label: '담당자명'},
 ]
 
 const currentYear = new Date().getFullYear();

@@ -109,7 +109,7 @@ export const pjtSalesColumns = [
 
 export const pjtManagerColumns = [
     { key: 'id', label: 'id', hidden: true },
-    { key: 'loginId', label: '사번', hidden: false },
+    { key: 'loginId', label: '로그인ID', hidden: false },
     { key: 'userName', label: '이름', hidden: false },
     { key: 'userDeptCode', label: '부서명', hidden: false },
 ]

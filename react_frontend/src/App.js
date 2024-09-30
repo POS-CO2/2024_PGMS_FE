@@ -29,6 +29,7 @@ import Ca from './components/analfc/Ca';
 import Error404 from './Error404';
 import axiosInstance from './utils/AxiosInstance';
 import { CircularProgress } from '@mui/material';
+import { ContinuousColorLegend } from '@mui/x-charts';
 
 export default function App() {
     const [token, setToken] = useState(null);

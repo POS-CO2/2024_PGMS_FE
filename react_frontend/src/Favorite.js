@@ -1,7 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
-import { favState } from './atoms/tabAtoms';
+import { favState, itemsState, selectedKeyState, openKeysState } from './atoms/tabAtoms';
 import { openTabsState, activeTabState } from './atoms/tabAtoms';
 import styled from 'styled-components';
 import { ConfigProvider, List } from 'antd';
@@ -66,13 +66,53 @@ const FavoriteItem = styled.div`
 `;
 
 
-const Favorite = () => {
+const Favorite = ({ handleMenuClick = ()=>{} }) => {
   const fav = useRecoilValue(favState);
   const navigate = useNavigate();
   const [openTabs, setOpenTabs] = useRecoilState(openTabsState);
   const setActiveKey = useSetRecoilState(activeTabState);
+  const items = useRecoilValue(itemsState);
+  const setSelectedKeys = useSetRecoilState(selectedKeyState);
+  const [openKeys, setOpenKeys] = useRecoilState(openKeysState);
 
-  const onFavClick = (path, label) => {
+  // 메뉴를 클릭했을 때, key값으로 item을 찾음
+  const findItemByLabel = (items, targetLabel) =>
+    items.reduce((acc, item) => {
+    if (acc) return acc;
+    if (typeof item.label === 'string' && item.label.replace(/\*/g, '') === targetLabel) // label에 * 이 있으면 없애고 비교
+      return item;
+    if (item.children) return findItemByLabel(item.children, targetLabel);
+    return null;
+  }, null);
+
+  const findParentItem = (items, childKey) => {
+    return items.reduce((acc, item) => {
+        if (acc) return acc;
+        if (item.children && item.children.some(child => child.key === childKey)) {
+            return item;  // 해당 childKey를 가진 부모 아이템을 반환
+        }
+        if (item.children) {
+            return findParentItem(item.children, childKey); // 재귀적으로 탐색
+        }
+        return null;
+    }, null);
+  };
+
+  const onFavClick = (label) => {
+    const item = findItemByLabel(items, label);
+
+    if (item) {
+      setSelectedKeys([item.key]);
+      handleMenuClick({ key: item.key });
+
+      // 대분류(상위 메뉴)를 찾아 openKeys에 추가
+      const parentItem = findParentItem(items, item.key);
+      if (parentItem) {
+        setOpenKeys([...openKeys, parentItem.key]);
+      }
+    }
+
+    const path = item.path;
     const newTab = { key: path, tab: label };
 
     if (!openTabs.find(tab => tab.key === path)) {
@@ -96,9 +136,9 @@ const Favorite = () => {
               <FavoritesList
                   dataSource={fav}
                   renderItem={item => (
-                  <List.Item onClick={() => onFavClick(item.address, item.menuName)}>
+                  <List.Item onClick={() => onFavClick(item.menuName)}>
                       <IconContainer>
-                          <StarOutlined />
+                          <StarOutlined style={{ color: '#FFCC00' }}/>
                       </IconContainer>
                       <FavoriteItem>
                           {item.menuName}

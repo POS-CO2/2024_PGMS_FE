@@ -199,7 +199,7 @@ export default function Fd({pjtId}) {
         <>
             <Card sx={{ width: "50%", height: "auto", borderRadius: "0.5rem" }}>
                 <TableCustom
-                    title='설비목록' 
+                    title='설비 목록' 
                     data={equips}
                     submittedRowIdx={submittedEqLibIdx} 
                     columns={equipColumns}                 
@@ -228,7 +228,7 @@ export default function Fd({pjtId}) {
             <Card sx={{ width: "50%", height: "auto", borderRadius: "0.5rem", paddingBottom: "20px" }}>
                 <div className={pdsStyles.card_container}>
                     <div className={pdsStyles.contents_header}>
-                        설비등록
+                        설비 등록
                         <AddButton onClick={handleSubmit} disabled={Object.keys(selectedEqLib).length === 0} />
                     </div>
                     <div className={pdsStyles.search_container}>

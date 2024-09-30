@@ -41,64 +41,59 @@ export default function Fl() {
 
     const fetchOptions = async (unitType) => {
         const response = await axiosInstance.get(`/sys/unit?unitType=${unitType}`);
-        // console.log("unitType", unitType);
-        // console.log("response", response.data);
-        // console.log("Array.isArray", Array.isArray(response.data))
         return response.data.map(item => ({
             value: item.code,
             label: item.name,
         }));
     };
+
+    const fetchEqLib = async () => {
+        try {
+            const response = await axiosInstance.get("/equip/lib");
+
+            setEqLibs(response.data);
+
+            // 설비 LIB 로드가 완료된 후에만 selectedEqLib를 확인하여 활동 자료를 불러옴
+            if (Object.keys(selectedEqLib).length !== 0) {
+                fetchActvList(selectedEqLib);
+            }
+        } catch (error) {
+            console.log(error);
+        }
+    };
+
+    const fetchDropDown = async () => {
+        try {
+            // 여러 개의 비동기 작업을 병렬로 실행하기 위해 await Promise.all 사용
+            const [optionsDvs, optionsType, optionSpecUnit] = await Promise.all([
+                fetchOptions('설비구분'),
+                fetchOptions('설비유형'),
+                fetchOptions('설비사양단위'),
+            ]);
+
+            
+            // formField_fl를 업데이트
+            const updateFormFields = formField_fl.map(field => {
+                if (field.name === 'equipDvs') {
+                    return { ...field, options: optionsDvs };
+                } else if (field.name === 'equipType') {
+                    return { ...field, options: optionsType };
+                } else if (field.name === 'equipSpecUnit') {
+                    return { ...field, options: optionSpecUnit };
+                } else {
+                    return field;
+                }
+            });
+            
+            setFormFields(updateFormFields);
+        } catch (error) {
+            console.error(error);
+        }
+    };
     
     useEffect(() => {
-        const fetchEqLib = async () => {
-            try {
-                const response = await axiosInstance.get("/equip/lib");
-
-                setEqLibs(response.data);
-
-                // 설비 LIB 로드가 완료된 후에만 selectedEqLib를 확인하여 활동 자료를 불러옴
-                if (Object.keys(selectedEqLib).length !== 0) {
-                    fetchActvList(selectedEqLib);
-                }
-            } catch (error) {
-                console.log(error);
-            }
-        };
-
-        const fetchDropDown = async () => {
-            try {
-                // 여러 개의 비동기 작업을 병렬로 실행하기 위해 await Promise.all 사용
-                const [optionsDvs, optionsType, optionSpecUnit] = await Promise.all([
-                    fetchOptions('설비구분'),
-                    fetchOptions('설비유형'),
-                    fetchOptions('설비사양단위'),
-                ]);
-
-                
-                // formField_fl를 업데이트
-                const updateFormFields = formField_fl.map(field => {
-                    if (field.name === 'equipDvs') {
-                        return { ...field, options: optionsDvs };
-                    } else if (field.name === 'equipType') {
-                        return { ...field, options: optionsType };
-                    } else if (field.name === 'equipSpecUnit') {
-                        return { ...field, options: optionSpecUnit };
-                    } else {
-                        return field;
-                    }
-                });
-                
-                console.log("updateFormFields", updateFormFields);
-                setFormFields(updateFormFields);
-            } catch (error) {
-                console.log("aaaa", error);
-                console.error(error);
-            }
-        };
-        
         fetchDropDown();
-        console.log("aaaa");
+
         // formData값이 없으면 설비LIB을 findAll, 있으면(이전 탭의 검색기록이 있으면) 그 값을 불러옴
         Object.keys(formData).length === 0 ? fetchEqLib() : handleFormSubmit(formData);
     }, []);
@@ -132,7 +127,6 @@ export default function Fl() {
 
         try {
             const response = await axiosInstance.get("/equip/lib", {params});
-            console.log("response", response.data);
             setEqLibs(response.data);
 
             //설비LIB 목록에 selectedEqLib 있는지 확인
@@ -288,18 +282,18 @@ export default function Fl() {
             }
         }
 
-        // Swal.fire 실행 후, 성공 메시지가 표시되면 페이지 새로고침
-        Swal.fire(swalOptions).then(() => {
-            // 성공 후 페이지 새로고침
-            if(modalType !== 'DeleteA' && modalType !== 'DeleteB') {
-                window.location.reload();
-            }
-        });
+        Swal.fire(swalOptions);
     };
 
     // 모달 닫기
     const handleCancel = (modalType) => () => {
         setIsModalOpen(prevState => ({ ...prevState, [modalType]: false }));
+    };
+
+    // 서치폼이 변경될 때 목록 clear
+    const handleFieldsChange = () => {
+        setEqLibs([]);
+        setSelectedEqLib({});
     };
 
     return (
@@ -309,90 +303,95 @@ export default function Fl() {
                 initialValues={formData} 
                 onFormSubmit={handleFormSubmit} 
                 formFields={formFields} 
+                handleFieldsChange={handleFieldsChange}
+                handleEmptyFields={fetchEqLib}
             />
 
-            <div className={pdsStyles.main_grid}>
-                <div className={pdsStyles.contents_container}>
-                    <Card sx={{ width: "50%", height: "auto", borderRadius: "0.5rem" }}>
-                        <TableCustom 
-                            title='설비LIB목록' 
-                            data={eqLibs}
-                            submittedRowIdx={submittedEqLibIdx}     
-                            columns={equipLibColumns}
-                            buttons={['Delete', 'Edit', 'Add']}
-                            onClicks={[() => showModal('DeleteA'), () => showModal('FlEdit'), () => showModal('FlAdd')]}
-                            onRowClick={(e) => handleEqLibClick(e)}
-                            selectedRows={[selectedEqLib]}
-                            keyProp={eqLibs.length}
-                            modals={[
-                                isModalOpen.DeleteA && {
-                                    'modalType': 'DeleteA',
-                                    'isModalOpen': isModalOpen.DeleteA,
-                                    'handleOk': handleOk('DeleteA'),
-                                    'handleCancel': handleCancel('DeleteA'),
-                                    'rowData': selectedEqLib,
-                                    'rowDataName': 'equipLibName',
-                                    'url': '/equip/lib'
-                                },
-                                isModalOpen.FlEdit && {
-                                    'modalType': 'FlEdit',
-                                    'isModalOpen': isModalOpen.FlEdit,
-                                    'handleOk': handleOk('FlEdit'),
-                                    'handleCancel': handleCancel('FlEdit'),
-                                    'rowData': selectedEqLib,
-                                    'dropDown': formFields
-                                },
-                                isModalOpen.FlAdd && {
-                                    'modalType': 'FlAdd',
-                                    'isModalOpen': isModalOpen.FlAdd,
-                                    'handleOk': handleOk('FlAdd'),
-                                    'handleCancel': handleCancel('FlAdd'),
-                                    'dropDown': formFields
-                                }
-                            ]}
-                        />
-                    </Card>
-                    <Card sx={{ width: "50%", borderRadius: "0.5rem", paddingBottom: "20px" }}>
-                        {(!selectedEqLib || Object.keys(selectedEqLib).length === 0) ?
-                        <div className={pdsStyles.card_container}>
-                            <div className={pdsStyles.table_title} style={{ padding: "8px" }}>활동자료목록</div>
-                        </div> : (
+            {(!eqLibs || eqLibs.length === 0) ? 
+                <></> :
+                <div className={pdsStyles.main_grid}>
+                    <div className={pdsStyles.contents_container}>
+                        <Card sx={{ width: "50%", height: "auto", borderRadius: "0.5rem" }}>
                             <TableCustom 
-                                title='활동자료목록' 
-                                data={actves}
-                                submittedRowIdx={submittedActvIdx}  
-                                columns={equipActvColumns}   
-                                buttons={['Delete', 'Add']}
-                                onClicks={[() => showModal('DeleteB'), () => showModal('FadAdd')]}
-                                onRowClick={handleActvClick}
-                                selectedRows={[selectedActv]}
-                                keyProp={actves.length}
+                                title='설비LIB 목록' 
+                                data={eqLibs}
+                                submittedRowIdx={submittedEqLibIdx}     
+                                columns={equipLibColumns}
+                                buttons={['Delete', 'Edit', 'Add']}
+                                onClicks={[() => showModal('DeleteA'), () => showModal('FlEdit'), () => showModal('FlAdd')]}
+                                onRowClick={(e) => handleEqLibClick(e)}
+                                selectedRows={[selectedEqLib]}
+                                keyProp={eqLibs.length}
                                 modals={[
-                                    isModalOpen.DeleteB && {
-                                        'modalType': 'DeleteB',
-                                        'isModalOpen': isModalOpen.DeleteB,
-                                        'handleOk': handleOk('DeleteB'),
-                                        'handleCancel': handleCancel('DeleteB'),
-                                        'rowData': {
-                                            ...selectedActv,
-                                            equipLibId: selectedEqLib.id
-                                        },
-                                        'rowDataName': 'actvDataName',
-                                        'url': '/equip/libmap'
+                                    isModalOpen.DeleteA && {
+                                        'modalType': 'DeleteA',
+                                        'isModalOpen': isModalOpen.DeleteA,
+                                        'handleOk': handleOk('DeleteA'),
+                                        'handleCancel': handleCancel('DeleteA'),
+                                        'rowData': selectedEqLib,
+                                        'rowDataName': 'equipLibName',
+                                        'url': '/equip/lib'
                                     },
-                                    isModalOpen.FadAdd && {
-                                        'modalType': 'FadAdd',
-                                        'isModalOpen': isModalOpen.FadAdd,
-                                        'handleOk': handleOk('FadAdd'),
-                                        'handleCancel': handleCancel('FadAdd'),
-                                        'rowData': selectedEqLib
+                                    isModalOpen.FlEdit && {
+                                        'modalType': 'FlEdit',
+                                        'isModalOpen': isModalOpen.FlEdit,
+                                        'handleOk': handleOk('FlEdit'),
+                                        'handleCancel': handleCancel('FlEdit'),
+                                        'rowData': selectedEqLib,
+                                        'dropDown': formFields
                                     },
+                                    isModalOpen.FlAdd && {
+                                        'modalType': 'FlAdd',
+                                        'isModalOpen': isModalOpen.FlAdd,
+                                        'handleOk': handleOk('FlAdd'),
+                                        'handleCancel': handleCancel('FlAdd'),
+                                        'dropDown': formFields
+                                    }
                                 ]}
                             />
-                        )}
-                    </Card>
+                        </Card>
+                        <Card sx={{ width: "50%", borderRadius: "0.5rem", paddingBottom: "20px" }}>
+                            {(!selectedEqLib || Object.keys(selectedEqLib).length === 0) ?
+                            <div className={pdsStyles.card_container}>
+                                <div className={pdsStyles.table_title} style={{ padding: "8px" }}>활동자료 목록</div>
+                            </div> : (
+                                <TableCustom 
+                                    title='활동자료 목록' 
+                                    data={actves}
+                                    submittedRowIdx={submittedActvIdx}  
+                                    columns={equipActvColumns}   
+                                    buttons={['Delete', 'Add']}
+                                    onClicks={[() => showModal('DeleteB'), () => showModal('FadAdd')]}
+                                    onRowClick={handleActvClick}
+                                    selectedRows={[selectedActv]}
+                                    keyProp={actves.length}
+                                    modals={[
+                                        isModalOpen.DeleteB && {
+                                            'modalType': 'DeleteB',
+                                            'isModalOpen': isModalOpen.DeleteB,
+                                            'handleOk': handleOk('DeleteB'),
+                                            'handleCancel': handleCancel('DeleteB'),
+                                            'rowData': {
+                                                ...selectedActv,
+                                                equipLibId: selectedEqLib.id
+                                            },
+                                            'rowDataName': 'actvDataName',
+                                            'url': '/equip/libmap'
+                                        },
+                                        isModalOpen.FadAdd && {
+                                            'modalType': 'FadAdd',
+                                            'isModalOpen': isModalOpen.FadAdd,
+                                            'handleOk': handleOk('FadAdd'),
+                                            'handleCancel': handleCancel('FadAdd'),
+                                            'rowData': selectedEqLib
+                                        },
+                                    ]}
+                                />
+                            )}
+                        </Card>
+                    </div>
                 </div>
-            </div>
+            }
         </>
     );
 }

@@ -56,9 +56,9 @@ button:hover {
     gap: 1rem;
 }
 
-.row:first-of-type {
-    margin-bottom: 1rem; /* Only the first row gets this margin */
-}
+/* .row:first-of-type {
+    margin-bottom: 1rem;
+} */
 
 .pjt_data_container {
     display: flex;
