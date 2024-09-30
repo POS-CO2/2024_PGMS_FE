@@ -287,6 +287,7 @@ const TabsContainer = forwardRef(({ handleLogout, user, handleMenuClick, handleC
 
     if (path === '') {  // 홈 탭을 클릭했을 때 명시적으로 홈 경로로 이동
       navigate('');
+      setSelectedKeys(null);
     } else {
       navigate(path);
     }
