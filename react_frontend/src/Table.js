@@ -155,6 +155,15 @@ export default function CustomizedTables({
         }
     }, [selectedRowId, data, rowsPerPage]);
 
+    // submittedRowIdx가 있을 때 해당 인덱스에 맞는 페이지로 이동
+    useEffect(() => {
+        if (submittedRowIdx.length > 0) {
+            const firstSubmittedIndex = submittedRowIdx[0]; // 첫 번째 인덱스를 사용
+            const newPage = Math.floor(firstSubmittedIndex / rowsPerPage); // 인덱스에 따른 페이지 계산
+            setPage(newPage); // 해당 페이지로 이동
+        }
+    }, [submittedRowIdx, rowsPerPage]);
+
     // 데이터와 컬럼에 기반하여 초기 열 너비 설정
     useEffect(() => {
         if (data.length > 0 && columns.length > 0) {
