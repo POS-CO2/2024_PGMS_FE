@@ -229,13 +229,10 @@ export default function Pg() {
             <SearchForms
                 initialValues={formData}
                 onFormSubmit={handleFormSubmit} 
-                formFields={formFields} 
-<<<<<<< HEAD
-                isPg={true}
-=======
+                formFields={formFields}
                 handleFieldsChange={handleFieldsChange}
                 handleEmptyFields={fetchProject}
->>>>>>> 0fdcced0a5ec0bf1ec381096ef16fd1a881faa5e
+                isPg={true}
             />
 
             <div className={pdsStyles.main_grid}>
