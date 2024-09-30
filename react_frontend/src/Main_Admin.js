@@ -8,8 +8,8 @@ import { Pagination, Navigation } from 'swiper/modules';
 import styled from 'styled-components';
 import ApexCharts from 'react-apexcharts';
 import { useNavigate } from 'react-router-dom';
-import { useRecoilState } from "recoil";
-import { openTabsState, activeTabState } from './atoms/tabAtoms';
+import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
+import { openTabsState, activeTabState, itemsState, selectedKeyState, openKeysState } from './atoms/tabAtoms';
 import EcrLogo from './assets/images/ecrlogo.png';
 import TerminalLogo from './assets/images/terminal.png';
 import ContainerLogo from './assets/images/container.png';
@@ -261,7 +261,7 @@ const ProgressComponent = memo(({ progress }) => {
     );
 });
 
-export default function Main_Admin() {
+export default function Main_Admin({ handleMenuClick=()=>{} }) {
     const today = new Date();
     const defaultStartDate = dayjs(today).format('YYYY-MM-DD') + 'T00:00:00.000';
     const defaultEndDate = dayjs(today).format('YYYY-MM-DD') + 'T23:59:59.999';
@@ -281,13 +281,53 @@ export default function Main_Admin() {
     const [logLoading, setLogLoading] = useState(false);
     const navigate = useNavigate();
     const [openTabs, setOpenTabs] = useRecoilState(openTabsState);
-    const [activeKey, setActiveKey] = useRecoilState(activeTabState);
+    const setActiveKey = useSetRecoilState(activeTabState);
+    const items = useRecoilValue(itemsState);
+    const setSelectedKeys = useSetRecoilState(selectedKeyState);
+    const [openKeys, setOpenKeys] = useRecoilState(openKeysState);
+
+    const findParentItem = (items, childKey) => {
+        return items.reduce((acc, item) => {
+            if (acc) return acc;
+            if (item.children && item.children.some(child => child.key === childKey)) {
+                return item;  // 해당 childKey를 가진 부모 아이템을 반환
+            }
+            if (item.children) {
+                return findParentItem(item.children, childKey); // 재귀적으로 탐색
+            }
+            return null;
+        }, null);
+    };
+
+    // 메뉴를 클릭했을 때, key값으로 item을 찾음
+    const findItemByLabel = (items, targetLabel) =>
+        items.reduce((acc, item) => {
+        if (acc) return acc;
+        if (typeof item.label === 'string' && item.label.replace(/\*/g, '') === targetLabel) // label에 * 이 있으면 없애고 비교
+        return item;
+        if (item.children) return findItemByLabel(item.children, targetLabel);
+        return null;
+    }, null);
 
     const handleButtonClick = (path, label) => {
-        const newTab = { key: path, tab: label };
+        const item = findItemByLabel(items, label);
+
+        if (item) {
+            setSelectedKeys([item.key]);
+        }
+
+        // 대분류(상위 메뉴)를 찾아 openKeys에 추가
+        const parentItem = findParentItem(items, item.key);
+        if (parentItem) {
+            setOpenKeys([...openKeys, parentItem.key]);
+        }
+
+        const newTab = { key: path, tab: label, accessUser: item.accessUser };
+
         if (!openTabs.find(tab => tab.key === path)) {
           setOpenTabs([...openTabs, newTab]);  // 새로운 탭 추가
         }
+
         setActiveKey(path);  // activeKey를 변경
         navigate(path);  // 경로 이동
     };

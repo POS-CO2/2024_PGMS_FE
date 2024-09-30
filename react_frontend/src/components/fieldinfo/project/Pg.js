@@ -1,16 +1,14 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate } from 'react-router-dom';
 import { useRecoilState } from "recoil";
 import { pjtMgrSearchForm } from '../../../atoms/searchFormAtoms';
 import { selectedPjtMgrState, expandedRowState } from '../../../atoms/selectedRowAtoms';
-import { openTabsState, activeTabState } from '../../../atoms/tabAtoms';
 import Swal from 'sweetalert2';
-import { Card, Accordion, AccordionSummary, AccordionDetails } from '@mui/material';
+import { Card } from '@mui/material';
 import * as mainStyles from "../../../assets/css/main.css"
 import TableCustom from "../../../TableCustom";
 import SearchForms from "../../../SearchForms"
 import {formField_pg} from "../../../assets/json/searchFormData"
-import { pjtColumns, pjtManagerColumns } from '../../../assets/json/tableColumn';
+import { pjtColumns } from '../../../assets/json/tableColumn';
 import axiosInstance from '../../../utils/AxiosInstance';
 import dayjs from 'dayjs';
 import * as pdsStyles from "../../../assets/css/pds.css";

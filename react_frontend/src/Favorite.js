@@ -66,7 +66,7 @@ const FavoriteItem = styled.div`
 `;
 
 
-const Favorite = ({ handleMenuClick = ()=>{} }) => {
+const Favorite = () => {
   const fav = useRecoilValue(favState);
   const navigate = useNavigate();
   const [openTabs, setOpenTabs] = useRecoilState(openTabsState);
@@ -103,7 +103,6 @@ const Favorite = ({ handleMenuClick = ()=>{} }) => {
 
     if (item) {
       setSelectedKeys([item.key]);
-      handleMenuClick({ key: item.key });
 
       // 대분류(상위 메뉴)를 찾아 openKeys에 추가
       const parentItem = findParentItem(items, item.key);
@@ -113,7 +112,7 @@ const Favorite = ({ handleMenuClick = ()=>{} }) => {
     }
 
     const path = item.path;
-    const newTab = { key: path, tab: label };
+    const newTab = { key: path, tab: label, accessUser: item.accessUser };
 
     if (!openTabs.find(tab => tab.key === path)) {
       setOpenTabs([...openTabs, newTab]);  // 새로운 탭 추가

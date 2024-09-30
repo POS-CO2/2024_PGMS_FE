@@ -84,8 +84,6 @@ export default function SiteLayout({handleLogout, menus, user}){
     const [chatOpen, setChatOpen] = useState(false);
     const navigate = useNavigate();
     const tabsContainerRef = useRef(null);
-
-    console.log("menu", menus);
     
     useEffect(() => {
         setItems(mapMenuDataToItems(menus));
@@ -100,10 +98,10 @@ export default function SiteLayout({handleLogout, menus, user}){
         const item = findItemByKey(items, e.key);
         if (item && item.path) {
             navigate(item.path);
-            tabsContainerRef.current.addTab(item.path, item.label);
+            tabsContainerRef.current.addTab(item.path, item.label, item.accessUser);
         }
         setLoading(false);
-        const response = await axiosInstance.post(`/sys/log/click?menuId=${item.key}`);
+        await axiosInstance.post(`/sys/log/click?menuId=${item.key}`);
     };
 
     // 메뉴를 클릭했을 때, key값으로 item을 찾음

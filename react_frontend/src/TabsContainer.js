@@ -232,8 +232,8 @@ const TabsContainer = forwardRef(({ handleLogout, user, handleMenuClick, handleC
   }, [tabs]);
 
   useImperativeHandle(ref, () => ({
-    addTab(path, label) {
-      const newTab = { key: path, tab: label };
+    addTab(path, label, accessUser) {
+      const newTab = { key: path, tab: label, accessUser: accessUser };
       setTabs(prevTabs => {
         const existingTab = prevTabs.find(tab => tab.key === path);
         if (!existingTab) {

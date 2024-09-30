@@ -270,10 +270,10 @@ export default function Adm() {
             try {
                 // POST 요청으로 서버에 데이터 전송
                 const response = await axiosInstance.patch('/equip/coef', data);
-    
+                
                 setFilteredEfs(prevList =>
                     prevList.map(item =>
-                        item.id === data.id ? { ...item, ...data } : item
+                        item.id === data.id ? { ...item, ...response.data } : item
                     )
                 );
                 setSelectedEF(response.data);

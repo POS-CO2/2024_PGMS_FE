@@ -144,11 +144,6 @@ export default function Sidebar({ collapsed, toggleCollapsed, items, onMenuClick
     })) : null
   }));
 
-  const handleMenuClick = (e) => {
-    setSelectedKeys([e.key]);  // 클릭된 메뉴 항목의 key를 selectedKeys로 설정
-    onMenuClick(e);            // 기존 메뉴 클릭 핸들러 호출
-  };
-
   // 마지막으로 선택한 대분류 토글만 내리기
   const handleOpenChange = (keys) => {
     const latestOpenKey = keys.find(key => !openKeys.includes(key));
@@ -181,7 +176,7 @@ export default function Sidebar({ collapsed, toggleCollapsed, items, onMenuClick
           theme="light"
           inlineCollapsed={collapsed}
           items={itemsWithAsterisk}
-          onClick={handleMenuClick}
+          onClick={onMenuClick}
           openKeys={openKeys}
           onOpenChange={handleOpenChange}
           selectedKeys={selectedKeys}
@@ -190,7 +185,7 @@ export default function Sidebar({ collapsed, toggleCollapsed, items, onMenuClick
       </ConfigProvider>
 
       {/* 즐겨찾기 섹션 (사이드바가 접혔을 때는 숨기기) */}
-      {!collapsed && <Favorite handleMenuClick={onMenuClick} />}
+      {!collapsed && <Favorite />}
 
     </SidebarContainer>
   );

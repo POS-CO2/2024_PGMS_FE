@@ -1625,10 +1625,6 @@ export function EfmEditModal({ isModalOpen, handleOk, handleCancel, rowData }) {
     const [error, setError] = useState({});
 
     const handleSelect = async() => {
-        let swalOptions = {
-            confirmButtonText: '확인'
-        };
-
         const formData = {
             id: rowData.id,
             actvDataId: rowData.actvDataId, 
