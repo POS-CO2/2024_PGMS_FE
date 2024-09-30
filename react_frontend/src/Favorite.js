@@ -5,7 +5,7 @@ import { favState, itemsState, selectedKeyState, openKeysState } from './atoms/t
 import { openTabsState, activeTabState } from './atoms/tabAtoms';
 import styled from 'styled-components';
 import { ConfigProvider, List } from 'antd';
-import { StarOutlined } from '@ant-design/icons';
+import { StarFilled } from '@ant-design/icons';
 
 const FavoritesContainer = styled.div`
   width: 100%;
@@ -137,7 +137,7 @@ const Favorite = () => {
                   renderItem={item => (
                   <List.Item onClick={() => onFavClick(item.menuName)}>
                       <IconContainer>
-                          <StarOutlined style={{ color: '#FFCC00' }}/>
+                          <StarFilled style={{ color: '#FFCC00' }}/>
                       </IconContainer>
                       <FavoriteItem>
                           {item.menuName}
