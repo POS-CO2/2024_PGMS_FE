@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useRecoilState } from 'recoil';
-import { emissionSrcSearchForm } from '../../../../atoms/searchFormAtoms';
+import { emissionSrcSearchForm, selectedPjtFPState } from '../../../../atoms/searchFormAtoms';
 import {
     emSourceState, selectedESState, suppDocState, selectedSuppDocState, filteredSDState
     } from '../../../../atoms/pdsAtoms';
@@ -91,6 +91,7 @@ export default function Esd_Fp() {
     const [formFields, setFormFields] = useState(formField_esm_fp);
     const [formData, setFormData] = useRecoilState(emissionSrcSearchForm);
     const [selectedPjt, setSelectedPjt] = useState({});                 // 선택된 프로젝트
+    const [selectedPjtId, setSelectedPjtId] = useRecoilState(selectedPjtFPState);                 // 선택된 프로젝트
     const [emSources, setEmSources] = useRecoilState(emSourceState);
     const [selectedES, setSelectedES] = useRecoilState(selectedESState);
     const [suppDocs, setSuppDocs] = useRecoilState(suppDocState);
@@ -104,6 +105,15 @@ export default function Esd_Fp() {
     // 프로젝트 드롭다운 옵션 설정
     const [pjtOptions, setPjtOptions] = useState([]);
     const [projectData, setProjectData] = useState([]);  // 전체 프로젝트 데이터를 저장
+    
+    // formData의 searchProject 값만 변경하는 함수
+    const updateSearchProject = (newValue) => {
+        setFormData((prevFormData) => ({
+        ...prevFormData,
+        searchProject: newValue,  // searchProject 값만 업데이트
+        }));
+    };
+    
     useEffect(() => {
         const fetchPjtOptions = async () => {
             try {
@@ -126,8 +136,13 @@ export default function Esd_Fp() {
 
         fetchPjtOptions();
 
-        // 이전 탭의 검색기록이 있으면 그 값을 불러옴
-        Object.keys(formData).length !== 0 && handleFormSubmit(formData);
+        if (selectedPjtId) {
+            if (selectedPjtId !== selectedPjt.id) {
+                updateSearchProject(selectedPjtId);
+            } else {
+                handleFormSubmit(formData);
+            }
+        }
     }, []);
 
     const fetchSDList = async (es) => {
@@ -152,6 +167,8 @@ export default function Esd_Fp() {
             }
 
             setSelectedPjt(pjtRes.data[0]);
+            setSelectedPjtId(data.searchProject);
+            
             setEmSources(emRes.data);
             setFormData(data);
         } catch (error) {

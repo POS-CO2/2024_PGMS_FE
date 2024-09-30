@@ -1,6 +1,4 @@
 import React from 'react';
-import { useRecoilState } from "recoil";
-import { selectedPjtFPState } from '../atoms/searchFormAtoms';
 import { styled } from '@mui/material/styles';
 import * as formItemStyles from '../assets/css/formItem.css';
 import { ConfigProvider, Form, Select } from 'antd';
@@ -35,8 +33,6 @@ const CustomSelect = styled(Select)`
 
 
 export default function DropDown({ name, label, required=false, options, defaultSelected=false, disabled=false, placeholder="", onProjectSelect=()=>{} }) {
-    const [selectedPjt, setSelectedPjt] = useRecoilState(selectedPjtFPState);
-    
     // 옵션 중 가장 긴 옵션의 길이를 계산
     const longestOptionLength = Math.max(...options.map(option => option.label.length));
     // 폰트 사이즈와 기타 요소들을 고려하여 너비를 설정
@@ -47,17 +43,6 @@ export default function DropDown({ name, label, required=false, options, default
         width: calculatedWidth,
         minWidth: '8rem',
         maxWidth: name === 'searchProject' ? '70rem' : '16rem'
-    };
-
-    // onChange 핸들러
-    const handleChange = (value) => {
-        if (label === '프로젝트코드/명') {
-            setSelectedPjt(value);  // '프로젝트코드/명'일 때만 setSelectedPjt 호출
-            console.log("value", value);
-        }
-
-        // 기존의 onProjectSelect 콜백도 호출
-        onProjectSelect(value);
     };
 
     return (
@@ -83,7 +68,6 @@ export default function DropDown({ name, label, required=false, options, default
                     allowClear={{ clearIcon: <CloseOutlined style={{color: "red"}} /> }}
                     disabled={disabled}
                     placeholder={placeholder}
-                    onChange={handleChange}
                     {...(name !== 'actvYear' && { onChange: (value) => onProjectSelect(value) })}  // name이 'actvYear'가 아닐 때만 onChange 속성 추가
                 >
                     {options.map(option => (

@@ -114,7 +114,6 @@ export default function Ps_1_2() {
             }
             if (Object.keys(formData).length === 0) {
                 form.setFieldsValue({ actvYear: yearOptions[0].value });
-                console.log("aaaa");
             }
 
         }

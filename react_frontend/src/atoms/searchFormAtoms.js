@@ -9,7 +9,7 @@ export const selectedPjtState = atom({
 // 선택한 프로젝트(현장담당자 페이지)
 export const selectedPjtFPState = atom({
     key: 'selectedPjtFPState',
-    default: null,
+    default: {},
 });
 
 // 활동량 관리 메뉴의 서치폼
