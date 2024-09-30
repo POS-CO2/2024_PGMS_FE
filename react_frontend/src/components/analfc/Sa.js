@@ -19,6 +19,9 @@ export default function Sa() {
     const [salesTableData, setSalesTableData] = useState([]); // 목록 표
     const [avgUnitPerDiv, setAvgUnitPerDiv] = useState([]); // 본부별 평균 원단위
     const [unitPerProd, setUnitPerProd] = useState([]); // 상품별 원단위
+    const [selectedDiv, setSelectedDiv] = useState(null); // 선택된 본부
+    const [selectedBar, setSelectedBar] = useState(null); // 선택된 바 상태 추가
+    const [highlightedItem, setHighlightedItem] = useState(null); // 강조된 항목 상태 추가
 
     useEffect(() => {
         // formData값이 있으면(이전 탭의 검색기록이 있으면) 그 값을 불러옴
@@ -30,6 +33,7 @@ export default function Sa() {
     // 조회 버튼 클릭시 호출될 함수
     const handleFormSubmit = async (data) => {
         setFormData(data);
+        setHighlightedItem(null); // 강조된 항목 초기화
         
         const startDate = `${data.calendar[0].$y}-${(data.calendar[0].$M + 1).toString().padStart(2, '0')}`;
         const endDate = `${data.calendar[1].$y}-${(data.calendar[1].$M + 1).toString().padStart(2, '0')}`;
@@ -72,124 +76,24 @@ export default function Sa() {
         XLSX.writeFile(wb, `${fileName}.xlsx`);
     };
 
-    function AvgUnitPerDivChart() {
-        return (
-            <>
-                <div className={chartStyles.chart_title}>{"본부별 평균 배출량/매출액"}</div>
+    const handleAxisClick = async (event, data, AxisData) => {
+        setSelectedDiv(data.axisValue); // 클릭된 축의 데이터를 상태에 저장
+        setSelectedBar(data.dataIndex); // 클릭된 바의 인덱스를 상태에 저장
+        setHighlightedItem({ seriesId: 'A', dataIndex: data.dataIndex }); // 클릭된 항목을 강조
 
-                <BarChart
-                    dataset={avgUnitPerDiv}
-                    xAxis={[{ 
-                        scaleType: 'band',
-                        data: avgUnitPerDiv.map(item => item.divCode),
-                        colorMap: {
-                            type: 'ordinal',
-                            colors: ['#f5f2c8', '#9ee0bc', '#8483e0', '#b5a1f3', '#f7b0ec', '#ffd7fe'],
-                        }
-                    }]}
-                    yAxis={[{
-                        position: 'left',
-                        tickLabelStyle: {
-                            whiteSpace: 'nowrap',  // 라벨이 잘리지 않도록 설정
-                            overflow: 'visible',  // 오버플로우 방지
-                            textOverflow: 'ellipsis',
-                        },
-                    }]}
-                    series={[{ dataKey: 'avgEmissionQtyPerSales' }]} //valueFormatter
-                    //width={400}
-                    height={300}
-                    borderRadius={10}
-                    margin={{ left: 80 }} // 왼쪽 여백 추가
-                    sx={{
-                        //change left yAxis label styles
-                        "& .MuiChartsAxis-left .MuiChartsAxis-tickLabel": {
-                            strokeWidth: "0.4",
-                            fontWeight: "bold",
-                        },
-                        // change bottom label styles
-                        "& .MuiChartsAxis-bottom .MuiChartsAxis-tickLabel": {
-                            strokeWidth: "0.5",
-                            fontWeight: "bold",
-                        },
-                        // bottomAxis Line Styles
-                        "& .MuiChartsAxis-bottom .MuiChartsAxis-line ": {
-                            strokeWidth: 0.4,
-                        },
-                        // leftAxis Line Styles
-                        "& .MuiChartsAxis-left .MuiChartsAxis-line": {
-                            strokeWidth: 0.4
-                        },
-                    }}
-                    slotProps={{
-                        legend: {
-                            labelStyle: {
-                                fill: 'black',
-                            },
-                        },
-                    }}
-                />
-            </>
-        )
-    }
+        const startDate = `${formData.calendar[0].$y}-${(formData.calendar[0].$M + 1).toString().padStart(2, '0')}`;
+        const endDate = `${formData.calendar[1].$y}-${(formData.calendar[1].$M + 1).toString().padStart(2, '0')}`;
 
-    function UnitPerProdChart() {
-        return (
-            <>
-                <div className={chartStyles.chart_title}>{"상품별 평균 배출량/매출액"}</div>
+        // 본부별 상품
+        let url = `/anal/sales/prod-div?startDate=${startDate}&endDate=${endDate}&divCode=${data.axisValue}`;
+        const newPerProdChartResponse = await axiosInstance.get(url);
+        setUnitPerProd(newPerProdChartResponse.data);
 
-                <BarChart
-                    dataset={unitPerProd}
-                    xAxis={[{ 
-                        scaleType: 'band',
-                        data: unitPerProd.map(item => item.prodTypeCode),
-                        colorMap: {
-                            type: 'ordinal',
-                            colors: ['#b8a3d6', '#97d3e7', '#b97b8c', '#e89596', '#c7e294', '#6fa7c7', '#9ed1b7', '#f1cb86', '#ef9080'],
-                        }
-                    }]}
-                    yAxis={[{
-                        position: 'left',
-                        tickLabelStyle: {
-                            whiteSpace: 'nowrap',  // 라벨이 잘리지 않도록 설정
-                            overflow: 'visible',  // 오버플로우 방지
-                            textOverflow: 'ellipsis',
-                        },
-                    }]}
-                    series={[{ dataKey: 'avgEmissionQtyPerSales' }]} //valueFormatter
-                    height={300}
-                    borderRadius={10}
-                    margin={{ left: 80 }} // 왼쪽 여백 추가
-                    sx={{
-                        //change left yAxis label styles
-                        "& .MuiChartsAxis-left .MuiChartsAxis-tickLabel": {
-                            strokeWidth: "0.4",
-                            fontWeight: "bold",
-                        },
-                        // change bottom label styles
-                        "& .MuiChartsAxis-bottom .MuiChartsAxis-tickLabel": {
-                            strokeWidth: "0.5",
-                            fontWeight: "bold",
-                        },
-                        // bottomAxis Line Styles
-                        "& .MuiChartsAxis-bottom .MuiChartsAxis-line ": {
-                            strokeWidth: 0.4,
-                        },
-                        // leftAxis Line Styles
-                        "& .MuiChartsAxis-left .MuiChartsAxis-line": {
-                            strokeWidth: 0.4
-                        },
-                    }}
-                    slotProps={{
-                        legend: {
-                            labelStyle: {
-                                fill: 'black',
-                            },
-                        },
-                    }}
-                />
-            </>
-        )
-    }
+        // 본부별 테이블
+        url = `/anal/sales/table-div?startDate=${startDate}&endDate=${endDate}&divCode=${data.axisValue}`;
+        const newTableResponse = await axiosInstance.get(url);
+        setSalesTableData(newTableResponse.data);
+    };
 
     return (
         <div>
@@ -205,10 +109,125 @@ export default function Sa() {
                 <>
                     <div className={saStyles.main_grid}>
                         <Card className={saStyles.card_box} sx={{ width: "30%", height: "auto", borderRadius: "15px" }}>
-                            <AvgUnitPerDivChart />
+                            <div className={chartStyles.chart_title}>{"본부별 평균 배출량/매출액"}</div>
+
+                            <BarChart
+                                dataset={avgUnitPerDiv}
+                                xAxis={[{ 
+                                    scaleType: 'band',
+                                    data: avgUnitPerDiv.map(item => item.divCode),
+                                    colorMap: {
+                                        type: 'ordinal',
+                                        colors: ['#f5f2c8', '#9ee0bc', '#8483e0', '#b5a1f3', '#f7b0ec', '#ffd7fe'],
+                                        /*colors: avgUnitPerDiv.map((item, index) => 
+                                            selectedBar === index ? '#ffcc00' : '#9ee0bc' // 클릭된 바는 강조 색상(#ffcc00)으로 설정
+                                        ),*/
+                                    }
+                                }]}
+                                yAxis={[{
+                                    position: 'left',
+                                    tickLabelStyle: {
+                                        whiteSpace: 'nowrap',  // 라벨이 잘리지 않도록 설정
+                                        overflow: 'visible',  // 오버플로우 방지
+                                        textOverflow: 'ellipsis',
+                                    },
+                                }]}
+                                series={[{
+                                    id: 'A', // seriesId 명시적으로 추가
+                                    dataKey: 'avgEmissionQtyPerSales',
+                                    highlightScope: {
+                                        highlighted: 'none', // fade 만 설정 //highlighted: 'item'
+                                        faded: 'global',  // 나머지는 흐리게 설정
+                                    },
+                                }]} //valueFormatter
+                                onAxisClick={handleAxisClick}
+                                highlightedItem={highlightedItem} // 강조된 항목 설정
+                                //width={400}
+                                height={300}
+                                borderRadius={10}
+                                margin={{ left: 80 }} // 왼쪽 여백 추가
+                                sx={{
+                                    //change left yAxis label styles
+                                    "& .MuiChartsAxis-left .MuiChartsAxis-tickLabel": {
+                                        strokeWidth: "0.4",
+                                        fontWeight: "bold",
+                                    },
+                                    // change bottom label styles
+                                    "& .MuiChartsAxis-bottom .MuiChartsAxis-tickLabel": {
+                                        strokeWidth: "0.5",
+                                        fontWeight: "bold",
+                                    },
+                                    // bottomAxis Line Styles
+                                    "& .MuiChartsAxis-bottom .MuiChartsAxis-line ": {
+                                        strokeWidth: 0.4,
+                                    },
+                                    // leftAxis Line Styles
+                                    "& .MuiChartsAxis-left .MuiChartsAxis-line": {
+                                        strokeWidth: 0.4
+                                    },
+                                }}
+                                slotProps={{
+                                    legend: {
+                                        labelStyle: {
+                                            fill: 'black',
+                                        },
+                                    },
+                                }}
+                            />
                         </Card>
                         <Card className={saStyles.card_box} sx={{ width: "70%", height: "auto", borderRadius: "15px" }}>
-                            <UnitPerProdChart />
+                            <div className={chartStyles.chart_title}>{"상품별 평균 배출량/매출액"}</div>
+
+                            <BarChart
+                                dataset={unitPerProd}
+                                xAxis={[{ 
+                                    scaleType: 'band',
+                                    data: unitPerProd.map(item => item.prodTypeCode),
+                                    colorMap: {
+                                        type: 'ordinal',
+                                        colors: ['#b8a3d6', '#97d3e7', '#b97b8c', '#e89596', '#c7e294', '#6fa7c7', '#9ed1b7', '#f1cb86', '#ef9080'],
+                                    }
+                                }]}
+                                yAxis={[{
+                                    position: 'left',
+                                    tickLabelStyle: {
+                                        whiteSpace: 'nowrap',  // 라벨이 잘리지 않도록 설정
+                                        overflow: 'visible',  // 오버플로우 방지
+                                        textOverflow: 'ellipsis',
+                                    },
+                                }]}
+                                series={[{ dataKey: 'avgEmissionQtyPerSales' }]} //valueFormatter
+                                height={300}
+                                borderRadius={10}
+                                margin={{ left: 80 }} // 왼쪽 여백 추가
+                                sx={{
+                                    //change left yAxis label styles
+                                    "& .MuiChartsAxis-left .MuiChartsAxis-tickLabel": {
+                                        strokeWidth: "0.4",
+                                        fontWeight: "bold",
+                                    },
+                                    // change bottom label styles
+                                    "& .MuiChartsAxis-bottom .MuiChartsAxis-tickLabel": {
+                                        strokeWidth: "0.5",
+                                        fontWeight: "bold",
+                                    },
+                                    // bottomAxis Line Styles
+                                    "& .MuiChartsAxis-bottom .MuiChartsAxis-line ": {
+                                        strokeWidth: 0.4,
+                                    },
+                                    // leftAxis Line Styles
+                                    "& .MuiChartsAxis-left .MuiChartsAxis-line": {
+                                        strokeWidth: 0.4
+                                    },
+                                }}
+                                slotProps={{
+                                    legend: {
+                                        labelStyle: {
+                                            fill: 'black',
+                                        },
+                                    },
+                                }}
+                            />
                         </Card>
                     </div>
                     
