@@ -242,7 +242,7 @@ export default function CustomizedTables({
                 <InboxIcon sx={{ fontSize: 60, color: 'gray' }} />
                 <br/>
                 <Typography variant="body2" color="textSecondary" paragraph>
-                    데이터를 찾을 수 없습니다. 데이터를 다시 불러오거나, 다른 옵션을 시도해보세요.
+                    현재 요청하신 조회 결과가 없습니다.
                 </Typography>
             </Box>
         );
