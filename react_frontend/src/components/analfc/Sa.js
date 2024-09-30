@@ -109,7 +109,7 @@ export default function Sa() {
                 <>
                     <div className={saStyles.main_grid}>
                         <Card className={saStyles.card_box} sx={{ width: "30%", height: "auto", borderRadius: "15px" }}>
-                            <div className={chartStyles.chart_title}>{"본부별 평균 배출량/매출액"}</div>
+                            <div className={chartStyles.chart_title}>{"본부별 월별 평균 배출량/매출액"}</div>
 
                             <BarChart
                                 dataset={avgUnitPerDiv}
@@ -176,7 +176,7 @@ export default function Sa() {
                             />
                         </Card>
                         <Card className={saStyles.card_box} sx={{ width: "70%", height: "auto", borderRadius: "15px" }}>
-                            <div className={chartStyles.chart_title}>{"상품별 평균 배출량/매출액"}</div>
+                            <div className={chartStyles.chart_title}>{"상품별 월별 평균 배출량/매출액"}</div>
 
                             <BarChart
                                 dataset={unitPerProd}
