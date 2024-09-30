@@ -137,6 +137,7 @@ export default function SearchForms({ initialValues={}, onFormSubmit, formFields
                         placeholder={field.placeholder} // placeholder 전달
                         // name이 'searchProject'인 경우에만 onProjectSelect 전달
                         onProjectSelect={field.name === 'searchProject' ? handleProjectSelect : ()=>{}} // 프로젝트 선택 시 대상년도 설정
+                        isAnal={field.isAnal}
                     />
                 )
             })}

@@ -146,11 +146,11 @@ export const formField_fad = [
 ];
 
 export const formField_sa = [
-    { type: 'SelectCalendar', name: 'calendar', label: '분석기간', required: true }
+    { type: 'SelectCalendar', name: 'calendar', label: '분석기간', required: true, isAnal: true }
 ];
 
 export const formField_ea = [
-    { type: 'SelectCalendar', name: 'calendar', label: '분석기간', required: true },
+    { type: 'SelectCalendar', name: 'calendar', label: '분석기간', required: true, isAnal: true },
     { type: 'DropDown', name: 'selected', label: '분석기준', required: true, options: [
         { value: '설비LIB', label: '설비LIB' },
         { value: '설비유형', label: '설비유형' },
@@ -159,7 +159,7 @@ export const formField_ea = [
 ];
 
 export const formField_ca = [
-    { type: 'SelectCalendar', name: 'calendar', label: '분석기간', required: true },
+    { type: 'SelectCalendar', name: 'calendar', label: '분석기간', required: true, isAnal: true },
     { type: 'DropDown', name: 'regCode', label: '지역', required: true, options: [] },
     { type: 'DropDown', name: 'selected', label: '영향인자', required: true, options: [
         { value: '평균기온', label: '평균기온' },
