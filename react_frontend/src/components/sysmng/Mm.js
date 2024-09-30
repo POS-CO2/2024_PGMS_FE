@@ -2,8 +2,8 @@ import * as React from 'react';
 import clsx from 'clsx';
 import { animated, useSpring } from '@react-spring/web';
 import { styled, alpha, createTheme } from '@mui/material/styles';
-import * as sysStyles from '../../assets/css/sysmng.css'
-
+import * as sysStyles from '../../assets/css/sysmng.css';
+import * as modalStyles from '../../assets/css/pdModal.css';
 import Box from '@mui/material/Box';
 import Collapse from '@mui/material/Collapse';
 import Typography from '@mui/material/Typography';
@@ -123,6 +123,7 @@ const StyledTreeItemLabelText = styled(Typography)({
     color: 'inherit',
     // fontFamily: 'General Sans',
     fontWeight: 500,
+    fontSize:"1rem",
 });
 
 function CustomLabel({ icon: Icon, expandable, children, ...other }) {
@@ -369,11 +370,10 @@ export default function Mm({menus, handleMenuSet}) {
             accessUser: selectedMenu.accessUser,
             menuOrder: selectedMenu.menuOrder
         }
-        console.log(formData);
         try {
             const {data} = await axiosInstance.patch('/sys/menu', formData);
             swalOptions.title = '성공!',
-            swalOptions.text = `${formData.menuName}이 성공적으로 수정되었습니다.`;
+            swalOptions.text = `${formData.menuName}이(가) 성공적으로 수정되었습니다.`;
             swalOptions.icon = 'success';
         } catch (error) {
             console.error(error);
@@ -388,34 +388,55 @@ export default function Mm({menus, handleMenuSet}) {
     const access = [
         {
             value: 'FP',
-            label: '현장담당자'
+            label: '현장 담당자'
         },
         {
             value: 'HP',
-            label: '본사담당자'
+            label: '본사 담당자'
         },
         {
             value: 'ADMIN',
-            label: '시스템관리자'
+            label: '시스템 관리자'
         },
     ]
     
-    let res = [];
-    function parseMenu(menuArray, bd = null, md = null) {
+    // let res = [];
+    // function parseMenu(menuArray, bd = null, md = null) {
+    //     menuArray.forEach(item => {
+    //         if (item.level === 1) {
+    //             parseMenu(item.menu, item.name, null);
+    //         } else if (item.level === 2) {
+    //             if (item.menu && item.menu.length > 0) {
+    //             parseMenu(item.menu, bd, item.name);
+    //             } else {
+    //             res.push({ id: item.id, level: item.level, url: item.url, name: item.name, accessUser: item.accessUser, bd, md: item.name, sd: null });
+    //             }
+    //         } else if (item.level === 3) {
+    //             res.push({ id: item.id, level: item.level, url: item.url, name: item.name, accessUser: item.accessUser, bd, md, sd: item.name });
+    //         }
+    //     });
+    // }
+    function parseMenu(menuArray, bd = null, md = null, result = []) {
         menuArray.forEach(item => {
             if (item.level === 1) {
-                parseMenu(item.menu, item.name, null);
+                parseMenu(item.menu, item.name, null, result);  // result 배열을 넘겨줍니다
             } else if (item.level === 2) {
                 if (item.menu && item.menu.length > 0) {
-                parseMenu(item.menu, bd, item.name);
+                    parseMenu(item.menu, bd, item.name, result);
                 } else {
-                res.push({ id: item.id, level: item.level, url: item.url, name: item.name, accessUser: item.accessUser, bd, md: item.name, sd: null });
+                    result.push({ id: item.id, level: item.level, url: item.url, name: item.name, accessUser: item.accessUser, bd, md: item.name, sd: null });
                 }
             } else if (item.level === 3) {
-                res.push({ id: item.id, level: item.level, url: item.url, name: item.name, accessUser: item.accessUser, bd, md, sd: item.name });
+                result.push({ id: item.id, level: item.level, url: item.url, name: item.name, accessUser: item.accessUser, bd, md, sd: item.name });
             }
         });
+        return result;
     }
+
+    const res = React.useMemo(() => {
+        return menus.reduce((acc, menu) => parseMenu(menu.menu, menu.name, null, acc), []);
+    }, [menus]);
+
     const findNameById = (id, upperDirArray) => {
         const item = upperDirArray.find(entry => entry.id === id);
         return item ? item : null; // 해당하는 항목이 없으면 `null`을 반환
@@ -453,21 +474,18 @@ export default function Mm({menus, handleMenuSet}) {
         }
     }, [selectedUpperDir]);
     menus.forEach(menu => parseMenu(menu.menu, menu.name, null));
-    const [fpMenu, setFpMenu] = useState(res.filter(e => e.accessUser === "FP"));
-    const [hpMenu, setHpMenu] = useState(res.filter(e => e.accessUser === "HP"));
-    const [adminMenu, setAdminMenu] = useState(res.filter(e => e.accessUser === "ADMIN"));
+    // const [fpMenu, setFpMenu] = useState(res.filter(e => e.accessUser === "FP"));
+    // const [hpMenu, setHpMenu] = useState(res.filter(e => e.accessUser === "HP"));
+    // const [adminMenu, setAdminMenu] = useState(res.filter(e => e.accessUser === "ADMIN"));
 
     const [expanded, setExpanded] = useState();
 
     const handleExpanded = (panel) => (event, isExpanded) => {
         setExpanded(isExpanded ? panel : false);
     }
-
-    useEffect(() => {
-        setFpMenu(res.filter(e => e.accessUser === "FP"));
-        setHpMenu(res.filter(e => e.accessUser === "HP"));
-        setAdminMenu(res.filter(e => e.accessUser === "ADMIN"));
-    }, [res])
+    const fpMenu = React.useMemo(() => res.filter(e => e.accessUser === "FP"), [res]);
+    const hpMenu = React.useMemo(() => res.filter(e => e.accessUser === "HP"), [res]);
+    const adminMenu = React.useMemo(() => res.filter(e => e.accessUser === "ADMIN"), [res]);
 
     return (
         <>
@@ -518,12 +536,12 @@ export default function Mm({menus, handleMenuSet}) {
                         />
                         <div className={sysStyles.text_field} style={{marginTop:"2rem"}}>
                             <div className={sysStyles.text}>
-                                {"메뉴 이름"}
+                                <span className={modalStyles.star}>*</span>{"메뉴이름"}
                             </div>
                             <Input id='menuName' value={selectedMenu.name} onChange={(e) => handleInputChangeText('name', e.target.value)} label="메뉴명" style={{width:"18rem", marginTop:"0.5rem"}} />
                         </div>
                         <div className={sysStyles.text_field}>
-                            <div className={sysStyles.text}>{"상위 폴더"}</div>
+                            <div className={sysStyles.text}><span className={modalStyles.star}>*</span>{"상위폴더"}</div>
                                 <Select value={selectedMenu.parentDir} onChange={(e) => {handleInputChange('parentDirId', e);}} style={{marginTop:"0.5rem",width:"18rem", height:"2rem", fontSize:"4rem"}}>
                                 {upperDir.map(option => (
                                     <Select.Option key={option.id} value={option.id}>
@@ -533,11 +551,11 @@ export default function Mm({menus, handleMenuSet}) {
                                 </Select>
                         </div>
                         <div className={sysStyles.text_field}>
-                            <div className={sysStyles.text}>{"Url 주소"}</div>
-                            <Input id='address' value={selectedMenu.url} onChange={(e) => handleInputChangeText('url', e.target.value)} label="Url" style={{width:"18rem", marginTop:"0.5rem"}} />
+                            <div className={sysStyles.text}>{"Url주소"}</div>
+                            <Input id='address' value={selectedMenu.url} placeholder='Url 주소가 없으면 분류폴더로 인식합니다.' onChange={(e) => handleInputChangeText('url', e.target.value)} label="Url" style={{width:"18rem", marginTop:"0.5rem"}} />
                         </div>
                         <div className={sysStyles.text_field}>
-                            <div className={sysStyles.text}>{"메뉴 순서"}</div>
+                            <div className={sysStyles.text}><span className={modalStyles.star}>*</span>{"메뉴순서"}</div>
                             <Select value={selectedMenu.menuOrder} onChange={(e) => handleInputChangeText('menuOrder', e)} style={{marginTop:"0.5rem",width:"18rem", height:"2rem", fontSize:"4rem"}}>
                             {menuOrderList.map(option => (
                                 <Select.Option key={option} value={option}>
@@ -547,8 +565,8 @@ export default function Mm({menus, handleMenuSet}) {
                             </Select>
                         </div>
                         <div className={sysStyles.text_field}>
-                            <div className={sysStyles.text}>{"접근 권한"}</div>
-                            <Select placeholder={"접근 권한"} defaultValue={selectedMenu.accessUser} value={selectedMenu.accessUser} onChange={(value) => handleInputChangeText('accessUser', value)} style={{marginTop:"0.5rem",width:"18rem", height:"2rem", fontSize:"4rem"}}>
+                            <div className={sysStyles.text}><span className={modalStyles.star}>*</span>{"접근권한"}</div>
+                            <Select placeholder={"접근권한"} defaultValue={selectedMenu.accessUser} value={selectedMenu.accessUser} onChange={(value) => handleInputChangeText('accessUser', value)} style={{marginTop:"0.5rem",width:"18rem", height:"2rem", fontSize:"4rem"}}>
                             {access.map(option => (
                                 <Select.Option key={option.value} value={option.value}>
                                     {option.label}

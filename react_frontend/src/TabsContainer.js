@@ -8,8 +8,9 @@ import { useNavigate } from 'react-router-dom';
 import { useDrag, useDrop, DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import Main from './Main';
-import Language from './Language';
 import styled from 'styled-components';
+import { ChatTwoTone } from '@mui/icons-material';
+import { Badge, IconButton } from '@mui/material';
 
 const ITEM_TYPE = 'TAB';
 const TABS_STORAGE_KEY = 'tabs'; // 로컬 스토리지 키
@@ -192,7 +193,7 @@ const DraggableTabNode = ({ index, moveTabNode, children }) => {
   );
 };
 
-const TabsContainer = forwardRef(({ handleLogout, user, handleMenuClick }, ref) => {
+const TabsContainer = forwardRef(({ handleLogout, user, handleMenuClick, handleChatClick, totCnt }, ref) => {
   const [tabs, setTabs] = useRecoilState(openTabsState);
   const [activeKey, setActiveKey] = useRecoilState(activeTabState);
   const navigate = useNavigate();
@@ -396,13 +397,6 @@ const TabsContainer = forwardRef(({ handleLogout, user, handleMenuClick }, ref) 
     </Menu>
   );
 
-  // 다국어 메뉴
-  const languageMenu = (
-    <div style={{ padding: '10px', fontFamily:"SUITE-Regular"}}>
-      <Language />
-    </div>
-  );
-
   return (
     <DndProvider backend={HTML5Backend}>
       <TabsWrapper>
@@ -427,10 +421,12 @@ const TabsContainer = forwardRef(({ handleLogout, user, handleMenuClick }, ref) 
             />
           </Tooltip>
 
-          {/* 다국어 섹션 */}
-          <Dropdown overlay={languageMenu} trigger={['click']} placement="bottomCenter">
-            <GTranslateIcon style={{ cursor: 'pointer', color: '#0A7800', fontSize: '30px' }} />
-          </Dropdown>
+          {/* 채팅 섹션 */}
+          <IconButton onClick={handleChatClick} sx={{ cursor:"pointer"}}>
+            <Badge badgeContent={totCnt} color='error'>
+              <ChatTwoTone fontSize="large" sx={{color:"rgb(14, 170, 0)"}}/>
+            </Badge>
+          </IconButton>
 
           {/* 유저 섹션 */}
           <Dropdown overlay={menu} trigger={['click']} placement="bottomRight">

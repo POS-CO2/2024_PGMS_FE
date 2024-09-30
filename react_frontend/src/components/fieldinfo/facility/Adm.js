@@ -279,7 +279,7 @@ export default function Adm() {
                 setSelectedEF(response.data);
                 
                 swalOptions.title = '성공!',
-                swalOptions.text = `${response.data.applyDvs}(이)가 성공적으로 수정되었습니다.`;
+                swalOptions.text = `${response.data.applyDvs}이(가) 성공적으로 수정되었습니다.`;
                 swalOptions.icon = 'success';
             } catch (error) {
                 swalOptions.title = '실패!',

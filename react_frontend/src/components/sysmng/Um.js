@@ -7,6 +7,7 @@ import { formField_mal, formField_um } from '../../assets/json/searchFormData';
 import TableCustom from '../../TableCustom';
 import * as sysStyles from '../../assets/css/sysmng.css';
 import * as mainStyle from '../../assets/css/main.css';
+import * as modalStyles from '../../assets/css/pdModal.css';
 import { Card, TextField,  } from '@mui/material';
 import { Dropdown } from '@mui/base';
 import axiosInstance from '../../utils/AxiosInstance';
@@ -131,7 +132,7 @@ export default function Um() {
                 setSubmittedUserIdx([0]);
 
                 swalOptions.title = '성공!',
-                swalOptions.text = `${data.userName}(이)가 성공적으로 등록되었습니다.`;
+                swalOptions.text = `${data.userName}이(가) 성공적으로 등록되었습니다.`;
                 swalOptions.icon = 'success';
             } catch (error) {
                 swalOptions.title = '실패!',
@@ -176,7 +177,7 @@ export default function Um() {
             setSelectedUser(data ?? {});
             setPassword(null);
             swalOptions.title = '성공!',
-            swalOptions.text = `${formData.userName}이 성공적으로 수정되었습니다.`;
+            swalOptions.text = `${formData.userName}이(가) 성공적으로 수정되었습니다.`;
             swalOptions.icon = 'success';
         } catch (error) {
             swalOptions.title = '실패!',
