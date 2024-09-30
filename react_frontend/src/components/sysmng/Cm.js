@@ -273,7 +273,7 @@ export default function Cm() {
                 formFields={formField_cm} 
             />
             <div className={sysStyles.main_grid}>
-                <Card className={sysStyles.card_box} sx={{width:"50%", height:"75vh", borderRadius:"15px"}}>
+                <Card className={sysStyles.card_box} sx={{width:"50%", height:"77vh", borderRadius:"15px"}}>
                     <TableCustom title="코드그룹ID" data={codeGroup} submittedRowIdx={submittedCGIdx} buttons={["Delete", "Edit", "Add"]} selectedRows={[selectedCodeGroup]} onRowClick={(e) => handleCodeGroupRowClick(e)} onClicks={[handleDeleteAClick, handleEditClick, handleAddClick]} columns={codeGroupColumns} modals={
                         [
                             isModalOpen.CMAdd && {
@@ -302,10 +302,10 @@ export default function Cm() {
                         ].filter(Boolean)
                     }/>
                 </Card>
-                <Card className={sysStyles.card_box} sx={{width:"50%", height:"75vh", borderRadius:"15px"}}>
+                <Card className={sysStyles.card_box} sx={{width:"50%", height:"77vh", borderRadius:"15px"}}>
                     {(!selectedCodeGroup || Object.keys(selectedCodeGroup).length === 0) ?
                         <div className={pdsStyles.card_container}>
-                            <div className={pdsStyles.table_title} style={{ padding: "8px" }}>배출계수목록</div>
+                            <div className={pdsStyles.table_title} style={{ padding: "8px" }}>코드리스트</div>
                         </div> : (
                             <TableCustom title="코드리스트" data={code} submittedRowIdx={submittedCLIdx} buttons={["Delete", "Edit", "Add"]} columns={codeColumns} selectedRows={[selectedCode]} onRowClick={handleCodeRowClick} onClicks={[handleDeleteBClick, handleListEditClick, handleListAddClick]} modals={
                                 [

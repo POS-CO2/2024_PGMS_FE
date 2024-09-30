@@ -493,7 +493,7 @@ export default function Mm({menus, handleMenuSet}) {
                 {"시스템관리 > 메뉴 관리"}
             </div>
             <div className={sysStyles.main_grid}>
-                <Card sx={{width:"25%", borderRadius:"15px", height:"88vh", overflowY:"auto"}}>
+                <Card sx={{width:"25%", borderRadius:"15px", height:"89vh", overflowY:"auto"}}>
                 <TableCustom title='' className={sysStyles.btn_group} buttons={['Add', 'Delete']} 
                 onClicks={[handleAddClick,handleDeleteClick]} 
                 table={false} 
@@ -527,7 +527,7 @@ export default function Mm({menus, handleMenuSet}) {
                     /** 테이블 컴포넌트 하나 생성해서 할당 */
                     /** 권한 부여 현황 어케 할건지 및 등록, 수정화면 필요 */
                     <>
-                    <Card className={sysStyles.card_box} sx={{width:"25%", height:"88vh", borderRadius:"15px"}}>
+                    <Card className={sysStyles.card_box} sx={{width:"25%", height:"89vh", borderRadius:"15px"}}>
                         <TableCustom 
                             table={false} 
                             title={"메뉴 정보"} 
@@ -575,7 +575,7 @@ export default function Mm({menus, handleMenuSet}) {
                             </Select>
                         </div>
                     </Card> 
-                    <Card className={sysStyles.card_box} sx={{width:"50%", borderRadius:"15px", height:"88vh", overflowY:"auto", paddingBottom:"1rem"}}>
+                    <Card className={sysStyles.card_box} sx={{width:"50%", borderRadius:"15px", height:"89vh", overflowY:"auto", paddingBottom:"1rem"}}>
                         <TableCustom title='권한 부여 현황' table={false}/>
                         <div className={sysStyles.accodion}>
                         <Accordion expanded={expanded === 'panel1'} onChange={handleExpanded('panel1')}>
@@ -771,7 +771,7 @@ export default function Mm({menus, handleMenuSet}) {
                     </Card>
                     </>
                 ) : (
-                    <Card className={sysStyles.card_box} sx={{width:"50%", borderRadius:"15px", height:"88vh"}}>
+                    <Card className={sysStyles.card_box} sx={{width:"50%", borderRadius:"15px", height:"89vh"}}>
                         <TableCustom title='권한 부여 현황' table={false}/>
                     </Card>
                 )}

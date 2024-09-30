@@ -1299,7 +1299,7 @@ export function CmListAddModal({ isModalOpen, handleOk, handleCancel, rowData })
         };
 
         let newError = {};
-        if(!formData.code) newError.code = '코드번호를 입력해주세요.';
+        if(!formData.code) newError.code = '코드ID를 입력해주세요.';
         if(!formData.codeName) newError.codeName = '코드이름을 입력해주세요.';
         if (Object.keys(newError).length > 0) {
             setError(newError);
@@ -1335,7 +1335,7 @@ export function CmListAddModal({ isModalOpen, handleOk, handleCancel, rowData })
                     <Input id='codeName' disabled value={rowData.codeGrpName} label="코드 그룹 이름" style={{width:"18rem"}} />
                 </div>
                 <div className={sysStyles.text_field}>
-                    <div className={sysStyles.text}><span className={modalStyles.star}>*</span>{"코드번호"}</div>
+                    <div className={sysStyles.text}><span className={modalStyles.star}>*</span>{"코드ID"}</div>
                     <Input id='code' value={code} allowClear={{ clearIcon: <CloseOutlined style={{color: "red"}} /> }} onChange={(e) => setCode(e.target.value)} label="코드" style={{width:"18rem"}} />
                     {error.code && <div className={modalStyles.error_message}>{error.code}</div>}
                 </div>
@@ -1392,7 +1392,7 @@ export function CmListEditModal({ isModalOpen, handleOk, handleCancel, rowData }
         };
 
         let newError = {};
-        if(!formData.code) newError.code = '코드번호를 입력해주세요.';
+        if(!formData.code) newError.code = '코드ID를 입력해주세요.';
         if(!formData.codeName) newError.codeName = '코드이름을 입력해주세요.';
         if (Object.keys(newError).length > 0) {
             setError(newError);
@@ -1420,14 +1420,14 @@ export function CmListEditModal({ isModalOpen, handleOk, handleCancel, rowData }
                     <div className={sysStyles.text}>
                         <span className={modalStyles.star}>*</span>{"코드그룹ID"}
                     </div>
-                    <Input id='codeGrpNo' disabled value={rowData.codeGrpNo} label="코드 그룹 번호" style={{width:"18rem"}} />
+                    <Input id='codeGrpNo' disabled value={rowData.codeGrpNo} label="코드 그룹 ID" style={{width:"18rem"}} />
                 </div>
                 <div className={sysStyles.text_field}>
                     <div className={sysStyles.text}><span className={modalStyles.star}>*</span>{"코드그룹이름"}</div>
                     <Input id='codeName' disabled value={rowData.codeGrpName} label="코드 그룹 이름" style={{width:"18rem"}} />
                 </div>
                 <div className={sysStyles.text_field}>
-                    <div className={sysStyles.text}><span className={modalStyles.star}>*</span>{"코드"}</div>
+                    <div className={sysStyles.text}><span className={modalStyles.star}>*</span>{"코드ID"}</div>
                     <Input id='code' value={code} allowClear={{ clearIcon: <CloseOutlined style={{color: "red"}} /> }} onChange={(e) => setCode(e.target.value)} label="코드" style={{width:"18rem"}} />
                     {error.code && <div className={modalStyles.error_message}>{error.code}</div>}
                 </div>
