@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useRecoilState } from 'recoil';
-import { emissionSourceForm } from '../../atoms/searchFormAtoms';
+import { emissionSourceForm, selectedPjtFPState } from '../../atoms/searchFormAtoms';
 import { ps12SelectedBtnState } from '../../atoms/buttonAtoms';
 import SearchForms from "../../SearchForms";
 import { formField_ps12_fp } from "../../assets/json/searchFormData";
@@ -20,7 +20,7 @@ export default function Ps_1_2_Fp() {
     const [formFields, setFormFields] = useState(formField_ps12_fp);
     const [formData, setFormData] = useRecoilState(emissionSourceForm);
     const [selectedPjtOption, setSelectedPjtOption] = useState([]);
-    const [selectedPjt, setSelectedPjt] = useState([]);
+    const [selectedPjt, setSelectedPjt] = useRecoilState(selectedPjtFPState);
     const [usagePerfs, setUsagePerfs] = useState([]);
     const [amountUsedPerfs, setAmountUsedPerfs] = useState([]);
     const [actvYearDisabled, setActvYearDisabled] = useState(true);  // 드롭다운 비활성화 상태 관리
@@ -75,6 +75,8 @@ export default function Ps_1_2_Fp() {
         };
     
         fetchPjtOptions();
+        
+        // Object.keys(selectedPjt).length !== 0 && setFormData(searchProject: selectedPjt);
         
         // 이전 탭의 검색기록이 있으면 그 값을 불러옴
         Object.keys(formData).length !== 0 && handleFormSubmit(formData);
