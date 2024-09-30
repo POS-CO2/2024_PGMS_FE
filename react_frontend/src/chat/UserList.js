@@ -3,7 +3,7 @@ import * as chatStyles from '../assets/css/chat.css';
 import { AccordionSummary, Avatar, Chip, Divider } from '@mui/material';
 import MuiAccordion from '@mui/material/Accordion';
 import MuiAccordionDetails from '@mui/material/AccordionDetails';
-import { ExpandMore } from '@mui/icons-material';
+import { CampaignTwoTone, ExpandMore } from '@mui/icons-material';
 import { styled } from '@mui/material/styles';
 
 const Accordion = styled((props) => (
@@ -32,14 +32,17 @@ const UserIcon = ({data}) => {
     else if (data.role === "HP") {
         return <Avatar sx={{ bgcolor: "rgb(74, 122, 230)", fontSize:"1rem", fontWeight:"bold", width:"50px", height:"50px" }} >본사</Avatar>
     }
-    else {
+    else if (data.role === "ADMIN") {
         return <Avatar sx={{ bgcolor: "orange", fontSize:"1.3rem", fontWeight:"bold", width:"50px", height:"50px" }} >관리</Avatar>
+    }
+    else {
+        return <CampaignTwoTone fontSize='large' sx={{bgcolor:"gold", width:"50px", height:"50px", borderRadius:"50%", color:"red"}}/>
     }
 }
 
 
 
-export default function UserList({ UserListIcon, handleChattingClick, fpUser, hpUser, adminUser, me }) {
+export default function UserList({ UserListIcon, handleChattingClick, fpUser, hpUser, adminUser, noticeUser, me }) {
 
 
     return (
@@ -56,6 +59,27 @@ export default function UserList({ UserListIcon, handleChattingClick, fpUser, hp
             </div>
             <Divider variant='middle'/>
             <div>
+                <Accordion defaultExpanded>
+                    <AccordionSummary
+                        expandIcon={<ExpandMore />}
+                        aria-controls='panel1-content'
+                        id='notice-userlist'
+                        sx={{fontSize:"0.8rem", color:"grey"}}
+                    >
+                        공지사항
+                    </AccordionSummary>
+                    <AccordionDetails>
+                        <div className={chatStyles.user_lists} onDoubleClick={() => handleChattingClick(noticeUser)}>
+                            <div style={{display:"flex" ,flexDirection:"row", alignItems:"center", gap:"1rem", fontSize:"1rem", fontWeight:"500"}}>
+                                <UserListIcon data = {noticeUser}/>
+                                {`${noticeUser.userName}`}
+                            </div>
+                            <div>
+                            </div>
+                        </div>
+                    </AccordionDetails>
+                </Accordion>
+                <Divider variant='middle' />
                 <Accordion defaultExpanded>
                     <AccordionSummary
                         expandIcon={<ExpandMore />}
@@ -84,7 +108,7 @@ export default function UserList({ UserListIcon, handleChattingClick, fpUser, hp
                     <AccordionSummary
                         expandIcon={<ExpandMore />}
                         aria-controls='panel1-content'
-                        id='fp-userlist'
+                        id='hp-userlist'
                         sx={{fontSize:"0.8rem", color:"grey"}}
                     >
                         본사 담당자

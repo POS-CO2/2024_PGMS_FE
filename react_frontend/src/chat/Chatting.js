@@ -7,7 +7,7 @@ import TextArea from "antd/es/input/TextArea";
 import axiosInstance from "../utils/AxiosInstance";
 import {useInView} from 'react-intersection-observer';
 
-export default function Chatting({ UserListIcon ,handleChatListClick, chatUser, me, chatContent, setChatContent, handleRead,handleReadAll, ws, fetchRoom, roomChange, setRoomChange, updateChatList}) {
+export default function Chatting({ UserListIcon ,handleChatListClick, chatUser, noticeUser, me, chatContent, setChatContent, handleRead,handleReadAll, ws, fetchRoom, roomChange, setRoomChange, updateChatList}) {
 
     const [text, setText] = useState('');
     const [isLoading, setIsLoading] = useState(false);
@@ -188,7 +188,7 @@ export default function Chatting({ UserListIcon ,handleChatListClick, chatUser, 
                     </div>
                 </div>
                 <div style={{paddingRight:"0.5rem"}}>
-                    <Chip label={chatUser.deptCode} variant='outlined' />
+                    {chatUser.id !== 0 && <Chip label={chatUser.deptCode} variant='outlined' />}
                 </div>
             </div>
             <Divider variant="middle" />
@@ -221,18 +221,41 @@ export default function Chatting({ UserListIcon ,handleChatListClick, chatUser, 
                     fontFamily:"SUITE-Regular"
                 }}}>
                     <div style={{display:"flex", flexDirection:"row", width:"100%", height:"100%", gap:"1rem", margin:"0.3rem 0.5rem", justifyContent:"space-between", alignItems:"center"}}>
-                        <TextArea 
-                        value={text} 
-                        onChange={(e) => handleKeyboard(e)} 
-                        placeholder="보낼 메시지를 입력하세요." 
-                        onKeyDown={handleKeyPress}
-                        autoSize={{
-                            minRows: 2,
-                            maxRows: 3,
-                        }} />
-                        <IconButton onClick={handleSend}>
-                            <Send sx={{color:"#6cbb66"}} />
-                        </IconButton>
+                        {
+                            chatUser.id !== 0 ? (
+                                <>
+                                    <TextArea 
+                                    value={text} 
+                                    onChange={(e) => handleKeyboard(e)} 
+                                    placeholder="보낼 메시지를 입력하세요." 
+                                    onKeyDown={handleKeyPress}
+                                    autoSize={{
+                                        minRows: 2,
+                                        maxRows: 3,
+                                    }} />
+                                    <IconButton onClick={handleSend}>
+                                        <Send sx={{color:"#6cbb66"}} />
+                                    </IconButton>
+                                </>
+                            ) : (
+                                <>
+                                    <TextArea 
+                                    value={text} 
+                                    onChange={(e) => handleKeyboard(e)} 
+                                    placeholder="메시지 수신만 가능합니다." 
+                                    onKeyDown={handleKeyPress}
+                                    disabled
+                                    autoSize={{
+                                        minRows: 2,
+                                        maxRows: 3,
+                                    }} />
+                                    <IconButton onClick={handleSend} disabled>
+                                        <Send sx={{color:"grey"}} />
+                                    </IconButton>
+                                </>
+                            )
+                        }
+                        
                     </div>
                 </ConfigProvider>
             </div>
