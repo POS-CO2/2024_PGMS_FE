@@ -151,11 +151,7 @@ function TableTab({ data }) {
 
     return (
         <Card sx={{ width: "100%", height: "100%", borderRadius: "15px" }}>
-<<<<<<< HEAD
-            <TableCustom columns={perfTotalColumns} title="총량실적표 (단위:kgGHG)" data={data} buttons={['DownloadExcel']} onClicks={[() => onDownloadExcelClick(data)]} monthPagination={true} />
-=======
-            <TableCustom columns={perfTotalColumns} title="총량실적표" data={data} buttons={['DownloadExcel']} onClicks={[() => onDownloadExcelClick(data)]} monthPagination={true} pagination={false} />
->>>>>>> 0fdcced0a5ec0bf1ec381096ef16fd1a881faa5e
+            <TableCustom columns={perfTotalColumns} title="총량실적표 (단위:kgGHG)" data={data} buttons={['DownloadExcel']} onClicks={[() => onDownloadExcelClick(data)]} monthPagination={true} pagination={false} />
         </Card>
     )
 }
