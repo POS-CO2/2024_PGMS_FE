@@ -20,7 +20,7 @@ import { PieChart } from '@mui/x-charts/PieChart';
 import { DownOutlined } from '@ant-design/icons';
 import { Dropdown, Space } from 'antd';
 import axiosInstance from '../../../utils/AxiosInstance';
-import { emissionPerfPjtColumns, perfPjtColumns, pjtColumns } from '../../../assets/json/tableColumn';
+import { emissionPerfPjtColumns, perfPjtColumns } from '../../../assets/json/tableColumn';
 
 export default function Psq() {
     const [formFields, setFormFields] = useState(formField_psq);
@@ -249,6 +249,11 @@ export default function Psq() {
         document.body.removeChild(a);
     };
 
+    // 서치폼이 변경될 때 목록 clear
+    const handleFieldsChange = () => {
+        setSelectedPjt({});
+    };
+
     return (
         <div>
             <div className={mainStyle.breadcrumb}>
@@ -259,6 +264,7 @@ export default function Psq() {
                 onFormSubmit={handleFormSubmit}
                 formFields={formFields.map(field => field.name === 'actvYear' ? { ...field, disabled: actvYearDisabled } : field)} // actvYear 필드의 disabled 상태 반영
                 onProjectSelect={onProjectSelect} 
+                handleFieldsChange={handleFieldsChange}
             />
             
             {(!selectedPjt || Object.keys(selectedPjt).length === 0) ? 

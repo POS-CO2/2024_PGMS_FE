@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useRecoilState } from 'recoil';
 import {
-    eqState, selectedEqState, eqLibState, selectedEqLibState
+    eqState, selectedEqState, eqLibState, selectedEquipLibState
     } from '../../../../atoms/pdsAtoms';
 import {
         useHandleOkAction, useModalActions, useHandleSubmitAction,
@@ -70,7 +70,7 @@ export default function Fd({pjtId}) {
     const [equips, setEquips] = useRecoilState(eqState);
     const [selectedEq, setSelectedEq] = useRecoilState(selectedEqState);
     const [eqLibs, setEqLibs] = useRecoilState(eqLibState);
-    const [selectedEqLib, setSelectedEqLib] = useRecoilState(selectedEqLibState);
+    const [selectedEqLib, setSelectedEqLib] = useRecoilState(selectedEquipLibState);
     const [submittedEqLibIdx, setSubmittedEqLibIdx] = useState([]);
 
     // 드롭다운 리스트
@@ -199,7 +199,7 @@ export default function Fd({pjtId}) {
         <>
             <Card sx={{ width: "50%", height: "auto", borderRadius: "0.5rem" }}>
                 <TableCustom
-                    title='설비목록' 
+                    title='설비 목록' 
                     data={equips}
                     submittedRowIdx={submittedEqLibIdx} 
                     columns={equipColumns}                 
@@ -228,7 +228,7 @@ export default function Fd({pjtId}) {
             <Card sx={{ width: "50%", height: "auto", borderRadius: "0.5rem", paddingBottom: "20px" }}>
                 <div className={pdsStyles.card_container}>
                     <div className={pdsStyles.contents_header}>
-                        설비등록
+                        설비 등록
                         <AddButton onClick={handleSubmit} disabled={Object.keys(selectedEqLib).length === 0} />
                     </div>
                     <div className={pdsStyles.search_container}>

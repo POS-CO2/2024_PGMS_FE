@@ -186,6 +186,11 @@ export default function Esd_Fp() {
         setFilteredSDs(filteredResult);
     };
 
+    // 서치폼이 변경될 때 목록 clear
+    const handleFieldsChange = () => {
+        setSelectedPjt({});
+    };
+
     return (
         <>
             <div className={mainStyles.breadcrumb}>현장정보 &gt; 프로젝트 상세설정</div>
@@ -193,8 +198,9 @@ export default function Esd_Fp() {
                 initialValues={formData}
                 onFormSubmit={handleFormSubmit} 
                 formFields={formFields} 
+                handleFieldsChange={handleFieldsChange}
             />
-            {(Object.keys(formData).length === 0) ?
+            {(!selectedPjt || Object.keys(selectedPjt).length === 0) ? 
                 <></> :
                 <div className={pdsStyles.main_grid}>
                     <Card sx={{ height: "auto", padding: "0.5rem", borderRadius: "0.5rem" }}>

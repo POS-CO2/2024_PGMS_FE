@@ -23,3 +23,15 @@ export const itemsState = atom({
   key: 'itemsState',
   default: [],
 });
+
+// 선택된 메뉴 항목 키
+export const selectedKeyState = atom({
+  key: 'selectedKeyState',
+  default: null, // 기본값: 선택된 항목 없음
+});
+
+// 열려 있는 대분류 키 상태
+export const openKeysState = atom({
+  key: 'openKeysState',
+  default: [],
+});
