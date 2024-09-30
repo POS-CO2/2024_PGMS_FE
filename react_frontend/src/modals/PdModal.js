@@ -563,7 +563,7 @@ export function FamAddModal({ isModalOpen, handleOk, handleCancel, dropDown }) {
                     {errors.inputUnit && <div className={modalStyles.error_message}>{errors.inputUnit}</div>}
                 </div>
                 <div className={rmStyles.search_item}>
-                    <div className={rmStyles.search_title}><span className={modalStyles.star}>*</span>산정단위</div>
+                    <div className={rmStyles.search_title}>산정단위</div>
                     <input 
                         className={rmStyles.search} 
                         id="calUnit" 
@@ -573,7 +573,7 @@ export function FamAddModal({ isModalOpen, handleOk, handleCancel, dropDown }) {
                     />
                 </div>
                 <div className={rmStyles.search_item}>
-                    <div className={rmStyles.search_title}><span className={modalStyles.star}>*</span>단위환산계수</div>
+                    <div className={rmStyles.search_title}>단위환산계수</div>
                     <input 
                         className={rmStyles.search} 
                         id="unitConvCoef" 
@@ -747,7 +747,7 @@ export function FamEditModal({ isModalOpen, handleOk, handleCancel, rowData, dro
                     {errors.inputUnit && <div className={modalStyles.error_message}>{errors.inputUnit}</div>}
                 </div>
                 <div className={rmStyles.search_item}>
-                    <div className={rmStyles.search_title}><span className={modalStyles.star}>*</span>산정단위</div>
+                    <div className={rmStyles.search_title}>산정단위</div>
                     <Input
                         value={calUnit}
                         disabled={true}
@@ -757,7 +757,7 @@ export function FamEditModal({ isModalOpen, handleOk, handleCancel, rowData, dro
                     />
                 </div>
                 <div className={rmStyles.search_item}>
-                    <div className={rmStyles.search_title}><span className={modalStyles.star}>*</span>단위환산계수</div>
+                    <div className={rmStyles.search_title}>단위환산계수</div>
                     <Input
                         value={unitConvCoef}
                         disabled={true}
@@ -850,7 +850,7 @@ export function FadAddModal({ isModalOpen, handleOk, handleCancel, rowData }) {
     return (
         <Modal 
             open={isModalOpen} 
-            width={800}
+            width={1200}
             onCancel={handleCancel} 
             footer={null}             //Ant Design의 기본 footer 제거(Cancel, OK 버튼)
             // bodyStyle={{ maxHeight: '60vh', overflowY: 'auto' }}
