@@ -1,4 +1,4 @@
-import { Card } from '@mui/material';
+import { Card, Divider } from '@mui/material';
 import React, { useState, useRef, useEffect } from 'react';
 import ApexChart from "react-apexcharts";
 import { Swiper, SwiperSlide } from 'swiper/react';
@@ -646,11 +646,11 @@ export default function Main_Hp() {
                                                         <div>
                                                             {v.equipLibName}
                                                         </div>
-                                                        <div>
+                                                        <div style={{textAlign:"right"}}>
                                                             <div>
-                                                                hello
+                                                                {v.formattedEquipEmissionQty}
                                                             </div>
-                                                            <div>
+                                                            <div style={{fontSize:"0.9rem", color:"grey"}}>
                                                             {`${v.formattedEquipActvQty} ${data.inputUnitCode}`}
                                                             </div>
                                                         </div>
@@ -667,7 +667,7 @@ export default function Main_Hp() {
                                                             <div>
                                                                 {data.formattedTotalEmissionQty}
                                                             </div>
-                                                            <div>
+                                                            <div style={{fontSize:"large", color:"grey"}}>
                                                                 {`${data.formattedTotalActvQty !== "" ? data.formattedTotalActvQty : 0} ${data.inputUnitCode}`}
                                                             </div>
                                                         </div>
