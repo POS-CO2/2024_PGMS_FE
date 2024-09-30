@@ -1,16 +1,14 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate } from 'react-router-dom';
 import { useRecoilState } from "recoil";
 import { pjtMgrSearchForm } from '../../../atoms/searchFormAtoms';
 import { selectedPjtMgrState, expandedRowState } from '../../../atoms/selectedRowAtoms';
-import { openTabsState, activeTabState } from '../../../atoms/tabAtoms';
 import Swal from 'sweetalert2';
-import { Card, Accordion, AccordionSummary, AccordionDetails } from '@mui/material';
+import { Card } from '@mui/material';
 import * as mainStyles from "../../../assets/css/main.css"
 import TableCustom from "../../../TableCustom";
 import SearchForms from "../../../SearchForms"
 import {formField_pg} from "../../../assets/json/searchFormData"
-import { pjtColumns, pjtManagerColumns } from '../../../assets/json/tableColumn';
+import { pjtColumns } from '../../../assets/json/tableColumn';
 import axiosInstance from '../../../utils/AxiosInstance';
 import dayjs from 'dayjs';
 import * as pdsStyles from "../../../assets/css/pds.css";
@@ -42,45 +40,45 @@ export default function Pg() {
             label: item.name,
         }));
     };
+
+    const fetchProject = async () => {
+        try {
+            const response = await axiosInstance.get(`/pjt?pgmsYn=y`);
+            setProjects(response.data);
+        } catch (error) {
+            console.log(error);
+        }
+    };
+
+    const fetchDropDown = async () => {
+        try {
+            // 여러 개의 비동기 작업을 병렬로 실행하기 위해 await Promise.all 사용
+            const [optionsDiv, optionsPS, optionsReg] = await Promise.all([
+                fetchOptions('본부코드'),
+                fetchOptions('프로젝트진행상태'),
+                fetchOptions('지역코드')
+            ]);
+
+            // formField_pg를 업데이트
+            const updateFormFields = formField_pg.map(field => {
+                if (field.name === 'divCode') {
+                    return { ...field, options: optionsDiv };
+                } else if (field.name === 'pjtProgStus') {
+                    return { ...field, options: optionsPS };
+                } else if (field.name === 'reg') {
+                    return { ...field, options: optionsReg };
+                } else {
+                    return field;
+                }
+            });
+
+            setFormFields(updateFormFields);
+        } catch (error) {
+            console.error(error);
+        }
+    };
     
     useEffect(() => {
-        const fetchProject = async () => {
-            try {
-                const response = await axiosInstance.get(`/pjt?pgmsYn=y`);
-                setProjects(response.data);
-            } catch (error) {
-                console.log(error);
-            }
-        };
-
-        const fetchDropDown = async () => {
-            try {
-                // 여러 개의 비동기 작업을 병렬로 실행하기 위해 await Promise.all 사용
-                const [optionsDiv, optionsPS, optionsReg] = await Promise.all([
-                    fetchOptions('본부코드'),
-                    fetchOptions('프로젝트진행상태'),
-                    fetchOptions('지역코드')
-                ]);
-    
-                // formField_pg를 업데이트
-                const updateFormFields = formField_pg.map(field => {
-                    if (field.name === 'divCode') {
-                        return { ...field, options: optionsDiv };
-                    } else if (field.name === 'pjtProgStus') {
-                        return { ...field, options: optionsPS };
-                    } else if (field.name === 'reg') {
-                        return { ...field, options: optionsReg };
-                    } else {
-                        return field;
-                    }
-                });
-
-                setFormFields(updateFormFields);
-            } catch (error) {
-                console.error(error);
-            }
-        };
-    
         fetchDropDown();
         fetchProject();
 
@@ -101,6 +99,7 @@ export default function Pg() {
     // 조회 버튼 클릭시 호출될 함수
     const handleFormSubmit = async (data) => {
         setFormData(data);
+        setExpandedRow(null);
 
         // data.calendar가 정의되어 있지 않거나 값이 없는 경우를 처리하기 위해 설정
         // ISO 형식 문자열을 dayjs로 변환
@@ -172,7 +171,6 @@ export default function Pg() {
                 });
 
                 const response = await axiosInstance.post("/pjt", requestBody);
-                console.log("resPjt", response.data);
 
                 setProjects(prevPjts => [...response.data, ...prevPjts]);
                 setSelectedPjt({});
@@ -191,9 +189,7 @@ export default function Pg() {
 
             // Swal.fire 실행 후, 성공 메시지가 표시되면 페이지 새로고침
             Swal.fire(swalOptions).then(() => {
-                // 성공 후 페이지 새로고침
                 setExpandedRow(null);
-                window.location.reload();
             });
         } else if (modalType === 'Delete') {
             try {
@@ -222,6 +218,11 @@ export default function Pg() {
         showModal('Delete');
     };
 
+    // 서치폼이 변경될 때 프로젝트 목록 clear
+    const handleFieldsChange = () => {
+        setProjects([]);
+    };
+
     return (
         <>
             <div className={mainStyles.breadcrumb}>현장정보 &gt; 프로젝트 &gt; 프로젝트 관리</div>
@@ -229,7 +230,12 @@ export default function Pg() {
                 initialValues={formData}
                 onFormSubmit={handleFormSubmit} 
                 formFields={formFields} 
+<<<<<<< HEAD
                 isPg={true}
+=======
+                handleFieldsChange={handleFieldsChange}
+                handleEmptyFields={fetchProject}
+>>>>>>> 0fdcced0a5ec0bf1ec381096ef16fd1a881faa5e
             />
 
             <div className={pdsStyles.main_grid}>

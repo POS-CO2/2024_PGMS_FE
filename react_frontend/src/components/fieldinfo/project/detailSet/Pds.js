@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useRecoilState } from 'recoil';
-import { selectedPjtState } from '../../../../atoms/pdsAtoms';
+import { selectedPjtState } from '../../../../atoms/searchFormAtoms';
 import { Card } from '@mui/material';
 import SearchProjectModal from "../../../../FormItem/SearchProjectModal";
 import * as pdsStyles from "../../../../assets/css/pds.css";
@@ -44,17 +44,17 @@ export default function Pds() {
 
             ) : (
                 <div className={pdsStyles.main_grid}>
-                    <Card sx={{ height: "auto", padding: "1rem", borderRadius: "0.5rem" }}>
-                        <div className={pdsStyles.row}>
+                    <Card sx={{ height: "auto", padding: "0.5rem", borderRadius: "0.5rem" }}>
+                        <div className={pdsStyles.table_title} style={{ padding: "0 1rem"}}>프로젝트 정보</div>
+
+                        <div className={pdsStyles.row} style={{ padding: "0.5rem 1rem" }}>
                             <div className={pdsStyles.pjt_data_container}>프로젝트 코드
                                 <div className={pdsStyles.code}>{searchedPjt.pjtCode}</div>
                             </div>
                             <div className={pdsStyles.pjt_data_container}>프로젝트명
                                 <div className={pdsStyles.code}>{searchedPjt.pjtName}</div>
                             </div>
-                        </div>
 
-                        <div className={pdsStyles.row}>
                             <div className={pdsStyles.pjt_data_container}>프로젝트 지역
                                 <div className={pdsStyles.code}>{searchedPjt.pjtType} / {searchedPjt.regCode}</div>
                             </div>

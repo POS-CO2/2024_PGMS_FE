@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef, forwardRef, useImperativeHandle } from 'react';
-import { useRecoilState } from "recoil";
-import { openTabsState, activeTabState } from './atoms/tabAtoms';
+import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
+import { openTabsState, activeTabState, itemsState, selectedKeyState, openKeysState } from './atoms/tabAtoms';
 import { Tabs, Dropdown, Menu, Button, Tooltip } from 'antd';
 import { CloseOutlined, CloseCircleOutlined } from '@ant-design/icons';
 import GTranslateIcon from '@mui/icons-material/GTranslate';
@@ -8,8 +8,9 @@ import { useNavigate } from 'react-router-dom';
 import { useDrag, useDrop, DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import Main from './Main';
-import Language from './Language';
 import styled from 'styled-components';
+import { ChatTwoTone } from '@mui/icons-material';
+import { Badge, IconButton } from '@mui/material';
 
 const ITEM_TYPE = 'TAB';
 const TABS_STORAGE_KEY = 'tabs'; // 로컬 스토리지 키
@@ -25,6 +26,9 @@ const TabsWrapper = styled.div`
 
 const TabContainer = styled.div`
   display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  flex-grow: 1;
   flex-wrap: nowrap;
   flex-shrink: 1;
   max-width: calc(100% - 160px);
@@ -76,7 +80,7 @@ const StyledButton = styled(Button)`
   margin-left: 10px;
   color: #0A7800; /* 기본 텍스트 색상 */
   border-color: #777777; /* 기본 보더 색상 */
-  padding: 2px 4px;
+  padding: 0px 4px;
   height: auto; /* 높이를 자동으로 설정하여 텍스트(userName)와 일치시킴 */
   font-size: 12px;
 
@@ -109,7 +113,7 @@ const StyledTabs = styled(Tabs)`
     width: auto;
     margin: 0 !important;
     justify-content: flex-start;
-    padding: 1rem 0.5rem;
+    padding: 0.6rem 0.5rem;
     font-weight: bold;
     overflow: hidden;
     white-space: nowrap !important;
@@ -189,11 +193,14 @@ const DraggableTabNode = ({ index, moveTabNode, children }) => {
   );
 };
 
-const TabsContainer = forwardRef(({ handleLogout, user, handleMenuClick }, ref) => {
+const TabsContainer = forwardRef(({ handleLogout, user, handleMenuClick, handleChatClick, totCnt }, ref) => {
   const [tabs, setTabs] = useRecoilState(openTabsState);
   const [activeKey, setActiveKey] = useRecoilState(activeTabState);
   const navigate = useNavigate();
   const homeTabAdded = useRef(false); // 홈 탭이 추가되었는지 추적하는 플래그
+  const items = useRecoilValue(itemsState);
+  const setSelectedKeys = useSetRecoilState(selectedKeyState);
+  const [openKeys, setOpenKeys] = useRecoilState(openKeysState);
 
   useEffect(() => {
     const savedTabs = JSON.parse(localStorage.getItem(TABS_STORAGE_KEY)) || [];
@@ -207,7 +214,6 @@ const TabsContainer = forwardRef(({ handleLogout, user, handleMenuClick }, ref) 
         key: '',
         tab: '홈',
         path: '',
-        content: <Main />,
       };
       setTabs([homeTab]);
       setActiveKey(homeTab.key);
@@ -226,8 +232,8 @@ const TabsContainer = forwardRef(({ handleLogout, user, handleMenuClick }, ref) 
   }, [tabs]);
 
   useImperativeHandle(ref, () => ({
-    addTab(path, label, content) {
-      const newTab = { key: path, tab: label, content };
+    addTab(path, label, accessUser) {
+      const newTab = { key: path, tab: label, accessUser: accessUser };
       setTabs(prevTabs => {
         const existingTab = prevTabs.find(tab => tab.key === path);
         if (!existingTab) {
@@ -239,10 +245,49 @@ const TabsContainer = forwardRef(({ handleLogout, user, handleMenuClick }, ref) 
     },
   }));
 
+  // 경로를 기준으로 메뉴 항목 찾기
+  const findItemByPath = (items, path) => {
+    return items.reduce((acc, item) => {
+        if (acc) return acc;
+        if (item.path === path) return item;
+        if (item.children) return findItemByPath(item.children, path);
+        return null;
+    }, null);
+  };
+
+  const findParentItem = (items, childKey) => {
+    return items.reduce((acc, item) => {
+        if (acc) return acc;
+        if (item.children && item.children.some(child => child.key === childKey)) {
+            return item;  // 해당 childKey를 가진 부모 아이템을 반환
+        }
+        if (item.children) {
+            return findParentItem(item.children, childKey); // 재귀적으로 탐색
+        }
+        return null;
+    }, null);
+  };
+
   const onTabChange = path => {
     setActiveKey(path);
+
+    // 메뉴 클릭을 처리
+    const item = findItemByPath(items, path);
+    
+    if (item) {
+      setSelectedKeys([item.key]);
+      handleMenuClick({ key: item.key });
+
+      // 대분류(상위 메뉴)를 찾아 openKeys에 추가
+      const parentItem = findParentItem(items, item.key);
+      if (parentItem) {
+        setOpenKeys([...openKeys, parentItem.key]);
+      }
+    }
+
     if (path === '') {  // 홈 탭을 클릭했을 때 명시적으로 홈 경로로 이동
       navigate('');
+      setSelectedKeys(null);
     } else {
       navigate(path);
     }
@@ -301,6 +346,8 @@ const TabsContainer = forwardRef(({ handleLogout, user, handleMenuClick }, ref) 
         <div style={{display:"flex", alignContent:"center", cursor:"pointer"}}>
           <div style={{ textOverflow:"ellipsis", whiteSpace:"nowrap", overflowX:"hidden", fontFamily:'SUITE-Regular'}}>
             {tab.tab}
+            {/* accessUser가 'FP'가 아닐 때 *을 추가 */}
+            {tab.accessUser !== 'FP' && <span style={{ color: '#FF7474' }}> *</span>}
           </div>
           <div>
             {tab.key !== '' && ( // 홈 탭에는 닫기 버튼을 표시하지 않음
@@ -352,13 +399,6 @@ const TabsContainer = forwardRef(({ handleLogout, user, handleMenuClick }, ref) 
     </Menu>
   );
 
-  // 다국어 메뉴
-  const languageMenu = (
-    <div style={{ padding: '10px', fontFamily:"SUITE-Regular"}}>
-      <Language />
-    </div>
-  );
-
   return (
     <DndProvider backend={HTML5Backend}>
       <TabsWrapper>
@@ -383,10 +423,12 @@ const TabsContainer = forwardRef(({ handleLogout, user, handleMenuClick }, ref) 
             />
           </Tooltip>
 
-          {/* 다국어 섹션 */}
-          <Dropdown overlay={languageMenu} trigger={['click']} placement="bottomCenter">
-            <GTranslateIcon style={{ cursor: 'pointer', color: '#0A7800', fontSize: '30px' }} />
-          </Dropdown>
+          {/* 채팅 섹션 */}
+          <IconButton onClick={handleChatClick} sx={{ cursor:"pointer"}}>
+            <Badge badgeContent={totCnt} color='error'>
+              <ChatTwoTone fontSize="large" sx={{color:"rgb(14, 170, 0)"}}/>
+            </Badge>
+          </IconButton>
 
           {/* 유저 섹션 */}
           <Dropdown overlay={menu} trigger={['click']} placement="bottomRight">

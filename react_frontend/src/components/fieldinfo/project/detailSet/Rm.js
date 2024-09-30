@@ -26,7 +26,8 @@ export default function Rm({pjtId}) {
         if (data.length === 0) {
             // 빈 데이터인 경우, 배열의 필드를 유지하면서 빈 값으로 채운 배열 생성
             setChartReves(
-                { data: Array(12).fill(null), stack: 'A' },
+                { data: Array(12).fill(null), stack: 'A', type: 'bar' },
+                { data: Array(12).fill(null), type: 'line' }
             );
 
         } else {
@@ -38,7 +39,8 @@ export default function Rm({pjtId}) {
             });
 
             const formattedChartReves = [
-                { data: chartData, stack: 'A' },
+                { data: chartData, stack: 'A', type: 'bar' },  // 막대 그래프
+                { data: chartData, type: 'line' }  // 꺾은선 그래프
             ];
             setChartReves(formattedChartReves);
         }
@@ -65,7 +67,7 @@ export default function Rm({pjtId}) {
         <>
             <Card sx={{ width: "30%", height: "auto", borderRadius: "0.5rem" }}>
                 <TableCustomDoubleClickEdit 
-                    title='매출액목록' 
+                    title='매출액 목록' 
                     data={revenues}
                     columns={pjtSalesColumns}                
                     buttons={['DoubleClickEdit']}

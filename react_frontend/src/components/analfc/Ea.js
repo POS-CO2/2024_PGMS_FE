@@ -104,13 +104,23 @@ export default function Ea() {
         XLSX.writeFile(wb, `${fileName}.xlsx`);
     };
 
+    // 서치폼이 변경될 때 목록 clear
+    const handleFieldsChange = () => {
+        setFormData({});
+    };
+
     return (
         <div>
             <div className={mainStyle.breadcrumb}>
                 {"분석및예측 > 설비별 분석"}
             </div>
 
-            <SearchForms initialValues={formData} onFormSubmit={handleFormSubmit} formFields={formField_ea} />
+            <SearchForms 
+                initialValues={formData} 
+                onFormSubmit={handleFormSubmit} 
+                formFields={formField_ea} 
+                handleFieldsChange={handleFieldsChange}
+            />
 
             {(!formData || Object.keys(formData).length === 0) ? (
                 <></>

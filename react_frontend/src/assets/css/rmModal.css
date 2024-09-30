@@ -23,7 +23,7 @@
     flex-direction: column;     /* 수직 정렬 */
     align-items: center;
     gap: 20px;
-    margin: 30px 0;
+    margin: 30px 0 0;
     font-family: 'SUITE-Regular';
 }
 
@@ -63,16 +63,16 @@
 .search_item {
     display: flex;
     flex-direction: column;
-    width: 100%;
+    margin: 0 auto;
     font-family: 'SUITE-Regular';
 }
 
 .search_title {
-    font-weight: bolder;
-    font-size: 16px;
-    line-height: 10px;
-    margin-bottom: 10px;
+    font-size: 1.2rem;
+    margin-bottom: 0.5rem;
     font-family: 'SUITE-Regular';
+    display: flex;
+    align-items: center;
 }
 
 .search {
@@ -118,7 +118,7 @@
 }
 
 .select_button {
-    width: 21rem;
+    width: 18rem;
     height: 41px;
     padding: 5px 10px;
     background: #0A7800;
@@ -127,6 +127,7 @@
     border-radius: 5px;
     cursor: pointer;
     font-family: 'SUITE-Regular';
+    margin: 2rem auto 0;
 }
 
 :where(.css-dev-only-do-not-override-1pg9a38).ant-modal .ant-modal-content {

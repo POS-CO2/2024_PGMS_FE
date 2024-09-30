@@ -49,6 +49,11 @@ export default function Sa() {
         const perProdChartResponse = await axiosInstance.get(url);
         setUnitPerProd(perProdChartResponse.data);
     };
+
+    // 서치폼이 변경될 때 목록 clear
+    const handleFieldsChange = () => {
+        setFormData({});
+    };
     
     const onDownloadExcelClick = (csvData) => {
         //const fileName = `사용금액 엑셀 양식_${formData.searchProject.pjtName}_${formData.actvYear}`;
@@ -76,6 +81,7 @@ export default function Sa() {
         XLSX.writeFile(wb, `${fileName}.xlsx`);
     };
 
+
     const handleAxisClick = async (event, data, AxisData) => {
         setSelectedDiv(data.axisValue); // 클릭된 축의 데이터를 상태에 저장
         setSelectedBar(data.dataIndex); // 클릭된 바의 인덱스를 상태에 저장
@@ -101,7 +107,12 @@ export default function Sa() {
                 {"분석및예측 > 매출액별 분석"}
             </div>
 
-            <SearchForms initialValues={formData} onFormSubmit={handleFormSubmit} formFields={formField_sa} />
+            <SearchForms 
+                initialValues={formData} 
+                onFormSubmit={handleFormSubmit} 
+                formFields={formField_sa} 
+                handleFieldsChange={handleFieldsChange}
+            />
 
             {(!formData || Object.keys(formData).length === 0) ? (
                 <></>

@@ -1,4 +1,6 @@
 import React, {useState, useRef, useEffect} from 'react';
+import { useRecoilState } from "recoil";
+import { itemsState } from './atoms/tabAtoms';
 import { useNavigate, Outlet } from 'react-router-dom';
 import styled from 'styled-components';
 import Sidebar from './Sidebar';
@@ -46,49 +48,45 @@ const mapMenuDataToItems = (menuData) => {
         menuItem.name === '시스템관리' ? <SettingOutlined /> : <></>;
   
       // 하위 메뉴를 재귀적으로 매핑
-      const mapChildren = (children) => {
+    const mapChildren = (children) => {
         return children.map(childItem => {
-          if (childItem.menu && childItem.menu.length > 0) {
-            return {
-                key: `${childItem.id}`,
-                label: childItem.name,
-                children: mapChildren(childItem.menu),  // 하위 메뉴가 있을 때만 children 추가
-            };
-          } else {
-            return {
-                key: `${childItem.id}`,
-                label: `${childItem.name}${childItem.accessUser !== 'FP' ? '*' : ''}`,  //현장이 볼 수 없는 메뉴명 뒤에 * 붙이기
-                path: childItem.url,  // 하위 메뉴가 없을 경우 path를 직접 설정
-            };
-          }
+            if (childItem.menu && childItem.menu.length > 0) {
+                return {
+                    key: `${childItem.id}`,
+                    label: childItem.name,
+                    children: mapChildren(childItem.menu),  // 하위 메뉴가 있을 때만 children 추가
+                };
+            } else {
+                return {
+                    key: `${childItem.id}`,
+                    label: childItem.name,
+                    path: childItem.url,  // 하위 메뉴가 없을 경우 path를 직접 설정
+                    accessUser: childItem.accessUser
+                };
+            }
         });
     };
+        // 대분류
         return {
             key: `sub${menuItem.id}`,
-            label: 
-                <>
-                    {menuItem.name}
-                    {menuItem.accessUser !== 'FP' ? '*' : ''}   {/*현장이 볼 수 없는 메뉴명 뒤에 * 붙이기 */}
-                </>,
+            label: menuItem.name,
             icon: icon,
             children: mapChildren(menuItem.menu),
+            accessUser: menuItem.accessUser
         };
     });
 };
 
 export default function SiteLayout({handleLogout, menus, user}){
     const [loading, setLoading] = useState(false);
-
+    const [items, setItems] = useRecoilState(itemsState);
     const [collapsed, setCollapsed] = useState(false);
-    const [openKeys, setOpenKeys] = useState([]);
     const [chatOpen, setChatOpen] = useState(false);
     const navigate = useNavigate();
     const tabsContainerRef = useRef(null);
     
-    let items = mapMenuDataToItems(menus);
-
     useEffect(() => {
-        items = mapMenuDataToItems(menus);
+        setItems(mapMenuDataToItems(menus));
     }, [menus]);
 
     const toggleCollapsed = () => {
@@ -100,20 +98,10 @@ export default function SiteLayout({handleLogout, menus, user}){
         const item = findItemByKey(items, e.key);
         if (item && item.path) {
             navigate(item.path);
-            tabsContainerRef.current.addTab(item.path, item.label);
+            tabsContainerRef.current.addTab(item.path, item.label, item.accessUser);
         }
         setLoading(false);
-        const response = await axiosInstance.post(`/sys/log/click?menuId=${item.key}`);
-    };
-
-    // 마지막으로 선택한 대분류 토글만 내리기
-    const handleOpenChange = (keys) => {
-        const latestOpenKey = keys.find(key => !openKeys.includes(key));
-        if (items.map(item => item.key).includes(latestOpenKey)) {
-        setOpenKeys(latestOpenKey ? [latestOpenKey] : []);
-        } else {
-        setOpenKeys(keys);
-        }
+        await axiosInstance.post(`/sys/log/click?menuId=${item.key}`);
     };
 
     // 메뉴를 클릭했을 때, key값으로 item을 찾음
@@ -126,7 +114,7 @@ export default function SiteLayout({handleLogout, menus, user}){
     }, null);
 
     const handleChatClick = () => {
-        setChatOpen(true);
+        setChatOpen(!chatOpen);
     }
 
     const handleCloseClick = () => {
@@ -141,8 +129,6 @@ export default function SiteLayout({handleLogout, menus, user}){
                     toggleCollapsed={toggleCollapsed}
                     onMenuClick={handleMenuClick}
                     items={items}
-                    openKeys={openKeys}
-                    onOpenChange={handleOpenChange}
                 />
                 <ContentContainer>
                     <StyledTabsContainer 
@@ -175,8 +161,6 @@ export default function SiteLayout({handleLogout, menus, user}){
                 toggleCollapsed={toggleCollapsed}
                 onMenuClick={handleMenuClick}
                 items={items}
-                openKeys={openKeys}
-                onOpenChange={handleOpenChange}
             />
             <ContentContainer>
                 <TabsContainer 
@@ -184,6 +168,9 @@ export default function SiteLayout({handleLogout, menus, user}){
                     user={user} 
                     handleMenuClick={handleMenuClick}
                     ref={tabsContainerRef} 
+                    chatOpen={chatOpen}
+                    handleChatClick={handleChatClick}
+                    totCnt={totCnt}
                 />
                 <div style={{ overflowY: 'auto' }}>
                     <Outlet />
@@ -192,11 +179,7 @@ export default function SiteLayout({handleLogout, menus, user}){
                     chatOpen ? (
                         <Chat handleCloseClick={handleCloseClick}/>
                     ) : (
-                            <Box component="span" onClick={handleChatClick} sx={{borderRadius:"50%", backgroundColor:"rgb(14, 170, 0)", position:"fixed", bottom: "16px", right:"16px", width:"70px", height:"70px", display:"flex", justifyContent:"center", alignItems:"center", cursor:"pointer"}}>
-                                <Badge color='error' badgeContent={totCnt} >
-                                    <ChatBubble fontSize='large' sx={{color:"white"}}/>
-                                </Badge>
-                            </Box>
+                            <></>
                     )
                 }
             </ContentContainer>

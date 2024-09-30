@@ -1,4 +1,4 @@
-import { Card } from '@mui/material';
+import { Card, Divider } from '@mui/material';
 import React, { useState, useRef, useEffect } from 'react';
 import ApexChart from "react-apexcharts";
 import { Swiper, SwiperSlide } from 'swiper/react';
@@ -302,7 +302,6 @@ const polarAreaChartOptions = (labels) => {
             enabled: true,
             enabledOnSeries: undefined,
             formatter: function (val, opts) {
-                console.log(opts);
                 return `${val.toFixed(2)}%`;
             },
             textAnchor: 'middle',
@@ -395,6 +394,7 @@ export default function Main_Hp() {
     const [emtn, setEmtn] = useState([]);
     const [emtnName, setEmtnName] = useState([]);
     const [emtnAmt, setEmtnAmt] = useState([]);
+    const [emissionAmt, setEmissionAmt] = useState([]);
 
     let today = new Date();
     let toYear = today.getFullYear();
@@ -451,7 +451,7 @@ export default function Main_Hp() {
                 setEmtn(emtnData);
                 setEmtnName(prev => prev.concat(emtnData.map(e=>e.emtnActvType)));
                 setEmtnAmt(prev => prev.concat(emtnData.map(e=>e.totalActvQty ?? 0)));
-                //parseInt(item.formattedTotalActvQty.replace(/,/g, ''), 10)
+                setEmissionAmt(prev => prev.concat(emtnData.map(e => e.totalEmissionQty ?? 0)));
                 
 
             } catch (error) {
@@ -461,7 +461,7 @@ export default function Main_Hp() {
         fetchChartData()
 
     }, [])
-
+    console.log(emissionAmt);
     const topData = [
         {
             name: "Scope1",
@@ -476,7 +476,7 @@ export default function Main_Hp() {
             value: (totScope[toMonth-1] / totScope[toMonth-2] * 100).toFixed(2) ?? 0,
         },
     ]
-
+    console.log(emtn);
     const renderIcon = (e) => {
         switch (e) {
             case 'T0':  //공통
@@ -515,7 +515,7 @@ export default function Main_Hp() {
                     <div className={gridStyles.left_box_top}>
                         {cardStyles.map((style, index) => (
                             <Card 
-                                key={{index}}
+                                key={index}
                                 sx={{
                                     ...style,
                                     cursor: "pointer",
@@ -626,7 +626,7 @@ export default function Main_Hp() {
                                 modules={[Navigation, Pagination]}
                             >
                                 {saleAmount.map((data, idx) => (
-                                    <SwiperSlide style={{width:"100%", height:"100%"}}>
+                                    <SwiperSlide key={data.pjtName || idx} style={{width:"100%", height:"100%"}}>
                                         <Card sx={{backgroundColor:"white", width:"95%", height:"70%", margin:"1rem auto", borderRadius:"15px", display:"flex", flexDirection:"column"}}>
                                             <div className={gridStyles.left_bottom_1}>
                                                 <div className={gridStyles.left_bottom_medal}>
@@ -650,7 +650,7 @@ export default function Main_Hp() {
                         <StyledChart2 style={{width:"100%", height:"100%"}}>
                             <ApexChart
                                 options={polarAreaChartOptions(emtnName)}
-                                series={polarChartSeries(emtnAmt)}
+                                series={polarChartSeries(emissionAmt)}
                                 type="pie"
                                 width={"100%"}
                                 height={"100%"}
@@ -659,7 +659,7 @@ export default function Main_Hp() {
                         </div>
                         <div className={gridStyles.right_swiper_area}>
                             <div style={{fontWeight:"bold", fontSize:"22px", marginLeft:"0.5rem", color:"rgb(55, 57, 78)"}}>
-                                배출량
+                                배출량 및 활동량
                             </div>
                             <StyledRoot2 style={{width:"100%", height:"100%", overflow:"hidden"}}>
                                 <Swiper
@@ -671,8 +671,8 @@ export default function Main_Hp() {
                                     navigation={true}           // 이전/다음 버튼 네비게이션
                                     modules={[Navigation, Pagination]}
                                 >
-                                    {emtn.map((data) => (
-                                        <SwiperSlide style={{width:"100%", height:"100%"}}>
+                                    {emtn.map((data, idx) => (
+                                        <SwiperSlide key={data.emtnActvType || idx} style={{width:"100%", height:"100%"}}>
                                             <Card sx={{backgroundColor:"white", width:"90%", height:"100%", margin:"1rem auto", borderRadius:"15px", display:"flex", flexDirection:"column", backgroundColor:"rgb(241,244,248)"}}>
                                                 <div className={gridStyles.left_bottom_1}>
                                                     <div className={gridStyles.right_swiper_box_logo}>
@@ -688,7 +688,6 @@ export default function Main_Hp() {
                             </StyledRoot2>
                         </div>
                     </Card>
-                    
                 </div>
             </div>
         </>

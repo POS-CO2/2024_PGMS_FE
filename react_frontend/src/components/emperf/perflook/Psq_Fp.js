@@ -275,6 +275,11 @@ export default function Psq_Fp() {
         document.body.removeChild(a);
     };
 
+    // 서치폼이 변경될 때 목록 clear
+    const handleFieldsChange = () => {
+        setSelectedPjt({});
+    };
+
     return (
         <div>
             <div className={mainStyle.breadcrumb}>
@@ -284,9 +289,11 @@ export default function Psq_Fp() {
                 initialValues={formData}
                 onFormSubmit={handleFormSubmit}
                 formFields={formFields.map(field => field.name === 'actvYear' ? { ...field, disabled: actvYearDisabled } : field)} // actvYear 필드의 disabled 상태 반영
-                onProjectSelect={onProjectSelect} />
+                onProjectSelect={onProjectSelect} 
+                handleFieldsChange={handleFieldsChange}
+            />
            
-            {(!formData || Object.keys(formData).length === 0) ? 
+           {(!selectedPjt || Object.keys(selectedPjt).length === 0) ? 
                 <></> :
                 <div className={pdsStyles.main_grid}>
                     <Card sx={{ height: "auto", padding: "0.5rem", borderRadius: "0.5rem" }}>

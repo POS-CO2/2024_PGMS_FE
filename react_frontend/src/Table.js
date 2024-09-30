@@ -85,7 +85,7 @@ const StyledCheckbox = styled(Checkbox)(({ theme, checked }) => ({
 }));
 
 // 텍스트 길이에 따라 너비 계산하는 함수
-const calculateColumnWidths = (columns, data, fontWidth = 15, hasCheckbox = false) => {
+const calculateColumnWidths = (columns, data, fontWidth = 2, hasCheckbox = false) => {
     const widths = {};
 
     let visibleIndex = 0; // visible 열에 대한 인덱스를 따로 관리
@@ -99,10 +99,15 @@ const calculateColumnWidths = (columns, data, fontWidth = 15, hasCheckbox = fals
         if (col.hidden) return; // hidden 열은 건너뛰기
 
         // 각 열의 헤더와 데이터 중 가장 긴 텍스트 길이를 찾아서 너비 계산
-        const maxTextLength = Math.max(
+        let maxTextLength = Math.max(
             col.label.length,
             ...data.map((row) => (row[col.key] ? row[col.key].toString().length : 0))
         );
+
+        // '코드그룹영문명'일 경우 텍스트 길이를 1.5로 나눔(영어랑 한글의 바이트 차이 떄문에)
+        if (col.label === '코드그룹영문명') {
+            maxTextLength = maxTextLength / 1.5;
+        }
 
         // 최소 너비는 100px, 텍스트 길이에 따른 너비 계산
         widths[`col${visibleIndex}`] = Math.max(100, maxTextLength * fontWidth + 20);
@@ -374,7 +379,7 @@ export default function CustomizedTables({
                                                             width: 'fit-content', // 텍스트 길이에 맞게 너비 설정
                                                         }}
                                                     >
-                                                        담당자목록
+                                                        담당자목록 <span style={{ fontSize: "0.9rem", color: "#777777" }}>(총 {subData.length}명)</span>
                                                     </Typography>
                                                     {subData.length > 0 ? (
                                                         <Box
@@ -489,10 +494,10 @@ export default function CustomizedTables({
                         </TableBody>
                 </Table>
             </TableContainer>
-            {pagination && (data.length >= 10) ? ( !modalPagination ? (// 10개 이상이면 자동으로 pagination 활성화, (pagination이 true일때만.)
+            {pagination && (data.length > 10) ? ( !modalPagination ? (// 10개 이상이면 자동으로 pagination 활성화, (pagination이 true일때만.)
             //페이지네이션을 하고 데이터길이가 길며 모달페이지네이션이 아닐때
             <TablePagination 
-                rowsPerPageOptions={[10, 25, 100]} // page row length custom
+                rowsPerPageOptions={[10]} // page row length custom
                 component="div"
                 count={data.length}
                 rowsPerPage={rowsPerPage}
@@ -503,7 +508,7 @@ export default function CustomizedTables({
             ) : (
                 //페이지네이션을 하고 데이터길이가 길며 모달페이지네이션이 맞을때
                 <TablePagination 
-                rowsPerPageOptions={[5, 10, 25]} // page row length custom
+                rowsPerPageOptions={[5]} // page row length custom
                 component="div"
                 count={data.length}
                 rowsPerPage={rowsPerPage}
@@ -517,7 +522,7 @@ export default function CustomizedTables({
             ) : (
                 //페이지네이션을 안하거나 데이터길이가 12이하이며 모달페이지네이션일때
                 <TablePagination 
-                rowsPerPageOptions={[5, 10, 25]} // page row length custom
+                rowsPerPageOptions={[5]} // page row length custom
                 component="div"
                 count={data.length}
                 rowsPerPage={rowsPerPage}

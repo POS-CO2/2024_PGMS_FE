@@ -128,14 +128,17 @@
     font-weight: bold;
     color: rgb(55,57,78);
     height: 25%;
+    margin-top: 0.5rem;
     gap: 0.5rem;
 }
 
 .right_swiper_emtn {
     height: 75%;
     display: flex;
+    flex-direction: column;
     justify-content: flex-end;
     align-items: flex-end;
+    text-align: right;
     font-size: x-large;
     font-weight: bold;
     margin: 0 2rem 1rem 0;

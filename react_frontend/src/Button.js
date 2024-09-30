@@ -19,7 +19,9 @@ const buttonMap = {
   ShowDetails: ShowDetailsButton,
 };
 
-export const CustomButton = styled(Button)(({disabled}) => ({
+export const CustomButton = styled(({ htmlType, ...otherProps }) => (
+  <Button {...otherProps} />
+))(({ disabled }) => ({
   fontFamily: 'SUITE-Regular',
   fontSize: '1rem',
   fontWeight: 900,
@@ -124,19 +126,20 @@ export function ButtonGroup({ buttons = [], onClicks = [], buttonStatus = [] }) 
         const disabled = !isEnabled;
 
         return ButtonComponent ? (
-          <ButtonComponent key={button} onClick={onClick} disabled={disabled} />
+          <ButtonComponent key={`${button}_${index}`} onClick={onClick} disabled={disabled} />
         ) : null;
       })}
     </div>
   );
 }
 
-export function ButtonGroupMm({ buttons = [], onClick }) {
+export function ButtonGroupMm({ buttons = [], onClicks = [] }) {
   return (
     <div style={{ display: 'flex', gap: '8px', marginRight: '1rem', justifyContent: "flex-end" }}>
       {buttons.map(button => {
         const ButtonComponent = buttonMap[button];
-        return ButtonComponent ? <ButtonComponent key={button} onClick={onClick} /> : null;
+        const onClick = onClicks[index];  // 각 버튼에 대한 개별 클릭 핸들러 설정
+        return ButtonComponent ? <ButtonComponent key={`${button}_${index}`} onClick={onClick} /> : null;
       })}
     </div>
   );

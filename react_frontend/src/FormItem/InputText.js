@@ -5,7 +5,7 @@ import { Form, Input } from 'antd';
 import { CloseOutlined } from '@ant-design/icons';
 
 const CustomInput = styled(Input)`
-    background-color: transparent !important;
+    background-color: ${({ isChanged }) => (isChanged ? '#FFF5E5' : 'transparent')} !important;
 
     &:focus, &:hover, &.ant-input-focused, &:focus-within {
         outline: none;
@@ -29,7 +29,7 @@ const CustomInput = styled(Input)`
 
 `;
 
-export default function InputText({ name, label, required = false }) {
+export default function InputText({ name, label, required = false, isChanged = false }) {
     const [value, setValue] = useState('');
 
     const handleChange = (e) => {
@@ -46,6 +46,7 @@ export default function InputText({ name, label, required = false }) {
             <CustomInput
                 value={value}
                 onChange={handleChange}
+                isChanged={isChanged}
                 allowClear={{ clearIcon: <CloseOutlined style={{ color: "red" }} /> }}
             />
         </Form.Item>

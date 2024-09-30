@@ -174,6 +174,11 @@ export default function Ps_1_2_Fp() {
         }
     };
 
+    // 서치폼이 변경될 때 목록 clear
+    const handleFieldsChange = () => {
+        setSelectedPjt({});
+    };
+
     function Usage({ data }) {
 
         const [isModalOpen, setIsModalOpen] = useState(false);
@@ -412,9 +417,10 @@ export default function Ps_1_2_Fp() {
                 onFormSubmit={handleFormSubmit}
                 formFields={formFields.map(field => field.name === 'actvYear' ? { ...field, disabled: actvYearDisabled } : field)} // actvYear 필드의 disabled 상태 반영
                 onProjectSelect={onProjectSelect} 
+                handleFieldsChange={handleFieldsChange}
             />
             
-            {(Object.keys(formData).length === 0) ?
+            {(!selectedPjt || Object.keys(selectedPjt).length === 0) ? 
                 <></> :
                 <div className={pdsStyles.main_grid}>
                     <Card sx={{ height: "auto", padding: "0.5rem", borderRadius: "0.5rem" }}>

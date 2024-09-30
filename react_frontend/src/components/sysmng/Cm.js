@@ -29,16 +29,16 @@ export default function Cm() {
         return rightTableSub ? JSON.parse(rightTableSub) : [];
     });
 
-    useEffect(() => {
-        const fetchCodeGroup = async () => {
-            try {
-                const {data} = await axiosInstance.get("/sys/codegroup");
-                setCodeGroup(data ?? {});
-            } catch (error) {
-                console.log(error);
-            }
-        };
+    const fetchCodeGroup = async () => {
+        try {
+            const {data} = await axiosInstance.get("/sys/codegroup");
+            setCodeGroup(data ?? {});
+        } catch (error) {
+            console.log(error);
+        }
+    };
 
+    useEffect(() => {
         // formData값이 없으면 코드 그룹ID 목록을 findAll, 있으면(이전 탭의 검색기록이 있으면) 그 값을 불러옴
         if(Object.keys(formData).length === 0) {
             fetchCodeGroup();
@@ -145,7 +145,7 @@ export default function Cm() {
                 setSubmittedCGIdx([0]);
 
                 swalOptions.title = '성공!',
-                swalOptions.text = `${data.codeGrpName}가 성공적으로 등록되었습니다.`;
+                swalOptions.text = `${data.codeGrpName}이(가) 성공적으로 등록되었습니다.`;
                 swalOptions.icon = 'success';
             } catch (error) {
                 swalOptions.title = '실패!',
@@ -164,7 +164,7 @@ export default function Cm() {
                 setSubmittedCLIdx([0]);
 
                 swalOptions.title = '성공!',
-                swalOptions.text = `${data.codeName}가 성공적으로 등록되었습니다.`;
+                swalOptions.text = `${data.codeName}이(가) 성공적으로 등록되었습니다.`;
                 swalOptions.icon = 'success';
             } catch (error) {
                 swalOptions.title = '실패!',
@@ -184,7 +184,7 @@ export default function Cm() {
                 setSelectedCodeGroup(response.data);
 
                 swalOptions.title = '성공!',
-                swalOptions.text = `${data.codeGrpName}이 성공적으로 수정되었습니다.`;
+                swalOptions.text = `${data.codeGrpName}이(가) 성공적으로 수정되었습니다.`;
                 swalOptions.icon = 'success';
             } catch (error) {
                 swalOptions.title = '실패!',
@@ -205,7 +205,7 @@ export default function Cm() {
                 setSelectedCode(response.data);
 
                 swalOptions.title = '성공!',
-                swalOptions.text = `${data.codeName}이 성공적으로 수정되었습니다.`;
+                swalOptions.text = `${data.codeName}이(가) 성공적으로 수정되었습니다.`;
                 swalOptions.icon = 'success';
             } catch (error) {
                 swalOptions.title = '실패!',
@@ -226,13 +226,7 @@ export default function Cm() {
             setSubmittedCLIdx([]);
         }
 
-        // Swal.fire 실행 후, 성공 메시지가 표시되면 페이지 새로고침
-        Swal.fire(swalOptions).then(() => {
-            // 성공 후 페이지 새로고침
-            if(modalType !== 'DeleteA' && modalType !== 'DeleteB') {
-                window.location.reload();
-            }
-        });
+        Swal.fire(swalOptions);
     };
     const handleCancel = (modalType) => () => {
         setIsModalOpen(prevState => ({ ...prevState, [modalType]: false }));
@@ -262,6 +256,12 @@ export default function Cm() {
         showModal('CMListEdit');
     }
 
+    // 서치폼이 변경될 때 목록 clear
+    const handleFieldsChange = () => {
+        setCodeGroup([]);
+        setSelectedCodeGroup({});
+    };
+
     return (
         <>
             <div className={mainStyle.breadcrumb}>
@@ -271,9 +271,11 @@ export default function Cm() {
                 initialValues={formData} 
                 onFormSubmit={handleFormSubmit} 
                 formFields={formField_cm} 
+                handleFieldsChange={handleFieldsChange}
+                handleEmptyFields={fetchCodeGroup}
             />
             <div className={sysStyles.main_grid}>
-                <Card className={sysStyles.card_box} sx={{width:"50%", height:"80vh", borderRadius:"15px"}}>
+                <Card className={sysStyles.card_box} sx={{width:"50%", height:"77vh", borderRadius:"15px"}}>
                     <TableCustom title="코드그룹ID" data={codeGroup} submittedRowIdx={submittedCGIdx} buttons={["Delete", "Edit", "Add"]} selectedRows={[selectedCodeGroup]} onRowClick={(e) => handleCodeGroupRowClick(e)} onClicks={[handleDeleteAClick, handleEditClick, handleAddClick]} columns={codeGroupColumns} modals={
                         [
                             isModalOpen.CMAdd && {
@@ -302,10 +304,10 @@ export default function Cm() {
                         ].filter(Boolean)
                     }/>
                 </Card>
-                <Card className={sysStyles.card_box} sx={{width:"50%", height:"80vh", borderRadius:"15px"}}>
+                <Card className={sysStyles.card_box} sx={{width:"50%", height:"77vh", borderRadius:"15px"}}>
                     {(!selectedCodeGroup || Object.keys(selectedCodeGroup).length === 0) ?
                         <div className={pdsStyles.card_container}>
-                            <div className={pdsStyles.table_title} style={{ padding: "8px" }}>배출계수목록</div>
+                            <div className={pdsStyles.table_title} style={{ padding: "8px" }}>코드리스트</div>
                         </div> : (
                             <TableCustom title="코드리스트" data={code} submittedRowIdx={submittedCLIdx} buttons={["Delete", "Edit", "Add"]} columns={codeColumns} selectedRows={[selectedCode]} onRowClick={handleCodeRowClick} onClicks={[handleDeleteBClick, handleListEditClick, handleListAddClick]} modals={
                                 [

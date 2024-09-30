@@ -21,7 +21,12 @@ export default function Tep() {
     const [content, setContent] = useRecoilState(tepSelectedBtnState);
 
     useEffect(() => {
-        handleFormSubmit(formData);
+        if(Object.keys(formData).length !== 0) {
+            handleFormSubmit(formData);
+        }
+        else {
+            handleFormSubmit({year: new Date().getFullYear()})
+        }
         handleButtonClick(content);
     }, []);
 
@@ -57,6 +62,11 @@ export default function Tep() {
         }
     };
 
+    // 서치폼이 변경될 때 목록 clear
+    const handleFieldsChange = () => {
+        setFormData({});
+    };
+
     return (
         <div>
             <div className={mainStyle.breadcrumb}>
@@ -66,7 +76,7 @@ export default function Tep() {
                 initialValues={formData} 
                 onFormSubmit={handleFormSubmit} 
                 formFields={formField_tep} 
-                //autoSubmitOnInit={true}
+                handleFieldsChange={handleFieldsChange}
             />
 
             {(!formData || Object.keys(formData).length === 0) ? (
@@ -141,7 +151,11 @@ function TableTab({ data }) {
 
     return (
         <Card sx={{ width: "100%", height: "100%", borderRadius: "15px" }}>
+<<<<<<< HEAD
             <TableCustom columns={perfTotalColumns} title="총량실적표 (단위:kgGHG)" data={data} buttons={['DownloadExcel']} onClicks={[() => onDownloadExcelClick(data)]} monthPagination={true} />
+=======
+            <TableCustom columns={perfTotalColumns} title="총량실적표" data={data} buttons={['DownloadExcel']} onClicks={[() => onDownloadExcelClick(data)]} monthPagination={true} pagination={false} />
+>>>>>>> 0fdcced0a5ec0bf1ec381096ef16fd1a881faa5e
         </Card>
     )
 }

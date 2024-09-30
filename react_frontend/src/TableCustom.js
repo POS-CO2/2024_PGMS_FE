@@ -370,11 +370,16 @@ console.log(response);
     };
 
     const handleInputChange = (e, rowIndex, colIndex) => {
+        const inputValue = e.target.value;
+
+        // 숫자와 콤마(,)만 입력되도록 필터링
+        const filteredValue = inputValue.replace(/[^0-9,]/g, '');
+
         const newData = [...editableData];  // editableData 복사
         const adjustedColIndex = pageType === 'rm' ? colIndex+3 : colIndex-4; // pageType에 따라 colIndex 조정
         newData[rowIndex] = {
             ...newData[rowIndex],            // 해당 행 복사
-            [Object.keys(newData[rowIndex])[adjustedColIndex]]: e.target.value // 특정 셀의 데이터만 업데이트(id 컬럼으로 인해 colIndex+1)
+            [Object.keys(newData[rowIndex])[adjustedColIndex]]: filteredValue // 특정 셀의 데이터만 업데이트(id 컬럼으로 인해 colIndex+1)
         };
 
         // 수정된 행의 인덱스를 추가
