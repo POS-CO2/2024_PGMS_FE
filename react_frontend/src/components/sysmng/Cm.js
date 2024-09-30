@@ -17,17 +17,8 @@ import * as pdsStyles from "../../assets/css/pds.css";
 export default function Cm() {
     const [formData, setFormData] = useRecoilState(codeMgrSearchForm);
     const [codeGroup, setCodeGroup] = useState([]);
-
-    // localStorage에서 값을 가져오고, 파싱하여 배열로 변환
-    const [submittedCGIdx, setSubmittedCGIdx] = useState(() => {
-        const leftTableSub = localStorage.getItem("leftTableSub");
-        return leftTableSub ? JSON.parse(leftTableSub) : [];
-    });
-    
-    const [submittedCLIdx, setSubmittedCLIdx] = useState(() => {
-        const rightTableSub = localStorage.getItem("rightTableSub");
-        return rightTableSub ? JSON.parse(rightTableSub) : [];
-    });
+    const [submittedCGIdx, setSubmittedCGIdx] = useState([]);
+    const [submittedCLIdx, setSubmittedCLIdx] = useState([]);
 
     const fetchCodeGroup = async () => {
         try {
@@ -50,15 +41,7 @@ export default function Cm() {
             handleFormSubmit(formData);
         }
     }, []);
-
-    useEffect(() => {
-        localStorage.setItem("leftTableSub", JSON.stringify(submittedCGIdx));
-    }, [submittedCGIdx]);
-
-    useEffect(() => {
-        localStorage.setItem("rightTableSub", JSON.stringify(submittedCLIdx));
-    }, [submittedCLIdx]);
-
+    
     const fetchCodeList = async (e) => {
         try {
             // 선택한 코드그룹에 매핑된 코드리스트 목록 조회

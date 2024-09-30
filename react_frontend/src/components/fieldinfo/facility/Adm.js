@@ -21,17 +21,8 @@ export default function Adm() {
     const [filteredEfs, setFilteredEfs] = useState([]);
     const [selectedEF, setSelectedEF] = useRecoilState(selectedEFState);                // 선택된 배출계수
     const [year, setYear] = useState(new Date().getFullYear());
-
-    // localStorage에서 값을 가져오고, 파싱하여 배열로 변환
-    const [submittedActvIdx, setSubmittedActvIdx] = useState(() => {
-        const leftTableSub = localStorage.getItem("leftTableSub");
-        return leftTableSub ? JSON.parse(leftTableSub) : [];
-    });
-    
-    const [submittedEFIdx, setSubmittedEFIdx] = useState(() => {
-        const rightTableSub = localStorage.getItem("rightTableSub");
-        return rightTableSub ? JSON.parse(rightTableSub) : [];
-    });
+    const [submittedActvIdx, setSubmittedActvIdx] = useState([]);
+    const [submittedEFIdx, setSubmittedEFIdx] = useState([]);
     
     const [isModalOpen, setIsModalOpen] = useState({
         FamAdd: false,
@@ -101,14 +92,6 @@ export default function Adm() {
             fetchEFList(selectedActv); // actv 리스트가 로딩된 이후에 호출
         }
     }, [actves, selectedActv]); // actves가 업데이트될 때마다 실행
-
-    useEffect(() => {
-        localStorage.setItem("leftTableSub", JSON.stringify(submittedActvIdx));
-    }, [submittedActvIdx]);
-
-    useEffect(() => {
-        localStorage.setItem("rightTableSub", JSON.stringify(submittedEFIdx));
-    }, [submittedEFIdx]);
 
     const fetchEFList = async (actv) => {
         try {
