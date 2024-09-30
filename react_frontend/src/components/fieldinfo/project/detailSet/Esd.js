@@ -85,6 +85,10 @@ export default function Esd({pjtId}) {
         setSelectedSD({});
     }, [selectedES])
 
+    useEffect(() => {
+        Object.keys(selectedES).length !== 0 && fetchSDList(selectedES);
+    }, [filteredSDs.length])
+
     const fetchSDList = async (es) => {
         try {
             // 선택한 배출원에 매핑된 증빙자료 목록 조회

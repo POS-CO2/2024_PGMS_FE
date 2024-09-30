@@ -98,6 +98,8 @@ export default function Esd_Fp() {
     const [filteredSDs, setFilteredSDs] = useRecoilState(filteredSDState);
     const [selectedSD, setSelectedSD] = useRecoilState(selectedSuppDocState);
     const [year, setYear] = useState(new Date().getFullYear());
+    const [submittedEsdIdx, setSubmittedEsdIdx] = useState([]);
+    const [submittedSDIdx, setSubmittedSDIdx] = useState([]);
 
     const { showModal, closeModal, isModalOpen } = useModalActions();
     const handleOk = useHandleOkAction();
@@ -113,7 +115,7 @@ export default function Esd_Fp() {
         searchProject: newValue,  // searchProject 값만 업데이트
         }));
     };
-    
+
     useEffect(() => {
         const fetchPjtOptions = async () => {
             try {
@@ -144,6 +146,18 @@ export default function Esd_Fp() {
             }
         }
     }, []);
+
+    useEffect(() => {
+        Object.keys(selectedES).length !== 0 && fetchSDList(selectedES);
+    }, []);
+
+    useEffect(() => {
+        setSelectedSD({});
+    }, [selectedES])
+
+    useEffect(() => {
+        Object.keys(selectedES).length !== 0 && fetchSDList(selectedES);
+    }, [filteredSDs.length])
 
     const fetchSDList = async (es) => {
         try {
@@ -259,6 +273,7 @@ export default function Esd_Fp() {
                             <TableCustom
                                 title='배출원목록' 
                                 data={emSources}
+                                submittedRowIdx={submittedEsdIdx}
                                 columns={equipEmissionColumns}                 
                                 buttons={['Delete', 'Add']}
                                 onClicks={[() => showModal('DeleteA'), () => showModal('EsmAdd')]}
@@ -273,7 +288,8 @@ export default function Esd_Fp() {
                                             ...params,
                                             data: selectedES, 
                                             setter: setEmSources,
-                                            setterSelected: setSelectedES
+                                            setterSelected: setSelectedES,
+                                            setterSumittedIdx: setSubmittedEsdIdx
                                         }),
                                         handleCancel: closeModal('DeleteA'),
                                         rowData: selectedES,
@@ -286,7 +302,8 @@ export default function Esd_Fp() {
                                         handleOk: (params) => handleOk('EsmAdd')({
                                             ...params,
                                             setter: setEmSources, 
-                                            setterSelected: setSelectedES
+                                            setterSelected: setSelectedES,
+                                            setterSumittedIdx: setSubmittedEsdIdx
                                         }),
                                         handleCancel: closeModal('EsmAdd'),
                                         rowData: selectedPjt.id
@@ -302,6 +319,7 @@ export default function Esd_Fp() {
                                 <TableCustom 
                                     title='증빙자료목록' 
                                     data={filteredSDs} 
+                                    submittedRowIdx={submittedSDIdx}
                                     columns={equipDocumentColumns}
                                     buttons={['ShowDetails', 'Delete', 'Add']}
                                     onClicks={[() => showModal('SdShowDetails'), () => showModal('DeleteB'), () => showModal('SdAdd')]}
@@ -316,7 +334,8 @@ export default function Esd_Fp() {
                                             handleOk: () => handleOk('SdShowDetails') ({
                                                 data: selectedSD, 
                                                 setter: setFilteredSDs, 
-                                                setterSelected: setSelectedSD
+                                                setterSelected: setSelectedSD,
+                                                setterSumittedIdx: setSubmittedSDIdx
                                             }),
                                             handleCancel: closeModal('SdShowDetails'),
                                             rowData: selectedSD
@@ -328,8 +347,8 @@ export default function Esd_Fp() {
                                                 ...params,
                                                 data: selectedSD, 
                                                 setter: setFilteredSDs, 
-                                                setterSelected: setSelectedSD
-                                            }),
+                                                setterSelected: setSelectedSD,
+                                                setterSumittedIdx: setSubmittedSDIdx                                            }),
                                             handleCancel: closeModal('DeleteB'),
                                             rowData: selectedSD,
                                             rowDataName: 'name',
@@ -341,7 +360,8 @@ export default function Esd_Fp() {
                                             handleOk: (params) => handleOk('SdAdd')({
                                                 ...params,
                                                 setter: setFilteredSDs, 
-                                                setterSelected: setSelectedSD
+                                                setterSelected: setSelectedSD,
+                                                setterSumittedIdx: setSubmittedSDIdx
                                             }),
                                             handleCancel: closeModal('SdAdd'),
                                             rowData: selectedES
