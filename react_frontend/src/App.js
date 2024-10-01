@@ -26,6 +26,7 @@ import Login from './components/login/Login';
 import Sa from './components/analfc/Sa';
 import Ea from './components/analfc/Ea';
 import Ca from './components/analfc/Ca';
+import Eqf from './components/analfc/Eqf';
 import Error404 from './Error404';
 import axiosInstance from './utils/AxiosInstance';
 import { CircularProgress } from '@mui/material';
@@ -136,6 +137,7 @@ export default function App() {
                         <Route path='/SalesAnal' element={<Sa />} />
                         <Route path='/EquipAnal' element={<Ea />} />
                         <Route path='/ClimateAnal' element={<Ca />} />
+                        <Route path='/EmissionQuantityForecast' element={<Eqf />} />
                         <Route path='*' element={<Error404 />} />
                     </Route>
                 ) : (

@@ -11,7 +11,7 @@ import CloseIcon from '@mui/icons-material/DisabledByDefault';
 import { CustomButton } from '../Button';
 
 const CustomInput = styled(Input)`
-    background-color: #ECF1F4 !important;
+    background-color: #FFFFFF !important;
     font-family: SUITE-Regular;
     .ant-input{
       font-family: SUITE-Regular;
