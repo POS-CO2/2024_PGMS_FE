@@ -10,10 +10,13 @@ import Paper from '@mui/material/Paper';
 import { pjtManagerColumns } from './assets/json/tableColumn';
 import { Box, Checkbox, TablePagination, TextField, Card, CardContent, Typography, CardMedia  } from '@mui/material';
 import InboxIcon from '@mui/icons-material/Inbox';
+import zIndex from '@mui/material/styles/zIndex';
 
 // TableCell을 스타일링하는 컴포넌트
-const StyledTableCell = styled(TableCell)(({ theme, isHighlighted, isEditable, isCheckbox }) => ({
-    position: "relative",
+const StyledTableCell = styled(TableCell)(({ theme, isHighlighted, isEditable, isCheckbox, isExpandedRow=false }) => ({
+    position: "sticky",  // 헤더 고정을 위한 sticky 사용
+    top: 0,              // sticky 위치 설정 (필수)
+    zIndex: 2,
   [`&.${tableCellClasses.head}`]: {
     backgroundColor: '#0A7800',
     color: '#FFFFFF',
@@ -24,6 +27,7 @@ const StyledTableCell = styled(TableCell)(({ theme, isHighlighted, isEditable, i
     textOverflow: 'ellipsis', // 넘치는 텍스트를 ...로 표시
     minWidth: '5px', // min-width를 최소로 설정
     width: 'auto', // 자동 크기 조정
+    zIndex: 3,
   },
   [`&.${tableCellClasses.body}`]: {
     fontSize: '0.9rem',
@@ -35,7 +39,9 @@ const StyledTableCell = styled(TableCell)(({ theme, isHighlighted, isEditable, i
     width: 'auto', // 자동 크기 조정
     maxWidth: 'none',
     backgroundColor: isCheckbox ? 'transparent' : (isHighlighted ? '#E5F1E4 !important' : isEditable ? 'transparent' : '#F4F4F4'),
-  },
+    zIndex: 2,
+    display: isExpandedRow ? 'table-row' : 'table-cell'
+},
   '&:not(:last-child)::after': {
     content: '""',
     position: 'absolute',
@@ -285,6 +291,8 @@ export default function CustomizedTables({
                 width: '100%', // 부모 컨테이너의 너비에 맞춤
                 margin: '0 auto',
                 overflowX: 'auto', // 가로 스크롤 허용
+                overflowY: 'auto', // 세로 스크롤 허용
+                maxHeight: 500
             }}>
                 <Table sx={{ tableLayout: 'fixed' }} stickyHeader aria-label="customized table">
                     <TableHead>
@@ -373,7 +381,7 @@ export default function CustomizedTables({
                                         {/* 클릭된 프로젝트 행 하단에 담당자 목록을 표시 */}
                                         {expandedRow === rowIndex + (rowsPerPage * page) && (
                                             <StyledTableRow>
-                                                <StyledTableCell colSpan={visibleColumns.length}>
+                                                <StyledTableCell colSpan={visibleColumns.length} isExpandedRow={true}>
                                                 <Box
                                                     sx={{
                                                         backgroundColor: '#FFF',

@@ -148,23 +148,21 @@ export default function Esd_Fp() {
     }, []);
 
     useEffect(() => {
-        Object.keys(selectedES).length !== 0 && fetchSDList(selectedES);
-    }, []);
+        setSelectedES({});
+        setFilteredSDs([]);
+    }, [selectedPjtId])
 
     useEffect(() => {
-        setSelectedSD({});
-    }, [selectedES])
+        Object.keys(selectedES).length !== 0 && fetchSDList(selectedES, year);
+    }, [suppDocs.length, filteredSDs.length]);
 
-    useEffect(() => {
-        Object.keys(selectedES).length !== 0 && fetchSDList(selectedES);
-    }, [filteredSDs.length])
-
-    const fetchSDList = async (es) => {
+    const fetchSDList = async (es, year) => {
         try {
             // 선택한 배출원에 매핑된 증빙자료 목록 조회
             const response = await axiosInstance.get(`/equip/document?emissionId=${es.id}`);
             setSuppDocs(response.data);
             setFilteredSDs(response.data);
+            handleYearChange(year);
         } catch (error) {
             console.error(error);
         }
@@ -203,7 +201,7 @@ export default function Esd_Fp() {
 
         // 배출원을 클릭하면 setSelectedES를 설정하고 API 호출
         setSelectedES(es);
-        fetchSDList(es);
+        fetchSDList(es, new Date().getFullYear());
     };
 
     // 증빙자료 row 클릭 시 호출될 함수
@@ -271,7 +269,7 @@ export default function Esd_Fp() {
                     <div className={pdsStyles.contents_container}>
                         <Card sx={{ width: "50%", height: "auto", borderRadius: "0.5rem" }}>
                             <TableCustom
-                                title='배출원목록' 
+                                title='배출원 목록' 
                                 data={emSources}
                                 submittedRowIdx={submittedEsdIdx}
                                 columns={equipEmissionColumns}                 
@@ -318,7 +316,7 @@ export default function Esd_Fp() {
                                 <div className={pdsStyles.table_title} style={{ padding: "8px" }}>증빙자료목록</div>
                             </div> : (
                                 <TableCustom 
-                                    title='증빙자료목록' 
+                                    title='증빙자료 목록' 
                                     data={filteredSDs} 
                                     submittedRowIdx={submittedSDIdx}
                                     columns={equipDocumentColumns}
