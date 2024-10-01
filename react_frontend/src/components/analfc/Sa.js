@@ -119,7 +119,7 @@ export default function Sa() {
              ) : (
                 <>
                     <div className={saStyles.main_grid}>
-                        <Card className={saStyles.card_box} sx={{ width: "30%", height: "auto", borderRadius: "15px" }}>
+                        <Card className={saStyles.card_box} sx={{ width: "30%", height: "35vh", borderRadius: "15px", overflow: "hidden" }}>
                             <div className={chartStyles.chart_title}>{"본부별 월별 평균 배출량/매출액"}</div>
 
                             <BarChart
@@ -154,9 +154,9 @@ export default function Sa() {
                                 onAxisClick={handleAxisClick}
                                 highlightedItem={highlightedItem} // 강조된 항목 설정
                                 //width={400}
-                                height={300}
+                                //height={300}
                                 borderRadius={10}
-                                margin={{ left: 80 }} // 왼쪽 여백 추가
+                                margin={{ top: 10, left: 80 }}
                                 sx={{
                                     //change left yAxis label styles
                                     "& .MuiChartsAxis-left .MuiChartsAxis-tickLabel": {
@@ -186,7 +186,7 @@ export default function Sa() {
                                 }}
                             />
                         </Card>
-                        <Card className={saStyles.card_box} sx={{ width: "70%", height: "auto", borderRadius: "15px" }}>
+                        <Card className={saStyles.card_box} sx={{ width: "70%", height: "35vh", borderRadius: "15px" }}>
                             <div className={chartStyles.chart_title}>{"상품별 월별 평균 배출량/매출액"}</div>
 
                             <BarChart
@@ -208,9 +208,9 @@ export default function Sa() {
                                     },
                                 }]}
                                 series={[{ dataKey: 'avgEmissionQtyPerSales' }]} //valueFormatter
-                                height={300}
+                                //height={300}
                                 borderRadius={10}
-                                margin={{ left: 80 }} // 왼쪽 여백 추가
+                                margin={{ top: 10, left: 80 }}
                                 sx={{
                                     //change left yAxis label styles
                                     "& .MuiChartsAxis-left .MuiChartsAxis-tickLabel": {
@@ -244,7 +244,7 @@ export default function Sa() {
                     
                     <div className={saStyles.main_grid}>
                         <Card sx={{ width: "100%", height: "100%", borderRadius: "15px" }}>
-                            <TableCustom columns={salesAnalColumns} title="목록" data={salesTableData} buttons={['DownloadExcel']} onClicks={[() => onDownloadExcelClick(salesTableData)]} />
+                            <TableCustom columns={salesAnalColumns} title="목록" data={salesTableData} buttons={['DownloadExcel']} onClicks={[() => onDownloadExcelClick(salesTableData)]} pagination={true} paginationRows={3} />
                         </Card>
                     </div>
                 </>

@@ -64,6 +64,7 @@ export default function TableCustom({
     subData = [],
     expandedRow = {},
     monthPagination = false,
+    paginationRows = undefined
 }) {modalPagination
     // 버튼 활성화 상태 결정
     const buttonStatus = buttons.map((button) => {
@@ -135,6 +136,7 @@ export default function TableCustom({
                         subData={subData}
                         expandedRow={expandedRow}
                         monthPagination={monthPagination}
+                        paginationRows={paginationRows}
                     />
                 ) : (<></>)}
             </div>

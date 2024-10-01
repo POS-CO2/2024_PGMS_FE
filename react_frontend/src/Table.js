@@ -134,11 +134,12 @@ export default function CustomizedTables({
         editedRows= [],
         subData = [], // 담당자 목록
         expandedRow, // 확장된 행
+        paginationRows,
     }) {
     const [selectedRow, setSelectedRow] = useState(null);   //variant = 'default' 의 선택상태
     const [selectedRows, setSelectedRows] = useState([]);
-    const [page, setPage] = useState(0);
-    const [rowsPerPage, setRowsPerPage] = useState(modalPagination ? 5 : (monthPagination ? 12 : 10));             // default page row length
+    const [page, setPage] = useState(0);    
+    const [rowsPerPage, setRowsPerPage] = useState(paginationRows ?? (modalPagination ? 5 : (monthPagination ? 12 : 10))); // default page row length
     const [columnWidths, setColumnWidths] = useState({});
     
     // selectedRowId와 일치하는 행을 찾아 인덱스를 selectedRow로 설정하고 페이지를 이동
@@ -494,45 +495,70 @@ export default function CustomizedTables({
                         </TableBody>
                 </Table>
             </TableContainer>
-            {pagination && (data.length > 10) ? ( !modalPagination ? (// 10개 이상이면 자동으로 pagination 활성화, (pagination이 true일때만.)
-            //페이지네이션을 하고 데이터길이가 길며 모달페이지네이션이 아닐때
-            <TablePagination 
-                rowsPerPageOptions={[10]} // page row length custom
-                component="div"
-                count={data.length}
-                rowsPerPage={rowsPerPage}
-                page={page}
-                onPageChange={handleChangePage}
-                onRowsPerPageChange={handleChangeRowsPerPage}
-            />
+            {pagination ? (
+                (paginationRows !== undefined && data.length > paginationRows) ? (
+                    // paginationRows가 존재하고 데이터 길이가 paginationRows보다 길 때
+                    <TablePagination
+                        rowsPerPageOptions={[paginationRows,6]}
+                        component="div"
+                        count={data.length}
+                        rowsPerPage={paginationRows} // paginationRows 사용
+                        page={page} // 데이터가 짧을 경우 첫 페이지로 설정
+                        onPageChange={handleChangePage}
+                        onRowsPerPageChange={handleChangeRowsPerPage}
+                    />
+                ) : (
+                    !modalPagination ? (
+                        // 모달 페이지네이션이 아닌 경우
+                        data.length > 10 ? (
+                            // 데이터 길이가 10개 이상일 때
+                            <TablePagination
+                                rowsPerPageOptions={[10,20,30]} // page row length custom
+                                component="div"
+                                count={data.length}
+                                rowsPerPage={rowsPerPage}
+                                page={page}
+                                onPageChange={handleChangePage}
+                                onRowsPerPageChange={handleChangeRowsPerPage}
+                            />
+                        ) : (
+                            // 데이터 길이가 10개 이하일 때
+                            <></>
+                        )
+                    ) : (
+                        // 모달 페이지네이션인 경우 + 데이터 길이가 10개 이상일 때
+                        data.length > 10 ? (
+                            <TablePagination
+                                rowsPerPageOptions={[5]} // page row length custom
+                                component="div"
+                                count={data.length}
+                                rowsPerPage={rowsPerPage}
+                                page={page}
+                                onPageChange={handleChangePage}
+                                onRowsPerPageChange={handleChangeRowsPerPage}
+                            />
+                        ) : (
+                            <></>
+                        )
+                    )
+                )
             ) : (
-                //페이지네이션을 하고 데이터길이가 길며 모달페이지네이션이 맞을때
-                <TablePagination 
-                rowsPerPageOptions={[5]} // page row length custom
-                component="div"
-                count={data.length}
-                rowsPerPage={rowsPerPage}
-                page={page}
-                onPageChange={handleChangePage}
-                onRowsPerPageChange={handleChangeRowsPerPage}
-            />
-            )
-            ) : ( !modalPagination ? (
-                <></>
-            ) : (
-                //페이지네이션을 안하거나 데이터길이가 12이하이며 모달페이지네이션일때
-                <TablePagination 
-                rowsPerPageOptions={[5]} // page row length custom
-                component="div"
-                count={data.length}
-                rowsPerPage={rowsPerPage}
-                page={page}
-                onPageChange={handleChangePage}
-                onRowsPerPageChange={handleChangeRowsPerPage}
-            />
-            )
-            )
-            }
+                // 페이지네이션을 하지 않을 때
+                modalPagination ? (
+                    // 모달 페이지네이션이 있을 때
+                    <TablePagination
+                        rowsPerPageOptions={[5]} // page row length custom
+                        component="div"
+                        count={data.length}
+                        rowsPerPage={rowsPerPage}
+                        page={page}
+                        onPageChange={handleChangePage}
+                        onRowsPerPageChange={handleChangeRowsPerPage}
+                    />
+                ) : (
+                    <></>
+                )
+            )}
         </Box>
     );
 }
