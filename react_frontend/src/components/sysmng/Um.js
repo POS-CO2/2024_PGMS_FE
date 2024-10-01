@@ -264,7 +264,7 @@ export default function Um() {
                                     <div className={sysStyles.text}>
                                         {"로그인 아이디"}
                                     </div>
-                                    <TextField size="small" id='loginId'  variant='outlined' onChange={handleInputChange} defaultValue={selectedUser.loginId} value={selectedUser.loginId} sx={{width:"100%"}}/>
+                                    <TextField size="small" id='loginId'  variant='outlined' onChange={handleInputChange} value={selectedUser.loginId} sx={{width:"100%"}}/>
                                 </div>
                                 <div className={sysStyles.text_field} style={{marginTop:"0.5rem",width:"50%"}}>
                                     <div className={sysStyles.text}>
@@ -274,11 +274,11 @@ export default function Um() {
                                 </div>
                                 <div className={sysStyles.text_field} style={{marginTop:"0.5rem",width:"50%"}}>
                                     <div className={sysStyles.text}>{"이름 "}</div>
-                                        <TextField size="small" id='userName'  variant='outlined' onChange={handleInputChange} defaultValue={selectedUser.userName} value={selectedUser.userName} sx={{width:"100%"}}/>
+                                        <TextField size="small" id='userName'  variant='outlined' onChange={handleInputChange} value={selectedUser.userName} sx={{width:"100%"}}/>
                                 </div>
                                 <div className={sysStyles.text_field} style={{marginTop:"0.5rem",width:"50%"}}>
                                     <div className={sysStyles.text}>{"부서 명"}</div>
-                                        <Select value={selectedUser.deptCode} onChange={(value) => handleInputChange({ target: { id: 'deptCode', value} })} defaultValue={selectedUser.deptCode} style={{width:"100%", height:"2.5rem", fontSize:"4rem"}}>
+                                        <Select value={selectedUser.deptCode} onChange={(value) => handleInputChange({ target: { id: 'deptCode', value} })} style={{width:"100%", height:"2.5rem", fontSize:"4rem"}}>
                                         {dept.map(option => (
                                             <Select.Option key={option.value} value={option.value}>
                                                 {option.label}
@@ -288,7 +288,7 @@ export default function Um() {
                                 </div>
                                 <div className={sysStyles.text_field} style={{marginTop:"0.5rem",width:"50%"}}>
                                     <div className={sysStyles.text}>{"권한"}</div>
-                                        <Select value={selectedUser.role} onChange={(value) => handleInputChange({ target: { id: 'role', value } })} defaultValue={selectedUser.role} style={{width:"100%", height:"2.5rem", fontSize:"4rem"}}>
+                                        <Select value={selectedUser.role} onChange={(value) => handleInputChange({ target: { id: 'role', value } })} style={{width:"100%", height:"2.5rem", fontSize:"4rem"}}>
                                         {access.map(option => (
                                             <Select.Option key={option.value} value={option.value}>
                                                 {option.label}
@@ -299,7 +299,7 @@ export default function Um() {
                             </div>
                             <div className={sysStyles.text_field} style={{marginTop:"0.5rem",width:"50%"}}>
                                 <div className={sysStyles.text}><span className={modalStyles.star}>*</span>{"부서명"}</div>
-                                    <Select value={selectedUser.deptCode} onChange={(value) => handleInputChange({ target: { id: 'deptCode', value} })} defaultValue={selectedUser.deptCode} style={{width:"100%", height:"2.5rem", fontSize:"4rem"}}>
+                                    <Select value={selectedUser.deptCode} onChange={(value) => handleInputChange({ target: { id: 'deptCode', value} })} style={{width:"100%", height:"2.5rem", fontSize:"4rem"}}>
                                     {dept.map(option => (
                                         <Select.Option key={option.value} value={option.value}>
                                             {option.label}
@@ -309,7 +309,7 @@ export default function Um() {
                             </div>
                             <div className={sysStyles.text_field} style={{marginTop:"0.5rem",width:"50%"}}>
                                 <div className={sysStyles.text}><span className={modalStyles.star}>*</span>{"접근권한"}</div>
-                                    <Select value={selectedUser.role} onChange={(value) => handleInputChange({ target: { id: 'role', value } })} defaultValue={selectedUser.role} style={{width:"100%", height:"2.5rem", fontSize:"4rem"}}>
+                                    <Select value={selectedUser.role} onChange={(value) => handleInputChange({ target: { id: 'role', value } })} style={{width:"100%", height:"2.5rem", fontSize:"4rem"}}>
                                     {access.map(option => (
                                         <Select.Option key={option.value} value={option.value}>
                                             {option.label}
