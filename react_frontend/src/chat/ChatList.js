@@ -1,17 +1,15 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import * as chatStyles from '../assets/css/chat.css'
 
-export default function ChatList({ UserListIcon, handleChattingClick, room, fetchRoom, noticeUser, roomChange, setRoomChange, ws }){
+export default function ChatList({ UserListIcon, handleChattingClick, room, fetchRoom, ws }){
 
     useEffect(() => {
         if (!ws) return;
-
 
         const handleMessage = (event) => {
             const message = JSON.parse(event.data);
             console.log(message);
             if (message.type === 'CHAT') {
-                // updateChatList(message)
                 fetchRoom();
             }
             else {
@@ -29,7 +27,6 @@ export default function ChatList({ UserListIcon, handleChattingClick, room, fetc
     useEffect(()=> {
         fetchRoom();
     },[])
-    console.log(room);
 
     return (
         <div className={chatStyles.chatlist}>

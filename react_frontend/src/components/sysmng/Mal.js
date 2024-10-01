@@ -14,7 +14,6 @@ export default function Mal() {
     const [formFields, setFormFields] = useState(formField_mal);
     const [formData, setFormData] = useRecoilState(accessLogSearchForm);
     const [user, setUser] = useState([]);
-    const [transUser, setTransUser] = useState([]);
     const [log, setLog] = useState([]);
     const [selectedUser, setSelectedUser] = useState([]);
     const [showUser, setShowUser] = useState(true);

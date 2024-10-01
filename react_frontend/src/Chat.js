@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import * as chatStyles from './assets/css/chat.css'
-import { CampaignTwoTone, ChatOutlined, Close, Person, Search } from "@mui/icons-material";
+import { CampaignTwoTone, ChatOutlined, Close, Person } from "@mui/icons-material";
 import { Avatar, IconButton } from "@mui/material";
 import UserList from "./chat/UserList";
 import ChatList from "./chat/ChatList";
@@ -50,7 +50,6 @@ export default function Chat({ handleCloseClick }) {
     };
 
     const updateChatList = (message) => {
-        console.log(message);
         setRoom((prevRooms) => {
             const updatedRooms = prevRooms.map((room) => {
                 if (room.users[0].id === message.senderId || room.users[0].id === message.receiverId) {
@@ -89,7 +88,6 @@ export default function Chat({ handleCloseClick }) {
 
     const handleChattingClick = async (e) => {
         setChatUser(e);
-        console.log("1", e);
         const chatResponse = await axiosInstance.get(`/chat?targetId=${e.id}&messageId=${chatContent.length === 0 ? 4000000000 : chatContent[chatContent.length - 1].messageId}&count=${10}`);
         setChatContent(chatResponse.data);
         try {
@@ -106,7 +104,6 @@ export default function Chat({ handleCloseClick }) {
     const fetchRoom = async () => {
         const roomResponse = await axiosInstance.get(`/chat/room`);
         const roomData = roomResponse.data;
-        console.log(roomData);
         const updatedRoomData = roomData.map((room) => {
             const filteredUsers = room.users.filter((user) => user.id !== me.id); // localStorage의 user.id와 일치하지 않는 사용자들만 남기기
             return {
@@ -115,7 +112,6 @@ export default function Chat({ handleCloseClick }) {
             };
         });
         const realRoomData = updatedRoomData.filter(e => e.users.length !== 0)
-        console.log("object");
         setRoom(realRoomData);
         
     };
@@ -179,9 +175,6 @@ export default function Chat({ handleCloseClick }) {
             </div>
             <div className={chatStyles.board}>
                 <div className={chatStyles.board_header}>
-                    {/* <IconButton >
-                        <Search />
-                    </IconButton> */}
                     <IconButton onClick={handleCloseClick}>
                         <Close />
                     </IconButton>

@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Modal, Button, Upload, Select, Input, ConfigProvider } from 'antd';
+import { Modal, Select, Input, ConfigProvider } from 'antd';
 import Swal from 'sweetalert2';
 import { useRecoilValue, useRecoilState } from 'recoil';
 import { selectedSuppDocState } from '../atoms/pdsAtoms';
@@ -19,7 +19,6 @@ import * as rmStyles from "../assets/css/rmModal.css";
 import * as delStyle from "../assets/css/delModal.css";
 import * as pjtModalStyles from "../assets/css/pjtModal.css";
 import * as sdStyles from "../assets/css/sdModal.css";
-import * as pdsStyles from "../assets/css/pds.css";
 import * as sysStyles from "../assets/css/sysmng.css"
 import * as ps12Styles from "../assets/css/ps12UploadExcelModal.css";
 
@@ -1127,7 +1126,6 @@ export function CmAddModal({ isModalOpen, handleOk, handleCancel }) {
             <div style={{display:"flex", justifyContent:"center", alignContent:"center"}}>
                 <button style={{width:"18rem"}} className={modalStyles.select_button} onClick={handleSelect}>등록</button>
             </div>
-            
         </Modal>
         </ConfigProvider>
     )
@@ -1285,10 +1283,6 @@ export function CmListAddModal({ isModalOpen, handleOk, handleCancel, rowData })
     const [error, setError] = useState({});
 
     const handleSelect = async() => {
-        let swalOptions = {
-            confirmButtonText: '확인'
-        };
-
         const formData = {
             codeGrpNo: rowData.codeGrpNo,
             codeGrpName: rowData.codeGrpName,
@@ -1310,7 +1304,7 @@ export function CmListAddModal({ isModalOpen, handleOk, handleCancel, rowData })
         setError({});
 
         // handleOk을 호출하여 모달을 닫고 상위 컴포넌트에 알림
-         handleOk(formData);
+        handleOk(formData);
     };
 
     return (
@@ -1378,9 +1372,6 @@ export function CmListEditModal({ isModalOpen, handleOk, handleCancel, rowData }
     const [note, setNote] = useState(rowData.note);
     const [error, setError] = useState({});
     const handleSelect = async() => {
-        let swalOptions = {
-            confirmButtonText: '확인'
-        };
         const formData = {
             id: rowData.id,
             codeGrpNo: rowData.codeGrpNo,
@@ -1626,7 +1617,6 @@ export function EfmEditModal({ isModalOpen, handleOk, handleCancel, rowData }) {
     const [selectedCoefClassCode, setSelectedCoefClassCode] = useState(rowData.coefClassCode);
     const [afterSelectedCoefClassCode, setAfterSelectedCoefClassCode] = useState([]);
     const [unitCode, setUnitCode] = useState(rowData.unitCode);
-    const [selectedUnitCode, setSelectedUnitCode] = useState(rowData.unitCode);
     const [coef, setCoef] = useState(rowData.coef);
     const [error, setError] = useState({});
 
@@ -1763,7 +1753,6 @@ export function EfmEditModal({ isModalOpen, handleOk, handleCancel, rowData }) {
                         <Select disabled placeholder="순발열량은 온실가스코드가 없습니다." style={{width:"18rem", height:"2rem",fontSize:"4rem"}}>
                         </Select>
                     )}
-                    
                 </div>
                 <div className={sysStyles.text_field}>
                     <div className={sysStyles.text}><span className={modalStyles.star}>*</span>{"단위"}</div>
@@ -1776,8 +1765,8 @@ export function EfmEditModal({ isModalOpen, handleOk, handleCancel, rowData }) {
                     {error.coef && <div className={modalStyles.error_message}>{error.coef}</div>}
                 </div>
             </div>
-            <div style={{display:"flex", justifyContent:"center", alignContent:"center"}}>
-            <button style={{width:"18rem"}} className={modalStyles.select_button} onClick={handleSelect}>수정</button>
+                <div style={{display:"flex", justifyContent:"center", alignContent:"center"}}>
+                <button style={{width:"18rem"}} className={modalStyles.select_button} onClick={handleSelect}>수정</button>
             </div>
         </Modal>
         </ConfigProvider>
@@ -1944,8 +1933,6 @@ export function UmAddModal({ isModalOpen, handleOk, handleCancel }) {
 
     },[])
 
-
-
     // 등록 버튼 클릭 시 호출될 함수
     const handleInsert = async () => {
         const formData = {
@@ -2098,7 +2085,6 @@ export function MmAddModal({ isModalOpen, handleOk, handleCancel, rowData }) {
     const [upperDir, setUpperDir] = useState([]);
     const [selectedUpperDir, setSelectedUpperDir] = useState('');
     const [orderMenuList, setOrderMenuList] = useState([]);
-    const [selectedOrderMenu, setSelectedOrderMenu] = useState([]);
 
     useEffect(() => {
         const fetchUpperDir = async () => {
@@ -2120,7 +2106,6 @@ export function MmAddModal({ isModalOpen, handleOk, handleCancel, rowData }) {
             })();
         }
         else {
-            // setOrderMenuList([]);
         }
     })
 
@@ -2385,7 +2370,6 @@ export function SdAddModal({ isModalOpen, handleOk, handleCancel, rowData }) {
                 <div className={sdStyles.input_item}>
                     <div className={sdStyles.input_title}>
                         <span className={modalStyles.star}>*</span>대상년월
-                        {/* <span className={sdStyles.requiredAsterisk}>*</span> */}
                     </div>
                     <div className={sdStyles.select_item}>
                         <Select
@@ -2419,7 +2403,6 @@ export function SdAddModal({ isModalOpen, handleOk, handleCancel, rowData }) {
                 <div className={sdStyles.input_item}>
                     <div className={sdStyles.input_title}>
                         <span className={modalStyles.star}>*</span>자료명
-                        {/* <span className={sdStyles.requiredAsterisk}>*</span> */}
                     </div>
                     <input
                         className={sdStyles.search}
@@ -2434,7 +2417,6 @@ export function SdAddModal({ isModalOpen, handleOk, handleCancel, rowData }) {
                     <div className={sdStyles.upload_header}>
                         <div className={sdStyles.input_title}>
                             <span className={modalStyles.star}>*</span>첨부파일
-                            {/* <span className={sdStyles.requiredAsterisk}>*</span> */}
                         </div>
                         <div>
                             <input
@@ -2656,7 +2638,6 @@ export function SdShowDetailsModal({ isModalOpen, handleOk, handleCancel }) {
                 <div className={sdStyles.input_item}>
                     <div className={sdStyles.input_title}>
                         <span className={modalStyles.star}>*</span>대상년월
-                        {/* <span className={sdStyles.requiredAsterisk}>*</span> */}
                     </div>
                     <div className={sdStyles.select_item}>
                         <Select
@@ -2717,7 +2698,6 @@ export function SdShowDetailsModal({ isModalOpen, handleOk, handleCancel }) {
                     <div className={sdStyles.upload_header}>
                         <div className={sdStyles.input_title}>
                             <span className={modalStyles.star}>*</span>첨부파일
-                            {/* <span className={sdStyles.requiredAsterisk}>*</span> */}
                         </div>
                         <div>
                             <input

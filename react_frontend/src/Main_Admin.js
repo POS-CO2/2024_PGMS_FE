@@ -1,8 +1,8 @@
-import React, { useState, useRef, useEffect, useCallback, memo } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import * as gridStyles from './assets/css/gridAdmin.css';
 import { useSpring, animated } from '@react-spring/web';
-import { Card, CircularProgress, Divider, IconButton, LinearProgress, Skeleton } from '@mui/material';
-import { Code, Menu, ManageAccounts, Terminal, PeopleAlt, Engineering, Business, Settings, Today, AddCircleTwoTone, RemoveCircleTwoTone, Person, RemoveCircleOutline, MoreHoriz, ScoreSharp } from '@mui/icons-material';
+import { Card, CircularProgress, Divider, IconButton, Skeleton } from '@mui/material';
+import { Code, Menu, ManageAccounts, Terminal, PeopleAlt, Engineering, Business, Settings, AddCircleTwoTone, RemoveCircleTwoTone, RemoveCircleOutline, MoreHoriz } from '@mui/icons-material';
 import { SwiperSlide, Swiper } from 'swiper/react';
 import { Pagination, Navigation } from 'swiper/modules';
 import styled from 'styled-components';
@@ -15,7 +15,7 @@ import TerminalLogo from './assets/images/terminal.png';
 import ContainerLogo from './assets/images/container.png';
 import ContainerAddLogo from './assets/images/containeradd.png';
 import ApiLogo from './assets/images/api.png';
-import { ConfigProvider, Tabs, DatePicker, Input, Select, Collapse } from 'antd';
+import { ConfigProvider, Tabs, DatePicker, Select, Collapse } from 'antd';
 import dayjs from 'dayjs';
 import axiosInstance from './utils/AxiosInstance';
 import useFetchData from './customhook/useFetchData';
@@ -253,14 +253,6 @@ const ChartOptions = (title, xdata) => {
     return chartOption;
 };
 
-const ProgressComponent = memo(({ progress }) => {
-    return (
-        <div style={{ width: "5%" }}>
-            <LinearProgress variant="determinate" value={progress} />
-        </div>
-    );
-});
-
 export default function Main_Admin({ handleMenuClick=()=>{} }) {
     const today = new Date();
     const defaultStartDate = dayjs(today).format('YYYY-MM-DD') + 'T00:00:00.000';
@@ -486,7 +478,6 @@ export default function Main_Admin({ handleMenuClick=()=>{} }) {
     const [prePendingPj, setPrePendingPj] = useState(false);
     const [prePendingAn, setPrePendingAn] = useState(false);
     const [prePendingSk, setPrePendingSk] = useState(false);
-    const [progress, setProgress] = useState(0);
 
     const fetchCommonService = async () => {
         try {
@@ -711,7 +702,6 @@ export default function Main_Admin({ handleMenuClick=()=>{} }) {
                                         <div style={{width:"20%"}}>
                                         서버 관리
                                         </div>
-                                        {/* <ProgressComponent progress={progress} /> */}
                                     </div>
                                     <div className={gridStyles.server_list}>
                                         <div className={gridStyles.server}>
@@ -731,7 +721,6 @@ export default function Main_Admin({ handleMenuClick=()=>{} }) {
                                                         <Swiper
                                                             spaceBetween={30}    // 슬라이드 사이의 간격
                                                             slidesPerView={3.5}     // 화면에 보여질 슬라이드 수
-                                                            // centeredSlides={true}
                                                             pagination={{ clickable: true }}  // 페이지 네이션 (점으로 표시되는 네비게이션)
                                                             navigation={true}           // 이전/다음 버튼 네비게이션
                                                             modules={[Navigation, Pagination]}
@@ -831,7 +820,6 @@ export default function Main_Admin({ handleMenuClick=()=>{} }) {
                                                         <Swiper
                                                             spaceBetween={30}    // 슬라이드 사이의 간격
                                                             slidesPerView={3.5}     // 화면에 보여질 슬라이드 수
-                                                            // centeredSlides={true}
                                                             pagination={{ clickable: true }}  // 페이지 네이션 (점으로 표시되는 네비게이션)
                                                             navigation={true}           // 이전/다음 버튼 네비게이션
                                                             modules={[Navigation, Pagination]}
@@ -931,7 +919,6 @@ export default function Main_Admin({ handleMenuClick=()=>{} }) {
                                                         <Swiper
                                                             spaceBetween={30}    // 슬라이드 사이의 간격
                                                             slidesPerView={3.5}     // 화면에 보여질 슬라이드 수
-                                                            // centeredSlides={true}
                                                             pagination={{ clickable: true }}  // 페이지 네이션 (점으로 표시되는 네비게이션)
                                                             navigation={true}           // 이전/다음 버튼 네비게이션
                                                             modules={[Navigation, Pagination]}
@@ -1031,7 +1018,6 @@ export default function Main_Admin({ handleMenuClick=()=>{} }) {
                                                         <Swiper
                                                             spaceBetween={30}    // 슬라이드 사이의 간격
                                                             slidesPerView={3.5}     // 화면에 보여질 슬라이드 수
-                                                            // centeredSlides={true}
                                                             pagination={{ clickable: true }}  // 페이지 네이션 (점으로 표시되는 네비게이션)
                                                             navigation={true}           // 이전/다음 버튼 네비게이션
                                                             modules={[Navigation, Pagination]}
@@ -1131,7 +1117,6 @@ export default function Main_Admin({ handleMenuClick=()=>{} }) {
                                                         <Swiper
                                                             spaceBetween={30}    // 슬라이드 사이의 간격
                                                             slidesPerView={3.5}     // 화면에 보여질 슬라이드 수
-                                                            // centeredSlides={true}
                                                             pagination={{ clickable: true }}  // 페이지 네이션 (점으로 표시되는 네비게이션)
                                                             navigation={true}           // 이전/다음 버튼 네비게이션
                                                             modules={[Navigation, Pagination]}
@@ -1226,7 +1211,6 @@ export default function Main_Admin({ handleMenuClick=()=>{} }) {
                                             theme={{
                                                 components:{
                                                     DatePicker:{
-                                                        // activeBorderColor: "#66C65E",
                                                         activeBorderColor:"#0EAA00",
                                                         cellActiveWithRangeBg : "#c3e59e",
                                                         cellRangeBorderColor:"#0EAA00",
@@ -1382,7 +1366,6 @@ export default function Main_Admin({ handleMenuClick=()=>{} }) {
                                 }}
                             >
                                 <div className={gridStyles.icon_box}>
-                                {/* 바로가기 구현 필요 */}
                                 <Card
                                     onClick={() => handleButtonClick('/cm', '코드 관리')}
                                     sx={{
@@ -1496,7 +1479,6 @@ export default function Main_Admin({ handleMenuClick=()=>{} }) {
                                     direction='vertical'
                                     spaceBetween={30}    // 슬라이드 사이의 간격
                                     slidesPerView={3.5}     // 화면에 보여질 슬라이드 수
-                                    // centeredSlides={true}
                                     pagination={{ clickable: true }}  // 페이지 네이션 (점으로 표시되는 네비게이션)
                                     navigation={true}           // 이전/다음 버튼 네비게이션
                                     modules={[Navigation, Pagination]}

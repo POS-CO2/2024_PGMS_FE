@@ -4,7 +4,6 @@ import { codeMgrSearchForm } from '../../atoms/searchFormAtoms';
 import { selectedCGState, selectedCLState } from '../../atoms/selectedRowAtoms';
 import Swal from 'sweetalert2';
 import SearchForms from '../../SearchForms';
-import * as tableStyles from '../../assets/css/table.css'
 import { formField_cm } from '../../assets/json/searchFormData';
 import TableCustom from '../../TableCustom';
 import * as sysStyles from '../../assets/css/sysmng.css';
@@ -157,7 +156,6 @@ export default function Cm() {
             try {
                 // POST 요청으로 서버에 데이터 전송
                 const response = await axiosInstance.post('/sys/code', data);
-               
                 // 새로 추가된 사용자 목록에 추가
                 setCode(prevList => [response.data, ...prevList]);
                 setSelectedCode({});

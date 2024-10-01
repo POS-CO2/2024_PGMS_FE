@@ -1,8 +1,8 @@
 import React, { useEffect, useRef, useState } from "react";
 import * as chatStyles from '../assets/css/chat.css'
 import { ArrowBackIosNew, ArrowDownward, Send } from "@mui/icons-material";
-import { Chip, CircularProgress, Divider, Fab, IconButton, Snackbar } from "@mui/material";
-import { Button, ConfigProvider, Input } from "antd";
+import { Chip, Divider, Fab, IconButton } from "@mui/material";
+import { Button, ConfigProvider } from "antd";
 import TextArea from "antd/es/input/TextArea";
 import axiosInstance from "../utils/AxiosInstance";
 import {useInView} from 'react-intersection-observer';
@@ -21,7 +21,7 @@ const StyledButton = styled(Button)`
 
 `;
 
-export default function Chatting({ UserListIcon ,handleChatListClick, chatUser, noticeUser, me, chatContent, setChatContent, handleRead,handleReadAll, ws, fetchRoom, roomChange, setRoomChange, updateChatList}) {
+export default function Chatting({ UserListIcon ,handleChatListClick, chatUser, me, chatContent, setChatContent, handleRead,handleReadAll, ws, fetchRoom, roomChange, setRoomChange }) {
 
     const [text, setText] = useState('');
     const [isLoading, setIsLoading] = useState(false);
@@ -227,7 +227,6 @@ export default function Chatting({ UserListIcon ,handleChatListClick, chatUser, 
                                     defaultHoverBg:"white",
                                     defaultHoverColor:"#0eaa00",
                                     defaultHoverBorderColor:"#0eaa00"
-
                                 }
                             },
                             token:{
@@ -245,13 +244,11 @@ export default function Chatting({ UserListIcon ,handleChatListClick, chatUser, 
                                     읽음
                                 </StyledButton>
                             )
-
                         )}
                         </ConfigProvider>
                         
                     </div>
                 ))}
-                {/* {isLoading && <CircularProgress color="success" sx={{margin:"0 auto"}}/>} */}
                 <div ref={sentinelRef}></div>
             </div>
             <Divider variant="middle" />
