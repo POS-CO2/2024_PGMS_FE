@@ -264,17 +264,17 @@ export default function Um() {
                                     <div className={sysStyles.text}>
                                         {"로그인 아이디"}
                                     </div>
-                                    <TextField size="small" id='loginId'  variant='outlined' onChange={handleInputChange} value={selectedUser.loginId} sx={{width:"100%"}}/>
+                                    <TextField size="small" id='loginId'  variant='outlined' onChange={handleInputChange} value={selectedUser.loginId || ""} sx={{width:"100%"}}/>
                                 </div>
                                 <div className={sysStyles.text_field} style={{marginTop:"0.5rem",width:"50%"}}>
                                     <div className={sysStyles.text}>
                                         {"비밀번호"}
                                     </div>
-                                    <TextField size="small" id='password'  variant='outlined' onChange={(e) => setPassword(e.target.value)} value={password} sx={{width:"100%"}}/>
+                                    <TextField size="small" id='password'  variant='outlined' onChange={(e) => setPassword(e.target.value)} value={password || ""} sx={{width:"100%"}}/>
                                 </div>
                                 <div className={sysStyles.text_field} style={{marginTop:"0.5rem",width:"50%"}}>
                                     <div className={sysStyles.text}>{"이름 "}</div>
-                                        <TextField size="small" id='userName'  variant='outlined' onChange={handleInputChange} value={selectedUser.userName} sx={{width:"100%"}}/>
+                                        <TextField size="small" id='userName'  variant='outlined' onChange={handleInputChange} value={selectedUser.userName || ""} sx={{width:"100%"}}/>
                                 </div>
                                 <div className={sysStyles.text_field} style={{marginTop:"0.5rem",width:"50%"}}>
                                     <div className={sysStyles.text}>{"부서 명"}</div>
