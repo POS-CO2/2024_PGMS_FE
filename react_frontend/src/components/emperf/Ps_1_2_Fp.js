@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useRecoilState } from 'recoil';
-import { emissionSourceForm } from '../../atoms/searchFormAtoms';
+import { emissionSourceForm, selectedPjtFPState } from '../../atoms/searchFormAtoms';
 import { ps12SelectedBtnState } from '../../atoms/buttonAtoms';
 import SearchForms from "../../SearchForms";
 import { formField_ps12_fp } from "../../assets/json/searchFormData";
@@ -20,21 +20,28 @@ export default function Ps_1_2_Fp() {
     const [formFields, setFormFields] = useState(formField_ps12_fp);
     const [formData, setFormData] = useRecoilState(emissionSourceForm);
     const [selectedPjtOption, setSelectedPjtOption] = useState([]);
-    const [selectedPjt, setSelectedPjt] = useState([]);
+    const [selectedPjt, setSelectedPjt] = useState({});
+    const [selectedPjtId, setSelectedPjtId] = useRecoilState(selectedPjtFPState);
     const [usagePerfs, setUsagePerfs] = useState([]);
     const [amountUsedPerfs, setAmountUsedPerfs] = useState([]);
     const [actvYearDisabled, setActvYearDisabled] = useState(true);  // 드롭다운 비활성화 상태 관리
-
+    const [pjtOptions, setPjtOptions] = useState([]);
+    const [projectData, setProjectData] = useState([]);  // 전체 프로젝트 데이터를 저장
+    const [emtnActvType, setEmtnActvType] = useState([]);
     const [content, setContent] = useRecoilState(ps12SelectedBtnState); // actvQty || fee
 
     const handleButtonClick = (value) => {
         setContent(value);
     };
 
-    const [pjtOptions, setPjtOptions] = useState([]);
-    const [projectData, setProjectData] = useState([]);  // 전체 프로젝트 데이터를 저장
-    const [emtnActvType, setEmtnActvType] = useState([]);
-    
+    // formData의 searchProject 값만 변경하는 함수
+    const updateSearchProject = (newValue) => {
+        setFormData((prevFormData) => ({
+        ...prevFormData,
+        searchProject: newValue,  // searchProject 값만 업데이트
+        }));
+    };
+
     useEffect(() => {
         const fetchPjtOptions = async () => {
             try {
@@ -74,13 +81,24 @@ export default function Ps_1_2_Fp() {
             }
         };
     
-        fetchPjtOptions();
-        
-        // 이전 탭의 검색기록이 있으면 그 값을 불러옴
-        Object.keys(formData).length !== 0 && handleFormSubmit(formData);
+        // 프로젝트 옵션 불러오기 처리 후 다음 로직 실행
+        const fetchDataAndContinue = async () => {
+            await fetchPjtOptions();  // fetchPjtOptions 호출 후 대기
 
-        handleButtonClick(content);
-    }, []);
+            // fetchPjtOptions 완료 후 실행될 로직
+            if (selectedPjtId) {
+                if (selectedPjtId !== selectedPjt.id) {
+                    updateSearchProject(selectedPjtId);
+                } else {
+                    handleFormSubmit(formData);
+                }
+            }
+
+            handleButtonClick(content);
+        };
+
+        fetchDataAndContinue();  // 함수 호출
+    }, [projectData.length]);
 
     // 프로젝트 선택 후 대상년도 드롭다운 옵션 설정
     const onProjectSelect = (selectedData, form) => {
@@ -109,7 +127,7 @@ export default function Ps_1_2_Fp() {
             if (yearOptions.length > 0) {
                 setActvYearDisabled(false);
             }
-            if (Object.keys(formData).length === 0) {
+            if (Object.keys(formData).length === 0 || selectedProject) {
                 form.setFieldsValue({ actvYear: yearOptions[0].value });
             }
         }
@@ -159,6 +177,7 @@ export default function Ps_1_2_Fp() {
         const perfRes = await axiosInstance.get(perfRequrl);
 
         setSelectedPjt(pjtRes.data[0]);
+        setSelectedPjtId(data.searchProject);
     
         // data가 빈 배열인지 확인
         if (perfRes.data.length === 0) {
@@ -253,6 +272,7 @@ export default function Ps_1_2_Fp() {
                 pageType="ps12actvQty"
                 handleFormSubmit={handleFormSubmit}
                 formData={formData}
+                immutableCellIndex={[0, 1, 2, 3]}
             />
         )
     }
@@ -331,6 +351,7 @@ export default function Ps_1_2_Fp() {
                 pageType="ps12fee"
                 handleFormSubmit={handleFormSubmit}
                 formData={formData}
+                immutableCellIndex={[0, 1, 2, 3]}
             />
         )
     }

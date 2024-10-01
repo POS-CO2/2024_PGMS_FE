@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useRecoilState } from 'recoil';
-import { projectPerfForm } from '../../../atoms/searchFormAtoms';
+import { projectPerfForm, selectedPjtFPState } from '../../../atoms/searchFormAtoms';
 import { psqSelectedBtnState } from '../../../atoms/buttonAtoms';
 import SearchForms from "../../../SearchForms.js";
 import { formField_psq_fp } from "../../../assets/json/searchFormData.js"
@@ -27,6 +27,7 @@ export default function Psq_Fp() {
     const [formData, setFormData] = useRecoilState(projectPerfForm); // 검색 데이터
     const [selectedPjtOption, setSelectedPjtOption] = useState([]); // searchForm에서 선택되어있는 프로젝트
     const [selectedPjt, setSelectedPjt] = useState([]); // 조회결과로 출력되는 프로젝트
+    const [selectedPjtId, setSelectedPjtId] = useRecoilState(selectedPjtFPState);
     const [emissionTableData, setEmissionTableData] = useState([]); // 설비별 표
     const [perfsData, setPerfsData] = useState(Array(12).fill({})); // scope1, scope2, total 표
     const [chartPerfs, setChartPerfs] = useState([]);
@@ -46,6 +47,24 @@ export default function Psq_Fp() {
     // 프로젝트 드롭다운 옵션 설정
     const [pjtOptions, setPjtOptions] = useState([]);
     const [projectData, setProjectData] = useState([]);  // 전체 프로젝트 데이터를 저장
+    
+    useEffect(() => {
+        console.log("projectData", projectData);
+    }, [projectData])
+
+    useEffect(() => {
+        console.log("formData", formData);
+    }, [formData])
+
+    // formData의 searchProject 값만 변경하는 함수
+    const updateSearchProject = (newValue) => {
+        console.log("cc");
+        setFormData((prevFormData) => ({
+        ...prevFormData,
+        searchProject: newValue,  // searchProject 값만 업데이트
+        }));
+    };
+
     useEffect(() => {
         const fetchPjtOptions = async () => {
             try {
@@ -65,13 +84,25 @@ export default function Psq_Fp() {
                 console.error(error);
             }
         };
-        fetchPjtOptions();
 
-        // 이전 탭의 검색기록이 있으면 그 값을 불러옴
-        Object.keys(formData).length !== 0 && handleFormSubmit(formData);
+        // 프로젝트 옵션 불러오기 처리 후 다음 로직 실행
+        const fetchDataAndContinue = async () => {
+            await fetchPjtOptions();  // fetchPjtOptions 호출 후 대기
 
-        handleButtonClick(content);
-    }, []);
+            // fetchPjtOptions 완료 후 실행될 로직
+            if (selectedPjtId) {
+                if (selectedPjtId !== selectedPjt.id) {
+                    updateSearchProject(selectedPjtId);
+                } else {
+                    handleFormSubmit(formData);
+                }
+            }
+
+            handleButtonClick(content);
+        };
+
+        fetchDataAndContinue();  // 함수 호출
+    }, [projectData.length]);
 
     // 프로젝트 선택 후 대상년도 드롭다운 옵션 설정
     const onProjectSelect = (selectedData, form) => {
@@ -94,13 +125,14 @@ export default function Psq_Fp() {
                 field.name === 'actvYear' ? { ...field, options: yearOptions } : field
             );
 
+            console.log("updatedFields", updatedFields);
             setFormFields(updatedFields);
 
             // 옵션 데이터가 있으면 드롭다운을 활성화, default값 설정
             if (yearOptions.length > 0) {
                 setActvYearDisabled(false);
             }
-            if (Object.keys(formData).length === 0) {
+            if (Object.keys(formData).length === 0 || selectedProject) {
                 form.setFieldsValue({ actvYear: yearOptions[0].value });
             }
         }
@@ -117,6 +149,7 @@ export default function Psq_Fp() {
         const perfRes = await axiosInstance.get(url);
 
         setSelectedPjt(pjtRes.data[0]);
+        setSelectedPjtId(data.searchProject);
 
         // data가 빈 배열인지 확인
         if (perfRes.data.length === 0) {
@@ -388,10 +421,10 @@ export default function Psq_Fp() {
                         {content === 'table' && 
                             <div className={psqStyles.table_container}>
                                 <Card className={psqStyles.table_card} sx={{ width: "100%", height: "fit-contents", borderRadius: "15px" }}>
-                                    <TableCustom columns={emissionPerfPjtColumns} title="배출원별 실적" data={emissionTableData} buttons={['DownloadExcel']} onClicks={[() => onDownloadExcelClick("배출원별 실적", emissionTableData, emissionPerfPjtColumns)]} pagination={false} />
+                                    <TableCustom columns={emissionPerfPjtColumns} title="배출원별 실적" data={emissionTableData} buttons={['DownloadExcel']} onClicks={[() => onDownloadExcelClick("배출원별 실적", emissionTableData, emissionPerfPjtColumns)]} pagination={false} highlightedColumnIndex={0} />
                                 </Card>
                                 <Card className={psqStyles.table_card} sx={{ width: "100%", height: "fit-contents", borderRadius: "15px" }}>
-                                    <TableCustom columns={perfPjtColumns} title="scope별 실적" data={perfsData} buttons={['DownloadExcel']} onClicks={[() => onDownloadExcelClick("scope별 실적", perfsData, perfPjtColumns)]} pagination={false} />
+                                    <TableCustom columns={perfPjtColumns} title="scope별 실적" data={perfsData} buttons={['DownloadExcel']} onClicks={[() => onDownloadExcelClick("scope별 실적", perfsData, perfPjtColumns)]} pagination={false} highlightedColumnIndex={0} />
                                 </Card>
                             </div>
                         }

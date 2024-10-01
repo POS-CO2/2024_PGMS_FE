@@ -20,10 +20,7 @@ export default function Um() {
     const [formData, setFormData] = useRecoilState(userMgrSearchForm);
     const [userList, setUserList] = useState([]);
     const [password, setPassword] = useState(null);
-    const [submittedUserIdx, setSubmittedUserIdx] = useState(() => {
-        const leftTableSub = localStorage.getItem("leftTableSub");
-        return leftTableSub ? JSON.parse(leftTableSub) : [];
-    });
+    const [submittedUserIdx, setSubmittedUserIdx] = useState([]);
     const [dept, setDept] = useState([]);
     const [selectedUser, setSelectedUser] = useRecoilState(selectedUserState);
     const [editable, setEditable] = useState(true);
@@ -78,10 +75,6 @@ export default function Um() {
         // formData값이 없으면 코드 사용자 목록을 findAll, 있으면(이전 탭의 검색기록이 있으면) 그 값을 불러옴
         Object.keys(formData).length === 0 ? fetchUserList() : handleFormSubmit(formData);
     },[]);
-
-    useEffect(() => {
-        localStorage.setItem("leftTableSub", JSON.stringify(submittedUserIdx));
-    }, [submittedUserIdx]);
 
     const handleFormSubmit = async (e) => {
         setFormData(e);
