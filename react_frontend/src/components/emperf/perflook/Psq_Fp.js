@@ -339,7 +339,7 @@ export default function Psq_Fp() {
                     <div className={pdsStyles.contents_container}>
                         {content === 'chart' && 
                             <>
-                                <Card className={saStyles.card_box} sx={{ width: "60%", height: "auto", borderRadius: "15px" }}>
+                                <Card className={saStyles.card_box} sx={{ width: "60%", height: "50vh", borderRadius: "15px" }}>
                                     <ChartCustom title={"프로젝트 실적 차트"} data={chartPerfs} unit={'kgGHG'} />
                                 </Card>
                                 <Card className={saStyles.card_box} sx={{ width: "40%", height: "auto", borderRadius: "15px" }}>
@@ -378,7 +378,7 @@ export default function Psq_Fp() {
                                                 arcLabelMinAngle: 35,
                                             },
                                         ]}
-                                        height={300}
+                                        height={200}
                                     />
                                 </Card>
                             </>

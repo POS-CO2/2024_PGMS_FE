@@ -10,6 +10,7 @@ import { CustomButton } from '../Ps_1_2';
 import * as mainStyle from '../../../assets/css/main.css';
 import * as ps12Style from '../../../assets/css/ps12.css';
 import * as sysStyles from '../../../assets/css/sysmng.css';
+import * as psqStyles from "../../../assets/css/psq.css";
 import { Card } from '@mui/material';
 import axiosInstance from '../../../utils/AxiosInstance';
 import { perfTotalColumns } from '../../../assets/json/tableColumn';
@@ -109,7 +110,7 @@ export default function Tep() {
 
 function ChartTab({ data }) {
     return (
-        <Card sx={{ width: "100%", height: "100%", borderRadius: "15px" }}>
+        <Card className={psqStyles.table_card} sx={{ width: "100%", height: "100%", borderRadius: "15px" }}>
             <ChartCustom title={"총량실적차트"} data={data} unit={'kgGHG'} />
         </Card>
     )
@@ -150,7 +151,7 @@ function TableTab({ data }) {
     };
 
     return (
-        <Card sx={{ width: "100%", height: "100%", borderRadius: "15px" }}>
+        <Card className={psqStyles.table_card} sx={{ width: "100%", height: "100%", borderRadius: "15px" }}>
             <TableCustom columns={perfTotalColumns} title="총량실적표 (단위:kgGHG)" data={data} buttons={['DownloadExcel']} onClicks={[() => onDownloadExcelClick(data)]} monthPagination={true} pagination={false} />
         </Card>
     )
