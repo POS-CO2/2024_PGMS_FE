@@ -362,11 +362,39 @@ export function TableCustomDoubleClickEdit({
         return clickHandler;
     });
     
-
     const handleDoubleClick = (rowIndex, colIndex) => {
         // 해당 셀이 immutableCellIndex에 포함되어 있지 않으면 편집 모드로 변경
         if (!immutableCellIndex.includes(colIndex)) {
             setEditingCell({ row: rowIndex, col: colIndex });
+        }
+    };
+
+    const handleKeyDown = (e, rowIndex, colIndex) => {
+        if (e.key === 'Tab') {
+            e.preventDefault();
+            let nextColIndex = colIndex + 1;
+            // 다음 셀로 이동, 만약 마지막 컬럼이면 다음 행의 첫 컬럼으로 이동
+            if (nextColIndex >= columns.length) {
+                nextColIndex = 0;
+                rowIndex = rowIndex + 1 < editableData.length ? rowIndex + 1 : 0; // 마지막 행이면 첫 행으로
+            }
+            setEditingCell({ row: rowIndex, col: nextColIndex });
+        } else if (e.key === 'Enter') {
+            e.preventDefault();
+            // Enter 키가 눌리면 저장 버튼 클릭
+            switch (pageType) {
+                case 'rm':
+                    handleEditButtonClickRm();
+                    break;
+                case 'ps12actvQty':
+                    handleEditButtonClickPs12ActvQty();
+                    break;
+                case 'ps12fee':
+                    handleEditButtonClickPs12Fee();
+                    break;
+                default:
+                    break;
+            }
         }
     };
 
@@ -436,7 +464,8 @@ export function TableCustomDoubleClickEdit({
                         variant={variant} 
                         onRowClick={onRowClick} 
                         handleDoubleClick={handleDoubleClick} 
-                        handleInputChange={handleInputChange} 
+                        handleInputChange={handleInputChange}
+                        handleKeyDown={handleKeyDown} 
                         handleBlur={handleBlur}
                         editingCell={editingCell}
                         pagination={pagination}

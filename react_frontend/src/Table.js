@@ -132,6 +132,7 @@ export default function CustomizedTables({
         onRowClick = () => { }, 
         handleDoubleClick = () => { },
         handleInputChange = () => { }, 
+        handleKeyDown = () => { },
         handleBlur = () => { },
         editingCell = {},
         pagination = true,
@@ -355,6 +356,7 @@ export default function CustomizedTables({
                                                         isEditable={!immutableCellIndex.includes(colIndex)}
                                                         align="left"
                                                         onDoubleClick={() => handleDoubleClick(rowIndex, colIndex)}
+                                                        onKeyDown={(e) => handleKeyDown(e, rowIndex, colIndex)}
                                                         style={{ 
                                                             width: columnWidths[`col${colIndex}`],
                                                             minWidth: 5,  // 최소 너비 설정
@@ -365,6 +367,7 @@ export default function CustomizedTables({
                                                         <TextField
                                                             value={row[col.key]}
                                                             onChange={(e) => handleInputChange(e, rowIndex, colIndex)}
+                                                            onKeyDown={(e) => handleKeyDown(e, rowIndex, colIndex)}
                                                             onBlur={handleBlur}
                                                             autoFocus
                                                             size="small"
@@ -492,6 +495,7 @@ export default function CustomizedTables({
                                                         isEditable={!immutableCellIndex.includes(idx)}
                                                         align="left" 
                                                         onDoubleClick={() => {handleDoubleClick(index, idx)}}
+                                                        onKeyDown={(e) => handleKeyDown(e, index, idx)}
                                                         style={{ 
                                                             width: columnWidths[`col${idx}`],
                                                             minWidth: 5,  // 최소 너비 설정
@@ -502,6 +506,7 @@ export default function CustomizedTables({
                                                             <TextField
                                                                 value={row[value.key]}
                                                                 onChange={(e) => handleInputChange(e, index, idx)}
+                                                                onKeyDown={(e) => handleKeyDown(e, index, idx)}
                                                                 onBlur={handleBlur}
                                                                 autoFocus
                                                                 size="small"
