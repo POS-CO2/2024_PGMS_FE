@@ -61,7 +61,9 @@ const formItemComponents = {
     SearchAtModal
 };
 
-export default function SearchForms({ initialValues={}, onFormSubmit, formFields, autoSubmitOnInit=false, onProjectSelect=()=>{}, handleFieldsChange=()=>{}, handleEmptyFields=()=>{} }) {
+
+export default function SearchForms({ initialValues={}, onFormSubmit, formFields, autoSubmitOnInit=false, onProjectSelect=()=>{}, handleFieldsChange=()=>{}, handleEmptyFields=()=>{}, isPg=false }) {
+
     const [form] = Form.useForm();
     const [isInitialSubmit, setIsInitialSubmit] = useState(autoSubmitOnInit); // 첫 렌더링 여부를 추적하는 상태
     const [changedFieldsState, setChangedFieldsState] = useState({}); // InputText 필드 변경 여부 상태
@@ -147,6 +149,8 @@ export default function SearchForms({ initialValues={}, onFormSubmit, formFields
     };
 
     return (
+        !isPg
+        ?
         <StyledForm 
             form={form} 
             layout="vertical" 
@@ -167,7 +171,6 @@ export default function SearchForms({ initialValues={}, onFormSubmit, formFields
                         options={field.options}
                         form={form}
                         defaultSelected={field.defaultSelected}
-
                         disabled={field.disabled} // disabled 상태 전달
                         placeholder={field.placeholder} // placeholder 전달
 
@@ -176,9 +179,49 @@ export default function SearchForms({ initialValues={}, onFormSubmit, formFields
 
                         // name이 'searchProject'인 경우에만 onProjectSelect 전달
                         onProjectSelect={field.name === 'searchProject' ? handleProjectSelect : ()=>{}} // 프로젝트 선택 시 대상년도 설정
+                        isAnal={field.isAnal}
                     />
                 )
             })}
+
+            <SearchBtn />
+        </StyledForm>
+        :
+        <StyledForm 
+            form={form} 
+            layout="vertical" 
+            className={searchFormStyles.form_container_pg} 
+            onFinish={handleFinish}
+            onFieldsChange={handleFieldsChange}
+        >
+            <div className={searchFormStyles.row} style={{ maxWidth: '63rem' }}>
+                {formFields.map((field, index) => {
+                    const FormItemComponent = formItemComponents[field.type];
+                    return (
+                        <FormItemComponent
+                            key={index}
+                            initialValues={initialValues}
+                            name={field.name}
+                            label={field.label}
+                            required={field.required}
+                            modalType={field.modalType}
+                            options={field.options}
+                            form={form}
+                            defaultSelected={field.defaultSelected}
+
+                            disabled={field.disabled} // disabled 상태 전달
+                            placeholder={field.placeholder} // placeholder 전달
+
+                            // InputText 필드의 변경 여부에 따라 배경색 변경
+                            isChanged={changedFieldsState[field.name] || false}
+
+                            // name이 'searchProject'인 경우에만 onProjectSelect 전달
+                            onProjectSelect={field.name === 'searchProject' ? handleProjectSelect : ()=>{}} // 프로젝트 선택 시 대상년도 설정
+                        />
+                    )
+                })}
+            </div>
+
             <SearchBtn />
         </StyledForm>
     );

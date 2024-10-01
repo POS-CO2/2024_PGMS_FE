@@ -41,7 +41,7 @@ export default function InputText({ name, label, required = false, isChanged = f
             className={formItemStyles.form_item}
             name={name}
             label={label}
-            rules={[{ required: required, message: '${label} 입력은 필수입니다.' }]}
+            rules={[{ required: required, message: <span style={{ fontFamily: 'SUITE-Regular' }}>{label} 입력은 필수입니다.</span> }]}
         >
             <CustomInput
                 value={value}

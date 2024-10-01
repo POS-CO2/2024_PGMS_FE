@@ -83,7 +83,7 @@ export default function Rm({pjtId}) {
                 />
             </Card>
             <Card sx={{ width: "70%", borderRadius: "0.5rem" }}>
-                <ChartCustom title={"매출액차트"} data={chartReves} />
+                <ChartCustom title={"매출액차트"} data={chartReves} unit={'원'} />
             </Card>
         </>
     );

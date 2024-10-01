@@ -216,13 +216,15 @@ export function TableCustomDoubleClickEdit({
             swalOptions.text = '매출액이 성공적으로 수정되었습니다.';
             swalOptions.icon = 'success';
 
-            handleFormSubmit(response.data);
-
         } catch (error) {
             swalOptions.title = '실패!',
             swalOptions.text = error.response.data.message,
             swalOptions.icon = 'error';
         }
+
+        // 테이블 갱신
+        handleFormSubmit(formData);
+
         setEditedRows([]);
         Swal.fire(swalOptions);
     };
@@ -258,7 +260,7 @@ export function TableCustomDoubleClickEdit({
                         actvYear: item.actvYear,
                         actvMth: item.actvMth,
                         fee: null, // 비용은 null로 설정
-                        actvQty: isNaN(parseInt((item.newActvQty).replace(/,/g, ''), 10)) ? 'NaN' : parseInt((item.newActvQty).replace(/,/g, ''), 10),
+                        actvQty: isNaN(parseInt((item.newActvQty).replace(/,/g, ''), 10)) ? 'NaN' : parseInt((item.newActvQty).replace(/,/g, ''), 10)
                     }));
         
                 return {
@@ -267,21 +269,23 @@ export function TableCustomDoubleClickEdit({
                     quantityList: updatedQuantities
                 };
             });
-
+            
             const response = await axiosInstance.put("/perf", requestBody);
-
+console.log(requestBody);
+console.log(response);
             swalOptions.title = '성공!',
             swalOptions.text = '활동량이 성공적으로 수정되었습니다.';
-            swalOptions.icon = 'success';
-
-            // 수정된 데이터로 테이블 갱신
-            handleFormSubmit(formData);
+            swalOptions.icon = 'success';            
 
         } catch (error) {
             swalOptions.title = '실패!',
             swalOptions.text = error.response.data.message;
             swalOptions.icon = 'error';
         }
+
+        // 테이블 갱신
+        handleFormSubmit(formData);
+
         setEditedRows([]);
         Swal.fire(swalOptions);
     };
@@ -316,7 +320,7 @@ export function TableCustomDoubleClickEdit({
                         id: item.id,
                         actvYear: item.actvYear,
                         actvMth: item.actvMth,
-                        fee: parseInt((item.newFee).replace(/,/g, ''), 10), // 쉼표를 제거하고 정수로 변환
+                        fee: isNaN(parseInt((item.newActvQty).replace(/,/g, ''), 10)) ? 'NaN' : parseInt((item.newActvQty).replace(/,/g, ''), 10),
                         actvQty: null // 사용량은 null로 설정
                     }));
         
@@ -333,14 +337,15 @@ export function TableCustomDoubleClickEdit({
             swalOptions.text = '활동량이 성공적으로 수정되었습니다.';
             swalOptions.icon = 'success';
 
-            // 수정된 데이터로 테이블 갱신
-            handleFormSubmit(response.data);
-
         } catch (error) {
             swalOptions.title = '실패!',
             swalOptions.text = error.response.data.message,
             swalOptions.icon = 'error';
         }
+
+        // 테이블 갱신
+        handleFormSubmit(formData);
+
         setEditedRows([]);
         Swal.fire(swalOptions);
     };

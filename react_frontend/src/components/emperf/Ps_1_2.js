@@ -153,7 +153,7 @@ export default function Ps_1_2() {
     const handleFormSubmit = async (data) => {
         setFormData(data);
         setSelectedPjt(data.searchProject);
-
+console.log(data);
         let url = `/perf?pjtId=${data.searchProject.id}&actvYear=${data.actvYear}`;
         // emtnActvType이 존재하는 경우에만 URL에 추가
         if (data.emtnActvType) {
@@ -199,19 +199,20 @@ export default function Ps_1_2() {
         };
     
         const onDownloadExcelFormClick = (csvData) => {
-            const fileName = `사용량 엑셀 양식_${formData.searchProject.pjtName}_${formData.actvYear}`;
-    
+            const xlsx = require('xlsx-js-style'); // xlsx-js-style 모둘 시용
+            const fileName = `활동량 엑셀 양식_${formData.searchProject.pjtName}_${formData.actvYear}`;
+
             // 워크북 및 워크시트 생성
-            const wb = XLSX.utils.book_new();
+            const wb = xlsx.utils.book_new();
             const wsData = [];
-            
+
             // 헤더 생성 (perfColumns 순서대로, quantityList 제외, '년도' 맨앞에 추가)
             const headers = ['년도'].concat(
                 perfColumns.filter(column => column.key !== 'quantityList')
                         .map(column => column.label)
             );
             wsData.push(headers);
-            
+
             // 데이터 생성
             for (const row of csvData) {
                 const values = [formData.actvYear].concat(
@@ -229,11 +230,47 @@ export default function Ps_1_2() {
             }
             
             // 워크시트에 데이터 추가
-            const ws = XLSX.utils.aoa_to_sheet(wsData);
-            XLSX.utils.book_append_sheet(wb, ws, 'Sheet1');
+            const ws = xlsx.utils.json_to_sheet(wsData, {skipHeader: true});
+
+            // 칼럼 넓이 지정
+            ws["!cols"] = [
+                { wpx : 64 }, // A열
+                { wpx : 64 }, // B열
+                { wpx : 104 }, // C열
+                { wpx : 128 }, // D열
+                { wpx : 177 }, // E열
+                { wpx : 108 }, // F열
+                { wpx : 64 }, // G열
+            ];
+
+            // A~G열의 모든 셀에 배경색 적용
+            const range = xlsx.utils.decode_range(ws['!ref']); // 셀 범위 가져오기
+            for (let R = range.s.r; R <= range.e.r; R++) { // 행 루프
+                for (let C = range.s.c; C <= 6; C++) { // 열 루프 (A열: 0 ~ G열: 6)
+                    const cellAddress = xlsx.utils.encode_cell({ r: R, c: C });
+                    if (!ws[cellAddress]) ws[cellAddress] = { v: '' }; // 빈 셀 생성
+
+                    // 셀 스타일 적용 (배경색 지정)
+                    ws[cellAddress].s = {
+                        fill: {
+                            patternType: 'solid',
+                            fgColor: { rgb: "FFe9edf0" } // 배경색 (연한 회색)
+                        },
+                        border: { // 셀 테두리 추가
+                            top: { style: "thin", color: { rgb: "d4d4d4" } },    // 위쪽 테두리
+                            bottom: { style: "thin", color: { rgb: "d4d4d4" } }, // 아래쪽 테두리
+                            left: { style: "thin", color: { rgb: "d4d4d4" } },   // 왼쪽 테두리
+                            right: { style: "thin", color: { rgb: "d4d4d4" } }   // 오른쪽 테두리
+                        }
+                    };
+                }
+            }
+
+            // 첫 번째 시트에 작성한 데이터 넣기
+            xlsx.utils.book_append_sheet(wb, ws, 'Sheet1');
 
             // 파일 다운로드
-            XLSX.writeFile(wb, `${fileName}.xlsx`);
+            xlsx.writeFile(wb, `${fileName}.xlsx`);
         };
     
         return (
@@ -278,10 +315,11 @@ export default function Ps_1_2() {
         };
         
         const onDownloadExcelFormClick = (csvData) => {
+            const xlsx = require('xlsx-js-style'); // xlsx-js-style 모둘 시용
             const fileName = `사용금액 엑셀 양식_${formData.searchProject.pjtName}_${formData.actvYear}`;
     
             // 워크북 및 워크시트 생성
-            const wb = XLSX.utils.book_new();
+            const wb = xlsx.utils.book_new();
             const wsData = [];
 
             // 헤더 생성 (perfColumns 순서대로, quantityList 제외, '년도' 맨앞에 추가)
@@ -308,11 +346,47 @@ export default function Ps_1_2() {
             }
             
             // 워크시트에 데이터 추가
-            const ws = XLSX.utils.aoa_to_sheet(wsData);
-            XLSX.utils.book_append_sheet(wb, ws, 'Sheet1');
+            const ws = xlsx.utils.json_to_sheet(wsData, {skipHeader: true});
+
+            // 칼럼 넓이 지정
+            ws["!cols"] = [
+                { wpx : 64 }, // A열
+                { wpx : 64 }, // B열
+                { wpx : 104 }, // C열
+                { wpx : 128 }, // D열
+                { wpx : 177 }, // E열
+                { wpx : 108 }, // F열
+                { wpx : 64 }, // G열
+            ];
+
+            // A~G열의 모든 셀에 배경색 적용
+            const range = xlsx.utils.decode_range(ws['!ref']); // 셀 범위 가져오기
+            for (let R = range.s.r; R <= range.e.r; R++) { // 행 루프
+                for (let C = range.s.c; C <= 6; C++) { // 열 루프 (A열: 0 ~ G열: 6)
+                    const cellAddress = xlsx.utils.encode_cell({ r: R, c: C });
+                    if (!ws[cellAddress]) ws[cellAddress] = { v: '' }; // 빈 셀 생성
+
+                    // 셀 스타일 적용 (배경색 지정)
+                    ws[cellAddress].s = {
+                        fill: {
+                            patternType: 'solid',
+                            fgColor: { rgb: "FFe9edf0" } // 배경색 (연한 회색)
+                        },
+                        border: { // 셀 테두리 추가
+                            top: { style: "thin", color: { rgb: "d4d4d4" } },    // 위쪽 테두리
+                            bottom: { style: "thin", color: { rgb: "d4d4d4" } }, // 아래쪽 테두리
+                            left: { style: "thin", color: { rgb: "d4d4d4" } },   // 왼쪽 테두리
+                            right: { style: "thin", color: { rgb: "d4d4d4" } }   // 오른쪽 테두리
+                        }
+                    };
+                }
+            }
+
+            // 첫 번째 시트에 작성한 데이터 넣기
+            xlsx.utils.book_append_sheet(wb, ws, 'Sheet1');
 
             // 파일 다운로드
-            XLSX.writeFile(wb, `${fileName}.xlsx`);
+            xlsx.writeFile(wb, `${fileName}.xlsx`);
         };
     
         return (
@@ -385,7 +459,7 @@ export default function Ps_1_2() {
                             selected={content === 'actvQty'} 
                             onClick={() => handleButtonClick('actvQty')}
                         >
-                            사용량
+                            활동량
                         </CustomButton>
                         <CustomButton 
                             selected={content === 'fee'} 
