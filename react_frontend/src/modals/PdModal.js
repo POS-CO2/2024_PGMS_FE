@@ -1477,7 +1477,6 @@ export function EfmAddModal({ isModalOpen, handleOk, handleCancel, rowData }) {
         if(!formData.applyYear) newError.applyYear = '적용년도를 입력해주세요.';
         if(!formData.applyDvs) newError.applyDvs = '적용구분을 입력해주세요.';
         if(!formData.coefClassCode) newError.coefClassCode = '계수구분코드를 선택해주세요.';
-        if(!formData.unitCode) newError.unitCode = '계수구분코드를 선택해주세요.';
         if(!formData.coef) newError.coef = '계수를 입력해주세요.';
         if (Object.keys(newError).length > 0) {
             setError(newError);
@@ -1495,17 +1494,29 @@ export function EfmAddModal({ isModalOpen, handleOk, handleCancel, rowData }) {
             const appDvsResponse = await axiosInstance.get(`/sys/unit?unitType=적용구분`);
             setApplyDvs(appDvsResponse.data);
 
-            const coefResponse = [
-                {
-                    "code": 2,
-                    "name": "순발열량"
-                },
-                {
-                    "code": 1,
-                    "name": "배출계수"
-                }
-            ]
-            setCoefClassCode(coefResponse);
+            if (rowData.actvDataDvs === "열") {
+                const coefResponse = [
+                    {
+                        "code": 1,
+                        "name": "배출계수",
+                    }
+                ]
+                setCoefClassCode(coefResponse);
+            }
+            else {
+                const coefResponse = [
+                    {
+                        "code": 2,
+                        "name": "순발열량"
+                    },
+                    {
+                        "code": 1,
+                        "name": "배출계수"
+                    }
+                ]
+                setCoefClassCode(coefResponse);
+            }
+            
             const ghgResponse = await axiosInstance.get(`/sys/coef-unit?inputUnitCode=${rowData.inputUnitCode}`)
             setAfterSelectedCoefClassCode(ghgResponse.data);
         };
@@ -1528,6 +1539,7 @@ export function EfmAddModal({ isModalOpen, handleOk, handleCancel, rowData }) {
             setUnitCode("");
         }
     }
+
 
     return (
         <ConfigProvider
@@ -1572,24 +1584,26 @@ export function EfmAddModal({ isModalOpen, handleOk, handleCancel, rowData }) {
                 </div>
                 <div className={sysStyles.text_field}>
                     <div className={sysStyles.text}><span className={modalStyles.star}>*</span>{"온실가스코드"}</div>
-                    {ghgCode.length !== 0 ? (
-                        <Select value={selectedGhgCode} allowClear={{ clearIcon: <CloseOutlined style={{color: "red"}} /> }} placeholder="계수구분코드를 선택해주세요." onChange={(value) => {setSelectedGhgCode(value)}} style={{width:"18rem", height:"2rem",fontSize:"4rem"}}>
-                        {ghgCode.map(option => (
-                            <Select.Option key={option.code} value={option.code}>
-                                {option.name}
-                            </Select.Option>
-                        ))}
-                        </Select>
-                    ) : (
-                        <Select disabled placeholder="순발열량은 온실가스코드가 없습니다." style={{width:"18rem", height:"2rem",fontSize:"4rem"}}>
-                        </Select>
-                    )}
+                    {
+                        ghgCode.length !== 0 ? (
+                            <Select value={selectedGhgCode} allowClear={{ clearIcon: <CloseOutlined style={{color: "red"}} /> }} placeholder="계수구분코드를 선택해주세요." onChange={(value) => {setSelectedGhgCode(value)}} style={{width:"18rem", height:"2rem",fontSize:"4rem"}}>
+                            {ghgCode.map(option => (
+                                <Select.Option key={option.code} value={option.code}>
+                                    {option.name}
+                                </Select.Option>
+                            ))}
+                            </Select>
+                        ) : (
+                            <Select disabled placeholder="순발열량은 온실가스코드가 없습니다." style={{width:"18rem", height:"2rem",fontSize:"4rem"}}>
+                            </Select>
+                        )
+                    }
+                    
                     
                 </div>
                 <div className={sysStyles.text_field}>
-                    <div className={sysStyles.text}><span className={modalStyles.star}>*</span>{"단위"}</div>
-                    <Input id='unitCode' allowClear={{ clearIcon: <CloseOutlined style={{color: "red"}} /> }} value={unitCode} disabled label="단위" style={{width:"18rem"}} />
-                    {error.unitCode && <div className={modalStyles.error_message}>{error.unitCode}</div>}
+                    <div className={sysStyles.text}>{"단위"}</div>
+                    <Input id='unitCode' placeholder='계수구분코드를 선택해주세요.' allowClear={{ clearIcon: <CloseOutlined style={{color: "red"}} /> }} value={unitCode} disabled label="단위" style={{width:"18rem"}} />
                 </div>
                 <div className={sysStyles.text_field}>
                     <div className={sysStyles.text}>
@@ -1635,7 +1649,6 @@ export function EfmEditModal({ isModalOpen, handleOk, handleCancel, rowData }) {
         if(!formData.applyYear) newError.applyYear = '적용년도를 입력해주세요.';
         if(!formData.applyDvs) newError.applyDvs = '적용구분을 입력해주세요.';
         if(!formData.coefClassCode) newError.coefClassCode = '계수구분코드를 선택해주세요.';
-        if(!formData.unitCode) newError.unitCode = '계수구분코드를 선택해주세요.';
         if(!formData.coef) newError.coef = '계수구분코드를 선택해주세요.';
         if (Object.keys(newError).length > 0) {
             setError(newError);
@@ -1646,24 +1659,33 @@ export function EfmEditModal({ isModalOpen, handleOk, handleCancel, rowData }) {
         // handleOk을 호출하여 모달을 닫고 상위 컴포넌트에 알림
         handleOk(formData);
     };
-
     useEffect(() => {
         const fetchData = async () => {
             const appDvsResponse = await axiosInstance.get(`/sys/unit?unitType=적용구분`);
             setApplyDvs(appDvsResponse.data);
             const matchAppDvs = appDvsResponse.data.find(e => e.name === selectedApplyDvs);
             setSelectedApplyDvs(matchAppDvs.code)
-            const coefResponse = [
-                {
-                    "code": 2,
-                    "name": "순발열량"
-                },
-                {
-                    "code": 1,
-                    "name": "배출계수"
-                }
-            ]
-            setCoefClassCode(coefResponse);
+            if (inputUnitCode === "TJ") {
+                const coefResponse = [
+                    {
+                        "code": 1,
+                        "name": "배출계수"
+                    }
+                ]
+                setCoefClassCode(coefResponse);
+            } else {
+                const coefResponse = [
+                    {
+                        "code": 2,
+                        "name": "순발열량"
+                    },
+                    {
+                        "code": 1,
+                        "name": "배출계수"
+                    }
+                ]    
+                setCoefClassCode(coefResponse);
+            }
             const ghgResponse = await axiosInstance.get(`/sys/coef-unit?inputUnitCode=${rowData.inputUnitCode}`)
             setAfterSelectedCoefClassCode(ghgResponse.data);
             const matchCcc = ghgResponse.data.find(e => e.name === selectedCoefClassCode);
@@ -1755,9 +1777,8 @@ export function EfmEditModal({ isModalOpen, handleOk, handleCancel, rowData }) {
                     )}
                 </div>
                 <div className={sysStyles.text_field}>
-                    <div className={sysStyles.text}><span className={modalStyles.star}>*</span>{"단위"}</div>
+                    <div className={sysStyles.text}>{"단위"}</div>
                     <Input id='unitCode' value={unitCode} allowClear={{ clearIcon: <CloseOutlined style={{color: "red"}} /> }} disabled label="단위" style={{width:"18rem"}} />
-                    {error.unitCode && <div className={modalStyles.error_message}>{error.unitCode}</div>}
                 </div>
                 <div className={sysStyles.text_field}>
                     <div className={sysStyles.text}><span className={modalStyles.star}>*</span>{"계수"}</div>
