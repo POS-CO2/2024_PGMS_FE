@@ -4,7 +4,7 @@ import * as formItemStyles from '../assets/css/formItem.css';
 import { Form, Input } from 'antd';
 import { CloseOutlined } from '@ant-design/icons';
 
-const CustomInput = styled(Input)`
+const CustomInput = styled(({ isChanged, ...rest }) => <Input {...rest} />)`
     background-color: ${({ isChanged }) => (isChanged ? '#FFF5E5' : 'transparent')} !important;
 
     &:focus, &:hover, &.ant-input-focused, &:focus-within {

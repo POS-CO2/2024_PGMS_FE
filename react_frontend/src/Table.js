@@ -13,9 +13,9 @@ import InboxIcon from '@mui/icons-material/Inbox';
 import zIndex from '@mui/material/styles/zIndex';
 
 // TableCell을 스타일링하는 컴포넌트
-const StyledTableCell = styled(({ isCheckbox, isHighlighted, isEditable, isExpandedRow, ...rest }) => (
-    <TableCell {...rest} />
-  ))(({ theme, isHighlighted, isEditable, isCheckbox, isExpandedRow = false }) => ({
+const StyledTableCell = styled(
+    ({ isCheckbox, isHighlighted, isEditable, isExpandedRow, ...rest }) => <TableCell {...rest} />
+  )(({ theme, isHighlighted, isEditable, isCheckbox, isExpandedRow = false }) => ({
     position: "sticky",  // 헤더 고정을 위한 sticky 사용
     top: 0,              // sticky 위치 설정 (필수)
     zIndex: 2,
