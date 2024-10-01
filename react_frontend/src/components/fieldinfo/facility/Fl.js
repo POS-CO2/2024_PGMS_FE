@@ -19,17 +19,8 @@ export default function Fl() {
     const [selectedEqLib, setSelectedEqLib] = useRecoilState(selectedEqLibState);     // 선택된 설비 LIB
     const [actves, setActves] = useState([]);
     const [selectedActv, setSelectedActv] = useState({});
-
-    // localStorage에서 값을 가져오고, 파싱하여 배열로 변환
-    const [submittedEqLibIdx, setSubmittedEqLibIdx] = useState(() => {
-        const leftTableSub = localStorage.getItem("leftTableSub");
-        return leftTableSub ? JSON.parse(leftTableSub) : [];
-    });
-    
-    const [submittedActvIdx, setSubmittedActvIdx] = useState(() => {
-        const rightTableSub = localStorage.getItem("rightTableSub");
-        return rightTableSub ? JSON.parse(rightTableSub) : [];
-    });
+    const [submittedEqLibIdx, setSubmittedEqLibIdx] = useState([]);
+    const [submittedActvIdx, setSubmittedActvIdx] = useState([]);
 
     const [isModalOpen, setIsModalOpen] = useState({
         FlAdd: false,
@@ -97,14 +88,6 @@ export default function Fl() {
         // formData값이 없으면 설비LIB을 findAll, 있으면(이전 탭의 검색기록이 있으면) 그 값을 불러옴
         Object.keys(formData).length === 0 ? fetchEqLib() : handleFormSubmit(formData);
     }, []);
-
-    useEffect(() => {
-        localStorage.setItem("leftTableSub", JSON.stringify(submittedEqLibIdx));
-    }, [submittedEqLibIdx]);
-
-    useEffect(() => {
-        localStorage.setItem("rightTableSub", JSON.stringify(submittedActvIdx));
-    }, [submittedActvIdx]);
 
     const fetchActvList = async (lib) => {
         try {

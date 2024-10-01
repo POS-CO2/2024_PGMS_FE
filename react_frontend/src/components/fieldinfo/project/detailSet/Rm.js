@@ -79,6 +79,7 @@ export default function Rm({pjtId}) {
                     handleFormSubmit={handleFormSubmit}
                     handleYearChange={handleYearChange}
                     year={year}
+                    immutableCellIndex={[0]}
                 />
             </Card>
             <Card sx={{ width: "70%", borderRadius: "0.5rem" }}>

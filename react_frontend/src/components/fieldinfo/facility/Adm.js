@@ -21,17 +21,8 @@ export default function Adm() {
     const [filteredEfs, setFilteredEfs] = useState([]);
     const [selectedEF, setSelectedEF] = useRecoilState(selectedEFState);                // 선택된 배출계수
     const [year, setYear] = useState(new Date().getFullYear());
-
-    // localStorage에서 값을 가져오고, 파싱하여 배열로 변환
-    const [submittedActvIdx, setSubmittedActvIdx] = useState(() => {
-        const leftTableSub = localStorage.getItem("leftTableSub");
-        return leftTableSub ? JSON.parse(leftTableSub) : [];
-    });
-    
-    const [submittedEFIdx, setSubmittedEFIdx] = useState(() => {
-        const rightTableSub = localStorage.getItem("rightTableSub");
-        return rightTableSub ? JSON.parse(rightTableSub) : [];
-    });
+    const [submittedActvIdx, setSubmittedActvIdx] = useState([]);
+    const [submittedEFIdx, setSubmittedEFIdx] = useState([]);
     
     const [isModalOpen, setIsModalOpen] = useState({
         FamAdd: false,
@@ -49,15 +40,6 @@ export default function Adm() {
             value: item.code,
             label: item.name,
         }));
-    };
-
-    const fetchActv = async () => {
-        try {
-            const response = await axiosInstance.get(`/equip/actv`);
-            setActves(response.data);
-        } catch (error) {
-            console.log(error);
-        }
     };
 
     const fetchDropDown = async () => {
@@ -87,6 +69,26 @@ export default function Adm() {
             console.error(error);
         }
     };
+
+    const fetchActv = async () => {
+        try {
+            const response = await axiosInstance.get(`/equip/actv`);
+            setActves(response.data);
+        } catch (error) {
+            console.log(error);
+        }
+    };
+
+    const fetchEFList = async (actv, year) => {
+        try {
+            // 선택한 actv에 매핑된 배출계수 목록 조회
+            const response = await axiosInstance.get(`/equip/coef?actvDataId=${actv.id}`);
+            setEmissionFactors(response.data);
+            handleYearChange(year);
+        } catch (error) {
+            console.error("Error fetching activity data:", error);
+        }
+    }
     
     useEffect(() => {
         fetchDropDown();
@@ -95,32 +97,10 @@ export default function Adm() {
         Object.keys(formData).length === 0 ? fetchActv() : handleFormSubmit(formData);
     }, []);
 
-    // actves가 업데이트된 이후에 fetchEFList를 호출
     useEffect(() => {
-        if (Object.keys(selectedActv).length !== 0) {
-            fetchEFList(selectedActv); // actv 리스트가 로딩된 이후에 호출
-        }
-    }, [actves, selectedActv]); // actves가 업데이트될 때마다 실행
-
-    useEffect(() => {
-        localStorage.setItem("leftTableSub", JSON.stringify(submittedActvIdx));
-    }, [submittedActvIdx]);
-
-    useEffect(() => {
-        localStorage.setItem("rightTableSub", JSON.stringify(submittedEFIdx));
-    }, [submittedEFIdx]);
-
-    const fetchEFList = async (actv) => {
-        try {
-            // 선택한 actv에 매핑된 배출계수 목록 조회
-            const response = await axiosInstance.get(`/equip/coef?actvDataId=${actv.id}`);
-            setEmissionFactors(response.data);
-            setFilteredEfs(response.data);
-        } catch (error) {
-            console.error("Error fetching activity data:", error);
-        }
-    }
-
+        Object.keys(selectedActv).length !== 0 && fetchEFList(selectedActv, year);
+    }, [actves.length, emissionFactors.length, filteredEfs.length])
+    
     //조회 버튼 클릭시 호출될 함수
     const handleFormSubmit = async (data) => {
         const params = {
@@ -139,7 +119,7 @@ export default function Adm() {
             //활동자료 목록에 selectedActvLib 있는지 확인
             const targetRow = response.data.find(row => row.id === selectedActv.id);
             if (targetRow) {
-                fetchEFList(selectedActv);
+                fetchEFList(selectedActv, new Date().getFullYear());
             } else {
                 setEmissionFactors([]);
             }
@@ -163,7 +143,7 @@ export default function Adm() {
 
         // actv가 있으면 setSelectedActv를 설정하고 API 호출
         setSelectedActv(actv);
-        fetchEFList(actv); //배출계수 목록 불러오기
+        fetchEFList(actv, new Date().getFullYear()); //배출계수 목록 불러오기
     };
 
     // 배출계수 row 클릭 시 호출될 함수
@@ -256,6 +236,7 @@ export default function Adm() {
     
                 setFilteredEfs(prevList => [response.data, ...prevList]);
                 setSelectedEF({});
+                await fetchEFList(selectedActv, response.data.applyYear);
                 setSubmittedEFIdx([0]);
                 
                 swalOptions.title = '성공!',
@@ -277,6 +258,7 @@ export default function Adm() {
                     )
                 );
                 setSelectedEF(response.data);
+                await fetchEFList(selectedActv, response.data.applyYear);
                 
                 swalOptions.title = '성공!',
                 swalOptions.text = `${response.data.applyDvs}(이)가 성공적으로 수정되었습니다.`;
@@ -373,7 +355,7 @@ export default function Adm() {
                                 <div className={pdsStyles.table_title} style={{ padding: "8px" }}>배출계수 목록</div>
                             </div> : (
                                 <TableCustom 
-                                    title="배출계수목록" 
+                                    title="배출계수 목록" 
                                     data={filteredEfs}
                                     submittedRowIdx={submittedEFIdx} 
                                     columns={equipCoefColumns}

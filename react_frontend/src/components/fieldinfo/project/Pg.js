@@ -19,18 +19,12 @@ export default function Pg() {
     const [projects, setProjects] = useState([]);                   // 검색 데이터(프로젝트 목록)
     const [selectedPjt, setSelectedPjt] = useRecoilState(selectedPjtMgrState);             // 선택된 프로젝트(PK column only)
     const [managers, setManagers] = useState([]);
-
-    // localStorage에서 값을 가져오고, 파싱하여 배열로 변환
-    const [submittedPjtIdx, setSubmittedPjtIdx] = useState(() => {
-        const leftTableSub = localStorage.getItem("leftTableSub");
-        return leftTableSub ? JSON.parse(leftTableSub) : [];
-    });
-
+    const [submittedPjtIdx, setSubmittedPjtIdx] = useState([]);
+    const [expandedRow, setExpandedRow] = useRecoilState(expandedRowState);           // 아코디언 확장 상태
     const [isModalOpen, setIsModalOpen] = useState({
         PgAdd: false,
-        Delete: false
+        Delete: false,
     });
-    const [expandedRow, setExpandedRow] = useRecoilState(expandedRowState);           // 아코디언 확장 상태
 
     const fetchOptions = async (unitType) => {
         const response = await axiosInstance.get(`/sys/unit?unitType=${unitType}`);
@@ -91,10 +85,6 @@ export default function Pg() {
             fetchManagers(selectedPjt.id);
         }
     }, []);
-
-    useEffect(() => {
-        localStorage.setItem("leftTableSub", JSON.stringify(submittedPjtIdx));
-    }, [submittedPjtIdx]);
 
     // 조회 버튼 클릭시 호출될 함수
     const handleFormSubmit = async (data) => {

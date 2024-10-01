@@ -71,9 +71,7 @@ export default function SearchForms({ initialValues={}, onFormSubmit, formFields
     // 폼 초기값 설정
     useEffect(() => {
         form.setFieldsValue(initialValues);
-        if(Object.keys(initialValues).length !== 0) {
-            onProjectSelect(initialValues.searchProject, form)
-        }
+        handleProjectSelect(initialValues.searchProject);
     }, [initialValues]);
 
     // 초기 렌더링 시 폼을 제출하는 함수 //default일 때 자동 폼 제출
