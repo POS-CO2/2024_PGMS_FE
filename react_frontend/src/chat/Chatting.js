@@ -61,7 +61,6 @@ export default function Chatting({ UserListIcon ,handleChatListClick, chatUser, 
         const keyboardRequest = await axiosInstance.post(`/chat/keyboard?targetId=${chatUser.id}`);
 
         if (typingTimeoutRef.current) {
-            console.log(typingTimeoutRef.current);
             clearTimeout(typingTimeoutRef.current);
         }
 
@@ -78,10 +77,8 @@ export default function Chatting({ UserListIcon ,handleChatListClick, chatUser, 
             }
             try {
                 const sendMessage = await axiosInstance.post(`/chat`, formData);
-                console.log('Message sent:', text);
                 if (sendMessage.data) {
                     ws.send(JSON.stringify(formData));  // WebSocket으로 메시지를 전송
-                    console.log('Message sent via WebSocket:', formData);
                     setText('');
                     setRoomChange(!roomChange);
                     await fetchRoom();
@@ -132,7 +129,6 @@ export default function Chatting({ UserListIcon ,handleChatListClick, chatUser, 
 
     const markAsRead = async (messageId) => {
         try {
-            console.log("messageId", messageId);
             await axiosInstance.post(`/chat/check?objectId=${messageId}`);
         } catch (error) {
             console.error('Failed to mark message as read:', error);
@@ -151,7 +147,6 @@ export default function Chatting({ UserListIcon ,handleChatListClick, chatUser, 
 
         const handleMessage = (event) => {
             const message = JSON.parse(event.data);
-            console.log(message);
             if(message.type === 'READ'){
                 handleRead(message.messageId);
             }
@@ -170,7 +165,6 @@ export default function Chatting({ UserListIcon ,handleChatListClick, chatUser, 
                 }, 2000);
             }
             else if (message.type === 'CHAT') {
-                // updateChatList(message)
                 setShowIsTyping(false);
                 setChatContent((prevContent) => [message, ...prevContent]);
                 if (message.senderId !== me.id) markAsRead(message.id);
@@ -186,7 +180,6 @@ export default function Chatting({ UserListIcon ,handleChatListClick, chatUser, 
             ws.removeEventListener('message', handleMessage)
         };
     }, [ws, me]);
-
 
     return (
         <div className={chatStyles.chatting}>
@@ -220,7 +213,7 @@ export default function Chatting({ UserListIcon ,handleChatListClick, chatUser, 
                 {chatContent.map((data, idx) => (
                     <div style={{display:"flex", flexDirection:"row", alignItems:"flex-end"}}>
                         <div key={idx} className={data.senderId === me.id ? chatStyles.mymessage : chatStyles.targetmessage} style={{position:"relative"}}>
-                            {data.message}
+                            {data.senderId !== 0 ? data.message : JSON.parse(data.message).message}
                             {!data.readYn && <div style={{position: "absolute",bottom: "0", left:"-1rem", color:"rgb(14, 170, 0)"}}>1</div>}
                         </div>
                         <ConfigProvider 
