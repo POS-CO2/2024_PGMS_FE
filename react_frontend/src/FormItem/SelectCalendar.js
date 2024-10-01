@@ -7,12 +7,15 @@ const { RangePicker } = DatePicker;
 
 export default function SelectCalendar({ name, label, required = false }) {
 
-    const customMonthRender = (current) => {
-        return (
-            <div className="ant-picker-cell-inner">
-                {dayjs(current).format('M')}월
-            </div>
-        );
+    const customMonthRender = (current, info) => {
+        if (info.type === 'month') {
+            return (
+                <div className="ant-picker-cell-inner">
+                    {dayjs(current).format('M')}월
+                </div>
+            );
+        }
+        return info.originNode; // 기본 렌더링
     };
 
     return (
@@ -25,7 +28,7 @@ export default function SelectCalendar({ name, label, required = false }) {
             >
                 <RangePicker
                     picker="month"
-                    monthCellRender={customMonthRender} // 커스텀 월 렌더링
+                    cellRender={customMonthRender} // 커스텀 월 렌더링
                 />
             </Form.Item>
         </ConfigProvider>
