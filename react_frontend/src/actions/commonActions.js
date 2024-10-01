@@ -1,5 +1,5 @@
-import { useRecoilCallback, useRecoilState } from 'recoil';
-import { modalState } from '../atoms/pdsAtoms'
+import { useRecoilCallback, useRecoilState, useRecoilValue } from 'recoil';
+import { modalState, selectedESState } from '../atoms/pdsAtoms'
 import axiosInstance from '../utils/AxiosInstance';
 import Swal from 'sweetalert2';
 import { ContinuousColorLegend } from '@mui/x-charts';
@@ -88,7 +88,9 @@ export const useModalActions = () => {
 
 // 모달 내의 버튼(등록, 수정, 삭제) 액션
 export const useHandleOkAction = () => {
+  const es = useRecoilValue(selectedESState);
   return useRecoilCallback(({ set }) => (modalType) => async ({data, setter, setterSelected, setterSumittedIdx = () => {}, url, requestBody, successMsg}) => {
+    
     let swalOptions = {
       confirmButtonText: '확인'
     };
@@ -100,13 +102,23 @@ export const useHandleOkAction = () => {
       try {
         const response = await axiosInstance.post(url, requestBody);
 
-        //등록한 데이터를 목록에 추가
-        setter(prevRegs => [
-          ...(Array.isArray(response.data) ? response.data : [response.data]),  //배열이면 ...response.data, 배열이 아니면 배열로 강제변환
-          ...prevRegs
-        ]);
+        if(modalType === 'SdAdd') {
+          const addedSdList = await axiosInstance.get(`/equip/document?emissionId=${es.id}`);
+          setter(addedSdList);
 
-        setterSumittedIdx([...Array(response.data.length).keys()]);
+          // 새로 추가된 데이터와 같은 id를 가진 항목의 인덱스를 찾음
+          const newAddedIndex = addedSdList.data.findIndex(sd => sd.id === response.data.id);
+
+          setterSumittedIdx([newAddedIndex]);
+        } else {
+          //등록한 데이터를 목록에 추가
+          setter(prevRegs => [
+            ...(Array.isArray(response.data) ? response.data : [response.data]),  //배열이면 ...response.data, 배열이 아니면 배열로 강제변환
+            ...prevRegs
+          ]);
+
+          setterSumittedIdx([...Array(response.data.length).keys()]);
+        }
 
         swalOptions.title = '성공!',
         swalOptions.text = successMsg;

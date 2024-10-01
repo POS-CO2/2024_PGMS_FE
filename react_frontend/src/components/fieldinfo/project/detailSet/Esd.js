@@ -78,19 +78,21 @@ export default function Esd({pjtId}) {
     const handleOk = useHandleOkAction();
 
     useEffect(() => {
-        Object.keys(selectedES).length !== 0 && fetchSDList(selectedES);
-    }, []);
+        setSelectedES({});
+        setFilteredSDs([]);
+    }, [pjtId])
 
     useEffect(() => {
-        setSelectedSD({});
-    }, [selectedES])
+        Object.keys(selectedES).length !== 0 && fetchSDList(selectedES, year);
+    }, [suppDocs.length, filteredSDs.length])
 
-    const fetchSDList = async (es) => {
+    const fetchSDList = async (es, year) => {
         try {
             // 선택한 배출원에 매핑된 증빙자료 목록 조회
             const response = await axiosInstance.get(`/equip/document?emissionId=${es.id}`);
             setSuppDocs(response.data);
             setFilteredSDs(response.data);
+            handleYearChange(year);
         } catch (error) {
             console.error("Error fetching activity data:", error);
         }
@@ -103,13 +105,12 @@ export default function Esd({pjtId}) {
         if (!es) {
             setSelectedES({});
             setSuppDocs([]);
-            setFilteredSDs([]);
             return;
         }
 
         // 배출원을 클릭하면 setSelectedES를 설정하고 API 호출
         setSelectedES(es);
-        fetchSDList(es);
+        fetchSDList(es, new Date().getFullYear());
     };
 
     // 증빙자료 row 클릭 시 호출될 함수
@@ -183,6 +184,7 @@ export default function Esd({pjtId}) {
                         selectedRows={[selectedSD]}
                         handleYearChange={handleYearChange}
                         year={year}
+                        highlightedColumnIndex={0}
                         modals={[
                             isModalOpen.SdShowDetails && {
                                 modalType: 'SdShowDetails',

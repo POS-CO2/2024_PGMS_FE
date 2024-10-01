@@ -10,10 +10,13 @@ import Paper from '@mui/material/Paper';
 import { pjtManagerColumns } from './assets/json/tableColumn';
 import { Box, Checkbox, TablePagination, TextField, Card, CardContent, Typography, CardMedia  } from '@mui/material';
 import InboxIcon from '@mui/icons-material/Inbox';
+import zIndex from '@mui/material/styles/zIndex';
 
 // TableCell을 스타일링하는 컴포넌트
-const StyledTableCell = styled(TableCell)(({ theme }) => ({
-    position: "relative",
+const StyledTableCell = styled(TableCell)(({ theme, isHighlighted, isEditable, isCheckbox, isExpandedRow=false }) => ({
+    position: "sticky",  // 헤더 고정을 위한 sticky 사용
+    top: 0,              // sticky 위치 설정 (필수)
+    zIndex: 2,
   [`&.${tableCellClasses.head}`]: {
     backgroundColor: '#0A7800',
     color: '#FFFFFF',
@@ -24,6 +27,7 @@ const StyledTableCell = styled(TableCell)(({ theme }) => ({
     textOverflow: 'ellipsis', // 넘치는 텍스트를 ...로 표시
     minWidth: '5px', // min-width를 최소로 설정
     width: 'auto', // 자동 크기 조정
+    zIndex: 3,
   },
   [`&.${tableCellClasses.body}`]: {
     fontSize: '0.9rem',
@@ -34,7 +38,10 @@ const StyledTableCell = styled(TableCell)(({ theme }) => ({
     minWidth: '5px', // 최소 크기를 없앰
     width: 'auto', // 자동 크기 조정
     maxWidth: 'none',
-  },
+    backgroundColor: isCheckbox ? 'transparent' : (isHighlighted ? '#E5F1E4 !important' : isEditable ? 'transparent' : '#F4F4F4'),
+    zIndex: 2,
+    display: isExpandedRow ? 'table-row' : 'table-cell'
+},
   '&:not(:last-child)::after': {
     content: '""',
     position: 'absolute',
@@ -125,6 +132,7 @@ export default function CustomizedTables({
         onRowClick = () => { }, 
         handleDoubleClick = () => { },
         handleInputChange = () => { }, 
+        handleKeyDown = () => { },
         handleBlur = () => { },
         editingCell = {},
         pagination = true,
@@ -134,13 +142,15 @@ export default function CustomizedTables({
         editedRows= [],
         subData = [], // 담당자 목록
         expandedRow, // 확장된 행
+        highlightedColumnIndex = -1, //기준이 되는 컬럼 인덱스
+        immutableCellIndex = []
     }) {
     const [selectedRow, setSelectedRow] = useState(null);   //variant = 'default' 의 선택상태
     const [selectedRows, setSelectedRows] = useState([]);
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(modalPagination ? 5 : (monthPagination ? 12 : 10));             // default page row length
     const [columnWidths, setColumnWidths] = useState({});
-    
+
     // selectedRowId와 일치하는 행을 찾아 인덱스를 selectedRow로 설정하고 페이지를 이동
     useEffect(() => {
         if (Array.isArray(data) && selectedRowId !== null) {
@@ -154,6 +164,15 @@ export default function CustomizedTables({
         }
         }
     }, [selectedRowId, data, rowsPerPage]);
+
+    // submittedRowIdx가 있을 때 해당 인덱스에 맞는 페이지로 이동
+    useEffect(() => {
+        if (submittedRowIdx.length > 0) {
+            const firstSubmittedIndex = submittedRowIdx[0]; // 첫 번째 인덱스를 사용
+            const newPage = Math.floor(firstSubmittedIndex / rowsPerPage); // 인덱스에 따른 페이지 계산
+            setPage(newPage); // 해당 페이지로 이동
+        }
+    }, [submittedRowIdx, rowsPerPage]);
 
     // 데이터와 컬럼에 기반하여 초기 열 너비 설정
     useEffect(() => {
@@ -216,11 +235,10 @@ export default function CustomizedTables({
         if (resizingColumn.current) {
             const newWidth = initialWidth.current + (e.clientX - startX.current);
             const minWidth = 5; // 최소 너비 설정
-            const maxWidth = 500; // 최대 너비 설정
 
             setColumnWidths((prevWidths) => ({
                 ...prevWidths,
-                [resizingColumn.current]: Math.max(minWidth, Math.min(newWidth, maxWidth)), // 최소와 최대 너비 적용
+                [resizingColumn.current]: Math.max(minWidth, newWidth), // 최소와 최대 너비 적용
             }));
         }
     };
@@ -274,18 +292,21 @@ export default function CustomizedTables({
                 width: '100%', // 부모 컨테이너의 너비에 맞춤
                 margin: '0 auto',
                 overflowX: 'auto', // 가로 스크롤 허용
-                maxHeight: 440,
+                overflowY: 'auto', // 세로 스크롤 허용
+                maxHeight: 500
             }}>
                 <Table sx={{ tableLayout: 'fixed' }} stickyHeader aria-label="customized table">
                     <TableHead>
                         <TableRow>
                         {variant === 'checkbox' && (
-                            <StyledTableCell style={{ width: columnWidths['col-checkbox'] }}>
+                            <StyledTableCell style={{ width: columnWidths['col-checkbox'] }} isCheckbox={true}>
                             </StyledTableCell>
                         )}
                         {visibleColumns.map((col, colIndex) => (
                             <StyledTableCell 
                                 key={col.key}
+                                isHighlighted={colIndex === highlightedColumnIndex}
+                                isEditable={!immutableCellIndex.includes(colIndex)}
                                 style={{ 
                                     width: columnWidths[`col${colIndex}`],
                                     minWidth: 5,  // 최소 너비 설정
@@ -318,7 +339,7 @@ export default function CustomizedTables({
                                                 >
                                             {   // checkbox가 있는 테이블이면 체크박스 셀 추가
                                                 variant === 'checkbox' && (
-                                                    <StyledTableCell style={{ width: columnWidths['col-checkbox'] }}>
+                                                    <StyledTableCell style={{ width: columnWidths['col-checkbox'] }} isCheckbox={true}>
                                                         <StyledCheckbox 
                                                             checked={selectedRows.includes(rowIndex + (rowsPerPage * page))}
                                                             onClick={(e) => handleCheckboxClick(e, rowIndex + (rowsPerPage * page))}
@@ -331,8 +352,11 @@ export default function CustomizedTables({
                                                 visibleColumns.map((col, colIndex) => (
                                                     <StyledTableCell 
                                                         key={colIndex} 
+                                                        isHighlighted={colIndex === highlightedColumnIndex}
+                                                        isEditable={!immutableCellIndex.includes(colIndex)}
                                                         align="left"
                                                         onDoubleClick={() => handleDoubleClick(rowIndex, colIndex)}
+                                                        onKeyDown={(e) => handleKeyDown(e, rowIndex, colIndex)}
                                                         style={{ 
                                                             width: columnWidths[`col${colIndex}`],
                                                             minWidth: 5,  // 최소 너비 설정
@@ -343,6 +367,7 @@ export default function CustomizedTables({
                                                         <TextField
                                                             value={row[col.key]}
                                                             onChange={(e) => handleInputChange(e, rowIndex, colIndex)}
+                                                            onKeyDown={(e) => handleKeyDown(e, rowIndex, colIndex)}
                                                             onBlur={handleBlur}
                                                             autoFocus
                                                             size="small"
@@ -359,7 +384,7 @@ export default function CustomizedTables({
                                         {/* 클릭된 프로젝트 행 하단에 담당자 목록을 표시 */}
                                         {expandedRow === rowIndex + (rowsPerPage * page) && (
                                             <StyledTableRow>
-                                                <StyledTableCell colSpan={visibleColumns.length}>
+                                                <StyledTableCell colSpan={visibleColumns.length} isExpandedRow={true}>
                                                 <Box
                                                     sx={{
                                                         backgroundColor: '#FFF',
@@ -454,7 +479,7 @@ export default function CustomizedTables({
                                         >
                                             {   // checkbox가 있는 테이블이면 체크박스 셀 추가
                                                 variant === 'checkbox' && (
-                                                    <StyledTableCell>
+                                                    <StyledTableCell isCheckbox={true}>
                                                         <StyledCheckbox 
                                                             checked={selectedRows.includes(index)}
                                                             onChange={() => handleCheckboxChange(index)}
@@ -466,8 +491,11 @@ export default function CustomizedTables({
                                                 visibleColumns.map((value, idx) => (
                                                     <StyledTableCell 
                                                         key={idx} 
+                                                        isHighlighted={idx === highlightedColumnIndex}
+                                                        isEditable={!immutableCellIndex.includes(idx)}
                                                         align="left" 
                                                         onDoubleClick={() => {handleDoubleClick(index, idx)}}
+                                                        onKeyDown={(e) => handleKeyDown(e, index, idx)}
                                                         style={{ 
                                                             width: columnWidths[`col${idx}`],
                                                             minWidth: 5,  // 최소 너비 설정
@@ -478,6 +506,7 @@ export default function CustomizedTables({
                                                             <TextField
                                                                 value={row[value.key]}
                                                                 onChange={(e) => handleInputChange(e, index, idx)}
+                                                                onKeyDown={(e) => handleKeyDown(e, index, idx)}
                                                                 onBlur={handleBlur}
                                                                 autoFocus
                                                                 size="small"

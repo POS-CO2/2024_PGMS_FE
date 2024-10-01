@@ -16,17 +16,13 @@ import * as pdsStyles from "../../assets/css/pds.css";
 export default function Cm() {
     const [formData, setFormData] = useRecoilState(codeMgrSearchForm);
     const [codeGroup, setCodeGroup] = useState([]);
-
-    // localStorage에서 값을 가져오고, 파싱하여 배열로 변환
-    const [submittedCGIdx, setSubmittedCGIdx] = useState(() => {
-        const leftTableSub = localStorage.getItem("leftTableSub");
-        return leftTableSub ? JSON.parse(leftTableSub) : [];
-    });
-    
-    const [submittedCLIdx, setSubmittedCLIdx] = useState(() => {
-        const rightTableSub = localStorage.getItem("rightTableSub");
-        return rightTableSub ? JSON.parse(rightTableSub) : [];
-    });
+    const [code, setCode] = useState([]);
+    const [selectedCodeGroup, setSelectedCodeGroup] = useRecoilState(selectedCGState);
+    const [selectedCode, setSelectedCode] = useRecoilState(selectedCLState);
+    const [submittedCGIdx, setSubmittedCGIdx] = useState([]);
+    const [submittedCLIdx, setSubmittedCLIdx] = useState([]);
+    const [newAddedCMId, setNewAddedCMId] = useState(null);
+    const [newAddedCLId, setNewAddedCLId] = useState(null);
 
     const fetchCodeGroup = async () => {
         try {
@@ -36,6 +32,34 @@ export default function Cm() {
             console.log(error);
         }
     };
+
+    // 코드 그룹이 추가될 때 데이터의 인덱스를 찾는 useEffect
+    useEffect(() => {
+        if (newAddedCMId) {
+            const newAddedIndex = codeGroup.findIndex(cg => cg.id === newAddedCMId);
+            if (newAddedIndex !== -1) {
+                setSubmittedCGIdx([newAddedIndex]);
+            }
+            else {
+                setSubmittedCGIdx([]);
+                setNewAddedCMId(null); // ID 초기화
+            }
+        }
+    }, [codeGroup.length]);
+
+    // 코드 그룹이 추가될 때 데이터의 인덱스를 찾는 useEffect
+    useEffect(() => {
+        if (newAddedCLId) {
+            const newAddedIndex = code.findIndex(code => code.id === newAddedCLId);
+            if (newAddedIndex !== -1) {
+                setSubmittedCLIdx([newAddedIndex]);
+            }
+            else {
+                setSubmittedCLIdx([]);
+                setNewAddedCLId(null); // ID 초기화
+            }
+        }
+    }, [code.length]);
 
     useEffect(() => {
         // formData값이 없으면 코드 그룹ID 목록을 findAll, 있으면(이전 탭의 검색기록이 있으면) 그 값을 불러옴
@@ -49,15 +73,7 @@ export default function Cm() {
             handleFormSubmit(formData);
         }
     }, []);
-
-    useEffect(() => {
-        localStorage.setItem("leftTableSub", JSON.stringify(submittedCGIdx));
-    }, [submittedCGIdx]);
-
-    useEffect(() => {
-        localStorage.setItem("rightTableSub", JSON.stringify(submittedCLIdx));
-    }, [submittedCLIdx]);
-
+    
     const fetchCodeList = async (e) => {
         try {
             // 선택한 코드그룹에 매핑된 코드리스트 목록 조회
@@ -90,10 +106,6 @@ export default function Cm() {
         setSubmittedCGIdx([]);
         setFormData(e);
     }
-    
-    const [selectedCodeGroup, setSelectedCodeGroup] = useRecoilState(selectedCGState);
-
-    const [code, setCode] = useState([]);
 
     const handleCodeGroupRowClick = async (e) => {
         if (e.row === undefined || e.row === null){
@@ -105,8 +117,6 @@ export default function Cm() {
             fetchCodeList(e.row);
         }
     }
-
-    const [selectedCode, setSelectedCode] = useRecoilState(selectedCLState);
 
     const handleCodeRowClick = (e) => {
         setSelectedCode(e.row);
@@ -138,10 +148,9 @@ export default function Cm() {
                 // POST 요청으로 서버에 데이터 전송
                 const response = await axiosInstance.post('/sys/codegroup', data);
                 
-                // 새로 추가된 사용자 목록에 추가
-                setCodeGroup(prevList => [response.data, ...prevList]);
+                handleFormSubmit(formData);
                 setSelectedCodeGroup({});
-                setSubmittedCGIdx([0]);
+                setNewAddedCMId(response.data.id); // 새로 추가된 데이터의 ID 저장
 
                 swalOptions.title = '성공!',
                 swalOptions.text = `${data.codeGrpName}이(가) 성공적으로 등록되었습니다.`;
@@ -157,9 +166,9 @@ export default function Cm() {
                 // POST 요청으로 서버에 데이터 전송
                 const response = await axiosInstance.post('/sys/code', data);
                 // 새로 추가된 사용자 목록에 추가
-                setCode(prevList => [response.data, ...prevList]);
+                fetchCodeList(selectedCodeGroup);
                 setSelectedCode({});
-                setSubmittedCLIdx([0]);
+                setNewAddedCLId(response.data.id);
 
                 swalOptions.title = '성공!',
                 swalOptions.text = `${data.codeName}이(가) 성공적으로 등록되었습니다.`;

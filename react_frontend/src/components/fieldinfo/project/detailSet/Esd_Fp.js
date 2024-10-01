@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useRecoilState } from 'recoil';
-import { emissionSrcSearchForm } from '../../../../atoms/searchFormAtoms';
+import { emissionSrcSearchForm, selectedPjtFPState } from '../../../../atoms/searchFormAtoms';
 import {
     emSourceState, selectedESState, suppDocState, selectedSuppDocState, filteredSDState
     } from '../../../../atoms/pdsAtoms';
@@ -91,12 +91,15 @@ export default function Esd_Fp() {
     const [formFields, setFormFields] = useState(formField_esm_fp);
     const [formData, setFormData] = useRecoilState(emissionSrcSearchForm);
     const [selectedPjt, setSelectedPjt] = useState({});                 // 선택된 프로젝트
+    const [selectedPjtId, setSelectedPjtId] = useRecoilState(selectedPjtFPState);                 // 선택된 프로젝트
     const [emSources, setEmSources] = useRecoilState(emSourceState);
     const [selectedES, setSelectedES] = useRecoilState(selectedESState);
     const [suppDocs, setSuppDocs] = useRecoilState(suppDocState);
     const [filteredSDs, setFilteredSDs] = useRecoilState(filteredSDState);
     const [selectedSD, setSelectedSD] = useRecoilState(selectedSuppDocState);
     const [year, setYear] = useState(new Date().getFullYear());
+    const [submittedEsdIdx, setSubmittedEsdIdx] = useState([]);
+    const [submittedSDIdx, setSubmittedSDIdx] = useState([]);
 
     const { showModal, closeModal, isModalOpen } = useModalActions();
     const handleOk = useHandleOkAction();
@@ -104,6 +107,15 @@ export default function Esd_Fp() {
     // 프로젝트 드롭다운 옵션 설정
     const [pjtOptions, setPjtOptions] = useState([]);
     const [projectData, setProjectData] = useState([]);  // 전체 프로젝트 데이터를 저장
+    
+    // formData의 searchProject 값만 변경하는 함수
+    const updateSearchProject = (newValue) => {
+        setFormData((prevFormData) => ({
+        ...prevFormData,
+        searchProject: newValue,  // searchProject 값만 업데이트
+        }));
+    };
+
     useEffect(() => {
         const fetchPjtOptions = async () => {
             try {
@@ -126,16 +138,31 @@ export default function Esd_Fp() {
 
         fetchPjtOptions();
 
-        // 이전 탭의 검색기록이 있으면 그 값을 불러옴
-        Object.keys(formData).length !== 0 && handleFormSubmit(formData);
+        if (selectedPjtId) {
+            if (selectedPjtId !== selectedPjt.id) {
+                updateSearchProject(selectedPjtId);
+            } else {
+                handleFormSubmit(formData);
+            }
+        }
     }, []);
 
-    const fetchSDList = async (es) => {
+    useEffect(() => {
+        setSelectedES({});
+        setFilteredSDs([]);
+    }, [selectedPjtId])
+
+    useEffect(() => {
+        Object.keys(selectedES).length !== 0 && fetchSDList(selectedES, year);
+    }, [suppDocs.length, filteredSDs.length]);
+
+    const fetchSDList = async (es, year) => {
         try {
             // 선택한 배출원에 매핑된 증빙자료 목록 조회
             const response = await axiosInstance.get(`/equip/document?emissionId=${es.id}`);
             setSuppDocs(response.data);
             setFilteredSDs(response.data);
+            handleYearChange(year);
         } catch (error) {
             console.error(error);
         }
@@ -152,6 +179,8 @@ export default function Esd_Fp() {
             }
 
             setSelectedPjt(pjtRes.data[0]);
+            setSelectedPjtId(data.searchProject);
+            
             setEmSources(emRes.data);
             setFormData(data);
         } catch (error) {
@@ -172,7 +201,7 @@ export default function Esd_Fp() {
 
         // 배출원을 클릭하면 setSelectedES를 설정하고 API 호출
         setSelectedES(es);
-        fetchSDList(es);
+        fetchSDList(es, new Date().getFullYear());
     };
 
     // 증빙자료 row 클릭 시 호출될 함수
@@ -240,14 +269,16 @@ export default function Esd_Fp() {
                     <div className={pdsStyles.contents_container}>
                         <Card sx={{ width: "50%", height: "auto", borderRadius: "0.5rem" }}>
                             <TableCustom
-                                title='배출원목록' 
+                                title='배출원 목록' 
                                 data={emSources}
+                                submittedRowIdx={submittedEsdIdx}
                                 columns={equipEmissionColumns}                 
                                 buttons={['Delete', 'Add']}
                                 onClicks={[() => showModal('DeleteA'), () => showModal('EsmAdd')]}
                                 onRowClick={handleESClick}
                                 selectedRows={[selectedES]}
                                 keyProp={emSources.length}
+                                highlightedColumnIndex={0}
                                 modals={[
                                     isModalOpen.DeleteA && {
                                         modalType: 'DeleteA',
@@ -256,7 +287,8 @@ export default function Esd_Fp() {
                                             ...params,
                                             data: selectedES, 
                                             setter: setEmSources,
-                                            setterSelected: setSelectedES
+                                            setterSelected: setSelectedES,
+                                            setterSumittedIdx: setSubmittedEsdIdx
                                         }),
                                         handleCancel: closeModal('DeleteA'),
                                         rowData: selectedES,
@@ -269,7 +301,8 @@ export default function Esd_Fp() {
                                         handleOk: (params) => handleOk('EsmAdd')({
                                             ...params,
                                             setter: setEmSources, 
-                                            setterSelected: setSelectedES
+                                            setterSelected: setSelectedES,
+                                            setterSumittedIdx: setSubmittedEsdIdx
                                         }),
                                         handleCancel: closeModal('EsmAdd'),
                                         rowData: selectedPjt.id
@@ -283,8 +316,9 @@ export default function Esd_Fp() {
                                 <div className={pdsStyles.table_title} style={{ padding: "8px" }}>증빙자료목록</div>
                             </div> : (
                                 <TableCustom 
-                                    title='증빙자료목록' 
+                                    title='증빙자료 목록' 
                                     data={filteredSDs} 
+                                    submittedRowIdx={submittedSDIdx}
                                     columns={equipDocumentColumns}
                                     buttons={['ShowDetails', 'Delete', 'Add']}
                                     onClicks={[() => showModal('SdShowDetails'), () => showModal('DeleteB'), () => showModal('SdAdd')]}
@@ -299,7 +333,8 @@ export default function Esd_Fp() {
                                             handleOk: () => handleOk('SdShowDetails') ({
                                                 data: selectedSD, 
                                                 setter: setFilteredSDs, 
-                                                setterSelected: setSelectedSD
+                                                setterSelected: setSelectedSD,
+                                                setterSumittedIdx: setSubmittedSDIdx
                                             }),
                                             handleCancel: closeModal('SdShowDetails'),
                                             rowData: selectedSD
@@ -311,8 +346,8 @@ export default function Esd_Fp() {
                                                 ...params,
                                                 data: selectedSD, 
                                                 setter: setFilteredSDs, 
-                                                setterSelected: setSelectedSD
-                                            }),
+                                                setterSelected: setSelectedSD,
+                                                setterSumittedIdx: setSubmittedSDIdx                                            }),
                                             handleCancel: closeModal('DeleteB'),
                                             rowData: selectedSD,
                                             rowDataName: 'name',
@@ -324,7 +359,8 @@ export default function Esd_Fp() {
                                             handleOk: (params) => handleOk('SdAdd')({
                                                 ...params,
                                                 setter: setFilteredSDs, 
-                                                setterSelected: setSelectedSD
+                                                setterSelected: setSelectedSD,
+                                                setterSumittedIdx: setSubmittedSDIdx
                                             }),
                                             handleCancel: closeModal('SdAdd'),
                                             rowData: selectedES

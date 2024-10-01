@@ -214,6 +214,7 @@ const TabsContainer = forwardRef(({ handleLogout, user, handleMenuClick, handleC
         key: '',
         tab: '홈',
         path: '',
+        accessUser: 'FP'
       };
       setTabs([homeTab]);
       setActiveKey(homeTab.key);
@@ -319,6 +320,17 @@ const TabsContainer = forwardRef(({ handleLogout, user, handleMenuClick, handleC
 
     if (newTabs.length === 1) {
       newActiveKey = '';
+    }
+    
+    const item = findItemByPath(items, newActiveKey);
+    if (item) {
+      setSelectedKeys([item.key]);
+
+      // 대분류(상위 메뉴)를 찾아 openKeys에 추가
+      const parentItem = findParentItem(items, item.key);
+      if (parentItem) {
+        setOpenKeys([...openKeys, parentItem.key]);
+      }
     }
 
     setActiveKey(newActiveKey);

@@ -114,7 +114,6 @@ export default function Ps_1_2() {
             }
             if (Object.keys(formData).length === 0) {
                 form.setFieldsValue({ actvYear: yearOptions[0].value });
-                console.log("aaaa");
             }
 
         }
@@ -255,6 +254,7 @@ export default function Ps_1_2() {
                 pageType="ps12actvQty"
                 handleFormSubmit={handleFormSubmit}
                 formData={formData}
+                immutableCellIndex={[0, 1, 2, 3]}
             />
         )
     }
@@ -333,6 +333,7 @@ export default function Ps_1_2() {
                 pageType="ps12fee"
                 handleFormSubmit={handleFormSubmit}
                 formData={formData}
+                immutableCellIndex={[0, 1, 2, 3]}
             />
         )
     }
