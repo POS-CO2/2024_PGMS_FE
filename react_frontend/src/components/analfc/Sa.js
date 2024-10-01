@@ -244,7 +244,7 @@ export default function Sa() {
                     
                     <div className={saStyles.main_grid}>
                         <Card sx={{ width: "100%", height: "100%", borderRadius: "15px" }}>
-                            <TableCustom columns={salesAnalColumns} title="목록" data={salesTableData} buttons={['DownloadExcel']} onClicks={[() => onDownloadExcelClick(salesTableData)]} pagination={true} paginationRows={3} />
+                            <TableCustom columns={salesAnalColumns} title="목록" data={salesTableData} buttons={['DownloadExcel']} onClicks={[() => onDownloadExcelClick(salesTableData)]} pagination={true} />
                         </Card>
                     </div>
                 </>
