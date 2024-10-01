@@ -558,7 +558,7 @@ export default function Main() {
                                 width:"100%",
                                 display:"flex"
                                 }}>
-                                <div className={gridStyles.box2_1_1_1}>
+                                <div className={gridStyles.box2_1_1_1} style={{background:"linear-gradient(to right, #38b0a8, #14a492)"}}>
                                     <div className={gridStyles.box1_1_logo} style={{color:'white', fontSize:"1rem", paddingLeft:"2rem"}}>
                                         증빙자료 제출 현황
                                     </div>

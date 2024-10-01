@@ -27,7 +27,6 @@ export default function ChatList({ UserListIcon, handleChattingClick, room, fetc
     useEffect(()=> {
         fetchRoom();
     },[])
-
     return (
         <div className={chatStyles.chatlist}>
             {room.map(data => (
@@ -39,7 +38,7 @@ export default function ChatList({ UserListIcon, handleChattingClick, room, fetc
                             {data.users[0].userName}
                             </div>
                             <div style={{fontSize:"0.8rem", color:"grey", textOverflow:"ellipsis", whiteSpace:"nowrap",overflow:"hidden", width:"150px"}}>
-                                {data.lastMessage}
+                                {data.users[0].id !== 0 ? data.lastMessage : JSON.parse(data.lastMessage).message}
                             </div>
                         </div>
                     </div>

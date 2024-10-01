@@ -274,6 +274,7 @@ export default function CustomizedTables({
                 width: '100%', // 부모 컨테이너의 너비에 맞춤
                 margin: '0 auto',
                 overflowX: 'auto', // 가로 스크롤 허용
+                maxHeight: 440,
             }}>
                 <Table sx={{ tableLayout: 'fixed' }} stickyHeader aria-label="customized table">
                     <TableHead>
