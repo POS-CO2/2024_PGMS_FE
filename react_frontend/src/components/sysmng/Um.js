@@ -240,8 +240,8 @@ export default function Um() {
             {(!userList || userList.length === 0) ? 
                 <></> :
                 <div className={sysStyles.main_grid}>
-                    <Card className={sysStyles.card_box} sx={{width:"50%", height:"80vh", borderRadius:"15px"}}>
-                        <TableCustom title="사용자목록" columns={userColumns} data={userList} submittedRowIdx={submittedUserIdx} buttons={['Delete', 'Add']} selectedRows={[selectedUser]} onClicks={[handleDeleteClick, handleAddClick]} onRowClick={(e) => handleRowClick(e)} modals={
+                    <Card className={sysStyles.card_box} sx={{width:"50%", height:"77vh", borderRadius:"15px"}}>
+                        <TableCustom title="사용자목록" columns={userColumns} data={patchedUserList} submittedRowIdx={submittedUserIdx} buttons={['Delete', 'Add']} selectedRows={[selectedUser]} onClicks={[handleDeleteClick, handleAddClick]} onRowClick={(e) => handleRowClick(e)} modals={
                             [
                                 isModalOpen.UmAdd && {
                                     "modalType" : 'UmAdd',
@@ -261,30 +261,30 @@ export default function Um() {
                             ].filter(Boolean)
                         }/>
                     </Card>
-                    <Card className={sysStyles.card_box} sx={{width:"50%", borderRadius:"15px", height:"80vh"}}>
+                    <Card className={sysStyles.card_box} sx={{width:"50%", borderRadius:"15px", height:"77vh"}}>
                         {(!selectedUser || Object.keys(selectedUser).length !== 0) ? (
                             <ConfigProvider theme={{token:{fontFamily:"SUITE-Regular"}}}>
-                                <TableCustom title='사용자 상세정보' buttons={['DoubleClickEdit']} onClicks={[handleEditClick]} table={false} 
-                                selectedRows={[selectedUser]}/>
+                                <TableCustom title='사용자 상세정보' buttons={['DoubleClickEdit']} onClicks={[handleEditClick]} table={false} selectedRows={[selectedUser]}/>
                                 <div className={sysStyles.card_box}>
-                                <div className={sysStyles.text_field} style={{marginTop:"2rem",width:"50%"}}>
-                                    <div className={sysStyles.text}>
-                                        {"로그인 아이디"}
+                                    <div className={sysStyles.text_field} style={{marginTop:"2rem",width:"50%"}}>
+                                        <div className={sysStyles.text}>
+                                            <span className={modalStyles.star}>*</span>{"로그인 아이디"}
+                                        </div>
+                                        <TextField size="small" id='loginId'  variant='outlined' onChange={handleInputChange} defaultValue={selectedUser.loginId} value={selectedUser.loginId} sx={{width:"100%"}}/>
                                     </div>
-                                    <TextField size="small" id='loginId'  variant='outlined' onChange={handleInputChange} defaultValue={selectedUser.loginId} value={selectedUser.loginId} sx={{width:"100%"}}/>
-                                </div>
-                                <div className={sysStyles.text_field} style={{marginTop:"0.5rem",width:"50%"}}>
-                                    <div className={sysStyles.text}>
-                                        {"비밀번호"}
+                                    <div className={sysStyles.text_field} style={{marginTop:"0.5rem",width:"50%"}}>
+                                        <div className={sysStyles.text}>
+                                            <span className={modalStyles.star}>*</span>{"비밀번호"}
+                                        </div>
+                                        <TextField size="small" placeholder='비밀번호를 입력하지 않으면 기존 비밀번호가 유지됩니다.' id='password'  variant='outlined' onChange={(e) => setPassword(e.target.value)} value={password} sx={{width:"100%"}}/>
                                     </div>
-                                    <TextField size="small" id='password'  variant='outlined' onChange={(e) => setPassword(e.target.value)} value={password} sx={{width:"100%"}}/>
+                                    <div className={sysStyles.text_field} style={{marginTop:"0.5rem",width:"50%"}}>
+                                        <div className={sysStyles.text}><span className={modalStyles.star}>*</span>{"이름"}</div>
+                                            <TextField size="small" id='userName'  variant='outlined' onChange={handleInputChange} defaultValue={selectedUser.userName} value={selectedUser.userName} sx={{width:"100%"}}/>
+                                    </div>
                                 </div>
                                 <div className={sysStyles.text_field} style={{marginTop:"0.5rem",width:"50%"}}>
-                                    <div className={sysStyles.text}>{"이름 "}</div>
-                                        <TextField size="small" id='userName'  variant='outlined' onChange={handleInputChange} defaultValue={selectedUser.userName} value={selectedUser.userName} sx={{width:"100%"}}/>
-                                </div>
-                                <div className={sysStyles.text_field} style={{marginTop:"0.5rem",width:"50%"}}>
-                                    <div className={sysStyles.text}>{"부서 명"}</div>
+                                    <div className={sysStyles.text}><span className={modalStyles.star}>*</span>{"부서명"}</div>
                                         <Select value={selectedUser.deptCode} onChange={(value) => handleInputChange({ target: { id: 'deptCode', value} })} defaultValue={selectedUser.deptCode} style={{width:"100%", height:"2.5rem", fontSize:"4rem"}}>
                                         {dept.map(option => (
                                             <Select.Option key={option.value} value={option.value}>
@@ -294,7 +294,7 @@ export default function Um() {
                                         </Select>
                                 </div>
                                 <div className={sysStyles.text_field} style={{marginTop:"0.5rem",width:"50%"}}>
-                                    <div className={sysStyles.text}>{"권한"}</div>
+                                    <div className={sysStyles.text}><span className={modalStyles.star}>*</span>{"접근권한"}</div>
                                         <Select value={selectedUser.role} onChange={(value) => handleInputChange({ target: { id: 'role', value } })} defaultValue={selectedUser.role} style={{width:"100%", height:"2.5rem", fontSize:"4rem"}}>
                                         {access.map(option => (
                                             <Select.Option key={option.value} value={option.value}>
@@ -303,27 +303,6 @@ export default function Um() {
                                         ))}
                                         </Select>
                                 </div>
-                            </div>
-                            <div className={sysStyles.text_field} style={{marginTop:"0.5rem",width:"50%"}}>
-                                <div className={sysStyles.text}><span className={modalStyles.star}>*</span>{"부서명"}</div>
-                                    <Select value={selectedUser.deptCode} onChange={(value) => handleInputChange({ target: { id: 'deptCode', value} })} defaultValue={selectedUser.deptCode} style={{width:"100%", height:"2.5rem", fontSize:"4rem"}}>
-                                    {dept.map(option => (
-                                        <Select.Option key={option.value} value={option.value}>
-                                            {option.label}
-                                        </Select.Option>
-                                    ))}
-                                    </Select>
-                            </div>
-                            <div className={sysStyles.text_field} style={{marginTop:"0.5rem",width:"50%"}}>
-                                <div className={sysStyles.text}><span className={modalStyles.star}>*</span>{"접근권한"}</div>
-                                    <Select value={selectedUser.role} onChange={(value) => handleInputChange({ target: { id: 'role', value } })} defaultValue={selectedUser.role} style={{width:"100%", height:"2.5rem", fontSize:"4rem"}}>
-                                    {access.map(option => (
-                                        <Select.Option key={option.value} value={option.value}>
-                                            {option.label}
-                                        </Select.Option>
-                                    ))}
-                                    </Select>
-                            </div>
                             </ConfigProvider>
                         ) : (
                         <TableCustom title='사용자 상세정보' table={false} />

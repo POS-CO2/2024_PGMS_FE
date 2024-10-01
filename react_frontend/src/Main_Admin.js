@@ -556,7 +556,7 @@ export default function Main_Admin({ handleMenuClick=()=>{} }) {
     };
     const fetchData = useCallback(async () => {
         try {
-            await Promise.all([
+            await Promise.allSettled([
                 fetchCommonService(),
                 fetchEquipmentService(),
                 fetchProjectService(),

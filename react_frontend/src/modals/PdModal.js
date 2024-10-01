@@ -986,8 +986,8 @@ export function Ps12UploadExcelModal({ isModalOpen, handleOk, handleCancel }) { 
 
             <div className={ps12Styles.header_container}>
                 <div className={ps12Styles.input_title}>
-                    첨부파일
-                    <span className={ps12Styles.requiredAsterisk}>*</span>
+                    <span className={modalStyles.star}>*</span>첨부파일
+                    {/* <span className={ps12Styles.requiredAsterisk}>*</span> */}
                 </div>
                 <div>
                     <input
@@ -2384,8 +2384,8 @@ export function SdAddModal({ isModalOpen, handleOk, handleCancel, rowData }) {
 
                 <div className={sdStyles.input_item}>
                     <div className={sdStyles.input_title}>
-                        대상년월
-                        <span className={sdStyles.requiredAsterisk}>*</span>
+                        <span className={modalStyles.star}>*</span>대상년월
+                        {/* <span className={sdStyles.requiredAsterisk}>*</span> */}
                     </div>
                     <div className={sdStyles.select_item}>
                         <Select
@@ -2418,8 +2418,8 @@ export function SdAddModal({ isModalOpen, handleOk, handleCancel, rowData }) {
 
                 <div className={sdStyles.input_item}>
                     <div className={sdStyles.input_title}>
-                        자료명
-                        <span className={sdStyles.requiredAsterisk}>*</span>
+                        <span className={modalStyles.star}>*</span>자료명
+                        {/* <span className={sdStyles.requiredAsterisk}>*</span> */}
                     </div>
                     <input
                         className={sdStyles.search}
@@ -2433,8 +2433,8 @@ export function SdAddModal({ isModalOpen, handleOk, handleCancel, rowData }) {
                 <div className={sdStyles.upload_item}>
                     <div className={sdStyles.upload_header}>
                         <div className={sdStyles.input_title}>
-                            첨부파일
-                            <span className={sdStyles.requiredAsterisk}>*</span>
+                            <span className={modalStyles.star}>*</span>첨부파일
+                            {/* <span className={sdStyles.requiredAsterisk}>*</span> */}
                         </div>
                         <div>
                             <input
@@ -2655,8 +2655,8 @@ export function SdShowDetailsModal({ isModalOpen, handleOk, handleCancel }) {
 
                 <div className={sdStyles.input_item}>
                     <div className={sdStyles.input_title}>
-                        대상년월
-                        <span className={sdStyles.requiredAsterisk}>*</span>
+                        <span className={modalStyles.star}>*</span>대상년월
+                        {/* <span className={sdStyles.requiredAsterisk}>*</span> */}
                     </div>
                     <div className={sdStyles.select_item}>
                         <Select
@@ -2703,8 +2703,8 @@ export function SdShowDetailsModal({ isModalOpen, handleOk, handleCancel }) {
 
                 <div className={sdStyles.input_item}>
                     <div className={sdStyles.input_title}>
-                        자료명
-                        <span className={sdStyles.requiredAsterisk}>*</span>
+                        <span className={modalStyles.star}>*</span>자료명
+                        {/* <span className={sdStyles.requiredAsterisk}>*</span> */}
                     </div>
                     <input className={sdStyles.search} id="name"
                         value={formData.name}
@@ -2716,8 +2716,8 @@ export function SdShowDetailsModal({ isModalOpen, handleOk, handleCancel }) {
                 <div className={sdStyles.upload_item}>
                     <div className={sdStyles.upload_header}>
                         <div className={sdStyles.input_title}>
-                            첨부파일
-                            <span className={sdStyles.requiredAsterisk}>*</span>
+                            <span className={modalStyles.star}>*</span>첨부파일
+                            {/* <span className={sdStyles.requiredAsterisk}>*</span> */}
                         </div>
                         <div>
                             <input
