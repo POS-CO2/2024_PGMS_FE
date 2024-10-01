@@ -21,6 +21,7 @@ export default function Ca() {
     const [caData, setCaData] = useState([]); // response, 표 데이터
     const [chartData, setChartData] = useState({ xAxis: [], series: [], yaxis: [] }); // 차트 데이터
     const [columns, setColumns] = useState(climateAnalColumns);
+    const [selectKey, setSelectKey] = useState({});
 
     useEffect(() => {
         // formData값이 있으면(이전 탭의 검색기록이 있으면) 그 값을 불러옴
@@ -54,11 +55,11 @@ export default function Ca() {
     const getSelectDataKey = (selected) => {
         switch (selected) {
             case '평균기온':
-                return 'avgTm';
+                return { key: 'avgTm', unit: '°C' };
             case '평균강수량':
-                return 'avgRn';
+                return { key: 'avgRn', unit: 'mm' };
             case '평균습도':
-                return 'avgRhm';
+                return { key: 'avgRhm', unit: '%' };
             default:
                 console.log("영향인자가 선택되지 않았습니다.");
                 return null;
@@ -78,6 +79,7 @@ export default function Ca() {
 
         // 영향인자 값에 따른 key 가져오기
         const selectKey = getSelectDataKey(data.selected);
+        setSelectKey(getSelectDataKey(data.selected));
 
         // 차트 데이터 설정
         if (response.data.length > 0) {
@@ -91,7 +93,7 @@ export default function Ca() {
                     },
                     {
                         name: data.selected,
-                        data: response.data.map(item => item[selectKey]), // 영향인자 데이터
+                        data: response.data.map(item => item[selectKey.key]), // 영향인자 데이터
                         //connectNulls: true,
                     }
                     
@@ -134,7 +136,7 @@ export default function Ca() {
                             }
                         },
                         title: {
-                            text: data.selected,
+                            text: `${data.selected}(${selectKey.unit})`,
                             style: {
                                 fontSize: '13px',
                                 fontWeight: 'normal'
@@ -156,8 +158,8 @@ export default function Ca() {
             if (col.label === '영향인자값') {
                 return {
                     ...col,
-                    label: data.selected, // selected 값으로 label 변경
-                    key: col.key.includes('formatted') ? `formatted${selectKey.charAt(0).toUpperCase()}${selectKey.slice(1)}` : selectKey, // key 변경
+                    label: `${data.selected}(${selectKey.unit})`, // selected 값으로 label 변경
+                    key: col.key.includes('formatted') ? `formatted${selectKey.key.charAt(0).toUpperCase()}${selectKey.key.slice(1)}` : selectKey.key, // key 변경
                 };
             }
             return col;
@@ -239,7 +241,20 @@ export default function Ca() {
                                     yaxis: chartData.yaxis,
                                     legend: {
                                         fontSize: '14px'
-                                    }
+                                    },
+                                    tooltip: {
+                                        shared: true,  // 여러 시리즈의 값을 함께 표시
+                                        intersect: false, // hover 시 모든 데이터 포인트를 보여줌
+                                        y: {
+                                            formatter: (value, { seriesIndex }) => {
+                                                if (value === null) {
+                                                    return null;
+                                                }
+                                                const unit = seriesIndex === 0 ? 'kgGHG' : selectKey.unit; // 첫 번째 시리즈에 대한 단위 설정
+                                                return `${value} ${unit}`; // 각 시리즈의 값에 맞는 단위 추가
+                                            },
+                                        },
+                                    },
                                 }}
                                 height={300}
                             />

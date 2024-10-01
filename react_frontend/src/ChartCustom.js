@@ -2,7 +2,7 @@ import React from 'react';
 import { BarChart, LineChart } from '@mui/x-charts';
 import * as chartStyles from "./assets/css/chart.css"
 //search by pjt
-export default function ChartCustom({ title, data }) {
+export default function ChartCustom({ title, data, unit }) {
     const validatedData = Array.isArray(data) ? data : [];
     const lineChartData = validatedData.filter(item => item.type === 'line'); // 필터링하여 꺾은선 그래프 데이터를 추출
 
@@ -13,7 +13,10 @@ export default function ChartCustom({ title, data }) {
             <div style={{ width: "100%", height: "30rem", position: "relative" }}>
                 <BarChart
                     borderRadius={10}
-                    series={validatedData}
+                    series={validatedData.map((item) => ({
+                        ...item,
+                        valueFormatter: (value) => value !== null ? `${value} ${unit}` : null,
+                    }))}
                     barLabel={(item, context) => {
                         return context.bar.height < 60 ? null : item.value?.toFixed(2).toString();
                     }}
@@ -24,7 +27,14 @@ export default function ChartCustom({ title, data }) {
                             id: 'months',
                         },
                     ]}
-                    leftAxis={null}
+                    yAxis={[{
+                        position: 'left',
+                        tickLabelStyle: {
+                            whiteSpace: 'nowrap',  // 라벨이 잘리지 않도록 설정
+                            overflow: 'visible',  // 오버플로우 방지
+                            textOverflow: 'ellipsis',
+                        },
+                    }]}
                     margin={{ left: 120 }}
                     colors={['rgb(53, 98, 227)', 'rgb(196, 218, 250)', 'rgb(255, 99, 132)']}
                     sx={{
@@ -60,13 +70,7 @@ export default function ChartCustom({ title, data }) {
                 {lineChartData.length > 0 && (
                     <LineChart
                         series={validatedData.filter(item => item.type === 'line')}
-                        xAxis={[
-                            {
-                                scaleType: 'band',
-                                data: ['1월', '2월', '3월', "4월", "5월", "6월", "7월", "8월", "9월", "10월", "11월", "12월"],
-                                id: 'months',
-                            },
-                        ]}
+                        leftAxis={null}
                         colors={['rgb(255, 99, 132)']} // Line color
                         margin={{ left: 120 }}
                         sx={{
@@ -77,6 +81,15 @@ export default function ChartCustom({ title, data }) {
                             "& .MuiChartsAxis-bottom .MuiChartsAxis-tickLabel": {
                                 strokeWidth: "0.5",
                                 fontWeight: "bold",
+                            },
+                            "& .MuiChartsAxis-bottom .MuiChartsAxis-tickLabel": {
+                                display: "none", // x축 라벨 숨기기
+                            },
+                            "& .MuiChartsAxis-bottom .MuiChartsAxis-line": {
+                                display: "none", // x축 선 숨기기
+                            },
+                            "& .MuiChartsAxis-bottom .MuiChartsAxis-tick": {
+                                display: "none", // x축 눈금 숨기기
                             },
                         }}
                         slotProps={{
