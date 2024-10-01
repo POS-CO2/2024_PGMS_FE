@@ -64,6 +64,7 @@ export default function TableCustom({
     subData = [],
     expandedRow = {},
     monthPagination = false,
+    highlightedColumnIndex = -1
 }) {modalPagination
     // 버튼 활성화 상태 결정
     const buttonStatus = buttons.map((button) => {
@@ -135,6 +136,7 @@ export default function TableCustom({
                         subData={subData}
                         expandedRow={expandedRow}
                         monthPagination={monthPagination}
+                        highlightedColumnIndex={highlightedColumnIndex}
                     />
                 ) : (<></>)}
             </div>
@@ -159,7 +161,8 @@ export function TableCustomDoubleClickEdit({
     handleFormSubmit = () => {},
     formData = [],
     handleYearChange = () => { },
-    year = undefined
+    year = undefined,
+    immutableCellIndex = []
 }) {
     const [editableData, setEditableData] = useState(data); // 수정된 데이터 저장
     const [editingCell, setEditingCell] = useState({ row: null, col: null }); // 현재 편집 중인 셀
@@ -361,7 +364,10 @@ export function TableCustomDoubleClickEdit({
     
 
     const handleDoubleClick = (rowIndex, colIndex) => {
-        setEditingCell({ row: rowIndex, col: colIndex });
+        // 해당 셀이 immutableCellIndex에 포함되어 있지 않으면 편집 모드로 변경
+        if (!immutableCellIndex.includes(colIndex)) {
+            setEditingCell({ row: rowIndex, col: colIndex });
+        }
     };
 
     const handleInputChange = (e, rowIndex, colIndex) => {
@@ -436,6 +442,7 @@ export function TableCustomDoubleClickEdit({
                         pagination={pagination}
                         modalPagination={modalPagination}
                         editedRows={editedRows} 
+                        immutableCellIndex={immutableCellIndex}
                     />
                 ) : (<></>)}
             </div>

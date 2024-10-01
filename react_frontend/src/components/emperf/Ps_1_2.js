@@ -254,6 +254,7 @@ export default function Ps_1_2() {
                 pageType="ps12actvQty"
                 handleFormSubmit={handleFormSubmit}
                 formData={formData}
+                immutableCellIndex={[0, 1, 2, 3]}
             />
         )
     }
@@ -332,6 +333,7 @@ export default function Ps_1_2() {
                 pageType="ps12fee"
                 handleFormSubmit={handleFormSubmit}
                 formData={formData}
+                immutableCellIndex={[0, 1, 2, 3]}
             />
         )
     }

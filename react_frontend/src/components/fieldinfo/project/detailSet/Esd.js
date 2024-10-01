@@ -187,6 +187,7 @@ export default function Esd({pjtId}) {
                         selectedRows={[selectedSD]}
                         handleYearChange={handleYearChange}
                         year={year}
+                        highlightedColumnIndex={0}
                         modals={[
                             isModalOpen.SdShowDetails && {
                                 modalType: 'SdShowDetails',

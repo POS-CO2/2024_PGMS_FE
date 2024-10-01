@@ -280,6 +280,7 @@ export default function Esd_Fp() {
                                 onRowClick={handleESClick}
                                 selectedRows={[selectedES]}
                                 keyProp={emSources.length}
+                                highlightedColumnIndex={0}
                                 modals={[
                                     isModalOpen.DeleteA && {
                                         modalType: 'DeleteA',

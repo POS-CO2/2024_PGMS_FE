@@ -421,10 +421,10 @@ export default function Psq_Fp() {
                         {content === 'table' && 
                             <div className={psqStyles.table_container}>
                                 <Card className={psqStyles.table_card} sx={{ width: "100%", height: "fit-contents", borderRadius: "15px" }}>
-                                    <TableCustom columns={emissionPerfPjtColumns} title="배출원별 실적" data={emissionTableData} buttons={['DownloadExcel']} onClicks={[() => onDownloadExcelClick("배출원별 실적", emissionTableData, emissionPerfPjtColumns)]} pagination={false} />
+                                    <TableCustom columns={emissionPerfPjtColumns} title="배출원별 실적" data={emissionTableData} buttons={['DownloadExcel']} onClicks={[() => onDownloadExcelClick("배출원별 실적", emissionTableData, emissionPerfPjtColumns)]} pagination={false} highlightedColumnIndex={0} />
                                 </Card>
                                 <Card className={psqStyles.table_card} sx={{ width: "100%", height: "fit-contents", borderRadius: "15px" }}>
-                                    <TableCustom columns={perfPjtColumns} title="scope별 실적" data={perfsData} buttons={['DownloadExcel']} onClicks={[() => onDownloadExcelClick("scope별 실적", perfsData, perfPjtColumns)]} pagination={false} />
+                                    <TableCustom columns={perfPjtColumns} title="scope별 실적" data={perfsData} buttons={['DownloadExcel']} onClicks={[() => onDownloadExcelClick("scope별 실적", perfsData, perfPjtColumns)]} pagination={false} highlightedColumnIndex={0} />
                                 </Card>
                             </div>
                         }

@@ -8,9 +8,6 @@ import { CustomButton } from '../Ps_1_2';
 import TableCustom from "../../../TableCustom.js";
 import ChartCustom from "../../../ChartCustom.js";
 import * as mainStyle from '../../../assets/css/main.css';
-import * as ps12Style from '../../../assets/css/ps12.css';
-import * as sysStyles from '../../../assets/css/sysmng.css';
-import * as esmStyles from '../../../assets/css/esm.css';
 import * as chartStyles from "../../../assets/css/chart.css";
 import * as saStyles from "../../../assets/css/sa.css";
 import * as psqStyles from "../../../assets/css/psq.css";
@@ -360,10 +357,10 @@ export default function Psq() {
                         {content === 'table' && 
                             <div className={psqStyles.table_container}>
                                 <Card className={psqStyles.table_card} sx={{ width: "100%", height: "fit-contents", borderRadius: "15px" }}>
-                                    <TableCustom columns={emissionPerfPjtColumns} title="배출원별 실적" data={emissionTableData} buttons={['DownloadExcel']} onClicks={[() => onDownloadExcelClick("배출원별 실적", emissionTableData, emissionPerfPjtColumns)]} pagination={false} />
+                                    <TableCustom columns={emissionPerfPjtColumns} title="배출원별 실적" data={emissionTableData} buttons={['DownloadExcel']} onClicks={[() => onDownloadExcelClick("배출원별 실적", emissionTableData, emissionPerfPjtColumns)]} pagination={false} highlightedColumnIndex={0}/>
                                 </Card>
                                 <Card className={psqStyles.table_card} sx={{ width: "100%", height: "fit-contents", borderRadius: "15px" }}>
-                                    <TableCustom columns={perfPjtColumns} title="scope별 실적" data={perfsData} buttons={['DownloadExcel']} onClicks={[() => onDownloadExcelClick("scope별 실적", perfsData, perfPjtColumns)]} pagination={false} />
+                                    <TableCustom columns={perfPjtColumns} title="scope별 실적" data={perfsData} buttons={['DownloadExcel']} onClicks={[() => onDownloadExcelClick("scope별 실적", perfsData, perfPjtColumns)]} pagination={false} highlightedColumnIndex={0}/>
                                 </Card>
                             </div>
                         }

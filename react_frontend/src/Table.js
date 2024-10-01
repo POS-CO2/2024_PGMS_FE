@@ -12,7 +12,7 @@ import { Box, Checkbox, TablePagination, TextField, Card, CardContent, Typograph
 import InboxIcon from '@mui/icons-material/Inbox';
 
 // TableCell을 스타일링하는 컴포넌트
-const StyledTableCell = styled(TableCell)(({ theme }) => ({
+const StyledTableCell = styled(TableCell)(({ theme, isHighlighted, isEditable, isCheckbox }) => ({
     position: "relative",
   [`&.${tableCellClasses.head}`]: {
     backgroundColor: '#0A7800',
@@ -34,6 +34,7 @@ const StyledTableCell = styled(TableCell)(({ theme }) => ({
     minWidth: '5px', // 최소 크기를 없앰
     width: 'auto', // 자동 크기 조정
     maxWidth: 'none',
+    backgroundColor: isCheckbox ? 'transparent' : (isHighlighted ? '#E5F1E4 !important' : isEditable ? 'transparent' : '#F4F4F4'),
   },
   '&:not(:last-child)::after': {
     content: '""',
@@ -134,13 +135,15 @@ export default function CustomizedTables({
         editedRows= [],
         subData = [], // 담당자 목록
         expandedRow, // 확장된 행
+        highlightedColumnIndex = -1, //기준이 되는 컬럼 인덱스
+        immutableCellIndex = []
     }) {
     const [selectedRow, setSelectedRow] = useState(null);   //variant = 'default' 의 선택상태
     const [selectedRows, setSelectedRows] = useState([]);
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(modalPagination ? 5 : (monthPagination ? 12 : 10));             // default page row length
     const [columnWidths, setColumnWidths] = useState({});
-    
+
     // selectedRowId와 일치하는 행을 찾아 인덱스를 selectedRow로 설정하고 페이지를 이동
     useEffect(() => {
         if (Array.isArray(data) && selectedRowId !== null) {
@@ -225,11 +228,10 @@ export default function CustomizedTables({
         if (resizingColumn.current) {
             const newWidth = initialWidth.current + (e.clientX - startX.current);
             const minWidth = 5; // 최소 너비 설정
-            const maxWidth = 500; // 최대 너비 설정
 
             setColumnWidths((prevWidths) => ({
                 ...prevWidths,
-                [resizingColumn.current]: Math.max(minWidth, Math.min(newWidth, maxWidth)), // 최소와 최대 너비 적용
+                [resizingColumn.current]: Math.max(minWidth, newWidth), // 최소와 최대 너비 적용
             }));
         }
     };
@@ -288,12 +290,14 @@ export default function CustomizedTables({
                     <TableHead>
                         <TableRow>
                         {variant === 'checkbox' && (
-                            <StyledTableCell style={{ width: columnWidths['col-checkbox'] }}>
+                            <StyledTableCell style={{ width: columnWidths['col-checkbox'] }} isCheckbox={true}>
                             </StyledTableCell>
                         )}
                         {visibleColumns.map((col, colIndex) => (
                             <StyledTableCell 
                                 key={col.key}
+                                isHighlighted={colIndex === highlightedColumnIndex}
+                                isEditable={!immutableCellIndex.includes(colIndex)}
                                 style={{ 
                                     width: columnWidths[`col${colIndex}`],
                                     minWidth: 5,  // 최소 너비 설정
@@ -326,7 +330,7 @@ export default function CustomizedTables({
                                                 >
                                             {   // checkbox가 있는 테이블이면 체크박스 셀 추가
                                                 variant === 'checkbox' && (
-                                                    <StyledTableCell style={{ width: columnWidths['col-checkbox'] }}>
+                                                    <StyledTableCell style={{ width: columnWidths['col-checkbox'] }} isCheckbox={true}>
                                                         <StyledCheckbox 
                                                             checked={selectedRows.includes(rowIndex + (rowsPerPage * page))}
                                                             onClick={(e) => handleCheckboxClick(e, rowIndex + (rowsPerPage * page))}
@@ -339,6 +343,8 @@ export default function CustomizedTables({
                                                 visibleColumns.map((col, colIndex) => (
                                                     <StyledTableCell 
                                                         key={colIndex} 
+                                                        isHighlighted={colIndex === highlightedColumnIndex}
+                                                        isEditable={!immutableCellIndex.includes(colIndex)}
                                                         align="left"
                                                         onDoubleClick={() => handleDoubleClick(rowIndex, colIndex)}
                                                         style={{ 
@@ -462,7 +468,7 @@ export default function CustomizedTables({
                                         >
                                             {   // checkbox가 있는 테이블이면 체크박스 셀 추가
                                                 variant === 'checkbox' && (
-                                                    <StyledTableCell>
+                                                    <StyledTableCell isCheckbox={true}>
                                                         <StyledCheckbox 
                                                             checked={selectedRows.includes(index)}
                                                             onChange={() => handleCheckboxChange(index)}
@@ -474,6 +480,8 @@ export default function CustomizedTables({
                                                 visibleColumns.map((value, idx) => (
                                                     <StyledTableCell 
                                                         key={idx} 
+                                                        isHighlighted={idx === highlightedColumnIndex}
+                                                        isEditable={!immutableCellIndex.includes(idx)}
                                                         align="left" 
                                                         onDoubleClick={() => {handleDoubleClick(index, idx)}}
                                                         style={{ 
