@@ -319,7 +319,7 @@ export default function Ps_1_2_Fp() {
         return (
             <TableCustomDoubleClickEdit
                 columns={perfColumns}
-                title="실적목록"
+                title="실적 목록"
                 data={data}
                 buttons={['DoubleClickEdit', 'DownloadExcelForm', 'UploadExcel']}
                 onClicks={[() => {}, () => onDownloadExcelFormClick(data), onUploadExcelClick]}
@@ -460,7 +460,7 @@ export default function Ps_1_2_Fp() {
         return (
             <TableCustomDoubleClickEdit
                 columns={perfColumns}
-                title="실적목록"
+                title="실적 목록"
                 data={data}
                 buttons={['DoubleClickEdit', 'DownloadExcelForm', 'UploadExcel']}
                 onClicks={[() => {}, () => onDownloadExcelFormClick(data), onUploadExcelClick]}
