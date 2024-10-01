@@ -243,13 +243,38 @@ console.log(data);
                 { wpx : 64 }, // G열
             ];
 
+            // 셀 범위 가져오기
+            const range = xlsx.utils.decode_range(ws['!ref']); 
+
+            // 헤더의 모든 열에 배경색(초록색)과 글자색(흰색) 적용
+            for (let C = range.s.c; C <= range.e.c; C++) { // 열 루프 (A열: 0 ~ G열: 6)
+                const cellAddress = xlsx.utils.encode_cell({ r: 0, c: C }); // 헤더는 첫 번째 행 (r: 0)
+                if (!ws[cellAddress]) ws[cellAddress] = { v: '' }; // 빈 셀 생성
+
+                // 셀 스타일 적용 (헤더 배경색 초록색으로 지정)
+                ws[cellAddress].s = {
+                    fill: {
+                        patternType: 'solid',
+                        fgColor: { rgb: "FF216F17" } // 배경색 (초록색)
+                    },
+                    font: {
+                        color: { rgb: "FFFFFFFF" }, // 글자색 (흰색)
+                    },
+                    border: { // 셀 테두리 추가
+                        top: { style: "thin", color: { rgb: "d4d4d4" } },    // 위쪽 테두리
+                        bottom: { style: "thin", color: { rgb: "d4d4d4" } }, // 아래쪽 테두리
+                        left: { style: "thin", color: { rgb: "d4d4d4" } },   // 왼쪽 테두리
+                        right: { style: "thin", color: { rgb: "d4d4d4" } }   // 오른쪽 테두리
+                    }
+                };
+            }
+
             // A~G열의 모든 셀에 배경색 적용
-            const range = xlsx.utils.decode_range(ws['!ref']); // 셀 범위 가져오기
-            for (let R = range.s.r; R <= range.e.r; R++) { // 행 루프
+            for (let R = range.s.r + 1; R <= range.e.r; R++) { // 첫 번째 행 제외 (데이터 행 루프)
                 for (let C = range.s.c; C <= 6; C++) { // 열 루프 (A열: 0 ~ G열: 6)
                     const cellAddress = xlsx.utils.encode_cell({ r: R, c: C });
                     if (!ws[cellAddress]) ws[cellAddress] = { v: '' }; // 빈 셀 생성
-
+        
                     // 셀 스타일 적용 (배경색 지정)
                     ws[cellAddress].s = {
                         fill: {
@@ -359,13 +384,38 @@ console.log(data);
                 { wpx : 64 }, // G열
             ];
 
+            // 셀 범위 가져오기
+            const range = xlsx.utils.decode_range(ws['!ref']); 
+
+            // 헤더의 모든 열에 배경색(초록색)과 글자색(흰색) 적용
+            for (let C = range.s.c; C <= range.e.c; C++) { // 열 루프 (A열: 0 ~ G열: 6)
+                const cellAddress = xlsx.utils.encode_cell({ r: 0, c: C }); // 헤더는 첫 번째 행 (r: 0)
+                if (!ws[cellAddress]) ws[cellAddress] = { v: '' }; // 빈 셀 생성
+
+                // 셀 스타일 적용 (헤더 배경색 초록색으로 지정)
+                ws[cellAddress].s = {
+                    fill: {
+                        patternType: 'solid',
+                        fgColor: { rgb: "FF216F17" } // 배경색 (초록색)
+                    },
+                    font: {
+                        color: { rgb: "FFFFFFFF" }, // 글자색 (흰색)
+                    },
+                    border: { // 셀 테두리 추가
+                        top: { style: "thin", color: { rgb: "d4d4d4" } },    // 위쪽 테두리
+                        bottom: { style: "thin", color: { rgb: "d4d4d4" } }, // 아래쪽 테두리
+                        left: { style: "thin", color: { rgb: "d4d4d4" } },   // 왼쪽 테두리
+                        right: { style: "thin", color: { rgb: "d4d4d4" } }   // 오른쪽 테두리
+                    }
+                };
+            }
+
             // A~G열의 모든 셀에 배경색 적용
-            const range = xlsx.utils.decode_range(ws['!ref']); // 셀 범위 가져오기
-            for (let R = range.s.r; R <= range.e.r; R++) { // 행 루프
+            for (let R = range.s.r + 1; R <= range.e.r; R++) { // 첫 번째 행 제외 (데이터 행 루프)
                 for (let C = range.s.c; C <= 6; C++) { // 열 루프 (A열: 0 ~ G열: 6)
                     const cellAddress = xlsx.utils.encode_cell({ r: R, c: C });
                     if (!ws[cellAddress]) ws[cellAddress] = { v: '' }; // 빈 셀 생성
-
+        
                     // 셀 스타일 적용 (배경색 지정)
                     ws[cellAddress].s = {
                         fill: {
