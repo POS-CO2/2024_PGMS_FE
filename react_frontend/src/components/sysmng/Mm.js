@@ -1,7 +1,7 @@
 import * as React from 'react';
 import clsx from 'clsx';
 import { animated, useSpring } from '@react-spring/web';
-import { styled, alpha, createTheme } from '@mui/material/styles';
+import { styled } from '@mui/material/styles';
 import * as sysStyles from '../../assets/css/sysmng.css';
 import * as modalStyles from '../../assets/css/pdModal.css';
 import Box from '@mui/material/Box';
@@ -25,10 +25,10 @@ import { TreeItem2Icon } from '@mui/x-tree-view/TreeItem2Icon';
 import { TreeItem2Provider } from '@mui/x-tree-view/TreeItem2Provider';
 import { TreeItem2DragAndDropOverlay } from '@mui/x-tree-view/TreeItem2DragAndDropOverlay';
 import { useState, useEffect } from 'react';
-import { Accordion, AccordionDetails, AccordionSummary, Button, Card, Divider, TextField } from '@mui/material';
+import { Accordion, AccordionDetails, AccordionSummary, Card, Divider } from '@mui/material';
 import TableCustom from '../../TableCustom';
 import * as mainStyle from '../../assets/css/main.css';
-import { ConfigProvider, Input, Select } from 'antd';
+import { Input, Select } from 'antd';
 import axiosInstance from '../../utils/AxiosInstance';
 import Swal from 'sweetalert2';
 import { ExpandMore, Public } from '@mui/icons-material';
@@ -121,7 +121,6 @@ function TransitionComponent(props) {
 
 const StyledTreeItemLabelText = styled(Typography)({
     color: 'inherit',
-    // fontFamily: 'General Sans',
     fontWeight: 500,
     fontSize:"1rem",
 });
@@ -399,23 +398,7 @@ export default function Mm({menus, handleMenuSet}) {
             label: '시스템 관리자'
         },
     ]
-    
-    // let res = [];
-    // function parseMenu(menuArray, bd = null, md = null) {
-    //     menuArray.forEach(item => {
-    //         if (item.level === 1) {
-    //             parseMenu(item.menu, item.name, null);
-    //         } else if (item.level === 2) {
-    //             if (item.menu && item.menu.length > 0) {
-    //             parseMenu(item.menu, bd, item.name);
-    //             } else {
-    //             res.push({ id: item.id, level: item.level, url: item.url, name: item.name, accessUser: item.accessUser, bd, md: item.name, sd: null });
-    //             }
-    //         } else if (item.level === 3) {
-    //             res.push({ id: item.id, level: item.level, url: item.url, name: item.name, accessUser: item.accessUser, bd, md, sd: item.name });
-    //         }
-    //     });
-    // }
+
     function parseMenu(menuArray, bd = null, md = null, result = []) {
         menuArray.forEach(item => {
             if (item.level === 1) {
@@ -474,9 +457,6 @@ export default function Mm({menus, handleMenuSet}) {
         }
     }, [selectedUpperDir]);
     menus.forEach(menu => parseMenu(menu.menu, menu.name, null));
-    // const [fpMenu, setFpMenu] = useState(res.filter(e => e.accessUser === "FP"));
-    // const [hpMenu, setHpMenu] = useState(res.filter(e => e.accessUser === "HP"));
-    // const [adminMenu, setAdminMenu] = useState(res.filter(e => e.accessUser === "ADMIN"));
 
     const [expanded, setExpanded] = useState();
 

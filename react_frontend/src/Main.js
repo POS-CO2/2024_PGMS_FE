@@ -1,7 +1,7 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect } from 'react';
 import * as gridStyles from './assets/css/grid.css'
-import { useGaugeState, Gauge, gaugeClasses } from '@mui/x-charts';
-import { Card, CircularProgress, IconButton } from '@mui/material';
+import { Gauge, gaugeClasses } from '@mui/x-charts';
+import { Card, CircularProgress, Divider, IconButton } from '@mui/material';
 import { CustomBarChart } from './Chart';
 import DataSaverOffOutlinedIcon from '@mui/icons-material/DataSaverOffOutlined';
 import SpeedIcon from '@mui/icons-material/Speed';
@@ -152,7 +152,6 @@ export default function Main() {
             try{
                 const pjtResponse = await axiosInstance.get(`/pjt/my`);
                 const myPjt = pjtResponse.data;
-                console.log(myPjt);
                 setMyPjt(myPjt);
                 
 
@@ -206,12 +205,10 @@ export default function Main() {
 
     useEffect(() => {
         const fetchMyPjt = async () => {
-            console.log(1);
             setIsLoading(true)
             const pjtResponse = await axiosInstance.get(`/pjt/my`);
             const myPjt = pjtResponse.data;
             setMyPjt(myPjt);
-            console.log(2);
         };
         const fetchSelectedProjectData = async () => {
             if (!selectedMyPjt) return;
@@ -221,7 +218,6 @@ export default function Main() {
             setPjtEndMonth(selectedMyPjt.ctrtToMth);
 
             try {
-                console.log(3);
                 const [chartResponse, documentResponse, emissionResponse, beforeEmissionResponse] = await Promise.all([
                     axiosInstance.get(`/perf/pjt?pjtId=${selectedMyPjt.pjtId}&year=${toYear}`),
                     axiosInstance.get(`/equip/document-status?pjtId=${selectedMyPjt.pjtId}`),
@@ -249,7 +245,6 @@ export default function Main() {
     
                 // Update mock data
                 getMock(emissionResponse.data, beforeEmissionResponse.data);
-                console.log(4);
                 setIsLoading(false);
             } catch (error) {
                 console.error(error);
@@ -287,7 +282,6 @@ export default function Main() {
                     equipId: key[0],
                     actvDataId: key[1],
                 }]
-                console.log(formDatas);
                 try {
                     const {data} = await axiosInstance.post(`/equip/emission`, formDatas);    
                     swalOptions.title = '성공!',
@@ -400,7 +394,6 @@ export default function Main() {
                     <div className={gridStyles.box1_header}>
                         {/* 로고  */}
                         <div className={gridStyles.box1_logo}>
-                            {/* <SsidChartRoundedIcon sx={{width:"2rem",height:"2rem", paddingRight:"0.5rem"}}/> */}
                             PGMS
                         </div>
                         <ConfigProvider theme={{token:{fontFamily:"SUITE-Regular", fontSize:"1rem"}}}>
@@ -420,6 +413,7 @@ export default function Main() {
                                     <DataSaverOffOutlinedIcon fontSize='large' sx={{marginRight:"0.5rem"}}/>프로젝트 진행현황
                                 </div>
                                 <Progress percent={progressPjt()} strokeColor={twoColors} style={{marginBottom:"2rem"}}/>
+                                <Divider variant='middle' sx={{height:"1px"}}/>
                                 <div className={gridStyles.box1_1_logo}>
                                     <LeaderboardOutlinedIcon fontSize='large' sx={{marginRight:"0.5rem"}}/>전월 대비 실적Scope
                                 </div>
@@ -565,7 +559,7 @@ export default function Main() {
                                 width:"100%",
                                 display:"flex"
                                 }}>
-                                <div className={gridStyles.box2_1_1_1}>
+                                <div className={gridStyles.box2_1_1_1} style={{background:"linear-gradient(to right, #38b0a8, #14a492)"}}>
                                     <div className={gridStyles.box1_1_logo} style={{color:'white', fontSize:"1rem", paddingLeft:"2rem"}}>
                                         증빙자료 제출 현황
                                     </div>
