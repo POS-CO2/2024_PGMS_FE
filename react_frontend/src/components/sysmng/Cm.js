@@ -203,10 +203,9 @@ export default function Cm() {
             try {
                 // POST 요청으로 서버에 데이터 전송
                 const response = await axiosInstance.patch('/sys/code', data);
-
                 setCode(prevList =>
                     prevList.map(item =>
-                        item.id === selectedCodeGroup.id ? response.data : item
+                        item.id === selectedCode.id ? response.data : item
                     )
                 );
                 setSelectedCode(response.data);

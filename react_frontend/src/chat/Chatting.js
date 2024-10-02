@@ -216,7 +216,6 @@ export default function Chatting({ UserListIcon ,handleChatListClick, chatUser, 
                             ) : (
                                 <div style={{position: "absolute",bottom: "-1.4rem", left:"0", color:"grey", fontSize:"0.8rem", whiteSpace:"nowrap"}}>{data.sendTime}</div>
                             )}
-                            
                             {!data.readYn && <div style={{position: "absolute",bottom: "0", left:"-1rem", color:"rgb(14, 170, 0)"}}>1</div>}
                         </div>
                         {data.senderId === 0 && (

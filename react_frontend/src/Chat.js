@@ -1,13 +1,13 @@
 import React, { useState, useEffect, useRef } from "react";
 import * as chatStyles from './assets/css/chat.css'
 import { CampaignTwoTone, ChatOutlined, Close, Person } from "@mui/icons-material";
-import { Avatar, IconButton } from "@mui/material";
+import { Avatar, Badge, IconButton } from "@mui/material";
 import UserList from "./chat/UserList";
 import ChatList from "./chat/ChatList";
 import Chatting from "./chat/Chatting";
 import axiosInstance from "./utils/AxiosInstance";
 
-export default function Chat({ handleCloseClick }) {
+export default function Chat({ handleCloseClick, totCnt }) {
     const [status, setStatus] = useState("user");
     const [userList, setUserList] = useState([]);
     const [room, setRoom] = useState([]);
@@ -123,7 +123,6 @@ export default function Chat({ handleCloseClick }) {
             setUserList(data);
         };
         
-
         fetchUserList();
         fetchRoom();
 
@@ -170,7 +169,9 @@ export default function Chat({ handleCloseClick }) {
                     <Person fontSize="large" sx={{color: "gray"}} />
                 </IconButton>
                 <IconButton onClick={handleChatListClick}>
-                    <ChatOutlined fontSize="large" sx={{color:"gray"}} />
+                    <Badge badgeContent={totCnt} color="error">
+                        <ChatOutlined fontSize="large" sx={{color:"gray"}} />
+                    </Badge>
                 </IconButton>
             </div>
             <div className={chatStyles.board}>
@@ -188,7 +189,6 @@ export default function Chat({ handleCloseClick }) {
                         ) : (
                             <Chatting UserListIcon={UserListIcon} ws={ws.current} handleChatListClick={handleChatListClick} noticeUser={noticeUser} handleRead={handleRead} handleReadAll={handleReadAll} updateChatList={updateChatList} chatContent={chatContent} fetchRoom={fetchRoom} setChatContent={setChatContent} roomChange={roomChange} setRoomChange={setRoomChange} chatUser={chatUser} me={me}/>
                         )
-                        
                     )
                 }
             </div>

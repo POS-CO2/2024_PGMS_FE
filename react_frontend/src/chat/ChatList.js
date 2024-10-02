@@ -43,8 +43,8 @@ export default function ChatList({ UserListIcon, handleChattingClick, room, fetc
                         </div>
                     </div>
                     <div style={{display:"flex", flexDirection:"column", width:"80px", alignItems:"flex-end", gap:"0.5rem"}}>
-                        <div style={{fontSize:"0.8rem", color:"grey", textOverflow:"ellipsis"}}>
-                        {data.lastSentDate}
+                        <div style={{fontSize:"0.8rem", color:"grey", whiteSpace:"nowrap"}}>
+                        {data.formattedLastSentDate}
                         </div>
                         {data.notReadCnt !== 0 ? ( 
                             <div className={chatStyles.chat_badge}>

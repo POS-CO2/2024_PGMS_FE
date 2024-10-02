@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import * as gridStyles from './assets/css/grid.css'
 import { Gauge, gaugeClasses } from '@mui/x-charts';
-import { Card, CircularProgress, IconButton } from '@mui/material';
+import { Card, CircularProgress, Divider, IconButton } from '@mui/material';
 import { CustomBarChart } from './Chart';
 import DataSaverOffOutlinedIcon from '@mui/icons-material/DataSaverOffOutlined';
 import SpeedIcon from '@mui/icons-material/Speed';
@@ -413,6 +413,7 @@ export default function Main() {
                                     <DataSaverOffOutlinedIcon fontSize='large' sx={{marginRight:"0.5rem"}}/>프로젝트 진행현황
                                 </div>
                                 <Progress percent={progressPjt()} strokeColor={twoColors} style={{marginBottom:"2rem"}}/>
+                                <Divider variant='middle' sx={{height:"1px"}}/>
                                 <div className={gridStyles.box1_1_logo}>
                                     <LeaderboardOutlinedIcon fontSize='large' sx={{marginRight:"0.5rem"}}/>전월 대비 실적Scope
                                 </div>

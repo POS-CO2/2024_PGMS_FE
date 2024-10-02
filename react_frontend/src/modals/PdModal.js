@@ -1665,7 +1665,7 @@ export function EfmEditModal({ isModalOpen, handleOk, handleCancel, rowData }) {
             setApplyDvs(appDvsResponse.data);
             const matchAppDvs = appDvsResponse.data.find(e => e.name === selectedApplyDvs);
             setSelectedApplyDvs(matchAppDvs.code)
-            if (inputUnitCode === "TJ") {
+            if (rowData.inputUnitCode === "TJ") {
                 const coefResponse = [
                     {
                         "code": 1,
