@@ -79,20 +79,22 @@ export default function Ea() {
     };
 
     const onDownloadExcelClick = (csvData) => {
-        //const fileName = `사용금액 엑셀 양식_${formData.searchProject.pjtName}_${formData.actvYear}`;
-        const fileName = `매출액 목록`;
+        const fileName = `설비별 분석__${formData.selected}`;
     
         // 워크북 및 워크시트 생성
         const wb = XLSX.utils.book_new();
         const wsData = [];
 
-        // 헤더 생성 (salesAnalColumns 순서대로)
-        const headers = salesAnalColumns.map(column => column.label);
+        // 'formatted'로 시작하지 않는 칼럼 필터링
+        const filteredColumns = tableColumn.filter(column => !column.key.startsWith('formatted'));
+
+        // 헤더 생성 (필터링된 tableColumn 순서대로)
+        const headers = filteredColumns.map(column => column.label);
         wsData.push(headers);
             
         // 데이터 생성
         for (const row of csvData) {
-            const values = salesAnalColumns.map(column => row[column.key]);
+            const values = filteredColumns.map(column => row[column.key]);
             wsData.push(values);
         }
             
@@ -150,7 +152,7 @@ export default function Ea() {
                         </Card>
 
                         <Card className={saStyles.card_box} sx={{ width: "50%", height: "auto", borderRadius: "15px" }}>
-                            <TableCustom columns={tableColumn} title="목록" data={analEquipData} buttons={['DownloadExcel']} onClicks={[() => onDownloadExcelClick(salesTableData)]} />
+                            <TableCustom columns={tableColumn} title="목록" data={analEquipData} buttons={['DownloadExcel']} onClicks={[() => onDownloadExcelClick(analEquipData)]} />
                         </Card>
                     </div>
                 </>
