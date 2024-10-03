@@ -255,15 +255,15 @@ export const equipAnalLibColumns = [
 
 export const equipAnalTypeColumns = [
     { key: 'equipType', label: '설비유형', hidden: false },
-    { key: 'totalEmissionQty', label: '총배출량', hidden: true },
-    { key: 'formattedTotalEmissionQty', label: '총배출량', hidden: false },
+    { key: 'totalEmissionQty', label: '총배출량(kgGHG)', hidden: true },
+    { key: 'formattedTotalEmissionQty', label: '총배출량(kgGHG)', hidden: false },
 ]
 
 export const equipAnalSourceColumns = [
     { key: 'energySource', label: '에너지원', hidden: false },
     { key: 'equipSpecUnit', label: '설비사양단위', hidden: false },
-    { key: 'totalEmissionQty', label: '총배출량', hidden: true },
-    { key: 'formattedTotalEmissionQty', label: '총배출량', hidden: false },
+    { key: 'totalEmissionQty', label: '총배출량(kgGHG)', hidden: true },
+    { key: 'formattedTotalEmissionQty', label: '총배출량(kgGHG)', hidden: false },
 ]
 
 export const climateAnalColumns = [
