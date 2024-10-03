@@ -79,7 +79,7 @@ export default function Ea() {
     };
 
     const onDownloadExcelClick = (csvData) => {
-        const fileName = `설비별 분석__${formData.selected}`;
+        const fileName = `설비별 분석_${formData.selected}`;
     
         // 워크북 및 워크시트 생성
         const wb = XLSX.utils.book_new();

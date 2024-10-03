@@ -976,6 +976,7 @@ export function Ps12UploadExcelModal({ isModalOpen, handleOk, handleCancel }) { 
     };
 
     return (
+        <ConfigProvider theme={{token:{fontFamily:"SUITE-Regular"}}}>
         <Modal
             open={isModalOpen}
             onCancel={handleCancel}
@@ -1027,6 +1028,7 @@ export function Ps12UploadExcelModal({ isModalOpen, handleOk, handleCancel }) { 
 
             <button className={ps12Styles.select_button} onClick={onSaveClick}>등록</button>
         </Modal>
+        </ConfigProvider>
     )
 }
 
