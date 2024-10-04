@@ -279,9 +279,10 @@ export const climateAnalColumns = [
 export const eqfColumns = [
     { key: 'year', label: '대상연도', hidden: false },
     { key: 'mth', label: '대상월', hidden: false },
-    { key: 'avg_tm', label: '평균기온', hidden: false },
-    { key: 'avg_rn', label: '평균강수량', hidden: false },
-    { key: 'avg_rhm', label: '평균습도', hidden: false },
+    { key: 'avgTm', label: '평균 기온', hidden: false },
+    { key: 'electric', label: '전기 요금', hidden: false },
+    { key: 'hardCoal', label: '무연탄 가격', hidden: false },
+    { key: 'diesel', label: '경유 가격', hidden: false },
     { key: 'sales', label: '매출액(백만원)', hidden: false },
-    { key: 'emission_qty', label: '배출량(kgGHG)', hidden: false },
+    { key: 'emissionQty', label: '배출량(kgGHG)', hidden: false },
 ]

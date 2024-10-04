@@ -37,9 +37,9 @@ export default function Eqf() { //Emission Quantity Forecast
 
             let url = `/anal/prediction`;
             try {
-                //const response = await axiosInstance.get(url);
-                //setCaData(response.data);
-                setCaData(eqfData);
+                const response = await axiosInstance.get(url);
+                setCaData(response.data);
+                //setCaData(eqfData);
                 
             } catch (error) {
                 console.error("Error fetching data:", error);
