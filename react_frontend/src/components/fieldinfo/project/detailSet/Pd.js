@@ -133,22 +133,22 @@ export default function Pd({pjtId}) {                                           
                     </div>
                     <div className={pdsStyles.search_container}>
                         <div className={pdsStyles.search_item}>
-                            <div className={pdsStyles.search_title}>로그인ID</div>
+                            <div className={pdsStyles.search_title}>이름</div>
                             <CustomInput
-                                value={inputEmpId}
+                                value={inputEmpName}
                                 allowClear={{ clearIcon: <CloseOutlined style={{color: "red"}} /> }}
-                                onChange={(e) => setInputEmpId(e.target.value)}
+                                onChange={(e) => setInputEmpName(e.target.value)}
                                 onKeyDown={(e) => handleKeyDown(e, handleSearch)}
                                 style={{ width: '12rem', backgroundColor: '#E5F1E4', outline: 'none', boxShadow: 'none' }}
                             />
                         </div>
                         <div className={pdsStyles.search_item}>
-                            <div className={pdsStyles.search_title}>이름</div>
+                            <div className={pdsStyles.search_title}>로그인ID</div>
                             <div className={pdsStyles.input_with_btn}>
                                 <CustomInput
-                                    value={inputEmpName}
+                                    value={inputEmpId}
                                     allowClear={{ clearIcon: <CloseOutlined style={{color: "red"}} /> }}
-                                    onChange={(e) => setInputEmpName(e.target.value)}
+                                    onChange={(e) => setInputEmpId(e.target.value)}
                                     onKeyDown={(e) => handleKeyDown(e, handleSearch)}
                                     style={{ width: '12rem', backgroundColor: '#E5F1E4', outline: 'none', boxShadow: 'none' }}
                                 />

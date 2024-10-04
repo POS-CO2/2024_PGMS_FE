@@ -325,6 +325,7 @@ export default function Esd_Fp() {
                                     onRowClick={handleSDClick}
                                     selectedRows={[selectedSD]}
                                     handleYearChange={handleYearChange}
+                                    highlightedColumnIndex={0}
                                     year={year}
                                     modals={[
                                         isModalOpen.SdShowDetails && {

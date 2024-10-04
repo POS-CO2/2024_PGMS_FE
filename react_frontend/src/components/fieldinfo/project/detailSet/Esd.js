@@ -137,6 +137,7 @@ export default function Esd({pjtId}) {
                     onRowClick={handleESClick}
                     selectedRows={[selectedES]}
                     keyProp={emSources.length}
+                    highlightedColumnIndex={0}
                     modals={[
                         isModalOpen.DeleteA && {
                             modalType: 'DeleteA',

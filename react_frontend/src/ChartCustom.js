@@ -17,7 +17,7 @@ export default function ChartCustom({ title, data, unit }) {
                         ...item,
                         valueFormatter: (value) => value !== null ? `${value} ${unit}` : null,
                     }))}
-                    barLabel={(item, context) => {
+                    barLabel={title === '매출액 차트' ? () => null : (item, context) => {
                         return context.bar.height < 60 ? null : item.value?.toFixed(2).toString();
                     }}
                     xAxis={[
@@ -70,6 +70,13 @@ export default function ChartCustom({ title, data, unit }) {
                 {lineChartData.length > 0 && (
                     <LineChart
                         series={validatedData.filter(item => item.type === 'line')}
+                        xAxis={[
+                            {
+                                scaleType: 'band', // BarChart와 동일한 x축 스케일 사용
+                                data: ['1월', '2월', '3월', "4월", "5월", "6월", "7월", "8월", "9월", "10월", "11월", "12월"],
+                                id: 'months', // BarChart와 동일한 ID 사용
+                            },
+                        ]}
                         leftAxis={null}
                         colors={['rgb(255, 99, 132)']} // Line color
                         margin={{ left: 120 }}

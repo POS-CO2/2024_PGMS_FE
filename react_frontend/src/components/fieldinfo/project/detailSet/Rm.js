@@ -39,8 +39,17 @@ export default function Rm({pjtId}) {
             });
 
             const formattedChartReves = [
-                { data: chartData, stack: 'A', type: 'bar' },  // 막대 그래프
-                { data: chartData, type: 'line' }  // 꺾은선 그래프
+                { 
+                    data: chartData, 
+                    stack: 'A', 
+                    type: 'bar',  
+                    valueFormatter: (value) => value !== null ? `${value.toLocaleString()} 원` : null // 콤마 추가
+                },
+                { 
+                    data: chartData, 
+                    type: 'line',  
+                    valueFormatter: (value) => value !== null ? `${value.toLocaleString()} 원` : null // 콤마 추가
+                }
             ];
             setChartReves(formattedChartReves);
         }
@@ -83,7 +92,7 @@ export default function Rm({pjtId}) {
                 />
             </Card>
             <Card sx={{ width: "70%", borderRadius: "0.5rem" }}>
-                <ChartCustom title={"매출액차트"} data={chartReves} unit={'원'} />
+                <ChartCustom title={"매출액 차트"} data={chartReves} unit={'원'} />
             </Card>
         </>
     );
