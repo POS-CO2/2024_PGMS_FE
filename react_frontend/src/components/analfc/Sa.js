@@ -150,7 +150,8 @@ export default function Sa() {
                                         highlighted: 'none', // fade 만 설정 //highlighted: 'item'
                                         faded: 'global',  // 나머지는 흐리게 설정
                                     },
-                                }]} //valueFormatter
+                                    valueFormatter: (value) => value !== null ? `${value} (kgGHG/백만원)` : null,
+                                }]} 
                                 onAxisClick={handleAxisClick}
                                 highlightedItem={highlightedItem} // 강조된 항목 설정
                                 //width={400}
@@ -207,7 +208,10 @@ export default function Sa() {
                                         textOverflow: 'ellipsis',
                                     },
                                 }]}
-                                series={[{ dataKey: 'avgEmissionQtyPerSales' }]} //valueFormatter
+                                series={[{ 
+                                    dataKey: 'avgEmissionQtyPerSales',
+                                    valueFormatter: (value) => value !== null ? `${value} (kgGHG/백만원)` : null,
+                                }]}
                                 //height={300}
                                 borderRadius={10}
                                 margin={{ top: 10, left: 80 }}
