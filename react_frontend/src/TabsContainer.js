@@ -269,6 +269,16 @@ const TabsContainer = forwardRef(({ handleLogout, user, handleMenuClick, handleC
     }, null);
   };
 
+  // 마지막으로 선택한 대분류 토글만 내리기
+  const handleOpenChange = (keys) => {
+    const latestOpenKey = keys.find(key => !openKeys.includes(key));
+    if (items.map(item => item.key).includes(latestOpenKey)) {
+      setOpenKeys(latestOpenKey ? [latestOpenKey] : []);
+    } else {
+      setOpenKeys(keys);
+    }
+  };
+
   const onTabChange = path => {
     setActiveKey(path);
 
@@ -282,13 +292,14 @@ const TabsContainer = forwardRef(({ handleLogout, user, handleMenuClick, handleC
       // 대분류(상위 메뉴)를 찾아 openKeys에 추가
       const parentItem = findParentItem(items, item.key);
       if (parentItem) {
-        setOpenKeys([...openKeys, parentItem.key]);
+        handleOpenChange([parentItem.key]);
       }
     }
 
     if (path === '') {  // 홈 탭을 클릭했을 때 명시적으로 홈 경로로 이동
       navigate('');
-      setSelectedKeys(null);
+      setOpenKeys([]); //사이드바 대분류 토글 다 접기
+      setSelectedKeys(null); //사이드바 선택된 메뉴 null
     } else {
       navigate(path);
     }
