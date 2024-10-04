@@ -380,9 +380,10 @@ const TabsContainer = forwardRef(({ handleLogout, user, handleMenuClick, handleC
   }));
 
   // 로그아웃 메뉴 정의 및 사용자 정보
-  const menu = (
-    <Menu>
-      <Menu.Item key="userInfo" disabled>
+  const menuItems = [
+    {
+      key: 'userInfo',
+      label: (
         <UserDetails>
           <Row>
             <div style={{ marginRight: '16px'}}>
@@ -407,10 +408,11 @@ const TabsContainer = forwardRef(({ handleLogout, user, handleMenuClick, handleC
             </div>
           </Row>
         </UserDetails>
-      </Menu.Item>
-    </Menu>
-  );
-
+      ),
+      disabled: true,
+    },
+  ];
+  
   return (
     <DndProvider backend={HTML5Backend}>
       <TabsWrapper>
@@ -443,7 +445,7 @@ const TabsContainer = forwardRef(({ handleLogout, user, handleMenuClick, handleC
           </IconButton>
 
           {/* 유저 섹션 */}
-          <Dropdown overlay={menu} trigger={['click']} placement="bottomRight">
+          <Dropdown menu={{ items: menuItems }} trigger={['click']} placement="bottomRight">
             <UserInfo>
               <Photo>
                 <img src="http://sanriokorea.co.kr/wp-content/themes/sanrio/images/kuromi.png" alt="User" />
