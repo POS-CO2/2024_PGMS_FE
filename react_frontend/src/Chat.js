@@ -89,6 +89,7 @@ export default function Chat({ handleCloseClick, totCnt }) {
     const handleChattingClick = async (e) => {
         setChatUser(e);
         const chatResponse = await axiosInstance.get(`/chat?targetId=${e.id}&messageId=${chatContent.length === 0 ? 4000000000 : chatContent[chatContent.length - 1].messageId}&count=${10}`);
+        console.log(chatResponse.data);
         setChatContent(chatResponse.data);
         try {
             if (e.id !== 0){

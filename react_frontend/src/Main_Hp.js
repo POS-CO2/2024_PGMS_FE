@@ -329,7 +329,7 @@ const polarAreaChartOptions = (labels) => {
             show: false
         },
         title: {
-            text: ' 배출 현황', // 차트 제목
+            text: ' 총 배출 현황', // 차트 제목
             align: 'left',
             style: {
                 fontSize: '22px',
@@ -576,7 +576,9 @@ export default function Main_Hp() {
                         </StyledChart>
                     </div>
                     <div className={gridStyles.left_box_bottom}>
-                        <div className={gridStyles.left_bottom_logo}></div>
+                        <div className={gridStyles.left_bottom_logo}>
+                            매출액
+                        </div>
                         <StyledRoot style={{width:"100%", height:"100%"}}>
                             <Swiper
                                 spaceBetween={30}    // 슬라이드 사이의 간격

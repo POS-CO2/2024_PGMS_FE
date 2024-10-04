@@ -73,6 +73,7 @@ export default function Chatting({ UserListIcon ,handleChatListClick, chatUser, 
                 receiverId : chatUser.id,
                 message : text,
             }
+            console.log(formData);
             try {
                 const sendMessage = await axiosInstance.post(`/chat`, formData);
                 if (sendMessage.data) {
@@ -165,7 +166,9 @@ export default function Chatting({ UserListIcon ,handleChatListClick, chatUser, 
             else if (message.type === 'CHAT') {
                 setShowIsTyping(false);
                 setChatContent((prevContent) => [message, ...prevContent]);
-                if (message.senderId !== me.id) markAsRead(message.id);
+                if (message.senderId !== me.id) {
+                    markAsRead(message.id);
+                } 
             }
             else {
                 return ;

@@ -1598,8 +1598,6 @@ export function EfmAddModal({ isModalOpen, handleOk, handleCancel, rowData }) {
                             </Select>
                         )
                     }
-                    
-                    
                 </div>
                 <div className={sysStyles.text_field}>
                     <div className={sysStyles.text}>{"단위"}</div>
