@@ -978,6 +978,9 @@ export function Ps12UploadExcelModal({ isModalOpen, handleOk, handleCancel }) { 
     return (
         <ConfigProvider theme={{token:{fontFamily:"SUITE-Regular"}}}>
         <Modal
+            style={{
+                top: "30%"
+            }}
             open={isModalOpen}
             onCancel={handleCancel}
             width={450}
