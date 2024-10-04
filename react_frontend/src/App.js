@@ -72,7 +72,11 @@ export default function App() {
     const fetchFavorites = async () => {
         try {
             const response = await axiosInstance.get('/sys/log/cnt'); // 즐겨찾기 API 호출
-            setFavorites(response.data.logMenuList.slice(0, 5)); // API 응답을 즐겨찾기 상태에 저장
+            // logMenuList가 null이거나 undefined일 때 빈 배열을 기본값으로 설정
+            const logMenuList = response.data?.logMenuList || [];
+            
+            // API 응답을 즐겨찾기 상태에 저장
+            setFavorites(logMenuList.slice(0, 5));
         } catch (error) {
             console.error('Failed to fetch favorites:', error);
         }
