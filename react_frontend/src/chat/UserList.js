@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import * as chatStyles from '../assets/css/chat.css';
 import { AccordionSummary, Avatar, Chip, Divider } from '@mui/material';
 import MuiAccordion from '@mui/material/Accordion';

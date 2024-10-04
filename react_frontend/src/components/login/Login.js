@@ -7,10 +7,9 @@ import InputAdornment from '@mui/material/InputAdornment';
 import VpnKeyIcon from '@mui/icons-material/VpnKey';
 import Button from "@mui/material/Button";
 import InputLabel from "@mui/material/InputLabel";
-import {FilledInput, IconButton, FormControl, OutlinedInput} from "@mui/material";
+import { IconButton, FormControl, OutlinedInput} from "@mui/material";
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
-import { useNavigate } from 'react-router';
 import posco from '../../assets/images/poscoenc.jpg';
 
 
@@ -18,24 +17,11 @@ export default function Login({handleLogin}) {
     const [showPassword, setShowPassword] = useState(false);
     const [id, setId] = useState('');
     const [password, setPassword] = useState('');
-    const [text, setText] = useState('');
-
-    const navigate = useNavigate();
 
     const handleClickShowPassword = () => setShowPassword((show) => !show);
 
     const handleMouseDownPassword = (event) => {
         event.preventDefault();
-    }
-
-    const activeButton = () => {
-        console.log("enter");
-    } 
-
-    const activeEnter = (e) => {
-        if(e.key === "Enter") {
-            onsubmit();
-        }
     }
 
     return (

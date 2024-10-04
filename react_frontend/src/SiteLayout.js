@@ -180,7 +180,7 @@ export default function SiteLayout({handleLogout, menus, user}){
                 </div>
                 {
                     chatOpen ? (
-                        <Chat handleCloseClick={handleCloseClick}/>
+                        <Chat handleCloseClick={handleCloseClick} totCnt={totCnt}/>
                     ) : (
                             <></>
                     )
