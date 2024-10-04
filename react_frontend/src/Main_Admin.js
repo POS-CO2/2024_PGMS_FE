@@ -253,7 +253,7 @@ const ChartOptions = (title, xdata) => {
     return chartOption;
 };
 
-export default function Main_Admin({ handleMenuClick=()=>{} }) {
+export default function Main_Admin() {
     const today = new Date();
     const defaultStartDate = dayjs(today).format('YYYY-MM-DD') + 'T00:00:00.000';
     const defaultEndDate = dayjs(today).format('YYYY-MM-DD') + 'T23:59:59.999';
