@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import TableCustom from "../../TableCustom.js";
-import { salesAnalColumns } from '../../assets/json/tableColumn';
-import { Card } from '@mui/material';
+import { eqfColumns } from '../../assets/json/tableColumn';
+import { Card, CircularProgress } from '@mui/material';
 import { BarChart } from '@mui/x-charts/BarChart';
 import axiosInstance from '../../utils/AxiosInstance';
 import * as mainStyle from '../../assets/css/main.css';
@@ -10,13 +10,46 @@ import * as chartStyles from "../../assets/css/chart.css"
 import * as saStyles from "../../assets/css/sa.css"
 import * as psqStyles from "../../assets/css/psq.css"
 import * as XLSX from 'xlsx';
+import styled from 'styled-components';
 
-import { saData, avgUnitPerDivData } from "../../assets/json/saDataEx.js"
+import { eqfData } from "../../assets/json/saDataEx.js"
+
+const Overlay = styled('div')({
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)', // 반투명 검정색
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    zIndex: 10001, // 스피너가 위에 보이도록 설정
+});
 
 export default function Eqf() { //Emission Quantity Forecast
-    const [formData, setFormData] = useState(); // 검색 데이터
-    const [caData, setCaData] = useState(saData); // response, 표 데이터
-    const [chartData, setChartData] = useState(avgUnitPerDivData); // 차트 데이터
+    const [caData, setCaData] = useState([]); // response
+    const [isLoading, setIsLoading] = useState(false);
+
+    useEffect(() => {
+        const fetchData = async () => {
+            setIsLoading(true); // 로딩 시작
+
+            let url = `/anal/prediction`;
+            try {
+                //const response = await axiosInstance.get(url);
+                //setCaData(response.data);
+                setCaData(eqfData);
+            } catch (error) {
+                console.error("Error fetching data:", error);
+            } finally {
+                await new Promise(resolve => setTimeout(resolve, 3000));//////////////////////////
+                setIsLoading(false); // 로딩 완료
+            }
+        };
+
+        fetchData();
+    }, []);
 
     const onDownloadExcelClick = (csvData) => {
         const fileName = `배출량 예측`;
@@ -26,12 +59,12 @@ export default function Eqf() { //Emission Quantity Forecast
         const wsData = [];
 
         // 헤더 생성 (columns 순서대로)
-        const headers = salesAnalColumns.map(salesAnalColumns => salesAnalColumns.label);
+        const headers = eqfColumns.map(eqfColumns => eqfColumns.label);
         wsData.push(headers);
 
         // 데이터 생성
         for (const row of csvData) {
-            const values = salesAnalColumns.map(salesAnalColumns => row[salesAnalColumns.key]);
+            const values = eqfColumns.map(eqfColumns => row[eqfColumns.key]);
             wsData.push(values);
         }
 
@@ -52,14 +85,15 @@ export default function Eqf() { //Emission Quantity Forecast
             <div className={saStyles.main_grid}>
                 <Card className={saStyles.card_box} sx={{ width: "100%", height: "auto", borderRadius: "15px" }}>
                     <div className={chartStyles.chart_title}>{"예측 차트"}</div>
+
                     <BarChart
-                        dataset={chartData}
+                        dataset={caData}
                         xAxis={[{ 
                             scaleType: 'band',
-                            data: chartData.map(item => item.divCode),
+                            data: caData.map(item => `${item.year}-${item.mth}`),
                             colorMap: {
                                 type: 'ordinal',
-                                colors: ['#37114e', '#511b75', '#6f2597', '#a73b8f', '#e05286', '#ed8495', '#f7bba6'],
+                                colors: ['#33104a', '#4b186c', '#63218f', '#8f3192', '#c0458a', '#e8608a', '#ef9198', '#f8c1a8'],
                             }
                         }]}
                         yAxis={[{
@@ -70,7 +104,7 @@ export default function Eqf() { //Emission Quantity Forecast
                                 textOverflow: 'ellipsis',
                             },
                         }]}
-                        series={[{ dataKey: 'avgEmissionQtyPerSales' }]} //valueFormatter
+                        series={[{ dataKey: 'emission_qty' }]} //valueFormatter
                         height={300}
                         borderRadius={10}
                         margin={{ left: 80 }} // 왼쪽 여백 추가
@@ -107,9 +141,15 @@ export default function Eqf() { //Emission Quantity Forecast
 
             <div className={saStyles.main_grid}>
                 <Card sx={{ width: "100%", height: "100%", borderRadius: "15px" }}>
-                    <TableCustom columns={salesAnalColumns} title="목록" data={caData} buttons={['DownloadExcel']} onClicks={[() => onDownloadExcelClick(caData)]} />
+                    <TableCustom columns={eqfColumns} title="목록" data={caData} buttons={['DownloadExcel']} onClicks={[() => onDownloadExcelClick(caData)]} />
                 </Card>
             </div>
+
+            {isLoading && 
+                <Overlay >
+                    <CircularProgress />
+                </Overlay>
+            }
         </div>
     );
 }

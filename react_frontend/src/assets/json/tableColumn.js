@@ -275,3 +275,13 @@ export const climateAnalColumns = [
     { key: 'formattedAvgTm', label: '영향인자값', hidden: false }, // 선택한 영향인자로 동적 변경
     { key: 'formattedCo2EmtnConvTotalQty', label: '총CO2배출량(kgGHG)', hidden: false },
 ]
+
+export const eqfColumns = [
+    { key: 'year', label: '대상연도', hidden: false },
+    { key: 'mth', label: '대상월', hidden: false },
+    { key: 'avg_tm', label: '평균기온', hidden: false },
+    { key: 'avg_rn', label: '평균강수량', hidden: false },
+    { key: 'avg_rhm', label: '평균습도', hidden: false },
+    { key: 'sales', label: '매출액(백만원)', hidden: false },
+    { key: 'emission_qty', label: '배출량(kgGHG)', hidden: false },
+]
