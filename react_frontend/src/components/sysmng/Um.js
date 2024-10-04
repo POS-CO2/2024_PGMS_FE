@@ -260,7 +260,7 @@ export default function Um() {
                                 <div className={sysStyles.card_box}>
                                     <div className={sysStyles.text_field} style={{marginTop:"2rem",width:"50%"}}>
                                         <div className={sysStyles.text}>
-                                            <span className={modalStyles.star}>*</span>{"로그인 아이디"}
+                                            <span className={modalStyles.star}>*</span>{"로그인ID"}
                                         </div>
                                         <TextField size="small" id='loginId'  variant='outlined' onChange={handleInputChange} defaultValue={selectedUser.loginId} value={selectedUser.loginId} sx={{width:"100%"}}/>
                                     </div>

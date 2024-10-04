@@ -473,7 +473,7 @@ export default function Mm({menus, handleMenuSet}) {
                 {"시스템관리 > 메뉴 관리"}
             </div>
             <div className={sysStyles.main_grid}>
-                <Card sx={{width:"25%", borderRadius:"15px", height:"89vh", overflowY:"auto"}}>
+                <Card sx={{width:"25%", borderRadius:"15px", height:"89vh", overflowY:"auto", paddingTop:"0.7rem"}}>
                 <TableCustom title='' className={sysStyles.btn_group} buttons={['Add', 'Delete']} 
                 onClicks={[handleAddClick,handleDeleteClick]} 
                 table={false} 

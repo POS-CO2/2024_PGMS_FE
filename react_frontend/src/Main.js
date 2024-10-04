@@ -412,10 +412,10 @@ export default function Main() {
                                 <div className={gridStyles.box1_1_logo}>
                                     <DataSaverOffOutlinedIcon fontSize='large' sx={{marginRight:"0.5rem"}}/>프로젝트 진행현황
                                 </div>
-                                <Progress percent={progressPjt()} strokeColor={twoColors} style={{marginBottom:"2rem"}}/>
-                                <Divider variant='middle' sx={{height:"1px"}}/>
+                                <Progress percent={progressPjt()} strokeColor={twoColors} style={{marginBottom:"1rem"}}/>
+                                <Divider variant='middle' sx={{height:"1px", width:"100%", marginBottom:"1rem"}}/>
                                 <div className={gridStyles.box1_1_logo}>
-                                    <LeaderboardOutlinedIcon fontSize='large' sx={{marginRight:"0.5rem"}}/>전월 대비 실적Scope
+                                    <LeaderboardOutlinedIcon fontSize='large' sx={{marginRight:"0.5rem"}}/>전월 대비 실적Scope ({toMonth}월)
                                 </div>
                                 <div className={gridStyles.box1_1_gauge}>
                                     <div style={{height:"100%"}}>
