@@ -7,12 +7,15 @@ const { RangePicker } = DatePicker;
 
 export default function SelectCalendar({ name, label, required=false, isAnal=false }) {
 
-    const customMonthRender = (current) => {
-        return (
-            <div className="ant-picker-cell-inner">
-                {dayjs(current).format('M')}월
-            </div>
-        );
+    const customMonthRender = (current, info) => {
+        if (info.type === 'month') {
+            return (
+                <div className="ant-picker-cell-inner">
+                    {dayjs(current).format('M')}월
+                </div>
+            );
+        }
+        return info.originNode; // 기본 렌더링
     };
 
     // 현재 월의 전 월까지만 선택 가능하도록 설정
@@ -36,8 +39,7 @@ export default function SelectCalendar({ name, label, required=false, isAnal=fal
             >
                 <RangePicker
                     picker="month"
-                    monthCellRender={customMonthRender} // 커스텀 월 렌더링
-                    disabledDate={isAnal ? disabledDate : undefined} // 비활성화 날짜 설정
+                    cellRender={customMonthRender} // 커스텀 월 렌더링
                 />
             </Form.Item>
         </ConfigProvider>

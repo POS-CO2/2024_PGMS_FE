@@ -271,8 +271,7 @@ export function TableCustomDoubleClickEdit({
             });
             
             const response = await axiosInstance.put("/perf", requestBody);
-console.log(requestBody);
-console.log(response);
+
             swalOptions.title = '성공!',
             swalOptions.text = '활동량이 성공적으로 수정되었습니다.';
             swalOptions.icon = 'success';            
