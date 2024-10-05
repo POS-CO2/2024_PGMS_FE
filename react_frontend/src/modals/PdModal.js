@@ -563,21 +563,19 @@ export function FamAddModal({ isModalOpen, handleOk, handleCancel, dropDown }) {
                 </div>
                 <div className={rmStyles.search_item}>
                     <div className={rmStyles.search_title}>산정단위</div>
-                    <input 
-                        className={rmStyles.search} 
-                        id="calUnit" 
-                        value={calUnit} 
-                        readOnly 
+                    <Input
+                        value={calUnit}
+                        disabled={true}
+                        allowClear={{ clearIcon: <CloseOutlined style={{color: "red"}} /> }}
                         style={{ width: '18rem' }}
                     />
                 </div>
                 <div className={rmStyles.search_item}>
                     <div className={rmStyles.search_title}>단위환산계수</div>
-                    <input 
-                        className={rmStyles.search} 
-                        id="unitConvCoef" 
-                        value={unitConvCoef} 
-                        readOnly 
+                    <Input
+                        value={unitConvCoef}
+                        disabled={true}
+                        allowClear={{ clearIcon: <CloseOutlined style={{color: "red"}} /> }}
                         style={{ width: '18rem' }}
                     />
                 </div>
@@ -751,7 +749,6 @@ export function FamEditModal({ isModalOpen, handleOk, handleCancel, rowData, dro
                         value={calUnit}
                         disabled={true}
                         allowClear={{ clearIcon: <CloseOutlined style={{color: "red"}} /> }}
-                        onChange={(e) => setEqLibName(e.target.value)}
                         style={{ width: '18rem' }}
                     />
                 </div>
@@ -761,7 +758,6 @@ export function FamEditModal({ isModalOpen, handleOk, handleCancel, rowData, dro
                         value={unitConvCoef}
                         disabled={true}
                         allowClear={{ clearIcon: <CloseOutlined style={{color: "red"}} /> }}
-                        onChange={(e) => setEqLibName(e.target.value)}
                         style={{ width: '18rem' }}
                     />
                 </div>
