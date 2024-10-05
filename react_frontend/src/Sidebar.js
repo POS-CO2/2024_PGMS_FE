@@ -152,7 +152,6 @@ export default function Sidebar({ collapsed, toggleCollapsed, items, onMenuClick
 
   // 마지막으로 선택한 대분류 토글만 내리기
   const handleOpenChange = (keys) => {
-    console.log("keys", keys);
     const latestOpenKey = keys.find(key => !openKeys.includes(key));
     if (items.map(item => item.key).includes(latestOpenKey)) {
       setOpenKeys(latestOpenKey ? [latestOpenKey] : []);

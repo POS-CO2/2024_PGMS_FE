@@ -32,7 +32,6 @@
 }
 
 .search_container {
-    padding-left: 0.5rem;
     display: flex;
     align-items: flex-end;
     gap: 10px;

@@ -2220,22 +2220,27 @@ export function EsmAddModal({ isModalOpen, handleOk, handleCancel, rowData }) {
 
     // 등록 버튼 클릭 시 호출될 함수
     const handleSelect = async () => {
+        const equipNameList = [];
+
         // selectedEmtnCands가 null이거나 비었으면 모달 닫고 함수 종료
         if (!selectedEmtnCands || selectedEmtnCands.length === 0) {
             handleCancel();
             return;
         }
 
-        const requestBody = selectedEmtnCands.map((selectedEmtnCand) => ({
-            equipId: selectedEmtnCand.equipId,
-            actvDataId: selectedEmtnCand.actvDataId,
-        }));
+        const requestBody = selectedEmtnCands.map((selectedEmtnCand) => {
+            equipNameList.push(selectedEmtnCand.equipName);
+            return {
+                equipId: selectedEmtnCand.equipId,
+                actvDataId: selectedEmtnCand.actvDataId
+            };
+        });
 
         // handleOk을 호출하여 모달을 닫고 상위 컴포넌트에 알림
         handleOk({
             url: "/equip/emission",
             requestBody: requestBody,
-            successMsg: `배출원이 성공적으로 등록되었습니다.`,
+            successMsg: `${equipNameList.join(', ')}이(가) 성공적으로 등록되었습니다.`,
         });
     };
 
@@ -2373,7 +2378,7 @@ export function SdAddModal({ isModalOpen, handleOk, handleCancel, rowData }) {
         handleOk({
             url: "/equip/document",
             requestBody: documentData,
-            successMsg: `${documentData.name}이 성공적으로 등록되었습니다.`,
+            successMsg: `${documentData.name}이(가) 성공적으로 등록되었습니다.`,
         });
     };
 
@@ -2638,7 +2643,7 @@ export function SdShowDetailsModal({ isModalOpen, handleOk, handleCancel }) {
         handleOk({
             url: "/equip/document",
             requestBody: documentData,
-            successMsg: `${documentData.name}(이)가 성공적으로 수정되었습니다.`,
+            successMsg: `${documentData.name}이(가) 성공적으로 수정되었습니다.`,
         });
 
     };

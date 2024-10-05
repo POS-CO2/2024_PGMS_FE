@@ -33,6 +33,16 @@ export default function Cm() {
         }
     };
 
+    const fetchCodeList = async (e) => {
+        try {
+            // 선택한 코드그룹에 매핑된 코드리스트 목록 조회
+            const response = await axiosInstance.get(`/sys/code?codeGrpNo=${e.codeGrpNo}`);
+            setCode(response.data);
+        } catch (error) {
+            console.error("Error fetching activity data:", error);
+        }
+    }
+
     // 코드 그룹이 추가될 때 데이터의 인덱스를 찾는 useEffect
     useEffect(() => {
         if (newAddedCMId) {
@@ -47,7 +57,7 @@ export default function Cm() {
         }
     }, [codeGroup.length]);
 
-    // 코드 그룹이 추가될 때 데이터의 인덱스를 찾는 useEffect
+    // 코드 리스트가 추가될 때 데이터의 인덱스를 찾는 useEffect
     useEffect(() => {
         if (newAddedCLId) {
             const newAddedIndex = code.findIndex(code => code.id === newAddedCLId);
@@ -73,16 +83,11 @@ export default function Cm() {
             handleFormSubmit(formData);
         }
     }, []);
-    
-    const fetchCodeList = async (e) => {
-        try {
-            // 선택한 코드그룹에 매핑된 코드리스트 목록 조회
-            const response = await axiosInstance.get(`/sys/code?codeGrpNo=${e.codeGrpNo}`);
-            setCode(response.data);
-        } catch (error) {
-            console.error("Error fetching activity data:", error);
-        }
-    }
+
+    useEffect(() => {
+        setSelectedCode({});
+        setSubmittedCLIdx([]);
+    }, [selectedCodeGroup])
 
     const handleFormSubmit = async (e) => {
         setFormData(e);

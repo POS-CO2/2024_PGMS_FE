@@ -22,8 +22,8 @@ export const pjtColumns = [
 
 export const equipColumns = [
     { key: 'id', label: 'id', hidden: true },
-    { key: 'equipLibName', label: '설비LIB명', hidden: false },
     { key: 'equipName', label: '설비명', hidden: false },
+    { key: 'equipLibName', label: '설비LIB명', hidden: false },
     { key: 'equipDvs', label: '설비구분', hidden: false },
     { key: 'equipType', label: '설비유형', hidden: false },
     { key: 'equipSpecUnit', label: '설비사양단위', hidden: false },

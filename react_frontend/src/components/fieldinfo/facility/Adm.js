@@ -100,6 +100,11 @@ export default function Adm() {
     useEffect(() => {
         Object.keys(selectedActv).length !== 0 && fetchEFList(selectedActv, year);
     }, [actves.length, emissionFactors.length, filteredEfs.length])
+
+    useEffect(() => {
+        setSelectedEF({});
+        setSubmittedEFIdx([]);
+    }, [selectedActv])
     
     //조회 버튼 클릭시 호출될 함수
     const handleFormSubmit = async (data) => {
@@ -183,7 +188,7 @@ export default function Adm() {
                 setSubmittedActvIdx([0]);
 
                 swalOptions.title = '성공!',
-                swalOptions.text = '활동자료가 성공적으로 등록되었습니다.';
+                swalOptions.text = `${actvDataName}이(가) 성공적으로 등록되었습니다.`;
                 swalOptions.icon = 'success';
             } catch (error) {
                 console.log(error);
@@ -220,7 +225,7 @@ export default function Adm() {
                 setSelectedActv(response.data);
 
                 swalOptions.title = '성공!',
-                swalOptions.text = '활동자료가 성공적으로 수정되었습니다.';
+                swalOptions.text = '${actvDataName}이(가) 성공적으로 수정되었습니다.';
                 swalOptions.icon = 'success';
             } catch (error) {
                 console.log(error);
@@ -236,11 +241,11 @@ export default function Adm() {
     
                 setFilteredEfs(prevList => [response.data, ...prevList]);
                 setSelectedEF({});
-                await fetchEFList(selectedActv, response.data.applyYear);
                 setSubmittedEFIdx([0]);
+                setYear(response.data.applyYear);
                 
                 swalOptions.title = '성공!',
-                swalOptions.text = `배출계수가 성공적으로 등록되었습니다.`;
+                swalOptions.text = `${response.data.applyDvs}이(가) 성공적으로 등록되었습니다.`;
                 swalOptions.icon = 'success';
             } catch (error) {
                 swalOptions.title = '실패!',
@@ -258,10 +263,10 @@ export default function Adm() {
                     )
                 );
                 setSelectedEF(response.data);
-                await fetchEFList(selectedActv, response.data.applyYear);
+                fetchEFList(selectedActv, response.data.applyYear);
                 
                 swalOptions.title = '성공!',
-                swalOptions.text = `${response.data.applyDvs}(이)가 성공적으로 수정되었습니다.`;
+                swalOptions.text = `${response.data.applyDvs}이(가) 성공적으로 수정되었습니다.`;
                 swalOptions.icon = 'success';
             } catch (error) {
                 swalOptions.title = '실패!',

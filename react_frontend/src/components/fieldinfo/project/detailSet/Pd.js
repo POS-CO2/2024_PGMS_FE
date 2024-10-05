@@ -67,18 +67,23 @@ export default function Pd({pjtId}) {                                           
     };
 
     const handleSubmit = () => {
+        const mgrNameList = [];
+
         setSubmittedMgrIdx([...Array(selectedEmps.length).keys()]) //등록된 현장담당자 수만큼의 인덱스 추출
         submitAction({
             data: selectedEmps,
             setterReg: setManagers,
             setterNotReg: setEmps,
             setterSelectedNotReg: setSelectedEmps,
-            requestBody: selectedEmps.map(emp => ({
-                pjtId: pjtId,
-                userId: emp.id
-            })),
+            requestBody: selectedEmps.map(emp => {
+                mgrNameList.push(emp.userName);  // mgrNameList 리스트에 추가
+                return {
+                    pjtId: pjtId,
+                    userId: emp.id
+                };
+            }),
             url: "/pjt/manager",
-            successMsg: '담당자가 성공적으로 지정되었습니다.'
+            successMsg: `${mgrNameList.join(', ')}이(가) 성공적으로 지정되었습니다.`
         })
     }
 
