@@ -1563,8 +1563,8 @@ export function EfmAddModal({ isModalOpen, handleOk, handleCancel, rowData }) {
                 <div className={sysStyles.text_field}>
                     <div className={sysStyles.text}><span className={modalStyles.star}>*</span>{"적용구분"}</div>
                     <Select value={selectedApplyDvs} allowClear={{ clearIcon: <CloseOutlined style={{color: "red"}} /> }} onChange={(value) => {setSelectedApplyDvs(value)}} style={{width:"18rem", height:"2rem",fontSize:"4rem"}}>
-                    {applyDvs.map(option => (
-                        <Select.Option key={option.code} value={option.code}>
+                    {applyDvs.map((option, index) => (
+                        <Select.Option key={`${option.value}-${index}`} value={option.code}>
                             {option.name}
                         </Select.Option>
                     ))}
@@ -1574,8 +1574,8 @@ export function EfmAddModal({ isModalOpen, handleOk, handleCancel, rowData }) {
                 <div className={sysStyles.text_field}>
                     <div className={sysStyles.text}><span className={modalStyles.star}>*</span>{"계수구분코드"}</div>
                     <Select value={selectedCoefClassCode} allowClear={{ clearIcon: <CloseOutlined style={{color: "red"}} /> }} onChange={(value) => handleInputUnitChange(value)} style={{width:"18rem", height:"2rem",fontSize:"4rem"}}>
-                    {coefClassCode.map(option => (
-                        <Select.Option key={option.code} value={option.code}>
+                    {coefClassCode.map((option, index) => (
+                        <Select.Option key={`${option.value}-${index}`} value={option.code}>
                             {option.name}
                         </Select.Option>
                     ))}
@@ -1587,8 +1587,8 @@ export function EfmAddModal({ isModalOpen, handleOk, handleCancel, rowData }) {
                     {
                         ghgCode.length !== 0 ? (
                             <Select value={selectedGhgCode} allowClear={{ clearIcon: <CloseOutlined style={{color: "red"}} /> }} placeholder="계수구분코드를 선택해주세요." onChange={(value) => {setSelectedGhgCode(value)}} style={{width:"18rem", height:"2rem",fontSize:"4rem"}}>
-                            {ghgCode.map(option => (
-                                <Select.Option key={option.code} value={option.code}>
+                            {ghgCode.map((option, index) => (
+                                <Select.Option key={`${option.value}-${index}`} value={option.code}>
                                     {option.name}
                                 </Select.Option>
                             ))}
@@ -2152,7 +2152,7 @@ export function MmAddModal({ isModalOpen, handleOk, handleCancel, rowData }) {
                     <div className={sysStyles.text}><span className={modalStyles.star}>*</span>{"상위폴더"}</div>
                     <Select value={selectedUpperDir} allowClear={{ clearIcon: <CloseOutlined style={{color: "red"}} /> }} onChange={(e) => {setSelectedUpperDir(e)}} style={{width:"18rem", height:"2rem", fontSize:"4rem"}}>
                     {upperDir.map(option => (
-                        <Select.Option key={option.id} value={option.id}>
+                        <Select.Option key={option.value} value={option.id}>
                             {option.name}
                         </Select.Option>
                     ))}
@@ -2167,7 +2167,7 @@ export function MmAddModal({ isModalOpen, handleOk, handleCancel, rowData }) {
                     <div className={sysStyles.text}><span className={modalStyles.star}>*</span>{"메뉴순서"}</div>
                     <Select placeholder={"메뉴순서"} value={orderMenu} allowClear={{ clearIcon: <CloseOutlined style={{color: "red"}} /> }} onChange={(value) => setOrderMenu(value)} style={{width:"18rem", height:"2rem", fontSize:"4rem"}}>
                     {orderMenuList.map(option => (
-                        <Select.Option key={option} value={option}>
+                        <Select.Option key={option.value} value={option}>
                             {option}
                         </Select.Option>
                     ))}
