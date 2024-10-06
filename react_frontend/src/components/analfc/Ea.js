@@ -5,7 +5,8 @@ import SearchForms from "../../SearchForms";
 import { formField_ea } from "../../assets/json/searchFormData";
 import TableCustom from "../../TableCustom.js";
 import { equipAnalLibColumns, equipAnalTypeColumns, equipAnalSourceColumns } from '../../assets/json/tableColumn';
-import { Card } from '@mui/material';
+import { Box, Card, Typography } from '@mui/material';
+import InboxIcon from '@mui/icons-material/Inbox';
 import { PieChart } from '@mui/x-charts/PieChart';
 import axiosInstance from '../../utils/AxiosInstance';
 import * as mainStyle from '../../assets/css/main.css';
@@ -134,21 +135,41 @@ export default function Ea() {
                                 <div className={chartStyles.chart_title}>{"설비별 실적 차트"}</div>
                             </div>
 
-                            <PieChart
-                                series={[
-                                    {
-                                        data: analEquipChartData,
-                                        highlightScope: { fade: 'global', highlight: 'item' },
-                                        faded: { innerRadius: 30, additionalRadius: -30, color: 'gray' },
-                                        cornerRadius: 3,
-                                        outerRadius: 150,
-                                        valueFormatter: (item) => `${item.value} kgGHG`,
-                                        arcLabel: (item) => `${item.arcLabel}`,
-                                        arcLabelMinAngle: 35,
-                                    },
-                                ]}
-                                height={400}
-                            />
+                            {analEquipChartData && analEquipChartData.length > 0 ? (
+                                <PieChart
+                                    series={[
+                                        {
+                                            data: analEquipChartData,
+                                            highlightScope: { fade: 'global', highlight: 'item' },
+                                            faded: { innerRadius: 30, additionalRadius: -30, color: 'gray' },
+                                            cornerRadius: 3,
+                                            outerRadius: 150,
+                                            valueFormatter: (item) => `${item.value} kgGHG`,
+                                            arcLabel: (item) => `${item.arcLabel}`,
+                                            arcLabelMinAngle: 35,
+                                        },
+                                    ]}
+                                    height={400}
+                                />
+                            ) : (
+                                <Box
+                                    sx={{
+                                        display: 'flex',
+                                        flexDirection: 'column',
+                                        alignItems: 'center',
+                                        justifyContent: 'center',
+                                        height: '100%',
+                                        textAlign: 'center',
+                                        padding: '2rem',
+                                    }}
+                                >
+                                    <InboxIcon sx={{ fontSize: 60, color: 'gray' }} />
+                                    <br />
+                                    <Typography variant="body2" color="textSecondary" paragraph>
+                                        현재 요청하신 조회 결과가 없습니다.
+                                    </Typography>
+                                </Box>
+                            )}
                         </Card>
 
                         <Card className={saStyles.card_box} sx={{ width: "50%", height: "auto", borderRadius: "15px" }}>

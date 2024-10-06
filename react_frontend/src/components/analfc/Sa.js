@@ -5,7 +5,8 @@ import SearchForms from "../../SearchForms";
 import { formField_sa } from "../../assets/json/searchFormData";
 import TableCustom from "../../TableCustom.js";
 import { salesAnalColumns } from '../../assets/json/tableColumn';
-import { Card } from '@mui/material';
+import { Box, Card, Typography } from '@mui/material';
+import InboxIcon from '@mui/icons-material/Inbox';
 import { BarChart } from '@mui/x-charts/BarChart';
 import axiosInstance from '../../utils/AxiosInstance';
 import * as mainStyle from '../../assets/css/main.css';
@@ -131,127 +132,167 @@ export default function Sa() {
                         <Card className={saStyles.card_box} sx={{ width: "30%", height: "35vh", borderRadius: "15px", overflow: "hidden" }}>
                             <div className={chartStyles.chart_title}>{"본부별 월별 평균 배출량/매출액"}</div>
 
-                            <BarChart
-                                dataset={avgUnitPerDiv}
-                                xAxis={[{ 
-                                    scaleType: 'band',
-                                    data: avgUnitPerDiv.map(item => item.divCode),
-                                    colorMap: {
-                                        type: 'ordinal',
-                                        colors: ['#f5f2c8', '#9ee0bc', '#8483e0', '#b5a1f3', '#f7b0ec', '#ffd7fe'],
-                                        /*colors: avgUnitPerDiv.map((item, index) => 
-                                            selectedBar === index ? '#ffcc00' : '#9ee0bc' // 클릭된 바는 강조 색상(#ffcc00)으로 설정
-                                        ),*/
-                                    }
-                                }]}
-                                yAxis={[{
-                                    position: 'left',
-                                    tickLabelStyle: {
-                                        whiteSpace: 'nowrap',  // 라벨이 잘리지 않도록 설정
-                                        overflow: 'visible',  // 오버플로우 방지
-                                        textOverflow: 'ellipsis',
-                                    },
-                                }]}
-                                series={[{
-                                    id: 'A', // seriesId 명시적으로 추가
-                                    dataKey: 'avgEmissionQtyPerSales',
-                                    highlightScope: {
-                                        highlighted: 'none', // fade 만 설정 //highlighted: 'item'
-                                        faded: 'global',  // 나머지는 흐리게 설정
-                                    },
-                                    valueFormatter: (value) => value !== null ? `${value} (kgGHG/백만원)` : null,
-                                }]} 
-                                onAxisClick={handleAxisClick}
-                                highlightedItem={highlightedItem} // 강조된 항목 설정
-                                //width={400}
-                                //height={300}
-                                borderRadius={10}
-                                margin={{ top: 10, left: 80 }}
-                                sx={{
-                                    //change left yAxis label styles
-                                    "& .MuiChartsAxis-left .MuiChartsAxis-tickLabel": {
-                                        strokeWidth: "0.4",
-                                        fontWeight: "bold",
-                                    },
-                                    // change bottom label styles
-                                    "& .MuiChartsAxis-bottom .MuiChartsAxis-tickLabel": {
-                                        strokeWidth: "0.5",
-                                        fontWeight: "bold",
-                                    },
-                                    // bottomAxis Line Styles
-                                    "& .MuiChartsAxis-bottom .MuiChartsAxis-line ": {
-                                        strokeWidth: 0.4,
-                                    },
-                                    // leftAxis Line Styles
-                                    "& .MuiChartsAxis-left .MuiChartsAxis-line": {
-                                        strokeWidth: 0.4
-                                    },
-                                }}
-                                slotProps={{
-                                    legend: {
-                                        labelStyle: {
-                                            fill: 'black',
+                            {avgUnitPerDiv && avgUnitPerDiv.length > 0 ? (
+                                <BarChart
+                                    dataset={avgUnitPerDiv}
+                                    xAxis={[{ 
+                                        scaleType: 'band',
+                                        data: avgUnitPerDiv.map(item => item.divCode),
+                                        colorMap: {
+                                            type: 'ordinal',
+                                            colors: ['#f5f2c8', '#9ee0bc', '#8483e0', '#b5a1f3', '#f7b0ec', '#ffd7fe'],
+                                            /*colors: avgUnitPerDiv.map((item, index) => 
+                                                selectedBar === index ? '#ffcc00' : '#9ee0bc' // 클릭된 바는 강조 색상(#ffcc00)으로 설정
+                                            ),*/
+                                        }
+                                    }]}
+                                    yAxis={[{
+                                        position: 'left',
+                                        tickLabelStyle: {
+                                            whiteSpace: 'nowrap',  // 라벨이 잘리지 않도록 설정
+                                            overflow: 'visible',  // 오버플로우 방지
+                                            textOverflow: 'ellipsis',
                                         },
-                                    },
-                                }}
-                            />
+                                    }]}
+                                    series={[{
+                                        id: 'A', // seriesId 명시적으로 추가
+                                        dataKey: 'avgEmissionQtyPerSales',
+                                        highlightScope: {
+                                            highlighted: 'none', // fade 만 설정 //highlighted: 'item'
+                                            faded: 'global',  // 나머지는 흐리게 설정
+                                        },
+                                        valueFormatter: (value) => value !== null ? `${value} (kgGHG/백만원)` : null,
+                                    }]} 
+                                    onAxisClick={handleAxisClick}
+                                    highlightedItem={highlightedItem} // 강조된 항목 설정
+                                    //width={400}
+                                    //height={300}
+                                    borderRadius={10}
+                                    margin={{ top: 10, left: 80 }}
+                                    sx={{
+                                        //change left yAxis label styles
+                                        "& .MuiChartsAxis-left .MuiChartsAxis-tickLabel": {
+                                            strokeWidth: "0.4",
+                                            fontWeight: "bold",
+                                        },
+                                        // change bottom label styles
+                                        "& .MuiChartsAxis-bottom .MuiChartsAxis-tickLabel": {
+                                            strokeWidth: "0.5",
+                                            fontWeight: "bold",
+                                        },
+                                        // bottomAxis Line Styles
+                                        "& .MuiChartsAxis-bottom .MuiChartsAxis-line ": {
+                                            strokeWidth: 0.4,
+                                        },
+                                        // leftAxis Line Styles
+                                        "& .MuiChartsAxis-left .MuiChartsAxis-line": {
+                                            strokeWidth: 0.4
+                                        },
+                                    }}
+                                    slotProps={{
+                                        legend: {
+                                            labelStyle: {
+                                                fill: 'black',
+                                            },
+                                        },
+                                    }}
+                                />
+                            ) : (
+                                <Box
+                                    sx={{
+                                        display: 'flex',
+                                        flexDirection: 'column',
+                                        alignItems: 'center',
+                                        justifyContent: 'center',
+                                        height: '100%',
+                                        textAlign: 'center',
+                                        padding: '2rem',
+                                    }}
+                                >
+                                    <InboxIcon sx={{ fontSize: 60, color: 'gray' }} />
+                                    <br />
+                                    <Typography variant="body2" color="textSecondary" paragraph>
+                                        현재 요청하신 조회 결과가 없습니다.
+                                    </Typography>
+                                </Box>
+                            )}
                         </Card>
                         <Card className={saStyles.card_box} sx={{ width: "70%", height: "35vh", borderRadius: "15px" }}>
                             <div className={chartStyles.chart_title}>{"상품별 월별 평균 배출량/매출액"}</div>
 
-                            <BarChart
-                                dataset={unitPerProd}
-                                xAxis={[{ 
-                                    scaleType: 'band',
-                                    data: unitPerProd.map(item => item.prodTypeCode),
-                                    colorMap: {
-                                        type: 'ordinal',
-                                        colors: ['#b8a3d6', '#97d3e7', '#b97b8c', '#e89596', '#c7e294', '#6fa7c7', '#9ed1b7', '#f1cb86', '#ef9080'],
-                                    }
-                                }]}
-                                yAxis={[{
-                                    position: 'left',
-                                    tickLabelStyle: {
-                                        whiteSpace: 'nowrap',  // 라벨이 잘리지 않도록 설정
-                                        overflow: 'visible',  // 오버플로우 방지
-                                        textOverflow: 'ellipsis',
-                                    },
-                                }]}
-                                series={[{ 
-                                    dataKey: 'avgEmissionQtyPerSales',
-                                    valueFormatter: (value) => value !== null ? `${value} (kgGHG/백만원)` : null,
-                                }]}
-                                //height={300}
-                                borderRadius={10}
-                                margin={{ top: 10, left: 80 }}
-                                sx={{
-                                    //change left yAxis label styles
-                                    "& .MuiChartsAxis-left .MuiChartsAxis-tickLabel": {
-                                        strokeWidth: "0.4",
-                                        fontWeight: "bold",
-                                    },
-                                    // change bottom label styles
-                                    "& .MuiChartsAxis-bottom .MuiChartsAxis-tickLabel": {
-                                        strokeWidth: "0.5",
-                                        fontWeight: "bold",
-                                    },
-                                    // bottomAxis Line Styles
-                                    "& .MuiChartsAxis-bottom .MuiChartsAxis-line ": {
-                                        strokeWidth: 0.4,
-                                    },
-                                    // leftAxis Line Styles
-                                    "& .MuiChartsAxis-left .MuiChartsAxis-line": {
-                                        strokeWidth: 0.4
-                                    },
-                                }}
-                                slotProps={{
-                                    legend: {
-                                        labelStyle: {
-                                            fill: 'black',
+                            {unitPerProd && unitPerProd.length > 0 ? (
+                                <BarChart
+                                    dataset={unitPerProd}
+                                    xAxis={[{ 
+                                        scaleType: 'band',
+                                        data: unitPerProd.map(item => item.prodTypeCode),
+                                        colorMap: {
+                                            type: 'ordinal',
+                                            colors: ['#b8a3d6', '#97d3e7', '#b97b8c', '#e89596', '#c7e294', '#6fa7c7', '#9ed1b7', '#f1cb86', '#ef9080'],
+                                        }
+                                    }]}
+                                    yAxis={[{
+                                        position: 'left',
+                                        tickLabelStyle: {
+                                            whiteSpace: 'nowrap',  // 라벨이 잘리지 않도록 설정
+                                            overflow: 'visible',  // 오버플로우 방지
+                                            textOverflow: 'ellipsis',
                                         },
-                                    },
-                                }}
-                            />
+                                    }]}
+                                    series={[{ 
+                                        dataKey: 'avgEmissionQtyPerSales',
+                                        valueFormatter: (value) => value !== null ? `${value} (kgGHG/백만원)` : null,
+                                    }]}
+                                    //height={300}
+                                    borderRadius={10}
+                                    margin={{ top: 10, left: 80 }}
+                                    sx={{
+                                        //change left yAxis label styles
+                                        "& .MuiChartsAxis-left .MuiChartsAxis-tickLabel": {
+                                            strokeWidth: "0.4",
+                                            fontWeight: "bold",
+                                        },
+                                        // change bottom label styles
+                                        "& .MuiChartsAxis-bottom .MuiChartsAxis-tickLabel": {
+                                            strokeWidth: "0.5",
+                                            fontWeight: "bold",
+                                        },
+                                        // bottomAxis Line Styles
+                                        "& .MuiChartsAxis-bottom .MuiChartsAxis-line ": {
+                                            strokeWidth: 0.4,
+                                        },
+                                        // leftAxis Line Styles
+                                        "& .MuiChartsAxis-left .MuiChartsAxis-line": {
+                                            strokeWidth: 0.4
+                                        },
+                                    }}
+                                    slotProps={{
+                                        legend: {
+                                            labelStyle: {
+                                                fill: 'black',
+                                            },
+                                        },
+                                    }}
+                                />
+                            ) : (
+                                <Box
+                                    sx={{
+                                        display: 'flex',
+                                        flexDirection: 'column',
+                                        alignItems: 'center',
+                                        justifyContent: 'center',
+                                        height: '100%',
+                                        textAlign: 'center',
+                                        padding: '2rem',
+                                    }}
+                                >
+                                    <InboxIcon sx={{ fontSize: 60, color: 'gray' }} />
+                                    <br />
+                                    <Typography variant="body2" color="textSecondary" paragraph>
+                                        현재 요청하신 조회 결과가 없습니다.
+                                    </Typography>
+                                </Box>
+                            )}
                         </Card>
                     </div>
                     
