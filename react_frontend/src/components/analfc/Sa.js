@@ -83,22 +83,31 @@ export default function Sa() {
 
 
     const handleAxisClick = async (event, data, AxisData) => {
-        setSelectedDiv(data.axisValue); // 클릭된 축의 데이터를 상태에 저장
-        setSelectedBar(data.dataIndex); // 클릭된 바의 인덱스를 상태에 저장
-        setHighlightedItem({ seriesId: 'A', dataIndex: data.dataIndex }); // 클릭된 항목을 강조
+        if (selectedBar === data.dataIndex) {
+            // 선택된 바를 다시 클릭하면 전체 데이터를 다시 불러옴
+            handleFormSubmit(formData);
+            setSelectedDiv(null); // 선택된 본부 초기화
+            setSelectedBar(null); // 선택된 바 초기화
+            setHighlightedItem(null); // 강조된 항목 초기화
 
-        const startDate = `${formData.calendar[0].$y}-${(formData.calendar[0].$M + 1).toString().padStart(2, '0')}`;
-        const endDate = `${formData.calendar[1].$y}-${(formData.calendar[1].$M + 1).toString().padStart(2, '0')}`;
+        } else {
+            setSelectedDiv(data.axisValue); // 클릭된 축의 데이터를 상태에 저장
+            setSelectedBar(data.dataIndex); // 클릭된 바의 인덱스를 상태에 저장
+            setHighlightedItem({ seriesId: 'A', dataIndex: data.dataIndex }); // 클릭된 항목을 강조
 
-        // 본부별 상품
-        let url = `/anal/sales/prod-div?startDate=${startDate}&endDate=${endDate}&divCode=${data.axisValue}`;
-        const newPerProdChartResponse = await axiosInstance.get(url);
-        setUnitPerProd(newPerProdChartResponse.data);
+            const startDate = `${formData.calendar[0].$y}-${(formData.calendar[0].$M + 1).toString().padStart(2, '0')}`;
+            const endDate = `${formData.calendar[1].$y}-${(formData.calendar[1].$M + 1).toString().padStart(2, '0')}`;
 
-        // 본부별 테이블
-        url = `/anal/sales/table-div?startDate=${startDate}&endDate=${endDate}&divCode=${data.axisValue}`;
-        const newTableResponse = await axiosInstance.get(url);
-        setSalesTableData(newTableResponse.data);
+            // 본부별 상품
+            let url = `/anal/sales/prod-div?startDate=${startDate}&endDate=${endDate}&divCode=${data.axisValue}`;
+            const newPerProdChartResponse = await axiosInstance.get(url);
+            setUnitPerProd(newPerProdChartResponse.data);
+
+            // 본부별 테이블
+            url = `/anal/sales/table-div?startDate=${startDate}&endDate=${endDate}&divCode=${data.axisValue}`;
+            const newTableResponse = await axiosInstance.get(url);
+            setSalesTableData(newTableResponse.data);
+        }
     };
 
     return (
