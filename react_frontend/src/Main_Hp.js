@@ -102,11 +102,11 @@ const chartOptions = (title) => {
     },
     yaxis: {
         title: {
-            text: "배출량" // Y축에 표시될 제목
+            text: "배출량(kgGHG)" // Y축에 표시될 제목
         },
         labels: {
             formatter: function (value) {
-                return Math.floor(value);
+                return `${Math.floor(value)}`;
             }
         }
     },
