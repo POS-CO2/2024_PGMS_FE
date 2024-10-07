@@ -7,12 +7,15 @@ const { RangePicker } = DatePicker;
 
 export default function SelectCalendar({ name, label, required=false, isAnal=false }) {
 
-    const customMonthRender = (current) => {
-        return (
-            <div className="ant-picker-cell-inner">
-                {dayjs(current).format('M')}월
-            </div>
-        );
+    const customMonthRender = (current, info) => {
+        if (info.type === 'month') {
+            return (
+                <div className="ant-picker-cell-inner">
+                    {dayjs(current).format('M')}월
+                </div>
+            );
+        }
+        return info.originNode; // 기본 렌더링
     };
 
     // 현재 월의 전 월까지만 선택 가능하도록 설정
@@ -27,7 +30,28 @@ export default function SelectCalendar({ name, label, required=false, isAnal=fal
     };
 
     return (
-        <ConfigProvider locale={{ locale: 'ko' }} theme={{ token:{ fontFamily:"SUITE-Regular"}}}>
+        <ConfigProvider
+            locale={{ locale: "ko" }}
+            theme={{
+                components: {
+                    DatePicker: {
+                        // activeBorderColor: "#66C65E",
+                        activeBorderColor: "#0EAA00",
+                        cellActiveWithRangeBg: "#c3e59e",
+                        cellRangeBorderColor: "#0EAA00",
+                        hoverBorderColor: "#0EAA00",
+                        multipleItemBg: "#0EAA00",
+                        addonBg: "#0EAA00",
+                        multipleItemBorderColor: "#0EAA00"
+        
+                    },
+                },
+                token: {
+                    colorPrimary: "#0EAA00",
+                    fontFamily: "SUITE-Regular",
+                }
+            }}
+        >
             <Form.Item
                 className={formItemStyles.form_item}
                 name={name}
@@ -36,8 +60,7 @@ export default function SelectCalendar({ name, label, required=false, isAnal=fal
             >
                 <RangePicker
                     picker="month"
-                    monthCellRender={customMonthRender} // 커스텀 월 렌더링
-                    disabledDate={isAnal ? disabledDate : undefined} // 비활성화 날짜 설정
+                    cellRender={customMonthRender} // 커스텀 월 렌더링
                 />
             </Form.Item>
         </ConfigProvider>

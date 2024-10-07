@@ -13,7 +13,9 @@ import InboxIcon from '@mui/icons-material/Inbox';
 import zIndex from '@mui/material/styles/zIndex';
 
 // TableCell을 스타일링하는 컴포넌트
-const StyledTableCell = styled(TableCell)(({ theme, isHighlighted, isEditable, isCheckbox, isExpandedRow=false }) => ({
+const StyledTableCell = styled(
+    ({ isCheckbox, isHighlighted, isEditable, isExpandedRow, ...rest }) => <TableCell {...rest} />
+  )(({ theme, isHighlighted, isEditable, isCheckbox, isExpandedRow = false }) => ({
     position: "sticky",  // 헤더 고정을 위한 sticky 사용
     top: 0,              // sticky 위치 설정 (필수)
     zIndex: 2,
@@ -329,12 +331,12 @@ export default function CustomizedTables({
                                     <React.Fragment key={rowIndex}>
                                         <StyledTableRow 
                                             key={rowIndex + (rowsPerPage * page)}
-                                            submitted={submittedRowIdx.includes(rowIndex + (rowsPerPage * page))}
+                                            submitted={submittedRowIdx.includes(rowIndex + (rowsPerPage * page)) ? 'true' : undefined}
                                             selected={variant === 'checkbox' 
                                                 ? selectedRows.includes(rowIndex) 
                                                 : selectedRow === rowIndex + (rowsPerPage * page)}
                                                 variant={variant}
-                                                edited={editedRows.includes(rowIndex + (rowsPerPage * page))} // 수정된 행을 식별
+                                                edited={editedRows.includes(rowIndex + (rowsPerPage * page)) ? 'true' : undefined} // 수정된 행을 식별
                                                 onClick={() => handleRowClick(rowIndex + (rowsPerPage * page))}
                                                 >
                                             {   // checkbox가 있는 테이블이면 체크박스 셀 추가
@@ -468,13 +470,13 @@ export default function CustomizedTables({
                                     filteredData.map((row, index) => (
                                         <StyledTableRow 
                                             key={index}
-                                            submitted={submittedRowIdx.includes(index)}
+                                            submitted={submittedRowIdx.includes(index) ? 'true' : undefined}
                                             selected={
                                                 variant === 'checkbox' 
                                                 ? selectedRows.includes(index) 
                                                 : selectedRow === index
                                             }
-                                            edited={editedRows.includes(index)} // 수정된 행을 식별
+                                            edited={editedRows.includes(index) ? 'true' : undefined} // 수정된 행을 식별
                                             onClick={(e) => handleRowClick(index, e)}
                                         >
                                             {   // checkbox가 있는 테이블이면 체크박스 셀 추가

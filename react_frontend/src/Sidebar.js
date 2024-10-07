@@ -125,24 +125,30 @@ export default function Sidebar({ collapsed, toggleCollapsed, items, onMenuClick
   const [openKeys, setOpenKeys] = useRecoilState(openKeysState);
 
   // label 뒤에 * 추가하는 새로운 items 배열 생성
-  const itemsWithAsterisk = items.map(item => ({
-    ...item, // 기존 item의 나머지 속성 유지
-    label: (
-      <>
-        {item.label}
-        {item.accessUser !== 'FP' && <span style={{ color: '#FF7474' }}> *</span>}
-      </>
-    ),
-    children: item.children ? item.children.map(child => ({
-      ...child,
+  const itemsWithAsterisk = items.map(item => {
+    const { accessUser, ...restItem } = item; // accessUser를 item에서 분리
+    return {
+      ...restItem,  // 나머지 item 속성만을 사용
       label: (
         <>
-          {child.label}
-          {child.accessUser !== 'FP' && <span style={{ color: '#FF7474' }}> *</span>}
+          {item.label}
+          {accessUser !== 'FP' && <span style={{ color: '#FF7474' }}> *</span>}
         </>
-      )
-    })) : null
-  }));
+      ),
+      children: item.children ? item.children.map(child => {
+        const { accessUser: childAccessUser, ...restChild } = child; // 자식에서도 accessUser를 분리
+        return {
+          ...restChild,
+          label: (
+            <>
+              {child.label}
+              {childAccessUser !== 'FP' && <span style={{ color: '#FF7474' }}> *</span>}
+            </>
+          ),
+        };
+      }) : null,
+    };
+  });
 
   // 마지막으로 선택한 대분류 토글만 내리기
   const handleOpenChange = (keys) => {

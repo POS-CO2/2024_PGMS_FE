@@ -579,9 +579,9 @@ export default function Mm({menus, handleMenuSet}) {
                             {fpMenu.map((e) => {
                                 if (e.level === 2) {
                                     return (
-                                        <>
-                                        <Divider />
-                                        <AccordionDetails sx={{marginLeft:"2rem", display:"flex", flexDirection:"column"}}>
+                                        <React.Fragment key={`${e.id}-fragment`}>
+                                        <Divider key={`${e.id}-divider`} />
+                                        <AccordionDetails key={e.id} sx={{marginLeft:"2rem", display:"flex", flexDirection:"column"}}>
                                             <div style={{display:"flex", flexDirection:"row", alignItems:"center", gap:"0.6rem"}}>
                                                 <div style={{fontSize:"1.2rem"}}>
                                                 {`${e.name}`}
@@ -595,14 +595,14 @@ export default function Mm({menus, handleMenuSet}) {
                                             <Public sx={{color:"green", marginRight:"0.6rem"}}/>{` : ${e.url}`}
                                             </div>
                                         </AccordionDetails>
-                                        </>
+                                        </React.Fragment>
                                     );
                                 }
                                 else if (e.level === 3) {
                                     return (
-                                        <>
-                                        <Divider />
-                                        <AccordionDetails sx={{marginLeft:"2rem"}}>
+                                        <React.Fragment key={`${e.id}-fragment`}>
+                                        <Divider key={`${e.id}-divider`} />
+                                        <AccordionDetails key={e.id} sx={{marginLeft:"2rem"}}>
                                             <div style={{display:"flex", flexDirection:"row", alignItems:"center", gap:"0.6rem"}}>
                                                 <div style={{fontSize:"1.2rem"}}>
                                                 {`${e.name}`}
@@ -616,7 +616,7 @@ export default function Mm({menus, handleMenuSet}) {
                                             <Public sx={{color:"green", marginRight:"0.6rem"}}/>{` : ${e.url}`}
                                             </div>
                                         </AccordionDetails>
-                                        </>
+                                        </React.Fragment>
                                     );
                                 }
                             })}
@@ -642,9 +642,9 @@ export default function Mm({menus, handleMenuSet}) {
                             {hpMenu.map((e) => {
                                 if (e.level === 2) {
                                     return (
-                                        <>
-                                        <Divider />
-                                        <AccordionDetails sx={{marginLeft:"2rem", display:"flex", flexDirection:"column"}}>
+                                        <React.Fragment key={`${e.id}-fragment`}>
+                                        <Divider key={`${e.id}-divider`} />
+                                        <AccordionDetails key={e.id} sx={{marginLeft:"2rem", display:"flex", flexDirection:"column"}}>
                                             <div style={{display:"flex", flexDirection:"row", alignItems:"center", gap:"0.6rem"}}>
                                                 <div style={{fontSize:"1.2rem"}}>
                                                 {`${e.name}`}
@@ -658,14 +658,14 @@ export default function Mm({menus, handleMenuSet}) {
                                             <Public sx={{color:"green", marginRight:"0.6rem"}}/>{` : ${e.url}`}
                                             </div>
                                         </AccordionDetails>
-                                        </>
+                                        </React.Fragment>
                                     );
                                 }
                                 else if (e.level === 3) {
                                     return (
-                                        <>
-                                        <Divider />
-                                        <AccordionDetails sx={{marginLeft:"2rem"}}>
+                                        <React.Fragment key={`${e.id}-fragment`}>
+                                        <Divider key={`${e.id}-divider`} />
+                                        <AccordionDetails key={e.id} sx={{marginLeft:"2rem"}}>
                                             <div style={{display:"flex", flexDirection:"row", alignItems:"center", gap:"0.6rem"}}>
                                                 <div style={{fontSize:"1.2rem"}}>
                                                 {`${e.name}`}
@@ -679,7 +679,7 @@ export default function Mm({menus, handleMenuSet}) {
                                             <Public sx={{color:"green", marginRight:"0.6rem"}}/>{` : ${e.url}`}
                                             </div>
                                         </AccordionDetails>
-                                        </>
+                                        </React.Fragment>
                                     );
                                 }
                             })}
@@ -705,9 +705,9 @@ export default function Mm({menus, handleMenuSet}) {
                             {adminMenu.map((e) => {
                                 if (e.level === 2) {
                                     return (
-                                        <>
-                                        <Divider />
-                                        <AccordionDetails sx={{marginLeft:"2rem", display:"flex", flexDirection:"column"}}>
+                                        <React.Fragment key={`${e.id}-fragment`}>
+                                        <Divider key={`${e.id}-divider`} />
+                                        <AccordionDetails key={e.id} sx={{marginLeft:"2rem", display:"flex", flexDirection:"column"}}>
                                             <div style={{display:"flex", flexDirection:"row", alignItems:"center", gap:"0.6rem"}}>
                                                 <div style={{fontSize:"1.2rem"}}>
                                                 {`${e.name}`}
@@ -721,14 +721,14 @@ export default function Mm({menus, handleMenuSet}) {
                                             <Public sx={{color:"green", marginRight:"0.6rem"}}/>{` : ${e.url}`}
                                             </div>
                                         </AccordionDetails>
-                                        </>
+                                        </React.Fragment>
                                     );
                                 }
                                 else if (e.level === 3) {
                                     return (
-                                        <>
-                                        <Divider />
-                                        <AccordionDetails sx={{marginLeft:"2rem"}}>
+                                        <React.Fragment key={`${e.id}-fragment`}>
+                                        <Divider key={`${e.id}-divider`} />
+                                        <AccordionDetails key={e.id} sx={{marginLeft:"2rem"}}>
                                             <div style={{display:"flex", flexDirection:"row", alignItems:"center", gap:"0.6rem"}}>
                                                 <div style={{fontSize:"1.2rem"}}>
                                                 {`${e.name}`}
@@ -742,7 +742,7 @@ export default function Mm({menus, handleMenuSet}) {
                                             <Public sx={{color:"green", marginRight:"0.6rem"}}/>{` : ${e.url}`}
                                             </div>
                                         </AccordionDetails>
-                                        </>
+                                        </React.Fragment>
                                     );
                                 }
                             })}
