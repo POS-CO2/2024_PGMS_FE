@@ -1,4 +1,5 @@
 import { atom } from 'recoil';
+import { localStorageEffect } from './localStorageEffect';
 
 // 열려있는 탭 목록
 export const openTabsState = atom({
@@ -28,10 +29,16 @@ export const itemsState = atom({
 export const selectedKeyState = atom({
   key: 'selectedKeyState',
   default: null, // 기본값: 선택된 항목 없음
+  effects: [
+    localStorageEffect('selectedKeyState'), // 로컬 스토리지와 동기화
+],
 });
 
 // 열려 있는 대분류 키 상태
 export const openKeysState = atom({
   key: 'openKeysState',
   default: [],
+  effects: [
+    localStorageEffect('openKeysState'), // 로컬 스토리지와 동기화
+],
 });
