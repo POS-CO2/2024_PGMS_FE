@@ -10,7 +10,7 @@ import Paper from '@mui/material/Paper';
 import { pjtManagerColumns } from './assets/json/tableColumn';
 import { Box, Checkbox, TablePagination, TextField, Card, CardContent, Typography, CardMedia  } from '@mui/material';
 import InboxIcon from '@mui/icons-material/Inbox';
-import zIndex from '@mui/material/styles/zIndex';
+import Avatar from '@mui/material/Avatar';
 
 // TableCell을 스타일링하는 컴포넌트
 const StyledTableCell = styled(
@@ -431,12 +431,12 @@ export default function CustomizedTables({
                                                                         alignItems: 'center',
                                                                     }}
                                                                 >
-                                                                    <CardMedia
-                                                                        component="img"
-                                                                        sx={{ width: '4rem', height: '4rem', marginRight: '1rem', marginLeft: '1rem' }}  // 이미지 크기 설정
-                                                                        image={imageUrl} // 이미지 URL
-                                                                        alt={`${manager.userName} 프로필 이미지`}
-                                                                    />
+                                                                    {/* 성을 표시하는 Avatar 컴포넌트 */}
+                                                                    <Avatar 
+                                                                        sx={{ width: '2rem', height: '2rem', marginRight: '0.5rem', marginLeft: '0.5rem', bgcolor: '#0EAA00', fontSize: '1.5rem' }} 
+                                                                    >
+                                                                        {manager.userName ? manager.userName.charAt(0) : ''}
+                                                                    </Avatar>
                                                                     <Box>
                                                                         <CardContent>
                                                                             {pjtManagerColumns

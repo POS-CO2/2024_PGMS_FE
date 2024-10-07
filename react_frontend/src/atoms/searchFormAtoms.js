@@ -12,6 +12,12 @@ export const selectedPjtFPState = atom({
     default: {},
 });
 
+// 선택한 분석기간(분석 페이지)
+export const selectedPeriodState = atom({
+    key: 'selectedPeriodState',
+    default: [],
+});
+
 // 활동량 관리 메뉴의 서치폼
 export const emissionSourceForm = atom({
     key: 'emissionSourceForm',

@@ -58,10 +58,9 @@ export default function Psq_Fp() {
 
     // formData의 searchProject 값만 변경하는 함수
     const updateSearchProject = (newValue) => {
-        console.log("cc");
         setFormData((prevFormData) => ({
-        ...prevFormData,
-        searchProject: newValue,  // searchProject 값만 업데이트
+            ...prevFormData,
+            searchProject: newValue,  // searchProject 값만 업데이트
         }));
     };
 

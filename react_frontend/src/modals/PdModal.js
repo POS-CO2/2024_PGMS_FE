@@ -763,8 +763,6 @@ export function FamEditModal({ isModalOpen, handleOk, handleCancel, rowData, dro
                 </div>
                 <button className={rmStyles.select_button} onClick={handleSelect}>수정</button>
             </div>
-
-            
         </Modal>
     )
 }
