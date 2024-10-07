@@ -440,8 +440,7 @@ export default function Main_Admin({ handleMenuClick=()=>{} }) {
             const year = priorDate.getFullYear();
             const month = priorDate.getMonth() + 1;
             const day = priorDate.getDate();
-        
-            days.push(`${year}-${String(month).padStart(2, '0')}-${day}`);
+            days.push(`${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`);
         }
     
         return days.reverse(); // 과거 -> 현재 순으로 정렬
