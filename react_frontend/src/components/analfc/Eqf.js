@@ -38,13 +38,13 @@ export default function Eqf() { //Emission Quantity Forecast
             let url = `/anal/prediction`;
             try {
                 const response = await axiosInstance.get(url);
+                console.log(response.data);
                 setCaData(response.data);
-                //setCaData(eqfData);
                 
             } catch (error) {
                 console.error("Error fetching data:", error);
             } finally {
-                await new Promise(resolve => setTimeout(resolve, 3000));//////////////////////////
+                //await new Promise(resolve => setTimeout(resolve, 3000));
                 setIsLoading(false); // 로딩 완료
             }
         };
@@ -98,7 +98,7 @@ export default function Eqf() { //Emission Quantity Forecast
                                 series={[
                                     {
                                         name: '배출량',
-                                        data: caData.map(data => data.emission_qty),
+                                        data: caData.map(data => data.emissionQty),
                                     }
                                 ]}
                                 options={{

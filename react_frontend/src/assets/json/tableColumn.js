@@ -283,6 +283,5 @@ export const eqfColumns = [
     { key: 'electric', label: '전기 요금', hidden: false },
     { key: 'hardCoal', label: '무연탄 가격', hidden: false },
     { key: 'diesel', label: '경유 가격', hidden: false },
-    { key: 'sales', label: '매출액(백만원)', hidden: false },
     { key: 'emissionQty', label: '배출량(kgGHG)', hidden: false },
 ]
