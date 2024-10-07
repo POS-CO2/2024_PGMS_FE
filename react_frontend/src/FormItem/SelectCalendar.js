@@ -61,6 +61,7 @@ export default function SelectCalendar({ name, label, required=false, isAnal=fal
                 <RangePicker
                     picker="month"
                     cellRender={customMonthRender} // 커스텀 월 렌더링
+                    disabledDate={isAnal ? disabledDate : undefined} // 비활성화 날짜 설정
                 />
             </Form.Item>
         </ConfigProvider>
