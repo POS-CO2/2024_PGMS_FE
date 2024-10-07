@@ -12,8 +12,6 @@ import * as psqStyles from "../../assets/css/psq.css"
 import * as XLSX from 'xlsx';
 import styled from 'styled-components';
 
-import { eqfData } from "../../assets/json/saDataEx.js"
-
 const Overlay = styled('div')({
     position: 'absolute',
     top: 0,
