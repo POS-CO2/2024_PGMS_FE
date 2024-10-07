@@ -9,10 +9,14 @@ export function CustomBarChart({ data }){
         <div style={{width:"100%", height:"100%"}}>
             <BarChart
                 borderRadius={10}
-                series={data}
+                // series={data}
                 // barLabel={(item, context) => {
                 //     return context.bar.height < 60 ? null : item.value?.toString();
                 // }}
+                series={data.map((item) => ({
+                    ...item,
+                    valueFormatter: (value) => value !== null ? `${value.toFixed(2)} kgGHG` : null,
+                }))}
                 xAxis={[
                     {
                         scaleType: 'band',

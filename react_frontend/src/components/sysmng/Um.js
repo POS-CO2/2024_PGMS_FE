@@ -232,7 +232,7 @@ export default function Um() {
             {(!userList || userList.length === 0) ? 
                 <></> :
                 <div className={sysStyles.main_grid}>
-                    <Card className={sysStyles.card_box} sx={{width:"50%", height:"77vh", borderRadius:"15px"}}>
+                    <Card className={sysStyles.card_box} sx={{width:"50%", height:"auto", borderRadius:"15px"}}>
                         <TableCustom title="사용자목록" columns={userColumns} data={patchedUserList} submittedRowIdx={submittedUserIdx} buttons={['Delete', 'Add']} selectedRows={[selectedUser]} onClicks={[handleDeleteClick, handleAddClick]} onRowClick={(e) => handleRowClick(e)} modals={
                             [
                                 isModalOpen.UmAdd && {
@@ -253,12 +253,16 @@ export default function Um() {
                             ].filter(Boolean)
                         }/>
                     </Card>
-                    <Card className={sysStyles.card_box} sx={{width:"50%", borderRadius:"15px", height:"77vh"}}>
+                    <Card className={sysStyles.card_box} sx={{width:"50%", borderRadius:"15px", height:"70vh"}}>
                         {(!selectedUser || Object.keys(selectedUser).length !== 0) ? (
                             <ConfigProvider theme={{token:{fontFamily:"SUITE-Regular"}}}>
                                 <TableCustom title='사용자 상세정보' buttons={['DoubleClickEdit']} onClicks={[handleEditClick]} table={false} selectedRows={[selectedUser]}/>
                                 <div className={sysStyles.card_box}>
                                     <div className={sysStyles.text_field} style={{marginTop:"2rem",width:"50%"}}>
+                                        <div className={sysStyles.text}><span className={modalStyles.star}>*</span>{"이름"}</div>
+                                            <TextField size="small" id='userName'  variant='outlined' onChange={handleInputChange} value={selectedUser.userName || ""} sx={{width:"100%"}}/>
+                                    </div>
+                                    <div className={sysStyles.text_field} style={{marginTop:"0.5rem",width:"50%"}}>
                                         <div className={sysStyles.text}>
                                             <span className={modalStyles.star}>*</span>{"로그인ID"}
                                         </div>
@@ -269,10 +273,6 @@ export default function Um() {
                                             <span className={modalStyles.star}>*</span>{"비밀번호"}
                                         </div>
                                         <TextField size="small" placeholder='비밀번호를 입력하지 않으면 기존 비밀번호가 유지됩니다.' id='password'  variant='outlined' onChange={(e) => setPassword(e.target.value)} value={password || ""} sx={{width:"100%"}}/>
-                                    </div>
-                                    <div className={sysStyles.text_field} style={{marginTop:"0.5rem",width:"50%"}}>
-                                        <div className={sysStyles.text}><span className={modalStyles.star}>*</span>{"이름"}</div>
-                                            <TextField size="small" id='userName'  variant='outlined' onChange={handleInputChange} value={selectedUser.userName || ""} sx={{width:"100%"}}/>
                                     </div>
                                 </div>
                                 <div className={sysStyles.text_field} style={{marginTop:"0.5rem",width:"50%"}}>
