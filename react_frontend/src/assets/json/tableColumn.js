@@ -244,7 +244,7 @@ export const salesAnalColumns = [
     //{ key: 'emissionQtyPerSales', label: '배출량/매출액', hidden: true },
     { key: 'formattedTotalEmissionQty', label: '총배출량(kgGHG)', hidden: false },
     { key: 'formattedTotalSales', label: '매출액(백만원)', hidden: false },
-    { key: 'formattedEmissionQtyPerSales', label: '배출량/매출액', hidden: false },
+    { key: 'formattedEmissionQtyPerSales', label: '배출량/매출액(kgGHG/백만원)', hidden: false },
 ]
 
 export const equipAnalLibColumns = [
