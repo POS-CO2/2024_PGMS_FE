@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Modal, Button, Upload, Select, Input, ConfigProvider } from 'antd';
+import { Modal, Select, Input, ConfigProvider } from 'antd';
 import Swal from 'sweetalert2';
 import { useRecoilValue, useRecoilState } from 'recoil';
 import { selectedSuppDocState } from '../atoms/pdsAtoms';
@@ -19,7 +19,6 @@ import * as rmStyles from "../assets/css/rmModal.css";
 import * as delStyle from "../assets/css/delModal.css";
 import * as pjtModalStyles from "../assets/css/pjtModal.css";
 import * as sdStyles from "../assets/css/sdModal.css";
-import * as pdsStyles from "../assets/css/pds.css";
 import * as sysStyles from "../assets/css/sysmng.css"
 import * as ps12Styles from "../assets/css/ps12UploadExcelModal.css";
 
@@ -990,8 +989,8 @@ export function Ps12UploadExcelModal({ isModalOpen, handleOk, handleCancel }) { 
 
             <div className={ps12Styles.header_container}>
                 <div className={ps12Styles.input_title}>
-                    첨부파일
-                    <span className={ps12Styles.requiredAsterisk}>*</span>
+                    <span className={modalStyles.star}>*</span>첨부파일
+                    {/* <span className={ps12Styles.requiredAsterisk}>*</span> */}
                 </div>
                 <div>
                     <input
@@ -1132,7 +1131,6 @@ export function CmAddModal({ isModalOpen, handleOk, handleCancel }) {
             <div style={{display:"flex", justifyContent:"center", alignContent:"center"}}>
                 <button style={{width:"18rem"}} className={modalStyles.select_button} onClick={handleSelect}>등록</button>
             </div>
-            
         </Modal>
         </ConfigProvider>
     )
@@ -1290,10 +1288,6 @@ export function CmListAddModal({ isModalOpen, handleOk, handleCancel, rowData })
     const [error, setError] = useState({});
 
     const handleSelect = async() => {
-        let swalOptions = {
-            confirmButtonText: '확인'
-        };
-
         const formData = {
             codeGrpNo: rowData.codeGrpNo,
             codeGrpName: rowData.codeGrpName,
@@ -1315,7 +1309,7 @@ export function CmListAddModal({ isModalOpen, handleOk, handleCancel, rowData })
         setError({});
 
         // handleOk을 호출하여 모달을 닫고 상위 컴포넌트에 알림
-         handleOk(formData);
+        handleOk(formData);
     };
 
     return (
@@ -1383,9 +1377,6 @@ export function CmListEditModal({ isModalOpen, handleOk, handleCancel, rowData }
     const [note, setNote] = useState(rowData.note);
     const [error, setError] = useState({});
     const handleSelect = async() => {
-        let swalOptions = {
-            confirmButtonText: '확인'
-        };
         const formData = {
             id: rowData.id,
             codeGrpNo: rowData.codeGrpNo,
@@ -1491,7 +1482,6 @@ export function EfmAddModal({ isModalOpen, handleOk, handleCancel, rowData }) {
         if(!formData.applyYear) newError.applyYear = '적용년도를 입력해주세요.';
         if(!formData.applyDvs) newError.applyDvs = '적용구분을 입력해주세요.';
         if(!formData.coefClassCode) newError.coefClassCode = '계수구분코드를 선택해주세요.';
-        if(!formData.unitCode) newError.unitCode = '계수구분코드를 선택해주세요.';
         if(!formData.coef) newError.coef = '계수를 입력해주세요.';
         if (Object.keys(newError).length > 0) {
             setError(newError);
@@ -1509,17 +1499,29 @@ export function EfmAddModal({ isModalOpen, handleOk, handleCancel, rowData }) {
             const appDvsResponse = await axiosInstance.get(`/sys/unit?unitType=적용구분`);
             setApplyDvs(appDvsResponse.data);
 
-            const coefResponse = [
-                {
-                    "code": 2,
-                    "name": "순발열량"
-                },
-                {
-                    "code": 1,
-                    "name": "배출계수"
-                }
-            ]
-            setCoefClassCode(coefResponse);
+            if (rowData.actvDataDvs === "열") {
+                const coefResponse = [
+                    {
+                        "code": 1,
+                        "name": "배출계수",
+                    }
+                ]
+                setCoefClassCode(coefResponse);
+            }
+            else {
+                const coefResponse = [
+                    {
+                        "code": 2,
+                        "name": "순발열량"
+                    },
+                    {
+                        "code": 1,
+                        "name": "배출계수"
+                    }
+                ]
+                setCoefClassCode(coefResponse);
+            }
+            
             const ghgResponse = await axiosInstance.get(`/sys/coef-unit?inputUnitCode=${rowData.inputUnitCode}`)
             setAfterSelectedCoefClassCode(ghgResponse.data);
         };
@@ -1542,6 +1544,7 @@ export function EfmAddModal({ isModalOpen, handleOk, handleCancel, rowData }) {
             setUnitCode("");
         }
     }
+
 
     return (
         <ConfigProvider
@@ -1586,24 +1589,24 @@ export function EfmAddModal({ isModalOpen, handleOk, handleCancel, rowData }) {
                 </div>
                 <div className={sysStyles.text_field}>
                     <div className={sysStyles.text}><span className={modalStyles.star}>*</span>{"온실가스코드"}</div>
-                    {ghgCode.length !== 0 ? (
-                        <Select value={selectedGhgCode} allowClear={{ clearIcon: <CloseOutlined style={{color: "red"}} /> }} placeholder="계수구분코드를 선택해주세요." onChange={(value) => {setSelectedGhgCode(value)}} style={{width:"18rem", height:"2rem",fontSize:"4rem"}}>
-                        {ghgCode.map(option => (
-                            <Select.Option key={option.code} value={option.code}>
-                                {option.name}
-                            </Select.Option>
-                        ))}
-                        </Select>
-                    ) : (
-                        <Select disabled placeholder="순발열량은 온실가스코드가 없습니다." style={{width:"18rem", height:"2rem",fontSize:"4rem"}}>
-                        </Select>
-                    )}
-                    
+                    {
+                        ghgCode.length !== 0 ? (
+                            <Select value={selectedGhgCode} allowClear={{ clearIcon: <CloseOutlined style={{color: "red"}} /> }} placeholder="계수구분코드를 선택해주세요." onChange={(value) => {setSelectedGhgCode(value)}} style={{width:"18rem", height:"2rem",fontSize:"4rem"}}>
+                            {ghgCode.map(option => (
+                                <Select.Option key={option.code} value={option.code}>
+                                    {option.name}
+                                </Select.Option>
+                            ))}
+                            </Select>
+                        ) : (
+                            <Select disabled placeholder="순발열량은 온실가스코드가 없습니다." style={{width:"18rem", height:"2rem",fontSize:"4rem"}}>
+                            </Select>
+                        )
+                    }
                 </div>
                 <div className={sysStyles.text_field}>
-                    <div className={sysStyles.text}><span className={modalStyles.star}>*</span>{"단위"}</div>
-                    <Input id='unitCode' allowClear={{ clearIcon: <CloseOutlined style={{color: "red"}} /> }} value={unitCode} disabled label="단위" style={{width:"18rem"}} />
-                    {error.unitCode && <div className={modalStyles.error_message}>{error.unitCode}</div>}
+                    <div className={sysStyles.text}>{"단위"}</div>
+                    <Input id='unitCode' placeholder='계수구분코드를 선택해주세요.' allowClear={{ clearIcon: <CloseOutlined style={{color: "red"}} /> }} value={unitCode} disabled label="단위" style={{width:"18rem"}} />
                 </div>
                 <div className={sysStyles.text_field}>
                     <div className={sysStyles.text}>
@@ -1631,7 +1634,6 @@ export function EfmEditModal({ isModalOpen, handleOk, handleCancel, rowData }) {
     const [selectedCoefClassCode, setSelectedCoefClassCode] = useState(rowData.coefClassCode);
     const [afterSelectedCoefClassCode, setAfterSelectedCoefClassCode] = useState([]);
     const [unitCode, setUnitCode] = useState(rowData.unitCode);
-    const [selectedUnitCode, setSelectedUnitCode] = useState(rowData.unitCode);
     const [coef, setCoef] = useState(rowData.coef);
     const [error, setError] = useState({});
 
@@ -1650,7 +1652,6 @@ export function EfmEditModal({ isModalOpen, handleOk, handleCancel, rowData }) {
         if(!formData.applyYear) newError.applyYear = '적용년도를 입력해주세요.';
         if(!formData.applyDvs) newError.applyDvs = '적용구분을 입력해주세요.';
         if(!formData.coefClassCode) newError.coefClassCode = '계수구분코드를 선택해주세요.';
-        if(!formData.unitCode) newError.unitCode = '계수구분코드를 선택해주세요.';
         if(!formData.coef) newError.coef = '계수구분코드를 선택해주세요.';
         if (Object.keys(newError).length > 0) {
             setError(newError);
@@ -1661,24 +1662,33 @@ export function EfmEditModal({ isModalOpen, handleOk, handleCancel, rowData }) {
         // handleOk을 호출하여 모달을 닫고 상위 컴포넌트에 알림
         handleOk(formData);
     };
-
     useEffect(() => {
         const fetchData = async () => {
             const appDvsResponse = await axiosInstance.get(`/sys/unit?unitType=적용구분`);
             setApplyDvs(appDvsResponse.data);
             const matchAppDvs = appDvsResponse.data.find(e => e.name === selectedApplyDvs);
             setSelectedApplyDvs(matchAppDvs.code)
-            const coefResponse = [
-                {
-                    "code": 2,
-                    "name": "순발열량"
-                },
-                {
-                    "code": 1,
-                    "name": "배출계수"
-                }
-            ]
-            setCoefClassCode(coefResponse);
+            if (rowData.inputUnitCode === "TJ") {
+                const coefResponse = [
+                    {
+                        "code": 1,
+                        "name": "배출계수"
+                    }
+                ]
+                setCoefClassCode(coefResponse);
+            } else {
+                const coefResponse = [
+                    {
+                        "code": 2,
+                        "name": "순발열량"
+                    },
+                    {
+                        "code": 1,
+                        "name": "배출계수"
+                    }
+                ]    
+                setCoefClassCode(coefResponse);
+            }
             const ghgResponse = await axiosInstance.get(`/sys/coef-unit?inputUnitCode=${rowData.inputUnitCode}`)
             setAfterSelectedCoefClassCode(ghgResponse.data);
             const matchCcc = ghgResponse.data.find(e => e.name === selectedCoefClassCode);
@@ -1768,12 +1778,10 @@ export function EfmEditModal({ isModalOpen, handleOk, handleCancel, rowData }) {
                         <Select disabled placeholder="순발열량은 온실가스코드가 없습니다." style={{width:"18rem", height:"2rem",fontSize:"4rem"}}>
                         </Select>
                     )}
-                    
                 </div>
                 <div className={sysStyles.text_field}>
-                    <div className={sysStyles.text}><span className={modalStyles.star}>*</span>{"단위"}</div>
+                    <div className={sysStyles.text}>{"단위"}</div>
                     <Input id='unitCode' value={unitCode} allowClear={{ clearIcon: <CloseOutlined style={{color: "red"}} /> }} disabled label="단위" style={{width:"18rem"}} />
-                    {error.unitCode && <div className={modalStyles.error_message}>{error.unitCode}</div>}
                 </div>
                 <div className={sysStyles.text_field}>
                     <div className={sysStyles.text}><span className={modalStyles.star}>*</span>{"계수"}</div>
@@ -1781,8 +1789,8 @@ export function EfmEditModal({ isModalOpen, handleOk, handleCancel, rowData }) {
                     {error.coef && <div className={modalStyles.error_message}>{error.coef}</div>}
                 </div>
             </div>
-            <div style={{display:"flex", justifyContent:"center", alignContent:"center"}}>
-            <button style={{width:"18rem"}} className={modalStyles.select_button} onClick={handleSelect}>수정</button>
+                <div style={{display:"flex", justifyContent:"center", alignContent:"center"}}>
+                <button style={{width:"18rem"}} className={modalStyles.select_button} onClick={handleSelect}>수정</button>
             </div>
         </Modal>
         </ConfigProvider>
@@ -1949,8 +1957,6 @@ export function UmAddModal({ isModalOpen, handleOk, handleCancel }) {
 
     },[])
 
-
-
     // 등록 버튼 클릭 시 호출될 함수
     const handleInsert = async () => {
         const formData = {
@@ -2103,7 +2109,6 @@ export function MmAddModal({ isModalOpen, handleOk, handleCancel, rowData }) {
     const [upperDir, setUpperDir] = useState([]);
     const [selectedUpperDir, setSelectedUpperDir] = useState('');
     const [orderMenuList, setOrderMenuList] = useState([]);
-    const [selectedOrderMenu, setSelectedOrderMenu] = useState([]);
 
     useEffect(() => {
         const fetchUpperDir = async () => {
@@ -2125,7 +2130,6 @@ export function MmAddModal({ isModalOpen, handleOk, handleCancel, rowData }) {
             })();
         }
         else {
-            // setOrderMenuList([]);
         }
     })
 
@@ -2387,11 +2391,9 @@ export function SdAddModal({ isModalOpen, handleOk, handleCancel, rowData }) {
                 <div className={modalStyles.title}>증빙서류 등록</div>
 
                 <div className={sdStyles.input_container}>
-
                     <div className={sdStyles.input_item}>
                         <div className={sdStyles.input_title}>
-                            대상년월
-                            <span className={sdStyles.requiredAsterisk}>*</span>
+                            <span className={modalStyles.star}>*</span>대상년월
                         </div>
                         <div className={sdStyles.select_item}>
                             <Select
@@ -2424,14 +2426,12 @@ export function SdAddModal({ isModalOpen, handleOk, handleCancel, rowData }) {
 
                     <div className={sdStyles.input_item}>
                         <div className={sdStyles.input_title}>
-                            자료명
-                            <span className={sdStyles.requiredAsterisk}>*</span>
+                            <span className={modalStyles.star}>*</span>자료명
                         </div>
                         <input
                             className={sdStyles.search}
                             id="name"
                             value={formData.name}
-                            style={{ fontFamily: 'SUITE-Regular' }}
                             onChange={(e) => setFormData(prevData => ({ ...prevData, name: e.target.value }))}
                         />
                         {errors.name && <div className={modalStyles.error_message}>{errors.name}</div>}
@@ -2440,8 +2440,7 @@ export function SdAddModal({ isModalOpen, handleOk, handleCancel, rowData }) {
                     <div className={sdStyles.upload_item}>
                         <div className={sdStyles.upload_header}>
                             <div className={sdStyles.input_title}>
-                                첨부파일
-                                <span className={sdStyles.requiredAsterisk}>*</span>
+                                <span className={modalStyles.star}>*</span>첨부파일
                             </div>
                             <div>
                                 <input
@@ -2664,8 +2663,7 @@ export function SdShowDetailsModal({ isModalOpen, handleOk, handleCancel }) {
 
                     <div className={sdStyles.input_item}>
                         <div className={sdStyles.input_title}>
-                            대상년월
-                            <span className={sdStyles.requiredAsterisk}>*</span>
+                            <span className={modalStyles.star}>*</span>대상년월
                         </div>
                         <div className={sdStyles.select_item}>
                             <Select
@@ -2712,8 +2710,8 @@ export function SdShowDetailsModal({ isModalOpen, handleOk, handleCancel }) {
 
                     <div className={sdStyles.input_item}>
                         <div className={sdStyles.input_title}>
-                            자료명
-                            <span className={sdStyles.requiredAsterisk}>*</span>
+                            <span className={modalStyles.star}>*</span>자료명
+                            {/* <span className={sdStyles.requiredAsterisk}>*</span> */}
                         </div>
                         <input className={sdStyles.search} id="name"
                             value={formData.name}
@@ -2726,8 +2724,7 @@ export function SdShowDetailsModal({ isModalOpen, handleOk, handleCancel }) {
                     <div className={sdStyles.upload_item}>
                         <div className={sdStyles.upload_header}>
                             <div className={sdStyles.input_title}>
-                                첨부파일
-                                <span className={sdStyles.requiredAsterisk}>*</span>
+                                <span className={modalStyles.star}>*</span>첨부파일
                             </div>
                             <div>
                                 <input

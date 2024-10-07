@@ -1,13 +1,13 @@
 import React, { useState, useEffect, useRef } from "react";
 import * as chatStyles from './assets/css/chat.css'
-import { CampaignTwoTone, ChatOutlined, Close, Person, Search } from "@mui/icons-material";
-import { Avatar, IconButton } from "@mui/material";
+import { CampaignTwoTone, ChatOutlined, Close, Person } from "@mui/icons-material";
+import { Avatar, Badge, IconButton } from "@mui/material";
 import UserList from "./chat/UserList";
 import ChatList from "./chat/ChatList";
 import Chatting from "./chat/Chatting";
 import axiosInstance from "./utils/AxiosInstance";
 
-export default function Chat({ handleCloseClick }) {
+export default function Chat({ handleCloseClick, totCnt }) {
     const [status, setStatus] = useState("user");
     const [userList, setUserList] = useState([]);
     const [room, setRoom] = useState([]);
@@ -50,7 +50,6 @@ export default function Chat({ handleCloseClick }) {
     };
 
     const updateChatList = (message) => {
-        console.log(message);
         setRoom((prevRooms) => {
             const updatedRooms = prevRooms.map((room) => {
                 if (room.users[0].id === message.senderId || room.users[0].id === message.receiverId) {
@@ -89,8 +88,8 @@ export default function Chat({ handleCloseClick }) {
 
     const handleChattingClick = async (e) => {
         setChatUser(e);
-        console.log("1", e);
         const chatResponse = await axiosInstance.get(`/chat?targetId=${e.id}&messageId=${chatContent.length === 0 ? 4000000000 : chatContent[chatContent.length - 1].messageId}&count=${10}`);
+        console.log(chatResponse.data);
         setChatContent(chatResponse.data);
         try {
             if (e.id !== 0){
@@ -106,7 +105,6 @@ export default function Chat({ handleCloseClick }) {
     const fetchRoom = async () => {
         const roomResponse = await axiosInstance.get(`/chat/room`);
         const roomData = roomResponse.data;
-        console.log(roomData);
         const updatedRoomData = roomData.map((room) => {
             const filteredUsers = room.users.filter((user) => user.id !== me.id); // localStorage의 user.id와 일치하지 않는 사용자들만 남기기
             return {
@@ -115,7 +113,6 @@ export default function Chat({ handleCloseClick }) {
             };
         });
         const realRoomData = updatedRoomData.filter(e => e.users.length !== 0)
-        console.log("object");
         setRoom(realRoomData);
         
     };
@@ -127,7 +124,6 @@ export default function Chat({ handleCloseClick }) {
             setUserList(data);
         };
         
-
         fetchUserList();
         fetchRoom();
 
@@ -174,14 +170,13 @@ export default function Chat({ handleCloseClick }) {
                     <Person fontSize="large" sx={{color: "gray"}} />
                 </IconButton>
                 <IconButton onClick={handleChatListClick}>
-                    <ChatOutlined fontSize="large" sx={{color:"gray"}} />
+                    <Badge badgeContent={totCnt} color="error">
+                        <ChatOutlined fontSize="large" sx={{color:"gray"}} />
+                    </Badge>
                 </IconButton>
             </div>
             <div className={chatStyles.board}>
                 <div className={chatStyles.board_header}>
-                    {/* <IconButton >
-                        <Search />
-                    </IconButton> */}
                     <IconButton onClick={handleCloseClick}>
                         <Close />
                     </IconButton>
@@ -195,7 +190,6 @@ export default function Chat({ handleCloseClick }) {
                         ) : (
                             <Chatting UserListIcon={UserListIcon} ws={ws.current} handleChatListClick={handleChatListClick} noticeUser={noticeUser} handleRead={handleRead} handleReadAll={handleReadAll} updateChatList={updateChatList} chatContent={chatContent} fetchRoom={fetchRoom} setChatContent={setChatContent} roomChange={roomChange} setRoomChange={setRoomChange} chatUser={chatUser} me={me}/>
                         )
-                        
                     )
                 }
             </div>

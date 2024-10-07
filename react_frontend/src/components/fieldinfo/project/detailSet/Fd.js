@@ -251,9 +251,9 @@ export default function Fd({pjtId}) {
                                 style={{ width: '12.3rem' }}
                             >
                                 {eqTypeList.map((option) => (
-                                    <Option key={option.value} value={option.value}>
+                                    <Select.Option key={option.value} value={option.value}>
                                         {option.label}
-                                    </Option>
+                                    </Select.Option>
                                 ))}
                             </CustomSelect>
                         </div>
@@ -267,9 +267,9 @@ export default function Fd({pjtId}) {
                                     style={{ width: '7rem' }}
                                 >
                                     {eqDvsList.map((option) => (
-                                        <Option key={option.value} value={option.value}>
+                                        <Select.Option key={option.value} value={option.value}>
                                             {option.label}
-                                        </Option>
+                                        </Select.Option>
                                     ))}
                                 </CustomSelect>
                                 <button className={pdsStyles.search_button} onClick={handleSearch} style={{ width: '3rem' }}>조회</button>

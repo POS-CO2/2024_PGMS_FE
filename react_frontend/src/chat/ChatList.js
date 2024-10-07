@@ -1,17 +1,15 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import * as chatStyles from '../assets/css/chat.css'
 
-export default function ChatList({ UserListIcon, handleChattingClick, room, fetchRoom, noticeUser, roomChange, setRoomChange, ws }){
+export default function ChatList({ UserListIcon, handleChattingClick, room, fetchRoom, ws }){
 
     useEffect(() => {
         if (!ws) return;
-
 
         const handleMessage = (event) => {
             const message = JSON.parse(event.data);
             console.log(message);
             if (message.type === 'CHAT') {
-                // updateChatList(message)
                 fetchRoom();
             }
             else {
@@ -29,8 +27,6 @@ export default function ChatList({ UserListIcon, handleChattingClick, room, fetc
     useEffect(()=> {
         fetchRoom();
     },[])
-    console.log(room);
-
     return (
         <div className={chatStyles.chatlist}>
             {room.map(data => (
@@ -42,13 +38,13 @@ export default function ChatList({ UserListIcon, handleChattingClick, room, fetc
                             {data.users[0].userName}
                             </div>
                             <div style={{fontSize:"0.8rem", color:"grey", textOverflow:"ellipsis", whiteSpace:"nowrap",overflow:"hidden", width:"150px"}}>
-                                {data.lastMessage}
+                                {data.users[0].id !== 0 ? data.lastMessage : JSON.parse(data.lastMessage).message}
                             </div>
                         </div>
                     </div>
                     <div style={{display:"flex", flexDirection:"column", width:"80px", alignItems:"flex-end", gap:"0.5rem"}}>
-                        <div style={{fontSize:"0.8rem", color:"grey", textOverflow:"ellipsis"}}>
-                        {data.lastSentDate}
+                        <div style={{fontSize:"0.8rem", color:"grey", whiteSpace:"nowrap"}}>
+                        {data.formattedLastSentDate}
                         </div>
                         {data.notReadCnt !== 0 ? ( 
                             <div className={chatStyles.chat_badge}>

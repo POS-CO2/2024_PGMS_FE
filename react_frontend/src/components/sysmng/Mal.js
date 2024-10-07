@@ -14,7 +14,6 @@ export default function Mal() {
     const [formFields, setFormFields] = useState(formField_mal);
     const [formData, setFormData] = useRecoilState(accessLogSearchForm);
     const [user, setUser] = useState([]);
-    const [transUser, setTransUser] = useState([]);
     const [log, setLog] = useState([]);
     const [selectedUser, setSelectedUser] = useState([]);
     const [showUser, setShowUser] = useState(true);
@@ -114,16 +113,16 @@ export default function Mal() {
                 <></> :
                 <div className={sysStyles.main_grid}>
                     {showUser ? (
-                        <Card className={sysStyles.card_box} sx={{width:"50%", height:"75vh", borderRadius:"15px"}}>
+                        <Card className={sysStyles.card_box} sx={{width:"50%", height:"77vh", borderRadius:"15px"}}>
                             <TableCustom title="사용자 목록" data={user} button="" onRowClick={handleRowClick} columns={userColumns}/>
                         </Card>
                     ) : (
-                        <Card className={sysStyles.card_box} sx={{width:"50%", height:"75vh", borderRadius:"15px"}}>
+                        <Card className={sysStyles.card_box} sx={{width:"50%", height:"77vh", borderRadius:"15px"}}>
                             <TableCustom title="사용자 목록" data={user} button="" onRowClick={handleRowClick} columns={userColumns}/>
                         </Card>
                     )}
                     
-                    <Card className={sysStyles.card_box} sx={{width:"50%", height:"75vh", borderRadius:"15px"}}>
+                    <Card className={sysStyles.card_box} sx={{width:"50%", height:"77vh", borderRadius:"15px"}}>
                         {showLog ? (
                             <TableCustom title="메뉴 접속 로그" data={log} button="" columns={menuLogColumns}/>
                         ) : (

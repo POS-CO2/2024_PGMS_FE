@@ -1,27 +1,25 @@
 import React, { useEffect, useRef, useState } from "react";
 import * as chatStyles from '../assets/css/chat.css'
 import { ArrowBackIosNew, ArrowDownward, Send } from "@mui/icons-material";
-import { Chip, CircularProgress, Divider, Fab, IconButton, Snackbar } from "@mui/material";
-import { Button, ConfigProvider, Input } from "antd";
+import { Button, Chip, Divider, Fab, IconButton } from "@mui/material";
+import { ConfigProvider } from "antd";
 import TextArea from "antd/es/input/TextArea";
 import axiosInstance from "../utils/AxiosInstance";
 import {useInView} from 'react-intersection-observer';
 import styled from "styled-components";
 
-const StyledButton = styled(Button)`
-    .ant-btn-default {
-        background-color: #0eaa00;
-        color: white;
-    }
+const ColorButton = styled(Button)(({ theme }) => ({
+    color: "white",
+    backgroundColor: "#0eaa00",
+    border:"1px solid #0eaa00",
+    '&:hover': {
+        backgroundColor: "white",
+        color:"#0eaa00",
+        border:"1px solid #0eaa00"
+    },
+}));
 
-    .ant-btn {
-        background-color: #0eaa00;
-        color: white;
-    }
-
-`;
-
-export default function Chatting({ UserListIcon ,handleChatListClick, chatUser, noticeUser, me, chatContent, setChatContent, handleRead,handleReadAll, ws, fetchRoom, roomChange, setRoomChange, updateChatList}) {
+export default function Chatting({ UserListIcon ,handleChatListClick, chatUser, me, chatContent, setChatContent, handleRead,handleReadAll, ws, fetchRoom, roomChange, setRoomChange }) {
 
     const [text, setText] = useState('');
     const [isLoading, setIsLoading] = useState(false);
@@ -61,7 +59,6 @@ export default function Chatting({ UserListIcon ,handleChatListClick, chatUser, 
         const keyboardRequest = await axiosInstance.post(`/chat/keyboard?targetId=${chatUser.id}`);
 
         if (typingTimeoutRef.current) {
-            console.log(typingTimeoutRef.current);
             clearTimeout(typingTimeoutRef.current);
         }
 
@@ -76,12 +73,11 @@ export default function Chatting({ UserListIcon ,handleChatListClick, chatUser, 
                 receiverId : chatUser.id,
                 message : text,
             }
+            console.log(formData);
             try {
                 const sendMessage = await axiosInstance.post(`/chat`, formData);
-                console.log('Message sent:', text);
                 if (sendMessage.data) {
                     ws.send(JSON.stringify(formData));  // WebSocket으로 메시지를 전송
-                    console.log('Message sent via WebSocket:', formData);
                     setText('');
                     setRoomChange(!roomChange);
                     await fetchRoom();
@@ -132,7 +128,6 @@ export default function Chatting({ UserListIcon ,handleChatListClick, chatUser, 
 
     const markAsRead = async (messageId) => {
         try {
-            console.log("messageId", messageId);
             await axiosInstance.post(`/chat/check?objectId=${messageId}`);
         } catch (error) {
             console.error('Failed to mark message as read:', error);
@@ -151,7 +146,6 @@ export default function Chatting({ UserListIcon ,handleChatListClick, chatUser, 
 
         const handleMessage = (event) => {
             const message = JSON.parse(event.data);
-            console.log(message);
             if(message.type === 'READ'){
                 handleRead(message.messageId);
             }
@@ -170,10 +164,11 @@ export default function Chatting({ UserListIcon ,handleChatListClick, chatUser, 
                 }, 2000);
             }
             else if (message.type === 'CHAT') {
-                // updateChatList(message)
                 setShowIsTyping(false);
                 setChatContent((prevContent) => [message, ...prevContent]);
-                if (message.senderId !== me.id) markAsRead(message.id);
+                if (message.senderId !== me.id) {
+                    markAsRead(message.id);
+                } 
             }
             else {
                 return ;
@@ -186,8 +181,6 @@ export default function Chatting({ UserListIcon ,handleChatListClick, chatUser, 
             ws.removeEventListener('message', handleMessage)
         };
     }, [ws, me]);
-
-
     return (
         <div className={chatStyles.chatting}>
             <div className={chatStyles.chatting_header}>
@@ -219,46 +212,28 @@ export default function Chatting({ UserListIcon ,handleChatListClick, chatUser, 
                 }
                 {chatContent.map((data, idx) => (
                     <div style={{display:"flex", flexDirection:"row", alignItems:"flex-end"}}>
-                        <div key={idx} className={data.senderId === me.id ? chatStyles.mymessage : chatStyles.targetmessage} style={{position:"relative"}}>
-                            {data.message}
+                        <div key={idx} className={data.senderId === me.id ? chatStyles.mymessage : chatStyles.targetmessage} style={{position:"relative", marginBottom:"1rem"}}>
+                            {data.senderId !== 0 ? data.message : JSON.parse(data.message).message}
+                            {data.senderId === me.id ? (
+                                <div style={{position: "absolute",bottom: "-1.4rem", right:"0", color:"grey", fontSize:"0.8rem", whiteSpace:"nowrap"}}>{data.sendTime}</div>
+                            ) : (
+                                <div style={{position: "absolute",bottom: "-1.4rem", left:"0", color:"grey", fontSize:"0.8rem", whiteSpace:"nowrap"}}>{data.sendTime}</div>
+                            )}
                             {!data.readYn && <div style={{position: "absolute",bottom: "0", left:"-1rem", color:"rgb(14, 170, 0)"}}>1</div>}
                         </div>
-                        <ConfigProvider 
-                        theme={{
-                            components:{
-                                Button:{
-                                    borderColorDisabled:"white",
-                                    defaultBg:"#0eaa00",
-                                    defaultBorderColor:"#0eaa00",
-                                    defaultColor:"white",
-                                    defaultHoverBg:"white",
-                                    defaultHoverColor:"#0eaa00",
-                                    defaultHoverBorderColor:"#0eaa00"
-
-                                }
-                            },
-                            token:{
-                                fontFamily:"SUITE-Regular"
-                            }
-                        }}
-                        >
                         {data.senderId === 0 && (
                             !data.readYn ? (
-                                <StyledButton onClick={() => markAsRead(data.id)}>
+                                <ColorButton type="primary" onClick={() => markAsRead(data.id)} sx={{height:"32px"}}>
                                     읽음
-                                </StyledButton>
+                                </ColorButton>
                             ) : (
-                                <StyledButton disabled >
+                                <ColorButton variant="outlined" disabled sx={{bgcolor:"white !important", height:"32px"}}>
                                     읽음
-                                </StyledButton>
+                                </ColorButton>
                             )
-
                         )}
-                        </ConfigProvider>
-                        
                     </div>
                 ))}
-                {/* {isLoading && <CircularProgress color="success" sx={{margin:"0 auto"}}/>} */}
                 <div ref={sentinelRef}></div>
             </div>
             <Divider variant="middle" />

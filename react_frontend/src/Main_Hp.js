@@ -1,5 +1,5 @@
-import { Card, Divider } from '@mui/material';
-import React, { useState, useRef, useEffect } from 'react';
+import { Card } from '@mui/material';
+import React, { useState, useEffect } from 'react';
 import ApexChart from "react-apexcharts";
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Pagination, Navigation } from 'swiper/modules';
@@ -11,6 +11,7 @@ import * as gridStyles from './assets/css/gridHp.css'
 import styled from 'styled-components';
 import axiosInstance from './utils/AxiosInstance';
 import { DataThresholding, Delete, ElectricBolt, KeyboardArrowDown, KeyboardArrowUp, KeyboardDoubleArrowDown, KeyboardDoubleArrowUp, LeaderboardOutlined, LocalFireDepartment, MoreHoriz, MoveDown, OilBarrel, Public, WaterDrop, WorkspacePremium } from '@mui/icons-material';
+import { ConfigProvider, Popover } from 'antd';
 
 const StyledChart = styled.div`
     .apexcharts-canvas {
@@ -219,33 +220,6 @@ const miniChartOptions = (title, toMonth) => {
     return chartOption;
 };
 
-const donutChartOptions = (label) => {
-    const chartOption = {
-        options: {
-            chart: {
-                width: 380,
-                type: 'polarArea',
-            },
-            labels: label,
-            responsive: [{
-                breakpoint: 480,
-                options: {
-                chart: {
-                    width: 200
-                },
-                legend: {
-                    position: 'bottom'
-                }
-            }
-            }]
-        },
-        chart: {
-            fontFamily:"SUITE-Regular",
-        }
-    }
-        return chartOption;
-}
-
 const chartSeries = (data, beforeData, toYear) => {
     const charData = [
         {
@@ -275,14 +249,6 @@ const miniChartSeries = (data, beforeData, toYear, toMonth) => {
 }
 
 const polarChartSeries = (data) => {
-    // const charData = data.map(e => {
-    //     return {
-    //         name: e.emtnActvType,
-    //         data: e.formattedTotalActvQty ? parseInt(e.formattedTotalActvQty, 10) : 0
-    //     };
-    // });
-    // console.log(data);
-    // console.log(charData);
     return data;
 }
 
@@ -363,7 +329,7 @@ const polarAreaChartOptions = (labels) => {
             show: false
         },
         title: {
-            text: ' 배출 현황', // 차트 제목
+            text: ' 총 배출 현황', // 차트 제목
             align: 'left',
             style: {
                 fontSize: '22px',
@@ -461,7 +427,6 @@ export default function Main_Hp() {
         fetchChartData()
 
     }, [])
-    console.log(emissionAmt);
     const topData = [
         {
             name: "Scope1",
@@ -476,7 +441,6 @@ export default function Main_Hp() {
             value: (totScope[toMonth-1] / totScope[toMonth-2] * 100).toFixed(2) ?? 0,
         },
     ]
-    console.log(emtn);
     const renderIcon = (e) => {
         switch (e) {
             case 'T0':  //공통
@@ -581,9 +545,6 @@ export default function Main_Hp() {
                                 )}
                             </Card>
                         ))}
-                        {/* <Card sx={{backgroundColor:"white",width:"25%", height: "100%"}}>ㅁ</Card>
-                        <Card sx={{backgroundColor:"white", width:"25%", height: "90%"}}>b</Card>
-                        <Card sx={{backgroundColor:"white", width:"25%", height: "90%"}}>c</Card> */}
                     </div>
                     <div className={gridStyles.left_box_chart}>
                         <StyledChart style={{width:"100%", height:"100%"}}>
@@ -615,7 +576,9 @@ export default function Main_Hp() {
                         </StyledChart>
                     </div>
                     <div className={gridStyles.left_box_bottom}>
-                        <div className={gridStyles.left_bottom_logo}></div>
+                        <div className={gridStyles.left_bottom_logo}>
+                            매출액
+                        </div>
                         <StyledRoot style={{width:"100%", height:"100%"}}>
                             <Swiper
                                 spaceBetween={30}    // 슬라이드 사이의 간격
@@ -673,15 +636,46 @@ export default function Main_Hp() {
                                 >
                                     {emtn.map((data, idx) => (
                                         <SwiperSlide key={data.emtnActvType || idx} style={{width:"100%", height:"100%"}}>
-                                            <Card sx={{backgroundColor:"white", width:"90%", height:"100%", margin:"1rem auto", borderRadius:"15px", display:"flex", flexDirection:"column", backgroundColor:"rgb(241,244,248)"}}>
-                                                <div className={gridStyles.left_bottom_1}>
-                                                    <div className={gridStyles.right_swiper_box_logo}>
-                                                        {renderIcon(data.actvDataDvs)}
-                                                        {data.emtnActvType}
+                                            <ConfigProvider
+                                            theme={{
+                                                token:{
+                                                    fontFamily:"SUITE-Regular",
+                                                    fontSize:"1.2rem"
+                                                }
+                                            }} >
+                                                <Popover placement='left' title={data.emtnActvType} content={data.emtnEquipQtyList.map(v => (
+                                                    <div style={{display:"flex", flexDirection:"row", justifyContent:"space-between", alignContent:"center", gap:"1rem"}}>
+                                                        <div>
+                                                            {v.equipLibName}
+                                                        </div>
+                                                        <div style={{textAlign:"right"}}>
+                                                            <div>
+                                                                {v.formattedEquipEmissionQty}
+                                                            </div>
+                                                            <div style={{fontSize:"0.9rem", color:"grey"}}>
+                                                            {`${v.formattedEquipActvQty} ${data.inputUnitCode}`}
+                                                            </div>
+                                                        </div>
                                                     </div>
-                                                </div>
-                                                <div className={gridStyles.right_swiper_emtn}>{`${data.formattedTotalActvQty !== "" ? data.formattedTotalActvQty : 0} ${data.inputUnitCode}`}</div>
-                                            </Card>
+                                                ))} arrow={true}>
+                                                    <Card sx={{backgroundColor:"white", width:"90%", height:"100%", margin:"1rem auto", borderRadius:"15px", display:"flex", flexDirection:"column", backgroundColor:"rgb(241,244,248)"}}>
+                                                        <div className={gridStyles.left_bottom_1}>
+                                                            <div className={gridStyles.right_swiper_box_logo}>
+                                                                {renderIcon(data.actvDataDvs)}
+                                                                {data.emtnActvType}
+                                                            </div>
+                                                        </div>
+                                                        <div className={gridStyles.right_swiper_emtn}>
+                                                            <div>
+                                                                {data.formattedTotalEmissionQty}
+                                                            </div>
+                                                            <div style={{fontSize:"large", color:"grey"}}>
+                                                                {`${data.formattedTotalActvQty !== "" ? data.formattedTotalActvQty : 0} ${data.inputUnitCode}`}
+                                                            </div>
+                                                        </div>
+                                                    </Card>
+                                                </Popover>
+                                            </ConfigProvider>
                                         </SwiperSlide>
                                     ))}
                                 </Swiper>
