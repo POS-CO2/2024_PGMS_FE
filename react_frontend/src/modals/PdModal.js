@@ -13,7 +13,7 @@ import WarningAmberIcon from '@mui/icons-material/WarningAmber';
 import Table from "../Table";
 import { CustomButton } from '../Button';
 import styled from 'styled-components';
-import { pjtColumns, equipColumns, equipActvColumns, equipEmissionColumns } from '../assets/json/tableColumn.js';
+import { pjtColumns, equipColumns, equipActvColumns, equipEmissionAddColumns } from '../assets/json/tableColumn.js';
 import * as modalStyles from "../assets/css/pdModal.css";
 import * as rmStyles from "../assets/css/rmModal.css";
 import * as delStyle from "../assets/css/delModal.css";
@@ -2264,7 +2264,7 @@ export function EsmAddModal({ isModalOpen, handleOk, handleCancel, rowData }) {
                     </div>
                 </div>
                 <div className={pjtModalStyles.result_container}>
-                    <Table data={emtnCands} variant='checkbox' onRowClick={handleEmtnClick} columns={equipEmissionColumns} modalPagination={true} />
+                    <Table data={emtnCands} variant='checkbox' onRowClick={handleEmtnClick} columns={equipEmissionAddColumns} modalPagination={true} />
                 </div>
             </div>
         </Modal>

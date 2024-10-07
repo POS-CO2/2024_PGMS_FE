@@ -192,6 +192,23 @@ export const equipEmissionColumns = [
     { key: 'fileStatus', label: '증빙자료현황', hidden: false },
 ]
 
+export const equipEmissionAddColumns = [
+    { key: 'id', label: 'id', hidden: true },
+    { key: 'equipId', label: '설비ID', hidden: true },
+    { key: 'actvDataId', label: '활동자료ID', hidden: true },
+    { key: 'equipName', label: '설비명', hidden: false },
+    { key: 'equipLibName', label: '설비LIB명', hidden: false },
+    { key: 'equipDvs', label: '설비구분', hidden: false },
+    { key: 'equipType', label: '설비유형', hidden: false },
+    { key: 'equipSpecUnit', label: '설비사양단위', hidden: false },
+    { key: 'emtnActvType', label: '배출활동유형', hidden: false },
+    { key: 'actvDataDvs', label: '활동자료구분', hidden: false },
+    { key: 'actvDataName', label: '활동자료이름', hidden: false },
+    { key: 'inputUnitCode', label: '입력단위코드', hidden: false },
+    { key: 'calUnitCode', label: '산정단위코드', hidden: false },
+    { key: 'unitConvCoef', label: '단위변환계수', hidden: false },
+]
+
 export const equipDocumentColumns = [
     { key: 'id', label: 'id', hidden: true },
     { key: 'actvYear', label: '활동년도', hidden: true },
