@@ -189,7 +189,7 @@ export default function Adm() {
                 console.log(error);
 
                 swalOptions.title = '실패!',
-                swalOptions.text = error.response.data.message,
+                swalOptions.html = error.response.data.message,
                 swalOptions.icon = 'error';
             }
         } else if (modalType === 'DeleteA') {
@@ -226,7 +226,7 @@ export default function Adm() {
                 console.log(error);
 
                 swalOptions.title = '실패!',
-                swalOptions.text = error.response.data.message,
+                swalOptions.html = error.response.data.message,
                 swalOptions.icon = 'error';
             }
         } else if (modalType === 'EfmAdd') {
@@ -244,7 +244,7 @@ export default function Adm() {
                 swalOptions.icon = 'success';
             } catch (error) {
                 swalOptions.title = '실패!',
-                swalOptions.text = error.response.data.message;
+                swalOptions.html = error.response.data.message;
                 swalOptions.icon = 'error';
             }
         } else if (modalType === 'EfmEdit') {
@@ -265,7 +265,7 @@ export default function Adm() {
                 swalOptions.icon = 'success';
             } catch (error) {
                 swalOptions.title = '실패!',
-                swalOptions.text = error.response.data.message;
+                swalOptions.html = error.response.data.message;
                 swalOptions.icon = 'error';
             }
         } else if (modalType === 'DeleteB') {

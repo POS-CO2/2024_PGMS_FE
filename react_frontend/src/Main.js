@@ -291,7 +291,7 @@ export default function Main() {
                 } catch (error) {
                     console.error(error);
                     swalOptions.title = '실패!',
-                    swalOptions.text = error.response.data.message,
+                    swalOptions.html = error.response.data.message,
                     swalOptions.icon = 'error';
                 }
                 
@@ -309,7 +309,7 @@ export default function Main() {
                         setTargetKeys(newTargetKeys);
                     } catch (error) {
                         swalOptions.title = '실패!',
-                        swalOptions.text = error.response.data.message,
+                        swalOptions.html = error.response.data.message,
                         swalOptions.icon = 'error';
                     }
                 }
@@ -364,7 +364,7 @@ export default function Main() {
             swalOptions.icon = 'success';
         } catch (error) {
             swalOptions.title = '실패!',
-            swalOptions.text = `${error.response.data.message}`;
+            swalOptions.html = `${error.response.data.message}`;
             swalOptions.icon = 'error';
         }
         setDpPjt(e);
