@@ -108,7 +108,22 @@ export default function Sa() {
     const handleAxisClick = async (event, data, AxisData) => {
         if (selectedBar === data.dataIndex) {
             // 선택된 바를 다시 클릭하면 전체 데이터를 다시 불러옴
-            handleFormSubmit(formData);
+
+            const startDate = `${formData.calendar[0].$y}-${(formData.calendar[0].$M + 1).toString().padStart(2, '0')}`;
+            const endDate = `${formData.calendar[1].$y}-${(formData.calendar[1].$M + 1).toString().padStart(2, '0')}`;
+            
+            let url = `/anal/sales/table?startDate=${startDate}&endDate=${endDate}`;
+            const tableResponse = await axiosInstance.get(url);
+            setSalesTableData(tableResponse.data);
+
+            url = `/anal/sales/div?startDate=${startDate}&endDate=${endDate}`;
+            const perDivChartResponse = await axiosInstance.get(url);
+            setAvgUnitPerDiv(perDivChartResponse.data);
+            
+            url = `/anal/sales/prod?startDate=${startDate}&endDate=${endDate}`;
+            const perProdChartResponse = await axiosInstance.get(url);
+            setUnitPerProd(perProdChartResponse.data);
+
             setSelectedDiv(null); // 선택된 본부 초기화
             setSelectedBar(null); // 선택된 바 초기화
             setHighlightedItem(null); // 강조된 항목 초기화
