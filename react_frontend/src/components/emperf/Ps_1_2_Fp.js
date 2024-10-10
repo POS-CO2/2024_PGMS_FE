@@ -19,7 +19,6 @@ import * as XLSX from 'xlsx';
 export default function Ps_1_2_Fp() {
     const [formFields, setFormFields] = useState(formField_ps12_fp);
     const [formData, setFormData] = useRecoilState(emissionSourceForm);
-    const [selectedPjtOption, setSelectedPjtOption] = useState([]);
     const [selectedPjt, setSelectedPjt] = useState({});
     const [selectedPjtId, setSelectedPjtId] = useRecoilState(selectedPjtFPState);
     const [usagePerfs, setUsagePerfs] = useState([]);
@@ -103,7 +102,6 @@ export default function Ps_1_2_Fp() {
     // 프로젝트 선택 후 대상년도 드롭다운 옵션 설정
     const onProjectSelect = (selectedData, form) => {
         const selectedProject = projectData.find(pjt => pjt.pjtId === selectedData);
-        setSelectedPjtOption(selectedProject);
 
         if (selectedProject) {
             const yearOptions = [];
@@ -128,7 +126,10 @@ export default function Ps_1_2_Fp() {
                 setActvYearDisabled(false);
             }
             if (Object.keys(formData).length === 0 || selectedProject) {
-                form.setFieldsValue({ actvYear: yearOptions[0].value });
+                form.setFieldsValue(
+                    formData.actvYear && formData.searchProject === selectedData ? 
+                        { actvYear: formData.actvYear} : { actvYear: yearOptions[0].value 
+                });
             }
         }
     };
@@ -261,13 +262,38 @@ export default function Ps_1_2_Fp() {
                 { wpx : 64 }, // G열
             ];
 
+            // 셀 범위 가져오기
+            const range = xlsx.utils.decode_range(ws['!ref']); 
+
+            // 헤더의 모든 열에 배경색(초록색)과 글자색(흰색) 적용
+            for (let C = range.s.c; C <= range.e.c; C++) { // 열 루프 (A열: 0 ~ G열: 6)
+                const cellAddress = xlsx.utils.encode_cell({ r: 0, c: C }); // 헤더는 첫 번째 행 (r: 0)
+                if (!ws[cellAddress]) ws[cellAddress] = { v: '' }; // 빈 셀 생성
+
+                // 셀 스타일 적용 (헤더 배경색 초록색으로 지정)
+                ws[cellAddress].s = {
+                    fill: {
+                        patternType: 'solid',
+                        fgColor: { rgb: "FF216F17" } // 배경색 (초록색)
+                    },
+                    font: {
+                        color: { rgb: "FFFFFFFF" }, // 글자색 (흰색)
+                    },
+                    border: { // 셀 테두리 추가
+                        top: { style: "thin", color: { rgb: "d4d4d4" } },    // 위쪽 테두리
+                        bottom: { style: "thin", color: { rgb: "d4d4d4" } }, // 아래쪽 테두리
+                        left: { style: "thin", color: { rgb: "d4d4d4" } },   // 왼쪽 테두리
+                        right: { style: "thin", color: { rgb: "d4d4d4" } }   // 오른쪽 테두리
+                    }
+                };
+            }
+
             // A~G열의 모든 셀에 배경색 적용
-            const range = xlsx.utils.decode_range(ws['!ref']); // 셀 범위 가져오기
-            for (let R = range.s.r; R <= range.e.r; R++) { // 행 루프
+            for (let R = range.s.r + 1; R <= range.e.r; R++) { // 첫 번째 행 제외 (데이터 행 루프)
                 for (let C = range.s.c; C <= 6; C++) { // 열 루프 (A열: 0 ~ G열: 6)
                     const cellAddress = xlsx.utils.encode_cell({ r: R, c: C });
                     if (!ws[cellAddress]) ws[cellAddress] = { v: '' }; // 빈 셀 생성
-
+        
                     // 셀 스타일 적용 (배경색 지정)
                     ws[cellAddress].s = {
                         fill: {
@@ -294,7 +320,7 @@ export default function Ps_1_2_Fp() {
         return (
             <TableCustomDoubleClickEdit
                 columns={perfColumns}
-                title="실적목록"
+                title="실적 목록"
                 data={data}
                 buttons={['DoubleClickEdit', 'DownloadExcelForm', 'UploadExcel']}
                 onClicks={[() => {}, () => onDownloadExcelFormClick(data), onUploadExcelClick]}
@@ -377,13 +403,38 @@ export default function Ps_1_2_Fp() {
                 { wpx : 64 }, // G열
             ];
 
+            // 셀 범위 가져오기
+            const range = xlsx.utils.decode_range(ws['!ref']); 
+
+            // 헤더의 모든 열에 배경색(초록색)과 글자색(흰색) 적용
+            for (let C = range.s.c; C <= range.e.c; C++) { // 열 루프 (A열: 0 ~ G열: 6)
+                const cellAddress = xlsx.utils.encode_cell({ r: 0, c: C }); // 헤더는 첫 번째 행 (r: 0)
+                if (!ws[cellAddress]) ws[cellAddress] = { v: '' }; // 빈 셀 생성
+
+                // 셀 스타일 적용 (헤더 배경색 초록색으로 지정)
+                ws[cellAddress].s = {
+                    fill: {
+                        patternType: 'solid',
+                        fgColor: { rgb: "FF216F17" } // 배경색 (초록색)
+                    },
+                    font: {
+                        color: { rgb: "FFFFFFFF" }, // 글자색 (흰색)
+                    },
+                    border: { // 셀 테두리 추가
+                        top: { style: "thin", color: { rgb: "d4d4d4" } },    // 위쪽 테두리
+                        bottom: { style: "thin", color: { rgb: "d4d4d4" } }, // 아래쪽 테두리
+                        left: { style: "thin", color: { rgb: "d4d4d4" } },   // 왼쪽 테두리
+                        right: { style: "thin", color: { rgb: "d4d4d4" } }   // 오른쪽 테두리
+                    }
+                };
+            }
+
             // A~G열의 모든 셀에 배경색 적용
-            const range = xlsx.utils.decode_range(ws['!ref']); // 셀 범위 가져오기
-            for (let R = range.s.r; R <= range.e.r; R++) { // 행 루프
+            for (let R = range.s.r + 1; R <= range.e.r; R++) { // 첫 번째 행 제외 (데이터 행 루프)
                 for (let C = range.s.c; C <= 6; C++) { // 열 루프 (A열: 0 ~ G열: 6)
                     const cellAddress = xlsx.utils.encode_cell({ r: R, c: C });
                     if (!ws[cellAddress]) ws[cellAddress] = { v: '' }; // 빈 셀 생성
-
+        
                     // 셀 스타일 적용 (배경색 지정)
                     ws[cellAddress].s = {
                         fill: {
@@ -410,7 +461,7 @@ export default function Ps_1_2_Fp() {
         return (
             <TableCustomDoubleClickEdit
                 columns={perfColumns}
-                title="실적목록"
+                title="실적 목록"
                 data={data}
                 buttons={['DoubleClickEdit', 'DownloadExcelForm', 'UploadExcel']}
                 onClicks={[() => {}, () => onDownloadExcelFormClick(data), onUploadExcelClick]}
