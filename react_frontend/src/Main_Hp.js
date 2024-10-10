@@ -653,7 +653,7 @@ export default function Main_Hp() {
                                                                 {v.formattedEquipEmissionQty}
                                                             </div>
                                                             <div style={{fontSize:"0.9rem", color:"grey"}}>
-                                                            {`${v.formattedEquipActvQty} ${data.inputUnitCode}`}
+                                                            {`${v.formattedEquipActvQty} (${data.inputUnitCode})`}
                                                             </div>
                                                         </div>
                                                     </div>
@@ -670,7 +670,7 @@ export default function Main_Hp() {
                                                                 {data.formattedTotalEmissionQty}
                                                             </div>
                                                             <div style={{fontSize:"large", color:"grey"}}>
-                                                                {`${data.formattedTotalActvQty !== "" ? data.formattedTotalActvQty : 0} ${data.inputUnitCode}`}
+                                                                {`${data.formattedTotalActvQty !== "" ? data.formattedTotalActvQty : 0} (${data.inputUnitCode})`}
                                                             </div>
                                                         </div>
                                                     </Card>
@@ -678,6 +678,9 @@ export default function Main_Hp() {
                                             </ConfigProvider>
                                         </SwiperSlide>
                                     ))}
+                                        <SwiperSlide style={{width:"100%", height:"100%"}}>
+
+                                        </SwiperSlide>
                                 </Swiper>
                             </StyledRoot2>
                         </div>
