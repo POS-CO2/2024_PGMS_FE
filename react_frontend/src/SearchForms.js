@@ -192,7 +192,7 @@ export default function SearchForms({ initialValues={}, onFormSubmit, formFields
             layout="vertical" 
             className={searchFormStyles.form_container_pg} 
             onFinish={handleFinish}
-            onFieldsChange={handleFieldsChange}
+            onFieldsChange={handleFieldsChangeWrapper}
         >
             <div className={searchFormStyles.row} style={{ maxWidth: '63rem' }}>
                 {formFields.map((field, index) => {

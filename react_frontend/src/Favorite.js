@@ -65,6 +65,12 @@ const FavoriteItem = styled.div`
   justify-content: flex-start;
 `;
 
+const NoFavoritesMessage = styled.div`
+  color: #777777;
+  padding: 0.75rem;
+  text-align: center;
+  font-size: 1rem;
+`;
 
 const Favorite = () => {
   const fav = useRecoilValue(favState);
@@ -98,6 +104,16 @@ const Favorite = () => {
     }, null);
   };
 
+  // 마지막으로 선택한 대분류 토글만 내리기
+  const handleOpenChange = (keys) => {
+    const latestOpenKey = keys.find(key => !openKeys.includes(key));
+    if (items.map(item => item.key).includes(latestOpenKey)) {
+      setOpenKeys(latestOpenKey ? [latestOpenKey] : []);
+    } else {
+      setOpenKeys(keys);
+    }
+  };
+
   const onFavClick = (label) => {
     const item = findItemByLabel(items, label);
 
@@ -107,7 +123,7 @@ const Favorite = () => {
       // 대분류(상위 메뉴)를 찾아 openKeys에 추가
       const parentItem = findParentItem(items, item.key);
       if (parentItem) {
-        setOpenKeys([...openKeys, parentItem.key]);
+        handleOpenChange([parentItem.key]);
       }
     }
 
@@ -132,19 +148,23 @@ const Favorite = () => {
       >
           <FavoritesContainer>
               <FavoritesTitle>즐겨찾기</FavoritesTitle>
-              <FavoritesList
-                  dataSource={fav}
-                  renderItem={item => (
-                  <List.Item onClick={() => onFavClick(item.menuName)}>
-                      <IconContainer>
-                          <StarFilled style={{ color: '#FFCC00' }}/>
-                      </IconContainer>
-                      <FavoriteItem>
-                          {item.menuName}
-                      </FavoriteItem>
-                  </List.Item>
-                  )}
-              />
+              {fav && fav.length > 0 ? (  // fav가 null이 아니고 빈 배열이 아닐 때만 렌더링
+                <FavoritesList
+                    dataSource={fav}
+                    renderItem={item => (
+                    <List.Item key={item.menuName} onClick={() => onFavClick(item.menuName)}>
+                        <IconContainer>
+                            <StarFilled style={{ color: '#FFCC00' }}/>
+                        </IconContainer>
+                        <FavoriteItem>
+                            {item.menuName}
+                        </FavoriteItem>
+                    </List.Item>
+                    )}
+                />
+              ) : (
+                <NoFavoritesMessage>메뉴 접속 기록이<br />없습니다.</NoFavoritesMessage>
+              )}
           </FavoritesContainer>
       </ConfigProvider>
   );

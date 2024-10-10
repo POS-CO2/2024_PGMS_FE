@@ -82,13 +82,6 @@ export default function Fl() {
         }
     };
     
-    useEffect(() => {
-        fetchDropDown();
-
-        // formData값이 없으면 설비LIB을 findAll, 있으면(이전 탭의 검색기록이 있으면) 그 값을 불러옴
-        Object.keys(formData).length === 0 ? fetchEqLib() : handleFormSubmit(formData);
-    }, []);
-
     const fetchActvList = async (lib) => {
         try {
             // 선택한 lib에 매핑된 활동자료 목록 조회
@@ -98,6 +91,18 @@ export default function Fl() {
             console.error("Error fetching activity data:", error);
         }
     }
+
+    useEffect(() => {
+        fetchDropDown();
+
+        // formData값이 없으면 설비LIB을 findAll, 있으면(이전 탭의 검색기록이 있으면) 그 값을 불러옴
+        Object.keys(formData).length === 0 ? fetchEqLib() : handleFormSubmit(formData);
+    }, []);
+
+    useEffect(() => {
+        setSelectedActv({});
+        setSubmittedActvIdx([]);
+    }, [selectedEqLib])
 
     // 조회 버튼 클릭시 호출될 함수
     const handleFormSubmit = async (data) => {
@@ -176,7 +181,7 @@ export default function Fl() {
                 setSubmittedEqLibIdx([0]);
 
                 swalOptions.title = '성공!',
-                swalOptions.text = `${data.eqLibName}(이)가 성공적으로 등록되었습니다.`;
+                swalOptions.text = `${response.data.eqLibName}이(가) 성공적으로 등록되었습니다.`;
                 swalOptions.icon = 'success';
             } catch (error) {
                 console.log(error);
@@ -206,7 +211,7 @@ export default function Fl() {
                 setSelectedEqLib(response.data);
 
                 swalOptions.title = '성공!',
-                swalOptions.text = `${selectedEqLib.equipLibName}(이)가 성공적으로 수정되었습니다.`;
+                swalOptions.text = `${response.data.equipLibName}이(가) 성공적으로 수정되었습니다.`;
                 swalOptions.icon = 'success';
             } catch (error) {
                 console.log(error);
@@ -245,7 +250,7 @@ export default function Fl() {
                 setSubmittedActvIdx([...Array(newFads.length).keys()]) //지정된 활동자료 만큼의 인덱스 추출(3개(n)를 지정했으면 [0, 1, 2(n-1)] 배열을 만듦)
 
                 swalOptions.title = '성공!',
-                swalOptions.text = `${actvDataNameList.join(', ')}(이)가 성공적으로 지정되었습니다.`;
+                swalOptions.text = `${actvDataNameList.join(', ')}이(가) 성공적으로 지정되었습니다.`;
                 swalOptions.icon = 'success';
             } catch (error) {
                 console.log(error);
@@ -347,7 +352,6 @@ export default function Fl() {
                                     onClicks={[() => showModal('DeleteB'), () => showModal('FadAdd')]}
                                     onRowClick={handleActvClick}
                                     selectedRows={[selectedActv]}
-                                    keyProp={actves.length}
                                     modals={[
                                         isModalOpen.DeleteB && {
                                             'modalType': 'DeleteB',

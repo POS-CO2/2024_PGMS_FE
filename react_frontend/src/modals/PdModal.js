@@ -563,21 +563,19 @@ export function FamAddModal({ isModalOpen, handleOk, handleCancel, dropDown }) {
                 </div>
                 <div className={rmStyles.search_item}>
                     <div className={rmStyles.search_title}>산정단위</div>
-                    <input 
-                        className={rmStyles.search} 
-                        id="calUnit" 
-                        value={calUnit} 
-                        readOnly 
+                    <Input
+                        value={calUnit}
+                        disabled={true}
+                        allowClear={{ clearIcon: <CloseOutlined style={{color: "red"}} /> }}
                         style={{ width: '18rem' }}
                     />
                 </div>
                 <div className={rmStyles.search_item}>
                     <div className={rmStyles.search_title}>단위환산계수</div>
-                    <input 
-                        className={rmStyles.search} 
-                        id="unitConvCoef" 
-                        value={unitConvCoef} 
-                        readOnly 
+                    <Input
+                        value={unitConvCoef}
+                        disabled={true}
+                        allowClear={{ clearIcon: <CloseOutlined style={{color: "red"}} /> }}
                         style={{ width: '18rem' }}
                     />
                 </div>
@@ -751,7 +749,6 @@ export function FamEditModal({ isModalOpen, handleOk, handleCancel, rowData, dro
                         value={calUnit}
                         disabled={true}
                         allowClear={{ clearIcon: <CloseOutlined style={{color: "red"}} /> }}
-                        onChange={(e) => setEqLibName(e.target.value)}
                         style={{ width: '18rem' }}
                     />
                 </div>
@@ -761,14 +758,11 @@ export function FamEditModal({ isModalOpen, handleOk, handleCancel, rowData, dro
                         value={unitConvCoef}
                         disabled={true}
                         allowClear={{ clearIcon: <CloseOutlined style={{color: "red"}} /> }}
-                        onChange={(e) => setEqLibName(e.target.value)}
                         style={{ width: '18rem' }}
                     />
                 </div>
                 <button className={rmStyles.select_button} onClick={handleSelect}>수정</button>
             </div>
-
-            
         </Modal>
     )
 }
@@ -1568,8 +1562,8 @@ export function EfmAddModal({ isModalOpen, handleOk, handleCancel, rowData }) {
                 <div className={sysStyles.text_field}>
                     <div className={sysStyles.text}><span className={modalStyles.star}>*</span>{"적용구분"}</div>
                     <Select value={selectedApplyDvs} allowClear={{ clearIcon: <CloseOutlined style={{color: "red"}} /> }} onChange={(value) => {setSelectedApplyDvs(value)}} style={{width:"18rem", height:"2rem",fontSize:"4rem"}}>
-                    {applyDvs.map(option => (
-                        <Select.Option key={option.code} value={option.code}>
+                    {applyDvs.map((option, index) => (
+                        <Select.Option key={`${option.value}-${index}`} value={option.code}>
                             {option.name}
                         </Select.Option>
                     ))}
@@ -1579,8 +1573,8 @@ export function EfmAddModal({ isModalOpen, handleOk, handleCancel, rowData }) {
                 <div className={sysStyles.text_field}>
                     <div className={sysStyles.text}><span className={modalStyles.star}>*</span>{"계수구분코드"}</div>
                     <Select value={selectedCoefClassCode} allowClear={{ clearIcon: <CloseOutlined style={{color: "red"}} /> }} onChange={(value) => handleInputUnitChange(value)} style={{width:"18rem", height:"2rem",fontSize:"4rem"}}>
-                    {coefClassCode.map(option => (
-                        <Select.Option key={option.code} value={option.code}>
+                    {coefClassCode.map((option, index) => (
+                        <Select.Option key={`${option.value}-${index}`} value={option.code}>
                             {option.name}
                         </Select.Option>
                     ))}
@@ -1592,8 +1586,8 @@ export function EfmAddModal({ isModalOpen, handleOk, handleCancel, rowData }) {
                     {
                         ghgCode.length !== 0 ? (
                             <Select value={selectedGhgCode} allowClear={{ clearIcon: <CloseOutlined style={{color: "red"}} /> }} placeholder="계수구분코드를 선택해주세요." onChange={(value) => {setSelectedGhgCode(value)}} style={{width:"18rem", height:"2rem",fontSize:"4rem"}}>
-                            {ghgCode.map(option => (
-                                <Select.Option key={option.code} value={option.code}>
+                            {ghgCode.map((option, index) => (
+                                <Select.Option key={`${option.value}-${index}`} value={option.code}>
                                     {option.name}
                                 </Select.Option>
                             ))}
@@ -2155,7 +2149,7 @@ export function MmAddModal({ isModalOpen, handleOk, handleCancel, rowData }) {
                     <div className={sysStyles.text}><span className={modalStyles.star}>*</span>{"상위폴더"}</div>
                     <Select value={selectedUpperDir} allowClear={{ clearIcon: <CloseOutlined style={{color: "red"}} /> }} onChange={(e) => {setSelectedUpperDir(e)}} style={{width:"18rem", height:"2rem", fontSize:"4rem"}}>
                     {upperDir.map(option => (
-                        <Select.Option key={option.id} value={option.id}>
+                        <Select.Option key={option.value} value={option.id}>
                             {option.name}
                         </Select.Option>
                     ))}
@@ -2170,7 +2164,7 @@ export function MmAddModal({ isModalOpen, handleOk, handleCancel, rowData }) {
                     <div className={sysStyles.text}><span className={modalStyles.star}>*</span>{"메뉴순서"}</div>
                     <Select placeholder={"메뉴순서"} value={orderMenu} allowClear={{ clearIcon: <CloseOutlined style={{color: "red"}} /> }} onChange={(value) => setOrderMenu(value)} style={{width:"18rem", height:"2rem", fontSize:"4rem"}}>
                     {orderMenuList.map(option => (
-                        <Select.Option key={option} value={option}>
+                        <Select.Option key={option.value} value={option}>
                             {option}
                         </Select.Option>
                     ))}
@@ -2223,22 +2217,27 @@ export function EsmAddModal({ isModalOpen, handleOk, handleCancel, rowData }) {
 
     // 등록 버튼 클릭 시 호출될 함수
     const handleSelect = async () => {
+        const equipNameList = [];
+
         // selectedEmtnCands가 null이거나 비었으면 모달 닫고 함수 종료
         if (!selectedEmtnCands || selectedEmtnCands.length === 0) {
             handleCancel();
             return;
         }
 
-        const requestBody = selectedEmtnCands.map((selectedEmtnCand) => ({
-            equipId: selectedEmtnCand.equipId,
-            actvDataId: selectedEmtnCand.actvDataId,
-        }));
+        const requestBody = selectedEmtnCands.map((selectedEmtnCand) => {
+            equipNameList.push(selectedEmtnCand.equipName);
+            return {
+                equipId: selectedEmtnCand.equipId,
+                actvDataId: selectedEmtnCand.actvDataId
+            };
+        });
 
         // handleOk을 호출하여 모달을 닫고 상위 컴포넌트에 알림
         handleOk({
             url: "/equip/emission",
             requestBody: requestBody,
-            successMsg: `배출원이 성공적으로 등록되었습니다.`,
+            successMsg: `${equipNameList.join(', ')}이(가) 성공적으로 등록되었습니다.`,
         });
     };
 
@@ -2376,7 +2375,7 @@ export function SdAddModal({ isModalOpen, handleOk, handleCancel, rowData }) {
         handleOk({
             url: "/equip/document",
             requestBody: documentData,
-            successMsg: `${documentData.name}이 성공적으로 등록되었습니다.`,
+            successMsg: `${documentData.name}이(가) 성공적으로 등록되었습니다.`,
         });
     };
 
@@ -2642,7 +2641,7 @@ export function SdShowDetailsModal({ isModalOpen, handleOk, handleCancel }) {
         handleOk({
             url: "/equip/document",
             requestBody: documentData,
-            successMsg: `${documentData.name}(이)가 성공적으로 수정되었습니다.`,
+            successMsg: `${documentData.name}이(가) 성공적으로 수정되었습니다.`,
         });
 
     };

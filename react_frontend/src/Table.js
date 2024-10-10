@@ -10,7 +10,7 @@ import Paper from '@mui/material/Paper';
 import { pjtManagerColumns } from './assets/json/tableColumn';
 import { Box, Checkbox, TablePagination, TextField, Card, CardContent, Typography, CardMedia  } from '@mui/material';
 import InboxIcon from '@mui/icons-material/Inbox';
-import zIndex from '@mui/material/styles/zIndex';
+import Avatar from '@mui/material/Avatar';
 
 // TableCell을 스타일링하는 컴포넌트
 const StyledTableCell = styled(
@@ -30,7 +30,27 @@ const StyledTableCell = styled(
     minWidth: '5px', // min-width를 최소로 설정
     width: 'auto', // 자동 크기 조정
     zIndex: 3,
-  },
+
+    '&:not(:last-child)::after': {
+        content: '""',
+        position: 'absolute',
+        top: '25%', // 위에서부터 시작할 위치 (전체 높이의 25%)
+        bottom: '25%', // 아래에서 끝날 위치 (전체 높이의 25%)
+        right: 0,
+        width: '0.08rem',
+        backgroundColor: '#FFF',
+      },
+      "& .resize-handle": {
+        position: "absolute",
+        right: 0,
+        top: 0,
+        bottom: 0,
+        width: "0.5rem",
+        cursor: "col-resize",
+        backgroundColor: "transparent",
+        zIndex: 1,
+      },
+    },
   [`&.${tableCellClasses.body}`]: {
     fontSize: '0.9rem',
     fontFamily: 'SUITE-Regular',
@@ -43,26 +63,7 @@ const StyledTableCell = styled(
     backgroundColor: isCheckbox ? 'transparent' : (isHighlighted ? '#E5F1E4 !important' : isEditable ? 'transparent' : '#F4F4F4'),
     zIndex: 2,
     display: isExpandedRow ? 'table-row' : 'table-cell'
-},
-  '&:not(:last-child)::after': {
-    content: '""',
-    position: 'absolute',
-    top: '25%', // 위에서부터 시작할 위치 (전체 높이의 25%)
-    bottom: '25%', // 아래에서 끝날 위치 (전체 높이의 25%)
-    right: 0,
-    width: '0.08rem',
-    backgroundColor: '#FFF',
-  },
-  "& .resize-handle": {
-    position: "absolute",
-    right: 0,
-    top: 0,
-    bottom: 0,
-    width: "0.5rem",
-    cursor: "col-resize",
-    backgroundColor: "transparent",
-    zIndex: 1,
-  },
+    },
 }));
 
 // TableRow를 스타일링하는 컴포넌트
@@ -431,12 +432,12 @@ export default function CustomizedTables({
                                                                         alignItems: 'center',
                                                                     }}
                                                                 >
-                                                                    <CardMedia
-                                                                        component="img"
-                                                                        sx={{ width: '4rem', height: '4rem', marginRight: '1rem', marginLeft: '1rem' }}  // 이미지 크기 설정
-                                                                        image={imageUrl} // 이미지 URL
-                                                                        alt={`${manager.userName} 프로필 이미지`}
-                                                                    />
+                                                                    {/* 성을 표시하는 Avatar 컴포넌트 */}
+                                                                    <Avatar 
+                                                                        sx={{ width: '2rem', height: '2rem', marginRight: '0.5rem', marginLeft: '0.5rem', bgcolor: '#0EAA00', fontSize: '1.5rem' }} 
+                                                                    >
+                                                                        {manager.userName ? manager.userName.charAt(0) : ''}
+                                                                    </Avatar>
                                                                     <Box>
                                                                         <CardContent>
                                                                             {pjtManagerColumns

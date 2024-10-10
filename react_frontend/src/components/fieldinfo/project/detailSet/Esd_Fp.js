@@ -104,15 +104,11 @@ export default function Esd_Fp() {
     const { showModal, closeModal, isModalOpen } = useModalActions();
     const handleOk = useHandleOkAction();
 
-    // 프로젝트 드롭다운 옵션 설정
-    const [pjtOptions, setPjtOptions] = useState([]);
-    const [projectData, setProjectData] = useState([]);  // 전체 프로젝트 데이터를 저장
-    
     // formData의 searchProject 값만 변경하는 함수
     const updateSearchProject = (newValue) => {
         setFormData((prevFormData) => ({
-        ...prevFormData,
-        searchProject: newValue,  // searchProject 값만 업데이트
+            ...prevFormData,
+            searchProject: newValue,  // searchProject 값만 업데이트
         }));
     };
 
@@ -120,12 +116,10 @@ export default function Esd_Fp() {
         const fetchPjtOptions = async () => {
             try {
                 const res = await axiosInstance.get("/pjt/my");
-                setProjectData(res.data);  // 전체 프로젝트 데이터를 저장
                 const options = res.data.map(pjt => ({
                     value: pjt.pjtId,  // value에 id만 전달
                     label: pjt.pjtCode +"/"+ pjt.pjtName,
                 }));
-                setPjtOptions(options);
                 const updateFormFields = formFields.map(field =>
                     field.name === 'searchProject' ? { ...field, options } : field
                 );
@@ -325,6 +319,7 @@ export default function Esd_Fp() {
                                     onRowClick={handleSDClick}
                                     selectedRows={[selectedSD]}
                                     handleYearChange={handleYearChange}
+                                    highlightedColumnIndex={0}
                                     year={year}
                                     modals={[
                                         isModalOpen.SdShowDetails && {

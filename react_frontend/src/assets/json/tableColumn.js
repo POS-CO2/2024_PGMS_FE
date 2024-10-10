@@ -22,8 +22,8 @@ export const pjtColumns = [
 
 export const equipColumns = [
     { key: 'id', label: 'id', hidden: true },
-    { key: 'equipLibName', label: '설비LIB명', hidden: false },
     { key: 'equipName', label: '설비명', hidden: false },
+    { key: 'equipLibName', label: '설비LIB명', hidden: false },
     { key: 'equipDvs', label: '설비구분', hidden: false },
     { key: 'equipType', label: '설비유형', hidden: false },
     { key: 'equipSpecUnit', label: '설비사양단위', hidden: false },
@@ -104,13 +104,13 @@ export const pjtSalesColumns = [
     { key: 'id', label: 'id', hidden: true },
     { key: 'year', label: '년도', hidden: true },
     { key: 'mth', label: '월', hidden: false },
-    { key: 'salesAmt', label: '매출액', hidden: false },
+    { key: 'salesAmt', label: '매출액(원)', hidden: false },
 ]
 
 export const pjtManagerColumns = [
     { key: 'id', label: 'id', hidden: true },
-    { key: 'loginId', label: '로그인ID', hidden: false },
     { key: 'userName', label: '이름', hidden: false },
+    { key: 'loginId', label: '로그인ID', hidden: false },
     { key: 'userDeptCode', label: '부서명', hidden: false },
 ]
 
@@ -176,6 +176,7 @@ export const perfPjtColumns = [
 
 export const equipEmissionColumns = [
     { key: 'id', label: 'id', hidden: true },
+    { key: 'fileStatus', label: '증빙자료현황', hidden: false },
     { key: 'equipId', label: '설비ID', hidden: true },
     { key: 'actvDataId', label: '활동자료ID', hidden: true },
     { key: 'equipName', label: '설비명', hidden: false },
@@ -189,7 +190,6 @@ export const equipEmissionColumns = [
     { key: 'inputUnitCode', label: '입력단위코드', hidden: false },
     { key: 'calUnitCode', label: '산정단위코드', hidden: false },
     { key: 'unitConvCoef', label: '단위변환계수', hidden: false },
-    { key: 'fileStatus', label: '증빙자료현황', hidden: false },
 ]
 
 export const equipEmissionAddColumns = [

@@ -151,7 +151,7 @@ export default function Fd({pjtId}) {
                 equipName: inputEqName
             },
             url: "/equip",
-            successMsg: `${inputEqName}(이)가 성공적으로 지정되었습니다.`
+            successMsg: `${inputEqName}이(가) 성공적으로 지정되었습니다.`
         })
     }
 
@@ -207,6 +207,7 @@ export default function Fd({pjtId}) {
                     onClicks={[() => showModal('Delete'), () => handleExcelUploadClick(equips, 'exported_table')]}
                     onRowClick={handleEqClick}
                     selectedRows={[selectedEq]}
+                    highlightedColumnIndex={0}
                     modals={[
                         isModalOpen.Delete && {
                             modalType: 'Delete',
@@ -239,7 +240,7 @@ export default function Fd({pjtId}) {
                                 allowClear={{ clearIcon: <CloseOutlined style={{color: "red"}} /> }}
                                 onChange={(e) => setInputEqLib(e.target.value)}
                                 onKeyDown={(e) => handleKeyDown(e, handleSearch)}
-                                style={{ width: '8rem' }}
+                                style={{ width: '12rem' }}
                             />
                         </div>
                         <div className={pdsStyles.search_item}>
@@ -248,7 +249,7 @@ export default function Fd({pjtId}) {
                                 value={inputEqType}
                                 allowClear={{ clearIcon: <CloseOutlined style={{color: "red"}} /> }}
                                 onChange={(value) => setInputEqType(value)}
-                                style={{ width: '12.3rem' }}
+                                style={{ width: '15rem' }}
                             >
                                 {eqTypeList.map((option) => (
                                     <Select.Option key={option.value} value={option.value}>

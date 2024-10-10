@@ -9,7 +9,7 @@ import styled from 'styled-components';
 import ApexCharts from 'react-apexcharts';
 import { useNavigate } from 'react-router-dom';
 import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
-import { openTabsState, activeTabState, itemsState, selectedKeyState, openKeysState } from './atoms/tabAtoms';
+import { openTabsState, activeTabState, itemsState, selectedKeyState, openKeysState, collapsedState } from './atoms/tabAtoms';
 import EcrLogo from './assets/images/ecrlogo.png';
 import TerminalLogo from './assets/images/terminal.png';
 import ContainerLogo from './assets/images/container.png';
@@ -253,7 +253,7 @@ const ChartOptions = (title, xdata) => {
     return chartOption;
 };
 
-export default function Main_Admin({ handleMenuClick=()=>{} }) {
+export default function Main_Admin() {
     const today = new Date();
     const defaultStartDate = dayjs(today).format('YYYY-MM-DD') + 'T00:00:00.000';
     const defaultEndDate = dayjs(today).format('YYYY-MM-DD') + 'T23:59:59.999';
@@ -277,6 +277,7 @@ export default function Main_Admin({ handleMenuClick=()=>{} }) {
     const items = useRecoilValue(itemsState);
     const setSelectedKeys = useSetRecoilState(selectedKeyState);
     const [openKeys, setOpenKeys] = useRecoilState(openKeysState);
+    const [collapsed, setCollapsed] = useRecoilState(collapsedState);
 
     const findParentItem = (items, childKey) => {
         return items.reduce((acc, item) => {
@@ -289,6 +290,16 @@ export default function Main_Admin({ handleMenuClick=()=>{} }) {
             }
             return null;
         }, null);
+    };
+
+    // 마지막으로 선택한 대분류 토글만 내리기
+    const handleOpenChange = (keys) => {
+        const latestOpenKey = keys.find(key => !openKeys.includes(key));
+        if (items.map(item => item.key).includes(latestOpenKey)) {
+        setOpenKeys(latestOpenKey ? [latestOpenKey] : []);
+        } else {
+        setOpenKeys(keys);
+        }
     };
 
     // 메뉴를 클릭했을 때, key값으로 item을 찾음
@@ -310,8 +321,8 @@ export default function Main_Admin({ handleMenuClick=()=>{} }) {
 
         // 대분류(상위 메뉴)를 찾아 openKeys에 추가
         const parentItem = findParentItem(items, item.key);
-        if (parentItem) {
-            setOpenKeys([...openKeys, parentItem.key]);
+        if (parentItem && !collapsed) {
+            handleOpenChange([parentItem.key]);
         }
 
         const newTab = { key: path, tab: label, accessUser: item.accessUser };

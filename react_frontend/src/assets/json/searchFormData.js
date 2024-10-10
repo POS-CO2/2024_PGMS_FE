@@ -128,6 +128,7 @@ export const formField_rm = [
 ]
 
 export const formField_fl = [
+    { type: 'SearchAtModal', name: 'searchProject', label: '프로젝트코드/명', required: true, modalType: '프로젝트 찾기' },
     { type: 'InputText', name: 'equipLibName', label: '설비LIB명'},
     { type: 'DropDown', name: 'equipDvs', label: '설비구분', options: []},
     { type: 'DropDown', name: 'equipType', label: '설비유형', options: []},

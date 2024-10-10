@@ -8,9 +8,6 @@ import { CustomButton } from '../Ps_1_2';
 import TableCustom from "../../../TableCustom.js";
 import ChartCustom from "../../../ChartCustom.js";
 import * as mainStyle from '../../../assets/css/main.css';
-import * as ps12Style from '../../../assets/css/ps12.css';
-import * as sysStyles from '../../../assets/css/sysmng.css';
-import * as esmStyles from '../../../assets/css/esm.css';
 import * as chartStyles from "../../../assets/css/chart.css";
 import * as saStyles from "../../../assets/css/sa.css";
 import * as psqStyles from "../../../assets/css/psq.css";
@@ -25,7 +22,6 @@ import { emissionPerfPjtColumns, perfPjtColumns, pjtColumns } from '../../../ass
 export default function Psq_Fp() {
     const [formFields, setFormFields] = useState(formField_psq_fp);
     const [formData, setFormData] = useRecoilState(projectPerfForm); // 검색 데이터
-    const [selectedPjtOption, setSelectedPjtOption] = useState([]); // searchForm에서 선택되어있는 프로젝트
     const [selectedPjt, setSelectedPjt] = useState([]); // 조회결과로 출력되는 프로젝트
     const [selectedPjtId, setSelectedPjtId] = useRecoilState(selectedPjtFPState);
     const [emissionTableData, setEmissionTableData] = useState([]); // 설비별 표
@@ -33,36 +29,23 @@ export default function Psq_Fp() {
     const [chartPerfs, setChartPerfs] = useState([]);
     const [actvYearDisabled, setActvYearDisabled] = useState(true);  // 드롭다운 비활성화 상태 관리
     const [pieChartPerfs, setPieChartPerfs] = useState([]);
-
     const [content, setContent] = useRecoilState(psqSelectedBtnState); // chart || table
-    const handleButtonClick = (value) => {
-        setContent(value);
-    };
-
     const [selectedMonth, setSelectedMonth] = useState({ key: '0', label: '- All -', });
+    const [projectData, setProjectData] = useState([]);  // 전체 프로젝트 데이터를 저장
     const items = [{ key: '0', label: '- All -', }, { key: '1', label: '1월', }, { key: '2', label: '2월', }, { key: '3', label: '3월', }, { key: '4', label: '4월', }, { key: '5', label: '5월', }, { key: '6', label: '6월', },
         { key: '7', label: '7월', }, { key: '8', label: '8월', }, { key: '9', label: '9월', }, { key: '10', label: '10월', }, { key: '11', label: '11월', }, { key: '12', label: '12월', },];
     const colors = ['#67b7dc', '#6794dc', '#6771dc', '#8067dc', '#a367dc', '#c767dc'];
-
-    // 프로젝트 드롭다운 옵션 설정
-    const [pjtOptions, setPjtOptions] = useState([]);
-    const [projectData, setProjectData] = useState([]);  // 전체 프로젝트 데이터를 저장
-    
-    useEffect(() => {
-        console.log("projectData", projectData);
-    }, [projectData])
-
-    useEffect(() => {
-        console.log("formData", formData);
-    }, [formData])
-
+        
     // formData의 searchProject 값만 변경하는 함수
     const updateSearchProject = (newValue) => {
-        console.log("cc");
         setFormData((prevFormData) => ({
-        ...prevFormData,
-        searchProject: newValue,  // searchProject 값만 업데이트
+            ...prevFormData,
+            searchProject: newValue,  // searchProject 값만 업데이트
         }));
+    };
+
+    const handleButtonClick = (value) => {
+        setContent(value);
     };
 
     useEffect(() => {
@@ -74,7 +57,6 @@ export default function Psq_Fp() {
                     value: pjt.pjtId,  // value에 id만 전달
                     label: pjt.pjtCode +"/"+ pjt.pjtName,
                 }));
-                setPjtOptions(options);
                 const updateFormFields = formFields.map(field =>
                     field.name === 'searchProject' ? { ...field, options } : field
                 );
@@ -107,7 +89,6 @@ export default function Psq_Fp() {
     // 프로젝트 선택 후 대상년도 드롭다운 옵션 설정
     const onProjectSelect = (selectedData, form) => {
         const selectedProject = projectData.find(pjt => pjt.pjtId === selectedData);
-        setSelectedPjtOption(selectedProject);
 
         if (selectedProject) {
             const yearOptions = [];
@@ -125,7 +106,6 @@ export default function Psq_Fp() {
                 field.name === 'actvYear' ? { ...field, options: yearOptions } : field
             );
 
-            console.log("updatedFields", updatedFields);
             setFormFields(updatedFields);
 
             // 옵션 데이터가 있으면 드롭다운을 활성화, default값 설정
@@ -133,7 +113,10 @@ export default function Psq_Fp() {
                 setActvYearDisabled(false);
             }
             if (Object.keys(formData).length === 0 || selectedProject) {
-                form.setFieldsValue({ actvYear: yearOptions[0].value });
+                form.setFieldsValue(
+                    formData.actvYear && formData.searchProject === selectedData ? 
+                        { actvYear: formData.actvYear} : { actvYear: yearOptions[0].value 
+                });
             }
         }
     };

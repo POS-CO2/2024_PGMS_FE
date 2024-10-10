@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef, forwardRef, useImperativeHandle } from 'react';
 import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
-import { openTabsState, activeTabState, itemsState, selectedKeyState, openKeysState } from './atoms/tabAtoms';
+import { openTabsState, activeTabState, itemsState, selectedKeyState, openKeysState, collapsedState } from './atoms/tabAtoms';
 import { Tabs, Dropdown, Menu, Button, Tooltip } from 'antd';
 import { CloseOutlined, CloseCircleOutlined } from '@ant-design/icons';
 import GTranslateIcon from '@mui/icons-material/GTranslate';
@@ -201,6 +201,7 @@ const TabsContainer = forwardRef(({ handleLogout, user, handleMenuClick, handleC
   const items = useRecoilValue(itemsState);
   const setSelectedKeys = useSetRecoilState(selectedKeyState);
   const [openKeys, setOpenKeys] = useRecoilState(openKeysState);
+  const [collapsed, setCollapsed] = useRecoilState(collapsedState);
 
   useEffect(() => {
     const savedTabs = JSON.parse(localStorage.getItem(TABS_STORAGE_KEY)) || [];
@@ -269,6 +270,16 @@ const TabsContainer = forwardRef(({ handleLogout, user, handleMenuClick, handleC
     }, null);
   };
 
+  // 마지막으로 선택한 대분류 토글만 내리기
+  const handleOpenChange = (keys) => {
+    const latestOpenKey = keys.find(key => !openKeys.includes(key));
+    if (items.map(item => item.key).includes(latestOpenKey)) {
+      setOpenKeys(latestOpenKey ? [latestOpenKey] : []);
+    } else {
+      setOpenKeys(keys);
+    }
+  };
+
   const onTabChange = path => {
     setActiveKey(path);
 
@@ -281,14 +292,15 @@ const TabsContainer = forwardRef(({ handleLogout, user, handleMenuClick, handleC
 
       // 대분류(상위 메뉴)를 찾아 openKeys에 추가
       const parentItem = findParentItem(items, item.key);
-      if (parentItem) {
-        setOpenKeys([...openKeys, parentItem.key]);
+      if (parentItem && !collapsed) {
+        handleOpenChange([parentItem.key]);
       }
     }
 
     if (path === '') {  // 홈 탭을 클릭했을 때 명시적으로 홈 경로로 이동
       navigate('');
-      setSelectedKeys(null);
+      setOpenKeys([]); //사이드바 대분류 토글 다 접기
+      setSelectedKeys(null); //사이드바 선택된 메뉴 null
     } else {
       navigate(path);
     }
@@ -311,8 +323,10 @@ const TabsContainer = forwardRef(({ handleLogout, user, handleMenuClick, handleC
     if (newTabs.length && newActiveKey === targetKey) {
       if (lastIndex >= 0) {
         newActiveKey = newTabs[lastIndex].key;
-      } else {
-        newActiveKey = newTabs[0].key;
+        if(newActiveKey === '') {
+          setOpenKeys([]);
+        setSelectedKeys(null);
+        }
       }
     }
 
@@ -380,9 +394,10 @@ const TabsContainer = forwardRef(({ handleLogout, user, handleMenuClick, handleC
   }));
 
   // 로그아웃 메뉴 정의 및 사용자 정보
-  const menu = (
-    <Menu>
-      <Menu.Item key="userInfo" disabled>
+  const menuItems = [
+    {
+      key: 'userInfo',
+      label: (
         <UserDetails>
           <Row>
             <div style={{ marginRight: '16px'}}>
@@ -407,10 +422,11 @@ const TabsContainer = forwardRef(({ handleLogout, user, handleMenuClick, handleC
             </div>
           </Row>
         </UserDetails>
-      </Menu.Item>
-    </Menu>
-  );
-
+      ),
+      disabled: true,
+    },
+  ];
+  
   return (
     <DndProvider backend={HTML5Backend}>
       <TabsWrapper>
@@ -443,7 +459,7 @@ const TabsContainer = forwardRef(({ handleLogout, user, handleMenuClick, handleC
           </IconButton>
 
           {/* 유저 섹션 */}
-          <Dropdown overlay={menu} trigger={['click']} placement="bottomRight">
+          <Dropdown menu={{ items: menuItems }} trigger={['click']} placement="bottomRight">
             <UserInfo>
               <Photo>
                 <img src="http://sanriokorea.co.kr/wp-content/themes/sanrio/images/kuromi.png" alt="User" />

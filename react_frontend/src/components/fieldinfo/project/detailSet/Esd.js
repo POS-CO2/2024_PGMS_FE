@@ -86,6 +86,11 @@ export default function Esd({pjtId}) {
         Object.keys(selectedES).length !== 0 && fetchSDList(selectedES, year);
     }, [suppDocs.length, filteredSDs.length])
 
+    useEffect(() => {
+        setSelectedSD({});
+        setSubmittedSDIdx([]);
+    }, [selectedES])
+
     const fetchSDList = async (es, year) => {
         try {
             // 선택한 배출원에 매핑된 증빙자료 목록 조회
@@ -126,7 +131,7 @@ export default function Esd({pjtId}) {
 
     return (
         <>
-            <Card sx={{ width: "50%", height: "auto", borderRadius: "0.5rem" }}>
+            <Card sx={{ width: "70%", height: "auto", borderRadius: "0.5rem" }}>
                 <TableCustom
                     title='배출원 목록' 
                     data={emSources}
@@ -137,6 +142,7 @@ export default function Esd({pjtId}) {
                     onRowClick={handleESClick}
                     selectedRows={[selectedES]}
                     keyProp={emSources.length}
+                    highlightedColumnIndex={0}
                     modals={[
                         isModalOpen.DeleteA && {
                             modalType: 'DeleteA',
@@ -168,7 +174,7 @@ export default function Esd({pjtId}) {
                     ]}
                 />
             </Card>
-            <Card sx={{ width: "50%", borderRadius: "0.5rem", paddingBottom: "20px" }}>
+            <Card sx={{ width: "30%", borderRadius: "0.5rem", paddingBottom: "20px" }}>
                 {(!selectedES || Object.keys(selectedES).length === 0) ?
                 <div className={pdsStyles.card_container}>
                     <div className={pdsStyles.table_title} style={{ padding: "8px" }}>증빙자료 목록</div>

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useRecoilState } from "recoil";
-import { eqLibAnaSearchForm } from '../../atoms/searchFormAtoms';
+import { eqLibAnaSearchForm, selectedPeriodState } from '../../atoms/searchFormAtoms';
 import SearchForms from "../../SearchForms";
 import { formField_ea } from "../../assets/json/searchFormData";
 import TableCustom from "../../TableCustom.js";
@@ -18,6 +18,7 @@ import * as XLSX from 'xlsx';
 
 export default function Ea() {
     const [formData, setFormData] = useRecoilState(eqLibAnaSearchForm); // 검색 데이터
+    const [selectedCal, setSelectedCal] = useRecoilState(selectedPeriodState);
     const [analEquipData, setAnalEquipData] = useState([]); // 표
     const [analEquipChartData, setAnalEquipChartData] = useState([]); // 차트
     const [tableColumn, setTableColumn] = useState([]);
@@ -25,11 +26,22 @@ export default function Ea() {
     const colors = ['#67b7dc', '#6794dc', '#6771dc', '#8067dc', '#a367dc', '#c767dc'];
 
     useEffect(() => {
-        // formData값이 있으면(이전 탭의 검색기록이 있으면) 그 값을 불러옴
-        if(Object.keys(formData).length !== 0) {
-            handleFormSubmit(formData);
-        }
-    }, []);
+        // selectedCal이 변경되면 formData의 calendar 값만 업데이트
+       if (formData.calendar !== selectedCal) {
+           setFormData((prevFormData) => ({
+               ...prevFormData,
+               calendar: selectedCal,  // calendar 값만 업데이트
+           }));
+       }
+   }, [selectedCal]);
+
+   useEffect(() => {
+       if (Object.keys(formData).length === 2) {
+           if(formData.calendar === selectedCal && selectedCal.length === 2) {
+               handleFormSubmit(formData);
+           } 
+       }
+   }, [formData])
 
     useEffect(() => {
         // 총 value 계산
@@ -52,6 +64,7 @@ export default function Ea() {
     // 조회 버튼 클릭시 호출될 함수
     const handleFormSubmit = async (data) => {
         setFormData(data);
+        setSelectedCal(data.calendar);
         
         const startDate = `${data.calendar[0].$y}-${(data.calendar[0].$M + 1).toString().padStart(2, '0')}`;
         const endDate = `${data.calendar[1].$y}-${(data.calendar[1].$M + 1).toString().padStart(2, '0')}`;
@@ -125,9 +138,11 @@ export default function Ea() {
                 handleFieldsChange={handleFieldsChange}
             />
 
-            {(!formData || Object.keys(formData).length === 0) ? (
-                <></>
-             ) : (
+            {Object.keys(formData).length < 2 ? 
+                <></> 
+                : formData.calendar && formData.calendar.length === 0 ? 
+                <></> 
+                : (
                 <>
                     <div className={sysStyles.main_grid}>
                         <Card className={saStyles.card_box} sx={{ width: "50%", height: "auto", borderRadius: "15px" }}>

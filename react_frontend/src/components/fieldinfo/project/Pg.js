@@ -167,7 +167,7 @@ export default function Pg() {
                 setSubmittedPjtIdx([...Array(newPjts.length).keys()]);
 
                 swalOptions.title = '성공!',
-                swalOptions.text = `${pjtNameList.join(', ')}(이)가 성공적으로 등록되었습니다.`;
+                swalOptions.text = `${pjtNameList.join(', ')}이(가) 성공적으로 등록되었습니다.`;
                 swalOptions.icon = 'success';
             } catch (error) {
                 console.log(error);

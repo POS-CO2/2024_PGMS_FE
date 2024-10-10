@@ -1,6 +1,6 @@
 import React, {useState, useRef, useEffect} from 'react';
 import { useRecoilState, useSetRecoilState } from "recoil";
-import { itemsState, selectedKeyState } from './atoms/tabAtoms';
+import { itemsState, selectedKeyState, collapsedState } from './atoms/tabAtoms';
 import { useNavigate, Outlet } from 'react-router-dom';
 import styled from 'styled-components';
 import Sidebar from './Sidebar';
@@ -80,7 +80,7 @@ const mapMenuDataToItems = (menuData) => {
 export default function SiteLayout({handleLogout, menus, user}){
     const [loading, setLoading] = useState(false);
     const [items, setItems] = useRecoilState(itemsState);
-    const [collapsed, setCollapsed] = useState(false);
+    const [collapsed, setCollapsed] = useRecoilState(collapsedState);
     const [chatOpen, setChatOpen] = useState(false);
     const navigate = useNavigate();
     const tabsContainerRef = useRef(null);

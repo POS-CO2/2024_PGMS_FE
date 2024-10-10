@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useRecoilState } from "recoil";
-import { revAnaSearchForm } from '../../atoms/searchFormAtoms';
+import { revAnaSearchForm, selectedPeriodState } from '../../atoms/searchFormAtoms';
 import SearchForms from "../../SearchForms";
 import { formField_sa } from "../../assets/json/searchFormData";
 import TableCustom from "../../TableCustom.js";
@@ -31,6 +31,7 @@ const Overlay = styled('div')({
 
 export default function Sa() {
     const [formData, setFormData] = useRecoilState(revAnaSearchForm); // 검색 데이터
+    const [selectedCal, setSelectedCal] = useRecoilState(selectedPeriodState);
     const [salesTableData, setSalesTableData] = useState([]); // 목록 표
     const [avgUnitPerDiv, setAvgUnitPerDiv] = useState([]); // 본부별 평균 원단위
     const [unitPerProd, setUnitPerProd] = useState([]); // 상품별 원단위
@@ -40,17 +41,29 @@ export default function Sa() {
     const [isLoading, setIsLoading] = useState(false);
 
     useEffect(() => {
-        // formData값이 있으면(이전 탭의 검색기록이 있으면) 그 값을 불러옴
-        if(Object.keys(formData).length !== 0) {
-            handleFormSubmit(formData);
+         // selectedCal이 변경되면 formData의 calendar 값만 업데이트
+        if (formData.calendar !== selectedCal) {
+            setFormData((prevFormData) => ({
+                ...prevFormData,
+                calendar: selectedCal,  // calendar 값만 업데이트
+            }));
         }
-    }, []);
+    }, [selectedCal]);
+
+    useEffect(() => {
+        if (Object.keys(formData).length !== 0) {
+            if(formData.calendar === selectedCal && selectedCal.length === 2) {
+                handleFormSubmit(formData);
+            } 
+        }
+    }, [formData])
 
     // 조회 버튼 클릭시 호출될 함수
     const handleFormSubmit = async (data) => {
         setIsLoading(true); // 로딩 시작
 
         setFormData(data);
+        setSelectedCal(data.calendar);
         setHighlightedItem(null); // 강조된 항목 초기화
         
         const startDate = `${data.calendar[0].$y}-${(data.calendar[0].$M + 1).toString().padStart(2, '0')}`;
@@ -161,9 +174,11 @@ export default function Sa() {
                 handleFieldsChange={handleFieldsChange}
             />
 
-            {(!formData || Object.keys(formData).length === 0) ? (
+            {Object.keys(formData).length === 0 ? 
+                <></> 
+                : formData.calendar && formData.calendar.length === 0 ? 
                 <></>
-             ) : (
+                : (
                 <>
                     <div className={saStyles.main_grid}>
                         <Card className={saStyles.card_box} sx={{ width: "30%", height: "35vh", borderRadius: "15px", overflow: "hidden" }}>

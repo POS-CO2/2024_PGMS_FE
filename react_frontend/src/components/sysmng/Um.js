@@ -233,7 +233,7 @@ export default function Um() {
                 <></> :
                 <div className={sysStyles.main_grid}>
                     <Card className={sysStyles.card_box} sx={{width:"50%", height:"auto", borderRadius:"15px"}}>
-                        <TableCustom title="사용자목록" columns={userColumns} data={patchedUserList} submittedRowIdx={submittedUserIdx} buttons={['Delete', 'Add']} selectedRows={[selectedUser]} onClicks={[handleDeleteClick, handleAddClick]} onRowClick={(e) => handleRowClick(e)} modals={
+                        <TableCustom title="사용자 목록" columns={userColumns} data={patchedUserList} submittedRowIdx={submittedUserIdx} buttons={['Delete', 'Add']} selectedRows={[selectedUser]} onClicks={[handleDeleteClick, handleAddClick]} onRowClick={(e) => handleRowClick(e)} modals={
                             [
                                 isModalOpen.UmAdd && {
                                     "modalType" : 'UmAdd',
@@ -253,7 +253,7 @@ export default function Um() {
                             ].filter(Boolean)
                         }/>
                     </Card>
-                    <Card className={sysStyles.card_box} sx={{width:"50%", borderRadius:"15px", height:"70vh"}}>
+                    <Card className={sysStyles.card_box} sx={{width:"50%", borderRadius:"15px", height:"62vh"}}>
                         {(!selectedUser || Object.keys(selectedUser).length !== 0) ? (
                             <ConfigProvider theme={{token:{fontFamily:"SUITE-Regular"}}}>
                                 <TableCustom title='사용자 상세정보' buttons={['DoubleClickEdit']} onClicks={[handleEditClick]} table={false} selectedRows={[selectedUser]}/>
