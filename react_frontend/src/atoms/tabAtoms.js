@@ -42,3 +42,9 @@ export const openKeysState = atom({
     localStorageEffect('openKeysState'), // 로컬 스토리지와 동기화
 ],
 });
+
+// 즐겨찾기 목록
+export const collapsedState = atom({
+  key: 'collapsedState',
+  default: false,
+});

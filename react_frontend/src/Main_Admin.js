@@ -9,7 +9,7 @@ import styled from 'styled-components';
 import ApexCharts from 'react-apexcharts';
 import { useNavigate } from 'react-router-dom';
 import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
-import { openTabsState, activeTabState, itemsState, selectedKeyState, openKeysState } from './atoms/tabAtoms';
+import { openTabsState, activeTabState, itemsState, selectedKeyState, openKeysState, collapsedState } from './atoms/tabAtoms';
 import EcrLogo from './assets/images/ecrlogo.png';
 import TerminalLogo from './assets/images/terminal.png';
 import ContainerLogo from './assets/images/container.png';
@@ -277,6 +277,7 @@ export default function Main_Admin() {
     const items = useRecoilValue(itemsState);
     const setSelectedKeys = useSetRecoilState(selectedKeyState);
     const [openKeys, setOpenKeys] = useRecoilState(openKeysState);
+    const [collapsed, setCollapsed] = useRecoilState(collapsedState);
 
     const findParentItem = (items, childKey) => {
         return items.reduce((acc, item) => {
@@ -320,7 +321,7 @@ export default function Main_Admin() {
 
         // 대분류(상위 메뉴)를 찾아 openKeys에 추가
         const parentItem = findParentItem(items, item.key);
-        if (parentItem) {
+        if (parentItem && !collapsed) {
             handleOpenChange([parentItem.key]);
         }
 

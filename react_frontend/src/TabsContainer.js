@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef, forwardRef, useImperativeHandle } from 'react';
 import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
-import { openTabsState, activeTabState, itemsState, selectedKeyState, openKeysState } from './atoms/tabAtoms';
+import { openTabsState, activeTabState, itemsState, selectedKeyState, openKeysState, collapsedState } from './atoms/tabAtoms';
 import { Tabs, Dropdown, Menu, Button, Tooltip } from 'antd';
 import { CloseOutlined, CloseCircleOutlined } from '@ant-design/icons';
 import GTranslateIcon from '@mui/icons-material/GTranslate';
@@ -201,6 +201,7 @@ const TabsContainer = forwardRef(({ handleLogout, user, handleMenuClick, handleC
   const items = useRecoilValue(itemsState);
   const setSelectedKeys = useSetRecoilState(selectedKeyState);
   const [openKeys, setOpenKeys] = useRecoilState(openKeysState);
+  const [collapsed, setCollapsed] = useRecoilState(collapsedState);
 
   useEffect(() => {
     const savedTabs = JSON.parse(localStorage.getItem(TABS_STORAGE_KEY)) || [];
@@ -291,7 +292,7 @@ const TabsContainer = forwardRef(({ handleLogout, user, handleMenuClick, handleC
 
       // 대분류(상위 메뉴)를 찾아 openKeys에 추가
       const parentItem = findParentItem(items, item.key);
-      if (parentItem) {
+      if (parentItem && !collapsed) {
         handleOpenChange([parentItem.key]);
       }
     }
@@ -322,8 +323,10 @@ const TabsContainer = forwardRef(({ handleLogout, user, handleMenuClick, handleC
     if (newTabs.length && newActiveKey === targetKey) {
       if (lastIndex >= 0) {
         newActiveKey = newTabs[lastIndex].key;
-      } else {
-        newActiveKey = newTabs[0].key;
+        if(newActiveKey === '') {
+          setOpenKeys([]);
+        setSelectedKeys(null);
+        }
       }
     }
 
