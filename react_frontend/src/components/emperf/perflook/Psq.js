@@ -45,7 +45,8 @@ export default function Psq() {
     const [selectedMonth, setSelectedMonth] = useState({ key: '0', label: '- All -', });
     const items = [{ key: '0', label: '- All -', }, { key: '1', label: '1월', }, { key: '2', label: '2월', }, { key: '3', label: '3월', }, { key: '4', label: '4월', }, { key: '5', label: '5월', }, { key: '6', label: '6월', },
         { key: '7', label: '7월', }, { key: '8', label: '8월', }, { key: '9', label: '9월', }, { key: '10', label: '10월', }, { key: '11', label: '11월', }, { key: '12', label: '12월', },];
-    const colors = ['#cd82b4', '#f2cbca', '#aed1e1', '#e3ead0', '#8095a3'];
+    //const colors = ['#cd82b4', '#f2cbca', '#aed1e1', '#e3ead0', '#8095a3'];
+    const colors = ['#67b7dc', '#6794dc', '#6771dc', '#8067dc', '#a367dc', '#c767dc'];
 
     // 프로젝트 선택 후 대상년도 드롭다운 옵션 설정
     const onProjectSelect = (selectedData, form) => {
@@ -347,7 +348,7 @@ export default function Psq() {
                                                 arcLabelMinAngle: 35,
                                             },
                                         ]}
-                                        height={200}
+                                        sx={{ width: "100%", height: "auto", minHeight: "300px" }}
                                     />
                                 </Card>
                             </>
@@ -357,7 +358,7 @@ export default function Psq() {
                                 <Card className={psqStyles.table_card} sx={{ width: "100%", height: "fit-contents", borderRadius: "15px" }}>
                                     <TableCustom columns={emissionPerfPjtColumns} title="배출원별 실적 (단위:kgGHG)" data={emissionTableData} buttons={['DownloadExcel']} onClicks={[() => onDownloadExcelClick("배출원별 실적", emissionTableData, emissionPerfPjtColumns)]} pagination={false} highlightedColumnIndex={0}/>
                                 </Card>
-                                <Card className={psqStyles.table_card} sx={{ width: "100%", height: "fit-contents", borderRadius: "15px" }}>
+                                <Card className={psqStyles.table_card} sx={{ width: "100%", height: "27vh", borderRadius: "15px" }}>
                                     <TableCustom columns={perfPjtColumns} title="scope별 실적 (단위:kgGHG)" data={perfsData} buttons={['DownloadExcel']} onClicks={[() => onDownloadExcelClick("scope별 실적", perfsData, perfPjtColumns)]} pagination={false} highlightedColumnIndex={0}/>
                                 </Card>
                             </div>

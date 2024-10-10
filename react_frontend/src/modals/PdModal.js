@@ -13,7 +13,7 @@ import WarningAmberIcon from '@mui/icons-material/WarningAmber';
 import Table from "../Table";
 import { CustomButton } from '../Button';
 import styled from 'styled-components';
-import { pjtColumns, equipColumns, equipActvColumns, equipEmissionColumns } from '../assets/json/tableColumn.js';
+import { pjtColumns, equipColumns, equipActvColumns, equipEmissionAddColumns } from '../assets/json/tableColumn.js';
 import * as modalStyles from "../assets/css/pdModal.css";
 import * as rmStyles from "../assets/css/rmModal.css";
 import * as delStyle from "../assets/css/delModal.css";
@@ -962,14 +962,18 @@ export function Ps12UploadExcelModal({ isModalOpen, handleOk, handleCancel }) { 
             swalOptions.icon = 'success';
         } catch (error) {
             swalOptions.title = '실패!',
-            swalOptions.text = error.response.data.message;
+            swalOptions.html = error.response.data.message;
             swalOptions.icon = 'error';
         }
         Swal.fire(swalOptions);
     };
 
     return (
+        <ConfigProvider theme={{token:{fontFamily:"SUITE-Regular"}}}>
         <Modal
+            style={{
+                top: "30%"
+            }}
             open={isModalOpen}
             onCancel={handleCancel}
             width={450}
@@ -1020,6 +1024,7 @@ export function Ps12UploadExcelModal({ isModalOpen, handleOk, handleCancel }) { 
 
             <button className={ps12Styles.select_button} onClick={onSaveClick}>등록</button>
         </Modal>
+        </ConfigProvider>
     )
 }
 
@@ -1238,7 +1243,7 @@ export function DeleteModal({ isModalOpen, handleOk, handleCancel, rowData, rowD
             handleOk();
         } catch (error) {
             swalOptions.title = '실패!',
-            swalOptions.text = error.response.data.message,
+            swalOptions.html = error.response.data.message,
             swalOptions.icon = 'error';
             handleCancel();
         }
@@ -1592,8 +1597,6 @@ export function EfmAddModal({ isModalOpen, handleOk, handleCancel, rowData }) {
                             </Select>
                         )
                     }
-                    
-                    
                 </div>
                 <div className={sysStyles.text_field}>
                     <div className={sysStyles.text}>{"단위"}</div>
@@ -1848,7 +1851,7 @@ export function FmAddModal({ isModalOpen, handleOk, handleCancel, rowData }) {
             swalOptions.icon = 'success';
         } catch (error) {
             swalOptions.title = '실패!',
-            swalOptions.text = error.response.data.message,
+            swalOptions.html = error.response.data.message,
             swalOptions.icon = 'error';
         }
         Swal.fire(swalOptions);
@@ -2091,7 +2094,7 @@ export function MmAddModal({ isModalOpen, handleOk, handleCancel, rowData }) {
             swalOptions.icon = 'success';
         } catch (error) {
             swalOptions.title = '실패!',
-            swalOptions.text = error.response.data.message,
+            swalOptions.html = error.response.data.message,
             swalOptions.icon = 'error';
         }
         Swal.fire(swalOptions);
@@ -2264,7 +2267,7 @@ export function EsmAddModal({ isModalOpen, handleOk, handleCancel, rowData }) {
                     </div>
                 </div>
                 <div className={pjtModalStyles.result_container}>
-                    <Table data={emtnCands} variant='checkbox' onRowClick={handleEmtnClick} columns={equipEmissionColumns} modalPagination={true} />
+                    <Table data={emtnCands} variant='checkbox' onRowClick={handleEmtnClick} columns={equipEmissionAddColumns} modalPagination={true} />
                 </div>
             </div>
         </Modal>
@@ -2335,7 +2338,7 @@ export function SdAddModal({ isModalOpen, handleOk, handleCancel, rowData }) {
             return response.data; // 파일 업로드 후 S3에서 반환된 파일 정보 배열
         } catch (error) {
             swalOptions.title = '실패!',
-            swalOptions.text = error.response.data.message,
+            swalOptions.html = error.response.data.message,
             swalOptions.icon = 'error';
         }
         Swal.fire(swalOptions);
@@ -2377,111 +2380,112 @@ export function SdAddModal({ isModalOpen, handleOk, handleCancel, rowData }) {
     };
 
     return (
-        <Modal
-            open={isModalOpen}
-            onCancel={handleCancel}
-            width={400}
-            footer={null}             //Ant Design의 기본 footer 제거(Cancel, OK 버튼)
-        >
-            <div className={modalStyles.title}>증빙서류 등록</div>
+        <ConfigProvider theme={{token:{fontFamily:"SUITE-Regular"}}}>
+            <Modal
+                open={isModalOpen}
+                onCancel={handleCancel}
+                width={400}
+                footer={null}             //Ant Design의 기본 footer 제거(Cancel, OK 버튼)
+            >
+                <div className={modalStyles.title}>증빙서류 등록</div>
 
-            <div className={sdStyles.input_container}>
-
-                <div className={sdStyles.input_item}>
-                    <div className={sdStyles.input_title}>
-                        <span className={modalStyles.star}>*</span>대상년월
-                    </div>
-                    <div className={sdStyles.select_item}>
-                        <Select
-                            id="actvYear"
-                            value={formData.actvYear}
-                            onChange={(value) => setFormData(prevData => ({ ...prevData, actvYear: value }))}
-                        >
-                            {yearSelectOptions.map(option => (
-                                <Select.Option key={option.value} value={option.value}>
-                                    {option.label}
-                                </Select.Option>
-                            ))}
-                        </Select>
-                        <div>년</div>
-                        <Select
-                            id="actvMth"
-                            value={formData.actvMth}
-                            onChange={(value) => setFormData(prevData => ({ ...prevData, actvMth: value }))}
-                        >
-                            {selectMonth.map(option => (
-                                <Select.Option key={option.value} value={option.value}>
-                                    {option.label}
-                                </Select.Option>
-                            ))}
-                        </Select>
-                        <div>월</div>
-                    </div>
-                    {errors.actvYearMth && <div className={modalStyles.error_message}>{errors.actvYearMth}</div>}
-                </div>
-
-                <div className={sdStyles.input_item}>
-                    <div className={sdStyles.input_title}>
-                        <span className={modalStyles.star}>*</span>자료명
-                    </div>
-                    <input
-                        className={sdStyles.search}
-                        id="name"
-                        value={formData.name}
-                        onChange={(e) => setFormData(prevData => ({ ...prevData, name: e.target.value }))}
-                    />
-                    {errors.name && <div className={modalStyles.error_message}>{errors.name}</div>}
-                </div>
-
-                <div className={sdStyles.upload_item}>
-                    <div className={sdStyles.upload_header}>
+                <div className={sdStyles.input_container}>
+                    <div className={sdStyles.input_item}>
                         <div className={sdStyles.input_title}>
-                            <span className={modalStyles.star}>*</span>첨부파일
+                            <span className={modalStyles.star}>*</span>대상년월
                         </div>
-                        <div>
-                            <input
-                                type="file"
-                                id="fileList"
-                                name="fileList"
-                                multiple
-                                style={{ display: 'none' }} // 숨김 처리
-                                onChange={handleFileChange} // 파일 선택 시 호출
-                            />
-                            <button
-                                type="button"
-                                onClick={() => document.getElementById('fileList').click()}
-                                className={ps12Styles.upload_button}
+                        <div className={sdStyles.select_item}>
+                            <Select
+                                id="actvYear"
+                                value={formData.actvYear}
+                                onChange={(value) => setFormData(prevData => ({ ...prevData, actvYear: value }))}
                             >
-                                파일선택 <PaperClipOutlined />
-                            </button>
+                                {yearSelectOptions.map(option => (
+                                    <Select.Option key={option.value} value={option.value}>
+                                        {option.label}
+                                    </Select.Option>
+                                ))}
+                            </Select>
+                            <div>년</div>
+                            <Select
+                                id="actvMth"
+                                value={formData.actvMth}
+                                onChange={(value) => setFormData(prevData => ({ ...prevData, actvMth: value }))}
+                            >
+                                {selectMonth.map(option => (
+                                    <Select.Option key={option.value} value={option.value}>
+                                        {option.label}
+                                    </Select.Option>
+                                ))}
+                            </Select>
+                            <div>월</div>
                         </div>
+                        {errors.actvYearMth && <div className={modalStyles.error_message}>{errors.actvYearMth}</div>}
                     </div>
-                    <div className={sdStyles.file_list_container}>
-                        <div className={sdStyles.file_list}>
-                            {formData.fileList.length === 0 ? (
-                                <></>
-                            ) : (
-                                formData.fileList.map((file, index) => (
-                                    <div key={index} className={sdStyles.file_item}>
-                                        {file.name}
-                                        <button
-                                            type="button"
-                                            className={sdStyles.remove_button}
-                                            onClick={() => handleFileRemove(file.name)}
-                                        >
-                                            <CloseOutlined />
-                                        </button>
-                                    </div>
-                                ))
-                            )}
-                        </div>
-                    </div>
-                    {errors.fileList && <div className={modalStyles.error_message}>{errors.fileList}</div>}
-                </div>
-            </div>
 
-            <button className={ps12Styles.select_button} onClick={onSaveClick}>저장</button>
-        </Modal>
+                    <div className={sdStyles.input_item}>
+                        <div className={sdStyles.input_title}>
+                            <span className={modalStyles.star}>*</span>자료명
+                        </div>
+                        <input
+                            className={sdStyles.search}
+                            id="name"
+                            value={formData.name}
+                            onChange={(e) => setFormData(prevData => ({ ...prevData, name: e.target.value }))}
+                        />
+                        {errors.name && <div className={modalStyles.error_message}>{errors.name}</div>}
+                    </div>
+
+                    <div className={sdStyles.upload_item}>
+                        <div className={sdStyles.upload_header}>
+                            <div className={sdStyles.input_title}>
+                                <span className={modalStyles.star}>*</span>첨부파일
+                            </div>
+                            <div>
+                                <input
+                                    type="file"
+                                    id="fileList"
+                                    name="fileList"
+                                    multiple
+                                    style={{ display: 'none' }} // 숨김 처리
+                                    onChange={handleFileChange} // 파일 선택 시 호출
+                                />
+                                <button
+                                    type="button"
+                                    onClick={() => document.getElementById('fileList').click()}
+                                    className={ps12Styles.upload_button}
+                                >
+                                    파일선택 <PaperClipOutlined />
+                                </button>
+                            </div>
+                        </div>
+                        <div className={sdStyles.file_list_container}>
+                            <div className={sdStyles.file_list}>
+                                {formData.fileList.length === 0 ? (
+                                    <></>
+                                ) : (
+                                    formData.fileList.map((file, index) => (
+                                        <div key={index} className={sdStyles.file_item}>
+                                            {file.name}
+                                            <button
+                                                type="button"
+                                                className={sdStyles.remove_button}
+                                                onClick={() => handleFileRemove(file.name)}
+                                            >
+                                                <CloseOutlined />
+                                            </button>
+                                        </div>
+                                    ))
+                                )}
+                            </div>
+                        </div>
+                        {errors.fileList && <div className={modalStyles.error_message}>{errors.fileList}</div>}
+                    </div>
+                </div>
+
+                <button className={ps12Styles.select_button} onClick={onSaveClick}>저장</button>
+            </Modal>
+        </ConfigProvider>
     )
 }
 
@@ -2584,7 +2588,7 @@ export function SdShowDetailsModal({ isModalOpen, handleOk, handleCancel }) {
             return []; // 파일이 없으면 빈 배열 반환
         } catch (error) {
             swalOptions.title = '실패!',
-            swalOptions.text = error.response.data.message,
+            swalOptions.html = error.response.data.message,
             swalOptions.icon = 'error';
             Swal.fire(swalOptions);
             return []; // 실패 시 빈 배열 반환
@@ -2643,140 +2647,143 @@ export function SdShowDetailsModal({ isModalOpen, handleOk, handleCancel }) {
     };
 
     return (
-        <Modal
-            open={isModalOpen}
-            onCancel={handleCancel} // 수정 중일 때 닫기 시도 시 경고 알림
-            width={400}
-            footer={null} //Ant Design의 기본 footer 제거(Cancel, OK 버튼)
-        >
-            <div className={sdStyles.modal_header}>
-                <div className={modalStyles.title}>증빙서류 상세보기</div>
-            </div>
-
-            <div className={sdStyles.input_container}>
-
-                <div className={sdStyles.input_item}>
-                    <div className={sdStyles.input_title}>
-                        <span className={modalStyles.star}>*</span>대상년월
-                    </div>
-                    <div className={sdStyles.select_item}>
-                        <Select
-                            id="actvYear"
-                            value={formData.actvYear}
-                            onChange={(value) => setFormData(prevData => ({ ...prevData, actvYear: value }))}
-                            disabled={true}
-                        >
-                            {yearSelectOptions.map(option => (
-                                <Select.Option key={option.value} value={option.value}>
-                                    {option.label}
-                                </Select.Option>
-                            ))}
-                        </Select>
-                        <div>년</div>
-                        <Select
-                            id="actvMth"
-                            value={formData.actvMth}
-                            onChange={(value) => setFormData(prevData => ({ ...prevData, actvMth: value }))}
-                            disabled={true}
-                        >
-                            {selectMonth.map(option => (
-                                <Select.Option key={option.value} value={option.value}>
-                                    {option.label}
-                                </Select.Option>
-                            ))}
-                        </Select>
-                        <div>월</div>
-                    </div>
-                    {errors.actvYearMth && <div className={modalStyles.error_message}>{errors.actvYearMth}</div>}
+        <ConfigProvider theme={{token:{fontFamily:"SUITE-Regular"}}}>
+            <Modal
+                open={isModalOpen}
+                onCancel={handleCancel} // 수정 중일 때 닫기 시도 시 경고 알림
+                width={400}
+                footer={null} //Ant Design의 기본 footer 제거(Cancel, OK 버튼)
+            >
+                <div className={sdStyles.modal_header}>
+                    <div className={modalStyles.title}>증빙서류 상세보기</div>
                 </div>
 
-                <div className={sdStyles.input_item}>
-                    <div className={sdStyles.input_title}>
-                        등록자
-                    </div>
-                    <input className={sdStyles.search} id="creator"
-                        value={selectedSD.creatorDeptCode+" / "+selectedSD.creatorName}
-                        onChange={(e) => setFormData(prevData => ({ ...prevData, name: e.target.value }))}
-                        disabled
-                        style={{ color: '#B6B6B6' }}
-                    />
-                </div>
+                <div className={sdStyles.input_container}>
 
-                <div className={sdStyles.input_item}>
-                    <div className={sdStyles.input_title}>
-                        <span className={modalStyles.star}>*</span>자료명
-                        {/* <span className={sdStyles.requiredAsterisk}>*</span> */}
-                    </div>
-                    <input className={sdStyles.search} id="name"
-                        value={formData.name}
-                        onChange={(e) => setFormData(prevData => ({ ...prevData, name: e.target.value }))}
-                    />
-                    {errors.name && <div className={modalStyles.error_message}>{errors.name}</div>}
-                </div>
-
-                <div className={sdStyles.upload_item}>
-                    <div className={sdStyles.upload_header}>
+                    <div className={sdStyles.input_item}>
                         <div className={sdStyles.input_title}>
-                            <span className={modalStyles.star}>*</span>첨부파일
+                            <span className={modalStyles.star}>*</span>대상년월
                         </div>
-                        <div>
-                            <input
-                                type="file"
-                                id="fileList"
-                                name="fileList"
-                                multiple
-                                style={{ display: 'none' }} // 숨김 처리
-                                onChange={handleFileChange} // 파일 선택 시 호출
-                            />
-                            <button
-                                type="button"
-                                onClick={() => document.getElementById('fileList').click()}
-                                className={ps12Styles.upload_button}
+                        <div className={sdStyles.select_item}>
+                            <Select
+                                id="actvYear"
+                                value={formData.actvYear}
+                                onChange={(value) => setFormData(prevData => ({ ...prevData, actvYear: value }))}
+                                disabled={true}
                             >
-                                파일선택 <PaperClipOutlined />
-                            </button>
+                                {yearSelectOptions.map(option => (
+                                    <Select.Option key={option.value} value={option.value}>
+                                        {option.label}
+                                    </Select.Option>
+                                ))}
+                            </Select>
+                            <div>년</div>
+                            <Select
+                                id="actvMth"
+                                value={formData.actvMth}
+                                onChange={(value) => setFormData(prevData => ({ ...prevData, actvMth: value }))}
+                                disabled={true}
+                            >
+                                {selectMonth.map(option => (
+                                    <Select.Option key={option.value} value={option.value}>
+                                        {option.label}
+                                    </Select.Option>
+                                ))}
+                            </Select>
+                            <div>월</div>
                         </div>
+                        {errors.actvYearMth && <div className={modalStyles.error_message}>{errors.actvYearMth}</div>}
                     </div>
-                    <div className={sdStyles.file_list_container}>
-                        <div className={sdStyles.file_list}>
-                            {formData.fileList.length === 0 ? (
-                                <></>
-                            ) : (
-                                formData.fileList.map((file, index) => { // file.name 편집모드 아닐 때는 클릭시 다운
-                                    let displayName = file.name;
-                                    if (file.status === 'done') {
-                                        const underscoreIndex = file.name.indexOf('_');
-                                        if (underscoreIndex !== -1) {
-                                            displayName = file.name.substring(underscoreIndex + 1);
-                                        }
-                                    }
-                                    
-                                    return (
-                                        <div key={index} className={sdStyles.file_item}>
-                                            <a href={file.url} target="_blank" rel="noopener noreferrer">
-                                                {displayName}
-                                            </a>
-                                            <button
-                                                type="button"
-                                                className={sdStyles.remove_button}
-                                                onClick={() => handleFileRemove(file.name)}
-                                            >
-                                                <CloseOutlined />
-                                            </button>
-                                        </div>
-                                    )
-                                })
-                            )}
-                        </div>
-                    </div>
-                    {errors.fileList && <div className={modalStyles.error_message}>{errors.fileList}</div>}
-                </div>
-            </div>
 
-            <div className={sdStyles.button_group}>
-                <button onClick={handleCancel} className={sdStyles.cancel_button}>취소</button>
-                <button onClick={onSaveClick} className={sdStyles.save_button}>저장</button>
-            </div>
-        </Modal>
+                    <div className={sdStyles.input_item}>
+                        <div className={sdStyles.input_title}>
+                            등록자
+                        </div>
+                        <input className={sdStyles.search} id="creator"
+                            value={selectedSD.creatorDeptCode+" / "+selectedSD.creatorName}
+                            onChange={(e) => setFormData(prevData => ({ ...prevData, name: e.target.value }))}
+                            disabled
+                            style={{ color: '#B6B6B6', fontFamily: 'SUITE-Regular' }}
+                        />
+                    </div>
+
+                    <div className={sdStyles.input_item}>
+                        <div className={sdStyles.input_title}>
+                            <span className={modalStyles.star}>*</span>자료명
+                            {/* <span className={sdStyles.requiredAsterisk}>*</span> */}
+                        </div>
+                        <input className={sdStyles.search} id="name"
+                            value={formData.name}
+                            style={{ fontFamily: 'SUITE-Regular' }}
+                            onChange={(e) => setFormData(prevData => ({ ...prevData, name: e.target.value }))}
+                        />
+                        {errors.name && <div className={modalStyles.error_message}>{errors.name}</div>}
+                    </div>
+
+                    <div className={sdStyles.upload_item}>
+                        <div className={sdStyles.upload_header}>
+                            <div className={sdStyles.input_title}>
+                                <span className={modalStyles.star}>*</span>첨부파일
+                            </div>
+                            <div>
+                                <input
+                                    type="file"
+                                    id="fileList"
+                                    name="fileList"
+                                    multiple
+                                    style={{ display: 'none' }} // 숨김 처리
+                                    onChange={handleFileChange} // 파일 선택 시 호출
+                                />
+                                <button
+                                    type="button"
+                                    onClick={() => document.getElementById('fileList').click()}
+                                    className={ps12Styles.upload_button}
+                                >
+                                    파일선택 <PaperClipOutlined />
+                                </button>
+                            </div>
+                        </div>
+                        <div className={sdStyles.file_list_container}>
+                            <div className={sdStyles.file_list}>
+                                {formData.fileList.length === 0 ? (
+                                    <></>
+                                ) : (
+                                    formData.fileList.map((file, index) => { // file.name 편집모드 아닐 때는 클릭시 다운
+                                        let displayName = file.name;
+                                        if (file.status === 'done') {
+                                            const underscoreIndex = file.name.indexOf('_');
+                                            if (underscoreIndex !== -1) {
+                                                displayName = file.name.substring(underscoreIndex + 1);
+                                            }
+                                        }
+                                        
+                                        return (
+                                            <div key={index} className={sdStyles.file_item}>
+                                                <a href={file.url} target="_blank" rel="noopener noreferrer">
+                                                    {displayName}
+                                                </a>
+                                                <button
+                                                    type="button"
+                                                    className={sdStyles.remove_button}
+                                                    onClick={() => handleFileRemove(file.name)}
+                                                >
+                                                    <CloseOutlined />
+                                                </button>
+                                            </div>
+                                        )
+                                    })
+                                )}
+                            </div>
+                        </div>
+                        {errors.fileList && <div className={modalStyles.error_message}>{errors.fileList}</div>}
+                    </div>
+                </div>
+
+                <div className={sdStyles.button_group}>
+                    <button onClick={handleCancel} className={sdStyles.cancel_button}>취소</button>
+                    <button onClick={onSaveClick} className={sdStyles.save_button}>저장</button>
+                </div>
+            </Modal>
+        </ConfigProvider>
     )
 }

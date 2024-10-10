@@ -111,7 +111,7 @@ export default function Tep() {
 function ChartTab({ data }) {
     return (
         <Card className={psqStyles.table_card} sx={{ width: "100%", height: "100%", borderRadius: "15px" }}>
-            <ChartCustom title={"총량실적차트"} data={data} unit={'kgGHG'} />
+            <ChartCustom title={"총량실적 차트"} data={data} unit={'kgGHG'} />
         </Card>
     )
 }

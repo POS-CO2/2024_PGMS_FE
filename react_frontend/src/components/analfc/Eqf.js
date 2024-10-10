@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import TableCustom from "../../TableCustom.js";
-import { salesAnalColumns } from '../../assets/json/tableColumn';
-import { Card } from '@mui/material';
-import { BarChart } from '@mui/x-charts/BarChart';
+import { eqfColumns } from '../../assets/json/tableColumn';
+import { Card, CircularProgress } from '@mui/material';
+import ApexCharts from "react-apexcharts";
 import axiosInstance from '../../utils/AxiosInstance';
 import * as mainStyle from '../../assets/css/main.css';
 import * as sysStyles from '../../assets/css/sysmng.css';
@@ -10,13 +10,45 @@ import * as chartStyles from "../../assets/css/chart.css"
 import * as saStyles from "../../assets/css/sa.css"
 import * as psqStyles from "../../assets/css/psq.css"
 import * as XLSX from 'xlsx';
+import styled from 'styled-components';
 
-import { saData, avgUnitPerDivData } from "../../assets/json/saDataEx.js"
+const Overlay = styled('div')({
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)', // 반투명 검정색
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    zIndex: 10001, // 스피너가 위에 보이도록 설정
+});
 
 export default function Eqf() { //Emission Quantity Forecast
-    const [formData, setFormData] = useState(); // 검색 데이터
-    const [caData, setCaData] = useState(saData); // response, 표 데이터
-    const [chartData, setChartData] = useState(avgUnitPerDivData); // 차트 데이터
+    const [caData, setCaData] = useState([]); // response
+    const [isLoading, setIsLoading] = useState(false);
+
+    useEffect(() => {
+        const fetchData = async () => {
+            setIsLoading(true); // 로딩 시작
+
+            let url = `/anal/prediction`;
+            try {
+                const response = await axiosInstance.get(url);
+                console.log(response.data);
+                setCaData(response.data);
+                
+            } catch (error) {
+                console.error("Error fetching data:", error);
+            } finally {
+                //await new Promise(resolve => setTimeout(resolve, 3000));
+                setIsLoading(false); // 로딩 완료
+            }
+        };
+
+        fetchData();
+    }, []);
 
     const onDownloadExcelClick = (csvData) => {
         const fileName = `배출량 예측`;
@@ -26,12 +58,12 @@ export default function Eqf() { //Emission Quantity Forecast
         const wsData = [];
 
         // 헤더 생성 (columns 순서대로)
-        const headers = salesAnalColumns.map(salesAnalColumns => salesAnalColumns.label);
+        const headers = eqfColumns.map(eqfColumns => eqfColumns.label);
         wsData.push(headers);
 
         // 데이터 생성
         for (const row of csvData) {
-            const values = salesAnalColumns.map(salesAnalColumns => row[salesAnalColumns.key]);
+            const values = eqfColumns.map(eqfColumns => row[eqfColumns.key]);
             wsData.push(values);
         }
 
@@ -49,67 +81,91 @@ export default function Eqf() { //Emission Quantity Forecast
                 {"분석및예측 > 배출량 예측"}
             </div>
 
-            <div className={saStyles.main_grid}>
-                <Card className={saStyles.card_box} sx={{ width: "100%", height: "auto", borderRadius: "15px" }}>
-                    <div className={chartStyles.chart_title}>{"예측 차트"}</div>
-                    <BarChart
-                        dataset={chartData}
-                        xAxis={[{ 
-                            scaleType: 'band',
-                            data: chartData.map(item => item.divCode),
-                            colorMap: {
-                                type: 'ordinal',
-                                colors: ['#37114e', '#511b75', '#6f2597', '#a73b8f', '#e05286', '#ed8495', '#f7bba6'],
-                            }
-                        }]}
-                        yAxis={[{
-                            position: 'left',
-                            tickLabelStyle: {
-                                whiteSpace: 'nowrap',  // 라벨이 잘리지 않도록 설정
-                                overflow: 'visible',  // 오버플로우 방지
-                                textOverflow: 'ellipsis',
-                            },
-                        }]}
-                        series={[{ dataKey: 'avgEmissionQtyPerSales' }]} //valueFormatter
-                        height={300}
-                        borderRadius={10}
-                        margin={{ left: 80 }} // 왼쪽 여백 추가
-                        sx={{
-                            //change left yAxis label styles
-                            "& .MuiChartsAxis-left .MuiChartsAxis-tickLabel": {
-                                strokeWidth: "0.4",
-                                fontWeight: "bold",
-                            },
-                            // change bottom label styles
-                            "& .MuiChartsAxis-bottom .MuiChartsAxis-tickLabel": {
-                                strokeWidth: "0.5",
-                                fontWeight: "bold",
-                            },
-                            // bottomAxis Line Styles
-                            "& .MuiChartsAxis-bottom .MuiChartsAxis-line ": {
-                                strokeWidth: 0.4,
-                            },
-                            // leftAxis Line Styles
-                            "& .MuiChartsAxis-left .MuiChartsAxis-line": {
-                                strokeWidth: 0.4
-                            },
-                        }}
-                        slotProps={{
-                            legend: {
-                                labelStyle: {
-                                    fill: 'black',
-                                },
-                            },
-                        }}
-                    />
-                </Card>
-            </div>
+            {isLoading || !caData ? (
+                <Overlay >
+                    <CircularProgress />
+                </Overlay>
+            ) : (
+                <>
+                    <div className={saStyles.main_grid}>
+                        <Card className={saStyles.card_box} sx={{ width: "100%", height: "auto", borderRadius: "15px" }}>
+                            <div className={chartStyles.chart_title}>{"예측 차트"}</div>
 
-            <div className={saStyles.main_grid}>
-                <Card sx={{ width: "100%", height: "100%", borderRadius: "15px" }}>
-                    <TableCustom columns={salesAnalColumns} title="목록" data={caData} buttons={['DownloadExcel']} onClicks={[() => onDownloadExcelClick(caData)]} />
-                </Card>
-            </div>
+                            <ApexCharts
+                                height={300}
+                                series={[
+                                    {
+                                        name: '배출량',
+                                        data: caData.map(data => data.emissionQty),
+                                    }
+                                ]}
+                                options={{
+                                    chart: {
+                                        type: "line",
+                                        stacked: false,
+                                        fontFamily: `SUITE-Regular`,
+                                        fontSize: '0.75em'
+                                    },
+                                    dataLabels: {
+                                        enabled: false
+                                    },
+                                    forecastDataPoints: { count: 4 },
+                                    stroke: { width: [5, 5] },
+                                    xaxis: { categories: caData.map(data => `${data.year}-${String(data.mth).padStart(2, '0')}`) },
+                                    yaxis: [
+                                        {
+                                            labels: {
+                                                formatter: (value) => Math.round(value), // 정수로 변환
+                                                style: {
+                                                    fontSize: '13px'
+                                                }
+                                            },
+                                            title: {
+                                                text: "배출량(kgGHG)",
+                                                style: {
+                                                    fontSize: '13px',
+                                                    fontWeight: 'normal'
+                                                },
+                                            }
+                                        }
+                                    ],
+                                    legend: { fontSize: '14px' },
+                                    fill: {
+                                        type: 'gradient',
+                                        gradient: {
+                                            shade: 'dark',
+                                            gradientToColors: [ '#FDD835'],
+                                            shadeIntensity: 1,
+                                            type: 'horizontal',
+                                            opacityFrom: 1,
+                                            opacityTo: 1,
+                                            stops: [0, 100, 100, 100]
+                                        },
+                                    },
+                                    tooltip: {
+                                        shared: true,  // 여러 시리즈의 값을 함께 표시
+                                        intersect: false, // hover 시 모든 데이터 포인트를 보여줌
+                                        y: {
+                                            formatter: (value) => {
+                                                if (value === null) {
+                                                    return null;
+                                                }
+                                                return `${value} kgGHG`; // 각 시리즈의 값에 맞는 단위 추가
+                                            },
+                                        },
+                                    },
+                                }}
+                            />
+                        </Card>
+                    </div>
+
+                    <div className={saStyles.main_grid}>
+                        <Card sx={{ width: "100%", height: "100%", borderRadius: "15px" }}>
+                            <TableCustom columns={eqfColumns} title="목록" data={caData} buttons={['DownloadExcel']} onClicks={[() => onDownloadExcelClick(caData)]} />
+                        </Card>
+                    </div>
+                </>
+            )}
         </div>
     );
 }

@@ -5,7 +5,8 @@ import SearchForms from "../../SearchForms";
 import { formField_ea } from "../../assets/json/searchFormData";
 import TableCustom from "../../TableCustom.js";
 import { equipAnalLibColumns, equipAnalTypeColumns, equipAnalSourceColumns } from '../../assets/json/tableColumn';
-import { Card } from '@mui/material';
+import { Box, Card, Typography } from '@mui/material';
+import InboxIcon from '@mui/icons-material/Inbox';
 import { PieChart } from '@mui/x-charts/PieChart';
 import axiosInstance from '../../utils/AxiosInstance';
 import * as mainStyle from '../../assets/css/main.css';
@@ -92,20 +93,22 @@ export default function Ea() {
     };
 
     const onDownloadExcelClick = (csvData) => {
-        //const fileName = `사용금액 엑셀 양식_${formData.searchProject.pjtName}_${formData.actvYear}`;
-        const fileName = `매출액 목록`;
+        const fileName = `설비별 분석_${formData.selected}`;
     
         // 워크북 및 워크시트 생성
         const wb = XLSX.utils.book_new();
         const wsData = [];
 
-        // 헤더 생성 (salesAnalColumns 순서대로)
-        const headers = salesAnalColumns.map(column => column.label);
+        // 'formatted'로 시작하지 않는 칼럼 필터링
+        const filteredColumns = tableColumn.filter(column => !column.key.startsWith('formatted'));
+
+        // 헤더 생성 (필터링된 tableColumn 순서대로)
+        const headers = filteredColumns.map(column => column.label);
         wsData.push(headers);
             
         // 데이터 생성
         for (const row of csvData) {
-            const values = salesAnalColumns.map(column => row[column.key]);
+            const values = filteredColumns.map(column => row[column.key]);
             wsData.push(values);
         }
             
@@ -147,25 +150,45 @@ export default function Ea() {
                                 <div className={chartStyles.chart_title}>{"설비별 실적 차트"}</div>
                             </div>
 
-                            <PieChart
-                                series={[
-                                    {
-                                        data: analEquipChartData,
-                                        highlightScope: { fade: 'global', highlight: 'item' },
-                                        faded: { innerRadius: 30, additionalRadius: -30, color: 'gray' },
-                                        cornerRadius: 3,
-                                        outerRadius: 150,
-                                        valueFormatter: (item) => `${item.value} kgGHG`,
-                                        arcLabel: (item) => `${item.arcLabel}`,
-                                        arcLabelMinAngle: 35,
-                                    },
-                                ]}
-                                height={400}
-                            />
+                            {analEquipChartData && analEquipChartData.length > 0 ? (
+                                <PieChart
+                                    series={[
+                                        {
+                                            data: analEquipChartData,
+                                            highlightScope: { fade: 'global', highlight: 'item' },
+                                            faded: { innerRadius: 30, additionalRadius: -30, color: 'gray' },
+                                            cornerRadius: 3,
+                                            outerRadius: 150,
+                                            valueFormatter: (item) => `${item.value} kgGHG`,
+                                            arcLabel: (item) => `${item.arcLabel}`,
+                                            arcLabelMinAngle: 35,
+                                        },
+                                    ]}
+                                    height={400}
+                                />
+                            ) : (
+                                <Box
+                                    sx={{
+                                        display: 'flex',
+                                        flexDirection: 'column',
+                                        alignItems: 'center',
+                                        justifyContent: 'center',
+                                        height: '100%',
+                                        textAlign: 'center',
+                                        padding: '2rem',
+                                    }}
+                                >
+                                    <InboxIcon sx={{ fontSize: 60, color: 'gray' }} />
+                                    <br />
+                                    <Typography variant="body2" color="textSecondary" paragraph>
+                                        현재 요청하신 조회 결과가 없습니다.
+                                    </Typography>
+                                </Box>
+                            )}
                         </Card>
 
                         <Card className={saStyles.card_box} sx={{ width: "50%", height: "auto", borderRadius: "15px" }}>
-                            <TableCustom columns={tableColumn} title="목록" data={analEquipData} buttons={['DownloadExcel']} onClicks={[() => onDownloadExcelClick(salesTableData)]} />
+                            <TableCustom columns={tableColumn} title="목록" data={analEquipData} buttons={['DownloadExcel']} onClicks={[() => onDownloadExcelClick(analEquipData)]} />
                         </Card>
                     </div>
                 </>

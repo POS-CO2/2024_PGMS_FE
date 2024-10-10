@@ -99,7 +99,7 @@ export default function Pd({pjtId}) {                                           
   
     return (
         <>
-            <Card sx={{ width: "50%", height: "75vh", borderRadius: "0.5rem" }}>
+            <Card sx={{ width: "50%", height: "auto", borderRadius: "0.5rem" }}>
                 <TableCustom
                     title='현장담당자 목록' 
                     data={managers}
@@ -127,7 +127,7 @@ export default function Pd({pjtId}) {                                           
                     ]}
                 />
             </Card>
-            <Card sx={{ width: "50%", height: "75vh", borderRadius: "0.5rem", paddingBottom: "20px" }}>
+            <Card sx={{ width: "50%", height: "auto", borderRadius: "0.5rem", paddingBottom: "20px" }}>
                 <div className={pdsStyles.card_container}>
                     <div className={pdsStyles.contents_header}>
                         현장담당자 등록

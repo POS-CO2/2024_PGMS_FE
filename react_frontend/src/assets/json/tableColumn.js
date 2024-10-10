@@ -192,6 +192,23 @@ export const equipEmissionColumns = [
     { key: 'unitConvCoef', label: '단위변환계수', hidden: false },
 ]
 
+export const equipEmissionAddColumns = [
+    { key: 'id', label: 'id', hidden: true },
+    { key: 'equipId', label: '설비ID', hidden: true },
+    { key: 'actvDataId', label: '활동자료ID', hidden: true },
+    { key: 'equipName', label: '설비명', hidden: false },
+    { key: 'equipLibName', label: '설비LIB명', hidden: false },
+    { key: 'equipDvs', label: '설비구분', hidden: false },
+    { key: 'equipType', label: '설비유형', hidden: false },
+    { key: 'equipSpecUnit', label: '설비사양단위', hidden: false },
+    { key: 'emtnActvType', label: '배출활동유형', hidden: false },
+    { key: 'actvDataDvs', label: '활동자료구분', hidden: false },
+    { key: 'actvDataName', label: '활동자료이름', hidden: false },
+    { key: 'inputUnitCode', label: '입력단위코드', hidden: false },
+    { key: 'calUnitCode', label: '산정단위코드', hidden: false },
+    { key: 'unitConvCoef', label: '단위변환계수', hidden: false },
+]
+
 export const equipDocumentColumns = [
     { key: 'id', label: 'id', hidden: true },
     { key: 'actvYear', label: '활동년도', hidden: true },
@@ -244,7 +261,7 @@ export const salesAnalColumns = [
     //{ key: 'emissionQtyPerSales', label: '배출량/매출액', hidden: true },
     { key: 'formattedTotalEmissionQty', label: '총배출량(kgGHG)', hidden: false },
     { key: 'formattedTotalSales', label: '매출액(백만원)', hidden: false },
-    { key: 'formattedEmissionQtyPerSales', label: '배출량/매출액', hidden: false },
+    { key: 'formattedEmissionQtyPerSales', label: '배출량/매출액(kgGHG/백만원)', hidden: false },
 ]
 
 export const equipAnalLibColumns = [
@@ -255,15 +272,15 @@ export const equipAnalLibColumns = [
 
 export const equipAnalTypeColumns = [
     { key: 'equipType', label: '설비유형', hidden: false },
-    { key: 'totalEmissionQty', label: '총배출량', hidden: true },
-    { key: 'formattedTotalEmissionQty', label: '총배출량', hidden: false },
+    { key: 'totalEmissionQty', label: '총배출량(kgGHG)', hidden: true },
+    { key: 'formattedTotalEmissionQty', label: '총배출량(kgGHG)', hidden: false },
 ]
 
 export const equipAnalSourceColumns = [
     { key: 'energySource', label: '에너지원', hidden: false },
     { key: 'equipSpecUnit', label: '설비사양단위', hidden: false },
-    { key: 'totalEmissionQty', label: '총배출량', hidden: true },
-    { key: 'formattedTotalEmissionQty', label: '총배출량', hidden: false },
+    { key: 'totalEmissionQty', label: '총배출량(kgGHG)', hidden: true },
+    { key: 'formattedTotalEmissionQty', label: '총배출량(kgGHG)', hidden: false },
 ]
 
 export const climateAnalColumns = [
@@ -274,4 +291,14 @@ export const climateAnalColumns = [
     { key: 'co2EmtnConvTotalQty', label: '총CO2배출량', hidden: true },
     { key: 'formattedAvgTm', label: '영향인자값', hidden: false }, // 선택한 영향인자로 동적 변경
     { key: 'formattedCo2EmtnConvTotalQty', label: '총CO2배출량(kgGHG)', hidden: false },
+]
+
+export const eqfColumns = [
+    { key: 'year', label: '대상연도', hidden: false },
+    { key: 'mth', label: '대상월', hidden: false },
+    { key: 'emissionQty', label: '배출량(kgGHG)', hidden: false },
+    { key: 'diesel', label: '경유 가격', hidden: false },
+    { key: 'avgTm', label: '평균 기온', hidden: false },
+    { key: 'electric', label: '전기 요금', hidden: false },
+    { key: 'hardCoal', label: '무연탄 가격', hidden: false },
 ]

@@ -102,11 +102,11 @@ const chartOptions = (title) => {
     },
     yaxis: {
         title: {
-            text: "배출량" // Y축에 표시될 제목
+            text: "배출량(kgGHG)" // Y축에 표시될 제목
         },
         labels: {
             formatter: function (value) {
-                return Math.floor(value);
+                return `${Math.floor(value)}`;
             }
         }
     },
@@ -329,7 +329,7 @@ const polarAreaChartOptions = (labels) => {
             show: false
         },
         title: {
-            text: ' 배출 현황', // 차트 제목
+            text: ' 총 배출 현황', // 차트 제목
             align: 'left',
             style: {
                 fontSize: '22px',
@@ -430,15 +430,15 @@ export default function Main_Hp() {
     const topData = [
         {
             name: "Scope1",
-            value: (scope1[toMonth-1] / scope1[toMonth-2] * 100).toFixed(2) ?? 0,
+            value: ((scope1[toMonth-1] - scope1[toMonth-2]) / scope1[toMonth-2] * 100).toFixed(2) ?? 0,
         },
         {
             name: "Scope2",
-            value: (scope2[toMonth-1] / scope2[toMonth-2] * 100).toFixed(2) ?? 0,
+            value: ((scope2[toMonth-1] - scope2[toMonth-2]) / scope2[toMonth-2] * 100).toFixed(2) ?? 0,
         },
         {
             name: "총량실적",
-            value: (totScope[toMonth-1] / totScope[toMonth-2] * 100).toFixed(2) ?? 0,
+            value: ((totScope[toMonth-1] - totScope[toMonth-2]) / totScope[toMonth-2] * 100).toFixed(2) ?? 0,
         },
     ]
     const renderIcon = (e) => {
@@ -576,7 +576,9 @@ export default function Main_Hp() {
                         </StyledChart>
                     </div>
                     <div className={gridStyles.left_box_bottom}>
-                        <div className={gridStyles.left_bottom_logo}></div>
+                        <div className={gridStyles.left_bottom_logo}>
+                            매출액
+                        </div>
                         <StyledRoot style={{width:"100%", height:"100%"}}>
                             <Swiper
                                 spaceBetween={30}    // 슬라이드 사이의 간격
@@ -651,7 +653,7 @@ export default function Main_Hp() {
                                                                 {v.formattedEquipEmissionQty}
                                                             </div>
                                                             <div style={{fontSize:"0.9rem", color:"grey"}}>
-                                                            {`${v.formattedEquipActvQty} ${data.inputUnitCode}`}
+                                                            {`${v.formattedEquipActvQty} (${data.inputUnitCode})`}
                                                             </div>
                                                         </div>
                                                     </div>
@@ -668,7 +670,7 @@ export default function Main_Hp() {
                                                                 {data.formattedTotalEmissionQty}
                                                             </div>
                                                             <div style={{fontSize:"large", color:"grey"}}>
-                                                                {`${data.formattedTotalActvQty !== "" ? data.formattedTotalActvQty : 0} ${data.inputUnitCode}`}
+                                                                {`${data.formattedTotalActvQty !== "" ? data.formattedTotalActvQty : 0} (${data.inputUnitCode})`}
                                                             </div>
                                                         </div>
                                                     </Card>
@@ -676,6 +678,9 @@ export default function Main_Hp() {
                                             </ConfigProvider>
                                         </SwiperSlide>
                                     ))}
+                                        <SwiperSlide style={{width:"100%", height:"100%"}}>
+
+                                        </SwiperSlide>
                                 </Swiper>
                             </StyledRoot2>
                         </div>

@@ -162,7 +162,7 @@ export default function Cm() {
                 swalOptions.icon = 'success';
             } catch (error) {
                 swalOptions.title = '실패!',
-                swalOptions.text = error.response.data.message,
+                swalOptions.html = error.response.data.message,
                 swalOptions.icon = 'error';
             }
         }
@@ -180,7 +180,7 @@ export default function Cm() {
                 swalOptions.icon = 'success';
             } catch (error) {
                 swalOptions.title = '실패!',
-                swalOptions.text = error.response.data.message,
+                swalOptions.html = error.response.data.message,
                 swalOptions.icon = 'error';
             }
         }
@@ -200,7 +200,7 @@ export default function Cm() {
                 swalOptions.icon = 'success';
             } catch (error) {
                 swalOptions.title = '실패!',
-                swalOptions.text = error.response.data.message,
+                swalOptions.html = error.response.data.message,
                 swalOptions.icon = 'error';
             }
         }
@@ -220,7 +220,7 @@ export default function Cm() {
                 swalOptions.icon = 'success';
             } catch (error) {
                 swalOptions.title = '실패!',
-                swalOptions.text = error.response.data.message,
+                swalOptions.html = error.response.data.message,
                 swalOptions.icon = 'error';
             }
         }
@@ -286,7 +286,7 @@ export default function Cm() {
                 handleEmptyFields={fetchCodeGroup}
             />
             <div className={sysStyles.main_grid}>
-                <Card className={sysStyles.card_box} sx={{width:"50%", height:"77vh", borderRadius:"15px"}}>
+                <Card className={sysStyles.card_box} sx={{width:"50%", height:"auto", borderRadius:"15px"}}>
                     <TableCustom title="코드그룹ID" data={codeGroup} submittedRowIdx={submittedCGIdx} buttons={["Delete", "Edit", "Add"]} selectedRows={[selectedCodeGroup]} onRowClick={(e) => handleCodeGroupRowClick(e)} onClicks={[handleDeleteAClick, handleEditClick, handleAddClick]} columns={codeGroupColumns} modals={
                         [
                             isModalOpen.CMAdd && {
@@ -315,7 +315,7 @@ export default function Cm() {
                         ].filter(Boolean)
                     }/>
                 </Card>
-                <Card className={sysStyles.card_box} sx={{width:"50%", height:"77vh", borderRadius:"15px"}}>
+                <Card className={sysStyles.card_box} sx={{width:"50%", height:"auto", borderRadius:"15px"}}>
                     {(!selectedCodeGroup || Object.keys(selectedCodeGroup).length === 0) ?
                         <div className={pdsStyles.card_container}>
                             <div className={pdsStyles.table_title} style={{ padding: "8px" }}>코드리스트</div>

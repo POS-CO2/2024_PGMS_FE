@@ -31,6 +31,7 @@ import Error404 from './Error404';
 import axiosInstance from './utils/AxiosInstance';
 import { CircularProgress } from '@mui/material';
 import { ContinuousColorLegend } from '@mui/x-charts';
+import Swal from 'sweetalert2';
 
 export default function App() {
     const [token, setToken] = useState(null);
@@ -40,6 +41,9 @@ export default function App() {
     const [favorites, setFavorites] = useRecoilState(favState);
 
     const handleLogin = async (id, password) => {
+        let swalOptions = {
+            confirmButtonText: '확인'
+        }
         try {
             const { data, headers } = await login(id, password);
             localStorage.setItem('token', headers['authorization']);
@@ -48,9 +52,11 @@ export default function App() {
             window.location.href = "/";
 
         } catch (error) {
-            console.log(error);
             if (error.response?.status === 400) {
-                alert("비밀번호가 틀렸습니다.");
+                swalOptions.title = '실패!',
+                swalOptions.text = "잘못된 아이디/비밀번호 입니다. 다시 확인해 주세요.";
+                swalOptions.icon = 'error';
+                Swal.fire(swalOptions);
             }
         }
     };

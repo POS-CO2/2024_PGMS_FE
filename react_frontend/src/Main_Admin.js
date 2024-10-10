@@ -451,8 +451,7 @@ export default function Main_Admin() {
             const year = priorDate.getFullYear();
             const month = priorDate.getMonth() + 1;
             const day = priorDate.getDate();
-        
-            days.push(`${year}-${String(month).padStart(2, '0')}-${day}`);
+            days.push(`${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`);
         }
     
         return days.reverse(); // 과거 -> 현재 순으로 정렬
@@ -624,7 +623,7 @@ export default function Main_Admin() {
             swalOptions.icon = 'success';
         } catch (error) {
             swalOptions.title = '실패!',
-            swalOptions.text = error.response.data.message;
+            swalOptions.html = error.response.data.message;
             swalOptions.icon = 'error';
         }
         Swal.fire(swalOptions);
@@ -666,7 +665,7 @@ export default function Main_Admin() {
             swalOptions.icon = 'success';
         } catch (error) {
             swalOptions.title = '실패!',
-            swalOptions.text = error.response.data.message;
+            swalOptions.html = error.response.data.message;
             swalOptions.icon = 'error';
         }
         Swal.fire(swalOptions);

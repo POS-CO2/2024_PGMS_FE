@@ -394,8 +394,9 @@ export default function CustomizedTables({
                                                         display: 'flex',
                                                         flexDirection: 'column',
                                                         justifyContent: 'flex-start', 
-                                                        overflowX: 'auto',
+                                                        overflowX: 'scroll',
                                                         whiteSpace: 'nowrap',
+                                                        width:"82vw"
                                                     }}
                                                 >
                                                     <Typography 
