@@ -968,7 +968,7 @@ export function Ps12UploadExcelModal({ isModalOpen, handleOk, handleCancel }) { 
             swalOptions.icon = 'success';
         } catch (error) {
             swalOptions.title = '실패!',
-            swalOptions.text = error.response.data.message;
+            swalOptions.html = error.response.data.message;
             swalOptions.icon = 'error';
         }
         Swal.fire(swalOptions);
@@ -1249,7 +1249,7 @@ export function DeleteModal({ isModalOpen, handleOk, handleCancel, rowData, rowD
             handleOk();
         } catch (error) {
             swalOptions.title = '실패!',
-            swalOptions.text = error.response.data.message,
+            swalOptions.html = error.response.data.message,
             swalOptions.icon = 'error';
             handleCancel();
         }
@@ -1857,7 +1857,7 @@ export function FmAddModal({ isModalOpen, handleOk, handleCancel, rowData }) {
             swalOptions.icon = 'success';
         } catch (error) {
             swalOptions.title = '실패!',
-            swalOptions.text = error.response.data.message,
+            swalOptions.html = error.response.data.message,
             swalOptions.icon = 'error';
         }
         Swal.fire(swalOptions);
@@ -2100,7 +2100,7 @@ export function MmAddModal({ isModalOpen, handleOk, handleCancel, rowData }) {
             swalOptions.icon = 'success';
         } catch (error) {
             swalOptions.title = '실패!',
-            swalOptions.text = error.response.data.message,
+            swalOptions.html = error.response.data.message,
             swalOptions.icon = 'error';
         }
         Swal.fire(swalOptions);
@@ -2339,7 +2339,7 @@ export function SdAddModal({ isModalOpen, handleOk, handleCancel, rowData }) {
             return response.data; // 파일 업로드 후 S3에서 반환된 파일 정보 배열
         } catch (error) {
             swalOptions.title = '실패!',
-            swalOptions.text = error.response.data.message,
+            swalOptions.html = error.response.data.message,
             swalOptions.icon = 'error';
         }
         Swal.fire(swalOptions);
@@ -2589,7 +2589,7 @@ export function SdShowDetailsModal({ isModalOpen, handleOk, handleCancel }) {
             return []; // 파일이 없으면 빈 배열 반환
         } catch (error) {
             swalOptions.title = '실패!',
-            swalOptions.text = error.response.data.message,
+            swalOptions.html = error.response.data.message,
             swalOptions.icon = 'error';
             Swal.fire(swalOptions);
             return []; // 실패 시 빈 배열 반환
