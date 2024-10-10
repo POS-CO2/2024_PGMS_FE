@@ -167,12 +167,18 @@ export default function Chat({ handleCloseClick, totCnt }) {
         <div className={chatStyles.main}>
             <div className={chatStyles.menu_bar}> 
                 <IconButton onClick={handleUserClick}>
-                    <Person fontSize="large" sx={{color: "gray"}} />
+                    {status === "user" ? (
+                        <Person fontSize="large" sx={{color: "black"}} />
+                    ) : (
+                        <Person fontSize="large" sx={{color: "gray"}} />
+                    )}
                 </IconButton>
                 <IconButton onClick={handleChatListClick}>
-                    <Badge badgeContent={totCnt} color="error">
+                    {status === "chat" ? (
+                        <ChatOutlined fontSize="large" sx={{color:"black"}} />
+                    ) : (
                         <ChatOutlined fontSize="large" sx={{color:"gray"}} />
-                    </Badge>
+                    )}
                 </IconButton>
             </div>
             <div className={chatStyles.board}>

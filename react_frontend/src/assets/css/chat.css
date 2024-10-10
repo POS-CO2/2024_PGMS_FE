@@ -152,8 +152,10 @@
     justify-content: center;
     align-items: center;
     text-align: center;
-    width: 1rem;
+    width: fit-content;
     height: 1rem;
+    padding: 0 5px;
+    font-size: 0.7rem;
     color: white;
     background-color: red;
     border-radius: 50%;
