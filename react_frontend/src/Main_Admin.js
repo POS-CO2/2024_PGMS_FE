@@ -612,7 +612,7 @@ export default function Main_Admin({ handleMenuClick=()=>{} }) {
             swalOptions.icon = 'success';
         } catch (error) {
             swalOptions.title = '실패!',
-            swalOptions.text = error.response.data.message;
+            swalOptions.html = error.response.data.message;
             swalOptions.icon = 'error';
         }
         Swal.fire(swalOptions);
@@ -654,7 +654,7 @@ export default function Main_Admin({ handleMenuClick=()=>{} }) {
             swalOptions.icon = 'success';
         } catch (error) {
             swalOptions.title = '실패!',
-            swalOptions.text = error.response.data.message;
+            swalOptions.html = error.response.data.message;
             swalOptions.icon = 'error';
         }
         Swal.fire(swalOptions);
