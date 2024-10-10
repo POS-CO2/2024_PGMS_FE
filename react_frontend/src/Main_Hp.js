@@ -430,15 +430,15 @@ export default function Main_Hp() {
     const topData = [
         {
             name: "Scope1",
-            value: (scope1[toMonth-1] / scope1[toMonth-2] * 100).toFixed(2) ?? 0,
+            value: ((scope1[toMonth-1] - scope1[toMonth-2]) / scope1[toMonth-2] * 100).toFixed(2) ?? 0,
         },
         {
             name: "Scope2",
-            value: (scope2[toMonth-1] / scope2[toMonth-2] * 100).toFixed(2) ?? 0,
+            value: ((scope2[toMonth-1] - scope2[toMonth-2]) / scope2[toMonth-2] * 100).toFixed(2) ?? 0,
         },
         {
             name: "총량실적",
-            value: (totScope[toMonth-1] / totScope[toMonth-2] * 100).toFixed(2) ?? 0,
+            value: ((totScope[toMonth-1] - totScope[toMonth-2]) / totScope[toMonth-2] * 100).toFixed(2) ?? 0,
         },
     ]
     const renderIcon = (e) => {
