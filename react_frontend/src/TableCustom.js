@@ -319,7 +319,7 @@ export function TableCustomDoubleClickEdit({
                         id: item.id,
                         actvYear: item.actvYear,
                         actvMth: item.actvMth,
-                        fee: isNaN(parseInt((item.newActvQty).replace(/,/g, ''), 10)) ? 'NaN' : parseInt((item.newActvQty).replace(/,/g, ''), 10),
+                        fee: isNaN(parseInt((item.newFee).replace(/,/g, ''), 10)) ? 'NaN' : parseInt((item.newFee).replace(/,/g, ''), 10),
                         actvQty: null // 사용량은 null로 설정
                     }));
         
@@ -333,7 +333,7 @@ export function TableCustomDoubleClickEdit({
             const response = await axiosInstance.put("/perf", requestBody);
 
             swalOptions.title = '성공!',
-            swalOptions.text = '활동량이 성공적으로 수정되었습니다.';
+            swalOptions.text = '사용금액이 성공적으로 수정되었습니다.';
             swalOptions.icon = 'success';
 
         } catch (error) {
