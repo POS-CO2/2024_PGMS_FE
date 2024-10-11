@@ -49,7 +49,7 @@ export default function DropDown({ name, label, required=false, options, default
         <ConfigProvider
             theme={{
                 token: {
-                    /* here is your global tokens */
+                    colorPrimary:"#0eaa00",
                     fontFamily: "SUITE-Regular"
                 },
             }}
