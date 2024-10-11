@@ -17,9 +17,6 @@ export default function ChartCustom({ title, data, unit }) {
                         ...item,
                         valueFormatter: (value) => value !== null ? `${value} ${unit}` : null,
                     }))}
-                    barLabel={title === '매출액 차트' ? () => null : (item, context) => {
-                        return context.bar.height < 60 ? null : item.value?.toFixed(2).toString();
-                    }}
                     xAxis={[
                         {
                             scaleType: 'band',
