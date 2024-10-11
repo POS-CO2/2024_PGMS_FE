@@ -156,17 +156,37 @@ export const formField_ea = [
         { value: '설비LIB', label: '설비LIB' },
         { value: '설비유형', label: '설비유형' },
         { value: '에너지원', label: '에너지원' }
-    ] }
+    ], defaultSelected: true }
 ];
 
 export const formField_ca = [
     { type: 'SelectCalendar', name: 'calendar', label: '분석기간', required: true, isAnal: true },
-    { type: 'DropDown', name: 'regCode', label: '지역', required: true, options: [] },
+    { type: 'DropDown', name: 'regCode', label: '지역', required: true, options: [
+        { value: '서울', label: '100' },
+        { value: '강원도', label: '300' },
+        { value: '대전', label: '500' },
+        { value: '충남', label: '700' },
+        { value: '충북', label: '900' },
+        { value: '인천', label: '1100' },
+        { value: '경기도', label: '1300' },
+        { value: '광주', label: '1500' },
+        { value: '전남', label: '1700' },
+        { value: '전남 광양시', label: '1719' },
+        { value: '전북', label: '1900' },
+        { value: '부산', label: '2100' },
+        { value: '울산', label: '2300' },
+        { value: '제주', label: '2500' },
+        { value: '대구', label: '2700' },
+        { value: '경남', label: '2900' },
+        { value: '경북', label: '3100' },
+        { value: '경북 포항시', label: '3122' },
+        { value: '세종시', label: '3400' }
+    ], defaultSelected: true },
     { type: 'DropDown', name: 'selected', label: '영향인자', required: true, options: [
         { value: '평균기온', label: '평균기온' },
         { value: '평균강수량', label: '평균강수량' },
         { value: '평균습도', label: '평균습도' }
-    ] }
+    ], defaultSelected: true }
 ];
 
 // 필요한 서치바 여기서 만들어서 데이터 임포트 해서 사용하기

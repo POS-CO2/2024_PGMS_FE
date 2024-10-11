@@ -60,7 +60,7 @@ export default function DropDown({ name, label, required=false, options, default
                 name={name}
                 label={label}
                 rules={[{ required: required, message: <span style={{ fontFamily: 'SUITE-Regular' }}>{label} 선택은 필수입니다.</span> }]}
-                initialValue={defaultSelected ? options[0].value : undefined}
+                initialValue={defaultSelected ? options[0].label : undefined}
             >
                 <CustomSelect
                     /*className={formItemStyles.select_dropdown}*/
