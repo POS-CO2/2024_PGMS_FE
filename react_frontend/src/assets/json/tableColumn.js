@@ -94,8 +94,8 @@ export const equipCoefColumns = [
     { key: 'id', label: 'id', hidden: true },
     { key: 'applyYear', label: '적용년도', hidden: false },
     { key: 'applyDvs', label: '적용구분', hidden: false },
-    { key: 'coefClassCode', label: '계수구분코드', hidden: false },
-    { key: 'ghgCode', label: '온실가스코드', hidden: false },
+    { key: 'coefClassCode', label: '계수구분', hidden: false },
+    { key: 'ghgCode', label: '온실가스', hidden: false },
     { key: 'unitCode', label: '단위', hidden: false },
     { key: 'coef', label: '계수', hidden: false },
 ]

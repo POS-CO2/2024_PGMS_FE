@@ -1475,7 +1475,7 @@ export function EfmAddModal({ isModalOpen, handleOk, handleCancel, rowData }) {
         let newError = {};
         if(!formData.applyYear) newError.applyYear = '적용년도를 입력해주세요.';
         if(!formData.applyDvs) newError.applyDvs = '적용구분을 입력해주세요.';
-        if(!formData.coefClassCode) newError.coefClassCode = '계수구분코드를 선택해주세요.';
+        if(!formData.coefClassCode) newError.coefClassCode = '계수구분을 선택해주세요.';
         if(!formData.coef) newError.coef = '계수를 입력해주세요.';
         if (Object.keys(newError).length > 0) {
             setError(newError);
@@ -1571,7 +1571,7 @@ export function EfmAddModal({ isModalOpen, handleOk, handleCancel, rowData }) {
                     {error.applyDvs && <div className={modalStyles.error_message}>{error.applyDvs}</div>}
                 </div>
                 <div className={sysStyles.text_field}>
-                    <div className={sysStyles.text}><span className={modalStyles.star}>*</span>{"계수구분코드"}</div>
+                    <div className={sysStyles.text}><span className={modalStyles.star}>*</span>{"계수구분"}</div>
                     <Select value={selectedCoefClassCode} allowClear={{ clearIcon: <CloseOutlined style={{color: "red"}} /> }} onChange={(value) => handleInputUnitChange(value)} style={{width:"18rem", height:"2rem",fontSize:"4rem"}}>
                     {coefClassCode.map((option, index) => (
                         <Select.Option key={`${option.value}-${index}`} value={option.code}>
@@ -1582,10 +1582,10 @@ export function EfmAddModal({ isModalOpen, handleOk, handleCancel, rowData }) {
                     {error.coefClassCode && <div className={modalStyles.error_message}>{error.coefClassCode}</div>}
                 </div>
                 <div className={sysStyles.text_field}>
-                    <div className={sysStyles.text}><span className={modalStyles.star}>*</span>{"온실가스코드"}</div>
+                    <div className={sysStyles.text}><span className={modalStyles.star}>*</span>{"온실가스"}</div>
                     {
                         ghgCode.length !== 0 ? (
-                            <Select value={selectedGhgCode} allowClear={{ clearIcon: <CloseOutlined style={{color: "red"}} /> }} placeholder="계수구분코드를 선택해주세요." onChange={(value) => {setSelectedGhgCode(value)}} style={{width:"18rem", height:"2rem",fontSize:"4rem"}}>
+                            <Select value={selectedGhgCode} allowClear={{ clearIcon: <CloseOutlined style={{color: "red"}} /> }} placeholder="계수구분을 선택해주세요." onChange={(value) => {setSelectedGhgCode(value)}} style={{width:"18rem", height:"2rem",fontSize:"4rem"}}>
                             {ghgCode.map((option, index) => (
                                 <Select.Option key={`${option.value}-${index}`} value={option.code}>
                                     {option.name}
@@ -1593,14 +1593,14 @@ export function EfmAddModal({ isModalOpen, handleOk, handleCancel, rowData }) {
                             ))}
                             </Select>
                         ) : (
-                            <Select disabled placeholder="순발열량은 온실가스코드가 없습니다." style={{width:"18rem", height:"2rem",fontSize:"4rem"}}>
+                            <Select disabled placeholder="순발열량은 온실가스가 없습니다." style={{width:"18rem", height:"2rem",fontSize:"4rem"}}>
                             </Select>
                         )
                     }
                 </div>
                 <div className={sysStyles.text_field}>
                     <div className={sysStyles.text}>{"단위"}</div>
-                    <Input id='unitCode' placeholder='계수구분코드를 선택해주세요.' allowClear={{ clearIcon: <CloseOutlined style={{color: "red"}} /> }} value={unitCode} disabled label="단위" style={{width:"18rem"}} />
+                    <Input id='unitCode' placeholder='계수구분을 선택해주세요.' allowClear={{ clearIcon: <CloseOutlined style={{color: "red"}} /> }} value={unitCode} disabled label="단위" style={{width:"18rem"}} />
                 </div>
                 <div className={sysStyles.text_field}>
                     <div className={sysStyles.text}>
@@ -1645,8 +1645,8 @@ export function EfmEditModal({ isModalOpen, handleOk, handleCancel, rowData }) {
         let newError = {};
         if(!formData.applyYear) newError.applyYear = '적용년도를 입력해주세요.';
         if(!formData.applyDvs) newError.applyDvs = '적용구분을 입력해주세요.';
-        if(!formData.coefClassCode) newError.coefClassCode = '계수구분코드를 선택해주세요.';
-        if(!formData.coef) newError.coef = '계수구분코드를 선택해주세요.';
+        if(!formData.coefClassCode) newError.coefClassCode = '계수구분을 선택해주세요.';
+        if(!formData.coef) newError.coef = '계수를 입력해주세요.';
         if (Object.keys(newError).length > 0) {
             setError(newError);
             return;
@@ -1748,7 +1748,7 @@ export function EfmEditModal({ isModalOpen, handleOk, handleCancel, rowData }) {
                     {error.applyDvs && <div className={modalStyles.error_message}>{error.applyDvs}</div>}
                 </div>
                 <div className={sysStyles.text_field}>
-                    <div className={sysStyles.text}><span className={modalStyles.star}>*</span>{"계수구분코드"}</div>
+                    <div className={sysStyles.text}><span className={modalStyles.star}>*</span>{"계수구분"}</div>
                     <Select value={selectedCoefClassCode} allowClear={{ clearIcon: <CloseOutlined style={{color: "red"}} /> }} onChange={(value) => handleInputUnitChange(value)} style={{width:"18rem", height:"2rem",fontSize:"4rem"}}>
                     {coefClassCode.map(option => (
                         <Select.Option key={option.code} value={option.code}>
@@ -1759,9 +1759,9 @@ export function EfmEditModal({ isModalOpen, handleOk, handleCancel, rowData }) {
                     {error.coefClassCode && <div className={modalStyles.error_message}>{error.coefClassCode}</div>}
                 </div>
                 <div className={sysStyles.text_field}>
-                    <div className={sysStyles.text}><span className={modalStyles.star}>*</span>{"온실가스코드"}</div>
+                    <div className={sysStyles.text}><span className={modalStyles.star}>*</span>{"온실가스"}</div>
                     {ghgCode.length !== 0 ? (
-                        <Select value={selectedGhgCode} placeholder="계수구분코드를 선택해주세요." allowClear={{ clearIcon: <CloseOutlined style={{color: "red"}} /> }} onChange={(value) => setSelectedGhgCode(value)} style={{width:"18rem", height:"2rem",fontSize:"4rem"}}>
+                        <Select value={selectedGhgCode} placeholder="계수구분을 선택해주세요." allowClear={{ clearIcon: <CloseOutlined style={{color: "red"}} /> }} onChange={(value) => setSelectedGhgCode(value)} style={{width:"18rem", height:"2rem",fontSize:"4rem"}}>
                         {ghgCode.map(option => (
                             <Select.Option key={option.code} value={option.code}>
                                 {option.name}
@@ -1769,7 +1769,7 @@ export function EfmEditModal({ isModalOpen, handleOk, handleCancel, rowData }) {
                         ))}
                         </Select>
                     ) : (
-                        <Select disabled placeholder="순발열량은 온실가스코드가 없습니다." style={{width:"18rem", height:"2rem",fontSize:"4rem"}}>
+                        <Select disabled placeholder="순발열량은 온실가스가 없습니다." style={{width:"18rem", height:"2rem",fontSize:"4rem"}}>
                         </Select>
                     )}
                 </div>
