@@ -28,6 +28,8 @@ const Overlay = styled('div')({
 export default function Eqf() { //Emission Quantity Forecast
     const [caData, setCaData] = useState([]); // response
     const [isLoading, setIsLoading] = useState(false);
+    const [tableData1, setTableData1] = useState([]);
+    const [tableData2, setTableData2] = useState([]);
 
     useEffect(() => {
         const fetchData = async () => {
@@ -38,6 +40,8 @@ export default function Eqf() { //Emission Quantity Forecast
                 const response = await axiosInstance.get(url);
                 console.log(response.data);
                 setCaData(response.data);
+                setTableData1(response.data.slice(0, 13)); // 앞 13개
+                setTableData2(response.data.slice(13)); // 뒤 12개
                 
             } catch (error) {
                 console.error("Error fetching data:", error);
@@ -50,9 +54,7 @@ export default function Eqf() { //Emission Quantity Forecast
         fetchData();
     }, []);
 
-    const onDownloadExcelClick = (csvData) => {
-        const fileName = `배출량 예측`;
-
+    const onDownloadExcelClick = (csvData, fileName) => {
         // 워크북 및 워크시트 생성
         const wb = XLSX.utils.book_new();
         const wsData = [];
@@ -109,7 +111,7 @@ export default function Eqf() { //Emission Quantity Forecast
                                     dataLabels: {
                                         enabled: false
                                     },
-                                    forecastDataPoints: { count: 4 },
+                                    forecastDataPoints: { count: 13 },
                                     stroke: { width: [5, 5] },
                                     xaxis: { categories: caData.map(data => `${data.year}-${String(data.mth).padStart(2, '0')}`) },
                                     yaxis: [
@@ -160,8 +162,11 @@ export default function Eqf() { //Emission Quantity Forecast
                     </div>
 
                     <div className={saStyles.main_grid}>
-                        <Card sx={{ width: "100%", height: "100%", borderRadius: "15px" }}>
-                            <TableCustom columns={eqfColumns} title="목록" data={caData} buttons={['DownloadExcel']} onClicks={[() => onDownloadExcelClick(caData)]} />
+                        <Card sx={{ width: "50%", height: "100%", borderRadius: "15px" }}>
+                            <TableCustom columns={eqfColumns} title="배출량 과거 데이터" data={tableData1} buttons={['DownloadExcel']} onClicks={[() => onDownloadExcelClick(tableData1, "배출량 과거 데이터")]} />
+                        </Card>
+                        <Card sx={{ width: "50%", height: "100%", borderRadius: "15px" }}>
+                            <TableCustom columns={eqfColumns} title="배출량 예측 데이터" data={tableData2} buttons={['DownloadExcel']} onClicks={[() => onDownloadExcelClick(tableData2, "배출량 예측 데이터")]} />
                         </Card>
                     </div>
                 </>
