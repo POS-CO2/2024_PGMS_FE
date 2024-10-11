@@ -111,7 +111,7 @@ export default function Eqf() { //Emission Quantity Forecast
                                     dataLabels: {
                                         enabled: false
                                     },
-                                    forecastDataPoints: { count: 13 },
+                                    forecastDataPoints: { count: 12 },
                                     stroke: { width: [5, 5] },
                                     xaxis: { categories: caData.map(data => `${data.year}-${String(data.mth).padStart(2, '0')}`) },
                                     yaxis: [
