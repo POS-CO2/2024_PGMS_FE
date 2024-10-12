@@ -140,11 +140,7 @@ export default function SearchForms({ initialValues={}, onFormSubmit, formFields
                 setChangedFieldsState({});
                 handleEmptyFields(); // 단일 함수 호출
             }
-        }
-
-        // handleEmptyFields 파라미터를 넘겼을경우(첫 렌더링시에 디폴트 리스트가 떠야하는 경우)
-        if (handleEmptyFields && handleEmptyFields.length > 0) {
-            
+            onFormSubmit(form.getFieldsValue());
         }
     };
 

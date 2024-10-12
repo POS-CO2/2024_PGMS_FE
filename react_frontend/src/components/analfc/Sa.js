@@ -51,6 +51,7 @@ export default function Sa() {
     }, [selectedCal]);
 
     useEffect(() => {
+        console.log("formData", formData);
         if (Object.keys(formData).length !== 0) {
             if(formData.calendar === selectedCal && selectedCal.length === 2) {
                 handleFormSubmit(formData);

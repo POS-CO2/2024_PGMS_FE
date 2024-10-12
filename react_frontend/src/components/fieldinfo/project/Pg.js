@@ -20,6 +20,7 @@ export default function Pg() {
     const [selectedPjt, setSelectedPjt] = useRecoilState(selectedPjtMgrState);             // 선택된 프로젝트(PK column only)
     const [managers, setManagers] = useState([]);
     const [submittedPjtIdx, setSubmittedPjtIdx] = useState([]);
+    const [newAddedPjtName, setNewAddedPjtName] = useState([]);
     const [expandedRow, setExpandedRow] = useRecoilState(expandedRowState);           // 아코디언 확장 상태
     const [isModalOpen, setIsModalOpen] = useState({
         PgAdd: false,
@@ -86,6 +87,20 @@ export default function Pg() {
         }
     }, []);
 
+    useEffect(() => {
+        if (newAddedPjtName) {
+            const newAddedIndices = newAddedPjtName
+                .map(newPjtName => projects.findIndex(pjt => pjt.pjtName === newPjtName));
+            console.log("newAddedIndices", newAddedIndices);
+                if (newAddedIndices.length > 0 && !newAddedIndices.includes(-1)) {
+                setSubmittedPjtIdx(newAddedIndices); // 찾아진 인덱스 배열 설정
+            } else {
+                setSubmittedPjtIdx([]);
+                setNewAddedPjtName([]);
+            }
+        }
+    }, [projects.length]);
+
     // 조회 버튼 클릭시 호출될 함수
     const handleFormSubmit = async (data) => {
         setFormData(data);
@@ -93,8 +108,8 @@ export default function Pg() {
 
         // data.calendar가 정의되어 있지 않거나 값이 없는 경우를 처리하기 위해 설정
         // ISO 형식 문자열을 dayjs로 변환
-        const startDate = `${data.calendar[0].$y}-${(data.calendar[0].$M + 1).toString().padStart(2, '0')}`;
-        const endDate = `${data.calendar[1].$y}-${(data.calendar[1].$M + 1).toString().padStart(2, '0')}`;
+        const startDate = data.calendar?.[0] ? dayjs(data.calendar[0]) : null;
+        const endDate = data.calendar?.[1] ? dayjs(data.calendar[1]) : null;
 
         const params = {
             pjtCode : data.pjtCode,
@@ -162,9 +177,9 @@ export default function Pg() {
 
                 const response = await axiosInstance.post("/pjt", requestBody);
 
-                setProjects(prevPjts => [...response.data, ...prevPjts]);
+                handleFormSubmit(formData);
                 setSelectedPjt({});
-                setSubmittedPjtIdx([...Array(newPjts.length).keys()]);
+                setNewAddedPjtName(response.data.map(pjt => pjt.pjtName));
 
                 swalOptions.title = '성공!',
                 swalOptions.text = `${pjtNameList.join(', ')}이(가) 성공적으로 등록되었습니다.`;

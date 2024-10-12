@@ -49,6 +49,7 @@ export default function Cm() {
             const newAddedIndex = codeGroup.findIndex(cg => cg.id === newAddedCMId);
             if (newAddedIndex !== -1) {
                 setSubmittedCGIdx([newAddedIndex]);
+                setNewAddedCLId(null);
             }
             else {
                 setSubmittedCGIdx([]);
@@ -109,7 +110,6 @@ export default function Cm() {
             setCode([]);
         }
         setSubmittedCGIdx([]);
-        setFormData(e);
     }
 
     const handleCodeGroupRowClick = async (e) => {
