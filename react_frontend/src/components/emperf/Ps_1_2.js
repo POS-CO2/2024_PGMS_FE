@@ -317,6 +317,7 @@ console.log(data);
                 handleFormSubmit={handleFormSubmit}
                 formData={formData}
                 immutableCellIndex={[0, 1, 2, 3]}
+                isRightAlign={true}
             />
         )
     }

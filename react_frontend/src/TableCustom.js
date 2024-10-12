@@ -64,7 +64,8 @@ export default function TableCustom({
     subData = [],
     expandedRow = {},
     monthPagination = false,
-    highlightedColumnIndex = -1
+    highlightedColumnIndex = -1,
+    isRightAlign = false
 }) {modalPagination
     // 버튼 활성화 상태 결정
     const buttonStatus = buttons.map((button) => {
@@ -137,6 +138,7 @@ export default function TableCustom({
                         expandedRow={expandedRow}
                         monthPagination={monthPagination}
                         highlightedColumnIndex={highlightedColumnIndex}
+                        isRightAlign={isRightAlign}
                     />
                 ) : (<></>)}
             </div>
@@ -162,7 +164,8 @@ export function TableCustomDoubleClickEdit({
     formData = [],
     handleYearChange = () => { },
     year = undefined,
-    immutableCellIndex = []
+    immutableCellIndex = [],
+    isRightAlign = false
 }) {
     const [editableData, setEditableData] = useState(data); // 수정된 데이터 저장
     const [editingCell, setEditingCell] = useState({ row: null, col: null }); // 현재 편집 중인 셀
@@ -525,6 +528,7 @@ export function TableCustomDoubleClickEdit({
                         modalPagination={modalPagination}
                         editedRows={editedRows} 
                         immutableCellIndex={immutableCellIndex}
+                        isRightAlign={isRightAlign}
                     />
                 ) : (<></>)}
             </div>

@@ -399,7 +399,7 @@ const TabsContainer = forwardRef(({ handleLogout, user, handleMenuClick, handleC
           <Row>
             <div style={{ marginLeft: '-0.9375rem', marginRight: '0.3125rem'}}>
               <StyledAvatar>
-                  {user.userName ? user.userName.substring(1, 4) : ''}
+                  {user.userName ? user.userName.charAt(0) : ''}
               </StyledAvatar>
             </div>
             <div>
@@ -462,7 +462,7 @@ const TabsContainer = forwardRef(({ handleLogout, user, handleMenuClick, handleC
             <UserInfo>
               {/* 성을 표시하는 Avatar 컴포넌트 */}
               <StyledAvatar>
-                {user.userName ? user.userName.substring(1, 4) : ''}
+                {user.userName ? user.userName.charAt(0) : ''}
               </StyledAvatar>
             </UserInfo>
           </Dropdown>
