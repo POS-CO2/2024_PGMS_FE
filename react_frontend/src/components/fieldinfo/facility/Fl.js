@@ -181,7 +181,7 @@ export default function Fl() {
                 setSubmittedEqLibIdx([0]);
 
                 swalOptions.title = '성공!',
-                swalOptions.text = `${response.data.eqLibName}이(가) 성공적으로 등록되었습니다.`;
+                swalOptions.text = `${response.data.equipLibName}이(가) 성공적으로 등록되었습니다.`;
                 swalOptions.icon = 'success';
             } catch (error) {
                 console.log(error);

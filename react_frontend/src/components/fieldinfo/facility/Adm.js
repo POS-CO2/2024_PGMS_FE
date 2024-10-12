@@ -188,7 +188,7 @@ export default function Adm() {
                 setSubmittedActvIdx([0]);
 
                 swalOptions.title = '성공!',
-                swalOptions.text = `${actvDataName}이(가) 성공적으로 등록되었습니다.`;
+                swalOptions.text = `${requestBody.actvDataName}이(가) 성공적으로 등록되었습니다.`;
                 swalOptions.icon = 'success';
             } catch (error) {
                 console.log(error);
@@ -213,7 +213,6 @@ export default function Adm() {
                     inputUnitCode: data.inputUnitCode,
                     unitConvCoef: data.unitConvCoef
                 };
-
                 const response = await axiosInstance.patch("/equip/actv", requestBody);
 
                 // 서버로부터 받은 수정된 데이터를 사용하여 리스트 업데이트
@@ -225,7 +224,7 @@ export default function Adm() {
                 setSelectedActv(response.data);
 
                 swalOptions.title = '성공!',
-                swalOptions.text = '${actvDataName}이(가) 성공적으로 수정되었습니다.';
+                swalOptions.text = `${requestBody.actvDataName}이(가) 성공적으로 수정되었습니다.`;
                 swalOptions.icon = 'success';
             } catch (error) {
                 console.log(error);
