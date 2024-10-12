@@ -93,8 +93,8 @@ export default function Pg() {
 
         // data.calendar가 정의되어 있지 않거나 값이 없는 경우를 처리하기 위해 설정
         // ISO 형식 문자열을 dayjs로 변환
-        const startDate = data.calendar?.[0] ? dayjs(data.calendar[0]) : null;
-        const endDate = data.calendar?.[1] ? dayjs(data.calendar[1]) : null;
+        const startDate = `${data.calendar[0].$y}-${(data.calendar[0].$M + 1).toString().padStart(2, '0')}`;
+        const endDate = `${data.calendar[1].$y}-${(data.calendar[1].$M + 1).toString().padStart(2, '0')}`;
 
         const params = {
             pjtCode : data.pjtCode,
