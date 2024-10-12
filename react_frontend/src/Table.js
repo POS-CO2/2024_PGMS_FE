@@ -434,9 +434,9 @@ export default function CustomizedTables({
                                                                 >
                                                                     {/* 성을 표시하는 Avatar 컴포넌트 */}
                                                                     <Avatar 
-                                                                        sx={{ width: '2rem', height: '2rem', marginRight: '0.5rem', marginLeft: '0.5rem', bgcolor: '#0EAA00', fontSize: '1.5rem' }} 
+                                                                        sx={{ marginRight: '0.5rem', marginLeft: '0.5rem', bgcolor: '#FFA310', color: '#FFF'}} 
                                                                     >
-                                                                        {manager.userName ? manager.userName.charAt(0) : ''}
+                                                                        {manager.userName ? manager.userName.substring(1, 4) : ''}
                                                                     </Avatar>
                                                                     <Box>
                                                                         <CardContent>

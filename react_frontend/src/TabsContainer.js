@@ -3,14 +3,12 @@ import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import { openTabsState, activeTabState, itemsState, selectedKeyState, openKeysState, collapsedState } from './atoms/tabAtoms';
 import { Tabs, Dropdown, Menu, Button, Tooltip } from 'antd';
 import { CloseOutlined, CloseCircleOutlined } from '@ant-design/icons';
-import GTranslateIcon from '@mui/icons-material/GTranslate';
 import { useNavigate } from 'react-router-dom';
 import { useDrag, useDrop, DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
-import Main from './Main';
 import styled from 'styled-components';
 import { ChatTwoTone } from '@mui/icons-material';
-import { Badge, IconButton } from '@mui/material';
+import { Badge, IconButton, Avatar } from '@mui/material';
 
 const ITEM_TYPE = 'TAB';
 const TABS_STORAGE_KEY = 'tabs'; // 로컬 스토리지 키
@@ -90,17 +88,14 @@ const StyledButton = styled(Button)`
   }
 `;
 
-const Photo = styled.div`
+const StyledAvatar = styled(Avatar)`
+  font-weight: 200;
   display: flex;
-  background-color: antiquewhite;
+  background-color: #FFA310;
+  color: #FFF;
   border-radius: 70%;
   margin-left: 10px;
   margin-right: 10px;
-
-  img {
-    width: 40px;
-    height: 40px;
-  }
 `;
 
 const StyledTabs = styled(Tabs)`
@@ -325,7 +320,7 @@ const TabsContainer = forwardRef(({ handleLogout, user, handleMenuClick, handleC
         newActiveKey = newTabs[lastIndex].key;
         if(newActiveKey === '') {
           setOpenKeys([]);
-        setSelectedKeys(null);
+          setSelectedKeys(null);
         }
       }
     }
@@ -354,9 +349,11 @@ const TabsContainer = forwardRef(({ handleLogout, user, handleMenuClick, handleC
   // 홈 탭만 남기고 나머지 탭 제거
   const closeAllTabs = () => {
     const homeTab = tabs.find(tab => tab.key === '');
-    setTabs([homeTab]); // 홈 탭만 남기고 나머지 모두 제거
-    setActiveKey(''); // 홈 탭으로 activeKey를 설정
-    navigate(''); // 홈 탭으로 이동
+    setTabs([homeTab]);     // 홈 탭만 남기고 나머지 모두 제거
+    setActiveKey('');       // 홈 탭으로 activeKey를 설정
+    navigate('');           // 홈 탭으로 이동
+    setOpenKeys([]);        // 사이드바 토글 내리기
+    setSelectedKeys(null);  // 사이드바 선택된 메뉴 지우기
   };
 
   const moveTabNode = (dragIndex, hoverIndex) => {
@@ -400,8 +397,10 @@ const TabsContainer = forwardRef(({ handleLogout, user, handleMenuClick, handleC
       label: (
         <UserDetails>
           <Row>
-            <div style={{ marginRight: '16px'}}>
-              <img src="http://sanriokorea.co.kr/wp-content/themes/sanrio/images/kuromi.png" alt="User" />
+            <div style={{ marginLeft: '-0.9375rem', marginRight: '0.3125rem'}}>
+              <StyledAvatar>
+                  {user.userName ? user.userName.substring(1, 4) : ''}
+              </StyledAvatar>
             </div>
             <div>
               <Row>
@@ -461,9 +460,10 @@ const TabsContainer = forwardRef(({ handleLogout, user, handleMenuClick, handleC
           {/* 유저 섹션 */}
           <Dropdown menu={{ items: menuItems }} trigger={['click']} placement="bottomRight">
             <UserInfo>
-              <Photo>
-                <img src="http://sanriokorea.co.kr/wp-content/themes/sanrio/images/kuromi.png" alt="User" />
-              </Photo>
+              {/* 성을 표시하는 Avatar 컴포넌트 */}
+              <StyledAvatar>
+                {user.userName ? user.userName.substring(1, 4) : ''}
+              </StyledAvatar>
             </UserInfo>
           </Dropdown>
         </TopRightWrapper>
