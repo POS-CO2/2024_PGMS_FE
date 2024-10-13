@@ -20,10 +20,10 @@ export default function SelectCalendar({ name, label, required=false, isAnal=fal
 
     // 현재 월의 전 월까지만 선택 가능하도록 설정
     const disabledDate = (current) => {
-        // 현재 월의 첫 날
-        const startOfCurrentMonth = dayjs().startOf('month');
-        // 현재 월의 전 월의 마지막 날
-        const endOfLastMonth = startOfCurrentMonth.subtract(1, 'day');
+        if (!current) return false;                                     // current가 없는 경우 false 처리
+
+        const startOfCurrentMonth = dayjs().startOf('month');           // 현재 월의 첫 날
+        const endOfLastMonth = startOfCurrentMonth.subtract(1, 'day');  // 현재 월의 전 월의 마지막 날
 
         // 현재 날짜가 전 월의 마지막 날보다 크면 비활성화
         return current.isAfter(endOfLastMonth);

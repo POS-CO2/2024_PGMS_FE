@@ -23,9 +23,6 @@ export const selectedPjtFPState = atom({
 export const selectedPeriodState = atom({
     key: 'selectedPeriodState',
     default: [],
-    effects: [
-        localStorageEffect('selectedPeriodState'), // 로컬 스토리지와 동기화
-    ],
 });
 
 // 활동량 관리 메뉴의 서치폼
@@ -126,25 +123,16 @@ export const emissionSrcSearchForm = atom({
 export const revAnaSearchForm = atom({
     key: 'revAnaSearchForm',
     default: {},
-    effects: [
-        localStorageEffect('revAnaSearchForm'), // 로컬 스토리지와 동기화
-    ],
 });
 
 // 설비별 분석 메뉴의 서치폼
 export const eqLibAnaSearchForm = atom({
     key: 'eqLibAnaSearchForm',
     default: {},
-    effects: [
-        localStorageEffect('eqLibAnaSearchForm'), // 로컬 스토리지와 동기화
-    ],
 });
 
 // 기후별 분석 메뉴의 서치폼
 export const clAnaSearchForm = atom({
     key: 'clAnaSearchForm',
     default: {},
-    effects: [
-        localStorageEffect('clAnaSearchForm'), // 로컬 스토리지와 동기화
-    ],
 });

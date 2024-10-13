@@ -146,7 +146,8 @@ export default function CustomizedTables({
         subData = [], // 담당자 목록
         expandedRow, // 확장된 행
         highlightedColumnIndex = -1, //기준이 되는 컬럼 인덱스
-        immutableCellIndex = []
+        immutableCellIndex = [], 
+        isRightAlign = false // 오른쪽 정렬 여부
     }) {
     const [selectedRow, setSelectedRow] = useState(null);   //variant = 'default' 의 선택상태
     const [selectedRows, setSelectedRows] = useState([]);
@@ -302,7 +303,10 @@ export default function CustomizedTables({
                     <TableHead>
                         <TableRow>
                         {variant === 'checkbox' && (
-                            <StyledTableCell style={{ width: columnWidths['col-checkbox'] }} isCheckbox={true}>
+                            <StyledTableCell 
+                                style={{ width: columnWidths['col-checkbox'] }} 
+                                isCheckbox={true}
+                            >
                             </StyledTableCell>
                         )}
                         {visibleColumns.map((col, colIndex) => (
@@ -310,6 +314,7 @@ export default function CustomizedTables({
                                 key={col.key}
                                 isHighlighted={colIndex === highlightedColumnIndex}
                                 isEditable={!immutableCellIndex.includes(colIndex)}
+                                align={isRightAlign ? 'right' : 'left'}
                                 style={{ 
                                     width: columnWidths[`col${colIndex}`],
                                     minWidth: 5,  // 최소 너비 설정
@@ -342,7 +347,10 @@ export default function CustomizedTables({
                                                 >
                                             {   // checkbox가 있는 테이블이면 체크박스 셀 추가
                                                 variant === 'checkbox' && (
-                                                    <StyledTableCell style={{ width: columnWidths['col-checkbox'] }} isCheckbox={true}>
+                                                    <StyledTableCell 
+                                                        style={{ width: columnWidths['col-checkbox'] }} 
+                                                        isCheckbox={true}
+                                                    >
                                                         <StyledCheckbox 
                                                             checked={selectedRows.includes(rowIndex + (rowsPerPage * page))}
                                                             onClick={(e) => handleCheckboxClick(e, rowIndex + (rowsPerPage * page))}
@@ -357,7 +365,7 @@ export default function CustomizedTables({
                                                         key={colIndex} 
                                                         isHighlighted={colIndex === highlightedColumnIndex}
                                                         isEditable={!immutableCellIndex.includes(colIndex)}
-                                                        align="left"
+                                                        align={isRightAlign ? 'right' : 'left'}
                                                         onDoubleClick={() => handleDoubleClick(rowIndex, colIndex)}
                                                         onKeyDown={(e) => handleKeyDown(e, rowIndex, colIndex)}
                                                         style={{ 
@@ -434,7 +442,7 @@ export default function CustomizedTables({
                                                                 >
                                                                     {/* 성을 표시하는 Avatar 컴포넌트 */}
                                                                     <Avatar 
-                                                                        sx={{ width: '2rem', height: '2rem', marginRight: '0.5rem', marginLeft: '0.5rem', bgcolor: '#0EAA00', fontSize: '1.5rem' }} 
+                                                                        sx={{ marginRight: '0.5rem', marginLeft: '0.5rem', bgcolor: '#FFA310', color: '#FFF'}} 
                                                                     >
                                                                         {manager.userName ? manager.userName.charAt(0) : ''}
                                                                     </Avatar>
@@ -497,7 +505,7 @@ export default function CustomizedTables({
                                                         key={idx} 
                                                         isHighlighted={idx === highlightedColumnIndex}
                                                         isEditable={!immutableCellIndex.includes(idx)}
-                                                        align="left" 
+                                                        align={isRightAlign ? 'right' : 'left'}
                                                         onDoubleClick={() => {handleDoubleClick(index, idx)}}
                                                         onKeyDown={(e) => handleKeyDown(e, index, idx)}
                                                         style={{ 

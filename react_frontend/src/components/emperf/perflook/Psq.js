@@ -356,10 +356,10 @@ export default function Psq() {
                         {content === 'table' && 
                             <div className={psqStyles.table_container}>
                                 <Card className={psqStyles.table_card} sx={{ width: "100%", height: "fit-contents", borderRadius: "15px" }}>
-                                    <TableCustom columns={emissionPerfPjtColumns} title="배출원별 실적 (단위:kgGHG)" data={emissionTableData} buttons={['DownloadExcel']} onClicks={[() => onDownloadExcelClick("배출원별 실적", emissionTableData, emissionPerfPjtColumns)]} pagination={false} highlightedColumnIndex={0}/>
+                                    <TableCustom columns={emissionPerfPjtColumns} title="배출원별 실적 (단위:kgGHG)" data={emissionTableData} buttons={['DownloadExcel']} onClicks={[() => onDownloadExcelClick("배출원별 실적", emissionTableData, emissionPerfPjtColumns)]} pagination={false} highlightedColumnIndex={0} isRightAlign={true} />
                                 </Card>
                                 <Card className={psqStyles.table_card} sx={{ width: "100%", height: "27vh", borderRadius: "15px" }}>
-                                    <TableCustom columns={perfPjtColumns} title="scope별 실적 (단위:kgGHG)" data={perfsData} buttons={['DownloadExcel']} onClicks={[() => onDownloadExcelClick("scope별 실적", perfsData, perfPjtColumns)]} pagination={false} highlightedColumnIndex={0}/>
+                                    <TableCustom columns={perfPjtColumns} title="scope별 실적 (단위:kgGHG)" data={perfsData} buttons={['DownloadExcel']} onClicks={[() => onDownloadExcelClick("scope별 실적", perfsData, perfPjtColumns)]} pagination={false} highlightedColumnIndex={0} isRightAlign={true} />
                                 </Card>
                             </div>
                         }

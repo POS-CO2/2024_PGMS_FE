@@ -89,6 +89,7 @@ export default function Rm({pjtId}) {
                     handleYearChange={handleYearChange}
                     year={year}
                     immutableCellIndex={[0]}
+                    isRightAlign={true}
                 />
             </Card>
             <Card sx={{ width: "70%", borderRadius: "0.5rem" }}>
