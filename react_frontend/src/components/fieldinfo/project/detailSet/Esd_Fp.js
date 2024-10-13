@@ -261,7 +261,7 @@ export default function Esd_Fp() {
                     </div>
                         
                     <div className={pdsStyles.contents_container}>
-                        <Card sx={{ width: "50%", height: "auto", borderRadius: "0.5rem" }}>
+                        <Card sx={{ width: "70%", height: "auto", borderRadius: "0.5rem" }}>
                             <TableCustom
                                 title='배출원 목록' 
                                 data={emSources}
@@ -304,7 +304,7 @@ export default function Esd_Fp() {
                                 ]}
                             />
                         </Card>
-                        <Card sx={{ width: "50%", borderRadius: "0.5rem", paddingBottom: "20px" }}>
+                        <Card sx={{ width: "30%", borderRadius: "0.5rem", paddingBottom: "20px" }}>
                             {(!selectedES || Object.keys(selectedES).length === 0) ?
                             <div className={pdsStyles.card_container}>
                                 <div className={pdsStyles.table_title} style={{ padding: "8px" }}>증빙자료목록</div>
