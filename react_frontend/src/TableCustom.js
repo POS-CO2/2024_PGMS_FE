@@ -64,7 +64,8 @@ export default function TableCustom({
     subData = [],
     expandedRow = {},
     monthPagination = false,
-    highlightedColumnIndex = -1
+    highlightedColumnIndex = -1,
+    isRightAlign = false
 }) {modalPagination
     // 버튼 활성화 상태 결정
     const buttonStatus = buttons.map((button) => {
@@ -137,6 +138,7 @@ export default function TableCustom({
                         expandedRow={expandedRow}
                         monthPagination={monthPagination}
                         highlightedColumnIndex={highlightedColumnIndex}
+                        isRightAlign={isRightAlign}
                     />
                 ) : (<></>)}
             </div>
@@ -162,11 +164,13 @@ export function TableCustomDoubleClickEdit({
     formData = [],
     handleYearChange = () => { },
     year = undefined,
-    immutableCellIndex = []
+    immutableCellIndex = [],
+    isRightAlign = false
 }) {
     const [editableData, setEditableData] = useState(data); // 수정된 데이터 저장
     const [editingCell, setEditingCell] = useState({ row: null, col: null }); // 현재 편집 중인 셀
     const [editedRows, setEditedRows] = useState([]); // 수정된 행의 인덱스 추적
+    const editableCellIndices = [];
 
     // data가 나중에 전달되거나 변경될 때 editableData도 자동으로 업데이트
     useEffect(() => {
@@ -374,15 +378,60 @@ export function TableCustomDoubleClickEdit({
     };
 
     const handleKeyDown = (e, rowIndex, colIndex) => {
-        if (e.key === 'Tab') {
+        let newRow = rowIndex;
+        let newCol = colIndex;
+        const hiddenCount = columns.filter(col => col.hidden).length;
+        const editableColCnt = columns.length - hiddenCount;
+    
+        // 셀이 immutableCellIndex에 포함되어 있는 경우
+        if (immutableCellIndex.includes(colIndex)) {
+            return; // 해당 셀에서 아무 작업도 수행하지 않음
+        }
+    
+        if (e.key === 'Tab' || e.key === 'ArrowRight') {
             e.preventDefault();
             let nextColIndex = colIndex + 1;
-            // 다음 셀로 이동, 만약 마지막 컬럼이면 다음 행의 첫 컬럼으로 이동
-            if (nextColIndex >= columns.length) {
-                nextColIndex = 0;
-                rowIndex = rowIndex + 1 < editableData.length ? rowIndex + 1 : 0; // 마지막 행이면 첫 행으로
+    
+            // 다음 셀로 이동, 만약 readonly 컬럼을 제외하고 마지막 컬럼이면 다음 행의 첫 컬럼으로 이동
+            while (nextColIndex >= editableColCnt || immutableCellIndex.includes(nextColIndex)) {
+                if (nextColIndex >= editableColCnt) {
+                    nextColIndex = 0;
+                    newRow = rowIndex + 1 < editableData.length ? rowIndex + 1 : 0; // 마지막 행이면 첫 행으로
+                } else {
+                    nextColIndex++;
+                }
             }
-            setEditingCell({ row: rowIndex, col: nextColIndex });
+    
+            newCol = nextColIndex;
+        } else if (e.key === 'ArrowLeft') {
+            e.preventDefault();
+            newCol--;
+
+            // 다음 셀로 이동, 만약 readonly 컬럼을 제외하고 첫번째 컬럼이면 이전 행의 마지막 컬럼으로 이동
+            while (newCol < 0 || immutableCellIndex.includes(newCol)) {
+                if (newCol < 0) {
+                    newCol = editableColCnt - 1;
+                    newRow = rowIndex - 1 >= 0 ? rowIndex - 1 : editableData.length-1; // 마지막 행이면 첫 행으로
+                } else {
+                    newCol--;
+                }
+            }
+        } else if (e.key === 'ArrowDown') {
+            e.preventDefault();
+            newRow++;
+
+            // 다음 셀로 이동, 만약 마지막 행이면 첫번째 행으로 이동
+            while (newRow >= editableData.length) {
+                newRow = newRow >= editableData.length ? 0 : newRow;
+            }
+        } else if (e.key === 'ArrowUp') {
+            e.preventDefault();
+            newRow--;
+
+            // 다음 셀로 이동, 만약 첫번째 행이면 마지막 행으로 이동
+            while (newRow < 0) {
+                newRow = newRow < 0 ? editableData.length - 1 : newRow;
+            }
         } else if (e.key === 'Enter') {
             e.preventDefault();
             // Enter 키가 눌리면 저장 버튼 클릭
@@ -400,6 +449,9 @@ export function TableCustomDoubleClickEdit({
                     break;
             }
         }
+    
+        // 셀 이동 후 설정
+        setEditingCell({ row: newRow, col: newCol });
     };
 
     const handleInputChange = (e, rowIndex, colIndex) => {
@@ -476,6 +528,7 @@ export function TableCustomDoubleClickEdit({
                         modalPagination={modalPagination}
                         editedRows={editedRows} 
                         immutableCellIndex={immutableCellIndex}
+                        isRightAlign={isRightAlign}
                     />
                 ) : (<></>)}
             </div>

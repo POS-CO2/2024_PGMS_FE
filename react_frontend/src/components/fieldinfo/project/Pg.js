@@ -20,6 +20,7 @@ export default function Pg() {
     const [selectedPjt, setSelectedPjt] = useRecoilState(selectedPjtMgrState);             // 선택된 프로젝트(PK column only)
     const [managers, setManagers] = useState([]);
     const [submittedPjtIdx, setSubmittedPjtIdx] = useState([]);
+    const [newAddedPjtName, setNewAddedPjtName] = useState([]);
     const [expandedRow, setExpandedRow] = useRecoilState(expandedRowState);           // 아코디언 확장 상태
     const [isModalOpen, setIsModalOpen] = useState({
         PgAdd: false,
@@ -85,6 +86,20 @@ export default function Pg() {
             fetchManagers(selectedPjt.id);
         }
     }, []);
+
+    useEffect(() => {
+        if (newAddedPjtName) {
+            const newAddedIndices = newAddedPjtName
+                .map(newPjtName => projects.findIndex(pjt => pjt.pjtName === newPjtName));
+            console.log("newAddedIndices", newAddedIndices);
+                if (newAddedIndices.length > 0 && !newAddedIndices.includes(-1)) {
+                setSubmittedPjtIdx(newAddedIndices); // 찾아진 인덱스 배열 설정
+            } else {
+                setSubmittedPjtIdx([]);
+                setNewAddedPjtName([]);
+            }
+        }
+    }, [projects.length]);
 
     // 조회 버튼 클릭시 호출될 함수
     const handleFormSubmit = async (data) => {
@@ -162,9 +177,9 @@ export default function Pg() {
 
                 const response = await axiosInstance.post("/pjt", requestBody);
 
-                setProjects(prevPjts => [...response.data, ...prevPjts]);
+                handleFormSubmit(formData);
                 setSelectedPjt({});
-                setSubmittedPjtIdx([...Array(newPjts.length).keys()]);
+                setNewAddedPjtName(response.data.map(pjt => pjt.pjtName));
 
                 swalOptions.title = '성공!',
                 swalOptions.text = `${pjtNameList.join(', ')}이(가) 성공적으로 등록되었습니다.`;

@@ -317,6 +317,7 @@ export default function Ps_1_2() {
                 handleFormSubmit={handleFormSubmit}
                 formData={formData}
                 immutableCellIndex={[0, 1, 2, 3]}
+                isRightAlign={true}
             />
         )
     }

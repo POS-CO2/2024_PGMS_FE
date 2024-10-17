@@ -14,6 +14,7 @@ import * as chartStyles from "../../assets/css/chart.css"
 import * as saStyles from "../../assets/css/sa.css"
 import * as psqStyles from "../../assets/css/psq.css"
 import * as XLSX from 'xlsx';
+import { SolarPower } from '@mui/icons-material';
 
 export default function Ca() {
     const [formFields, setFormFields] = useState(formField_ca);
