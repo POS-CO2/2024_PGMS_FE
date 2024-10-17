@@ -73,7 +73,6 @@ export default function Chatting({ UserListIcon ,handleChatListClick, chatUser, 
                 receiverId : chatUser.id,
                 message : text,
             }
-            console.log(formData);
             try {
                 const sendMessage = await axiosInstance.post(`/chat`, formData);
                 if (sendMessage.data) {
