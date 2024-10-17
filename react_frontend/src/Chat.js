@@ -23,6 +23,13 @@ export default function Chat({ handleCloseClick, totCnt }) {
         deptCode: "",
     }
 
+    const botUser = {
+        id: 688,
+        userName: "PG봇",
+        role: "BOT",
+        deptCode:"발전사업팀"
+    }
+
     const handleUserClick = (e) => {
         setStatus("user");
     }
@@ -89,7 +96,6 @@ export default function Chat({ handleCloseClick, totCnt }) {
     const handleChattingClick = async (e) => {
         setChatUser(e);
         const chatResponse = await axiosInstance.get(`/chat?targetId=${e.id}&messageId=${chatContent.length === 0 ? 4000000000 : chatContent[chatContent.length - 1].messageId}&count=${10}`);
-        console.log(chatResponse.data);
         setChatContent(chatResponse.data);
         try {
             if (e.id !== 0){
@@ -132,7 +138,6 @@ export default function Chat({ handleCloseClick, totCnt }) {
     const fpUser = userList.filter(e => e.role === 'FP' && e.id !== me.id);
     const hpUser = userList.filter(e => e.role === "HP" && e.id !== me.id);
     const adminUser = userList.filter(e => e.role === "ADMIN" && e.id !== me.id);
-
     const UserListIcon = ({data}) => {
         if (!data) {
             return <></>;
@@ -145,7 +150,13 @@ export default function Chat({ handleCloseClick, totCnt }) {
             return <Avatar sx={{ bgcolor: "rgb(74, 122, 230)", fontSize:"1rem", fontWeight:"bold" }} >본사</Avatar>
         }
         else if (data.role === "ADMIN") {
+            if (data.id === 688) {
+                return <Avatar sx={{bgcolor:"rgb(192 191 249)", fontSize:"1.3rem", fontWeight:"bold"}} >봇</Avatar>
+            }
             return <Avatar sx={{ bgcolor: "orange", fontSize:"1.3rem", fontWeight:"bold" }} >관리</Avatar>
+        }
+        else if (data.role === "BOT") {
+            return <Avatar sx={{bgcolor:"rgb(192 191 249)", fontSize:"1.3rem", fontWeight:"bold"}} >봇</Avatar>
         }
         else {
             return <CampaignTwoTone sx={{bgcolor:"rgb(64,64,64)", width:"40px", height:"40px", borderRadius:"50%", color:"white"}}/>
@@ -189,12 +200,12 @@ export default function Chat({ handleCloseClick, totCnt }) {
                 </div>
                 {
                     status === "user" ? (
-                        <UserList UserListIcon={UserListIcon} handleChattingClick={handleChattingClick} noticeUser={noticeUser} fpUser={fpUser} hpUser={hpUser} adminUser={adminUser} me={me} />
+                        <UserList UserListIcon={UserListIcon} handleChattingClick={handleChattingClick} botUser={botUser} noticeUser={noticeUser} fpUser={fpUser} hpUser={hpUser} adminUser={adminUser} me={me} />
                     ) : (
                         status === "chat" ? (
-                            <ChatList UserListIcon={UserListIcon} ws={ws.current} handleChattingClick={handleChattingClick} noticeUser={noticeUser} room={room} fetchRoom={fetchRoom} roomChange={roomChange} setRoomChange={setRoomChange}/>
+                            <ChatList UserListIcon={UserListIcon} ws={ws.current} handleChattingClick={handleChattingClick} botUser={botUser} noticeUser={noticeUser} room={room} fetchRoom={fetchRoom} roomChange={roomChange} setRoomChange={setRoomChange}/>
                         ) : (
-                            <Chatting UserListIcon={UserListIcon} ws={ws.current} handleChatListClick={handleChatListClick} noticeUser={noticeUser} handleRead={handleRead} handleReadAll={handleReadAll} updateChatList={updateChatList} chatContent={chatContent} fetchRoom={fetchRoom} setChatContent={setChatContent} roomChange={roomChange} setRoomChange={setRoomChange} chatUser={chatUser} me={me}/>
+                            <Chatting UserListIcon={UserListIcon} ws={ws.current} handleChatListClick={handleChatListClick} botUser={botUser} noticeUser={noticeUser} handleRead={handleRead} handleReadAll={handleReadAll} updateChatList={updateChatList} chatContent={chatContent} fetchRoom={fetchRoom} setChatContent={setChatContent} roomChange={roomChange} setRoomChange={setRoomChange} chatUser={chatUser} me={me}/>
                         )
                     )
                 }

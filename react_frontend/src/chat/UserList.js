@@ -33,7 +33,13 @@ const UserIcon = ({data}) => {
         return <Avatar sx={{ bgcolor: "rgb(74, 122, 230)", fontSize:"1rem", fontWeight:"bold", width:"50px", height:"50px" }} >본사</Avatar>
     }
     else if (data.role === "ADMIN") {
+        if (data.id === 688) {
+            return <Avatar sx={{bgcolor:"rgb(192 191 249)", fontSize:"1.3rem", fontWeight:"bold"}} >봇</Avatar>
+        }
         return <Avatar sx={{ bgcolor: "orange", fontSize:"1.3rem", fontWeight:"bold", width:"50px", height:"50px" }} >관리</Avatar>
+    }
+    else if (data.role === "BOT"){
+        return <Avatar sx={{bgcolor:"rgb(192 191 249)", fontSize:"1.3rem", fontWeight:"bold"}} >봇</Avatar>
     }
     else {
         return <CampaignTwoTone sx={{bgcolor:"rgb(64,64,64)", width:"50px", height:"50px", borderRadius:"50%", color:"white"}}/>
@@ -42,7 +48,7 @@ const UserIcon = ({data}) => {
 
 
 
-export default function UserList({ UserListIcon, handleChattingClick, fpUser, hpUser, adminUser, noticeUser, me }) {
+export default function UserList({ UserListIcon, handleChattingClick, fpUser, hpUser, adminUser, botUser, noticeUser, me }) {
 
 
     return (
@@ -73,6 +79,27 @@ export default function UserList({ UserListIcon, handleChattingClick, fpUser, hp
                             <div style={{display:"flex" ,flexDirection:"row", alignItems:"center", gap:"1rem", fontSize:"1rem", fontWeight:"500"}}>
                                 <UserListIcon data = {noticeUser}/>
                                 {`${noticeUser.userName}`}
+                            </div>
+                            <div>
+                            </div>
+                        </div>
+                    </AccordionDetails>
+                </Accordion>
+                <Divider variant='middle' />
+                <Accordion defaultExpanded>
+                    <AccordionSummary
+                        expandIcon={<ExpandMore />}
+                        aria-controls='panel1-content'
+                        id='notice-userlist'
+                        sx={{fontSize:"0.8rem", color:"grey"}}
+                    >
+                        챗봇
+                    </AccordionSummary>
+                    <AccordionDetails>
+                        <div className={chatStyles.user_lists} onDoubleClick={() => handleChattingClick(botUser)}>
+                            <div style={{display:"flex" ,flexDirection:"row", alignItems:"center", gap:"1rem", fontSize:"1rem", fontWeight:"500"}}>
+                                <UserListIcon data = {botUser}/>
+                                {`${botUser.userName}`}
                             </div>
                             <div>
                             </div>
