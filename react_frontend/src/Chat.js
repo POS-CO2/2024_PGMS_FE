@@ -137,7 +137,7 @@ export default function Chat({ handleCloseClick, totCnt }) {
         
     const fpUser = userList.filter(e => e.role === 'FP' && e.id !== me.id);
     const hpUser = userList.filter(e => e.role === "HP" && e.id !== me.id);
-    const adminUser = userList.filter(e => e.role === "ADMIN" && e.id !== me.id);
+    const adminUser = userList.filter(e => e.role === "ADMIN" && e.id !== me.id && e.id !== 688);
     const UserListIcon = ({data}) => {
         if (!data) {
             return <></>;
